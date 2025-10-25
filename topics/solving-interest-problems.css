@@ -1,0 +1,11 @@
+.gradient-bg{
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+}
+.preset-btn{
+    @apply bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors;
+}
+.virtual-aid{
+    background: linear-gradient(135deg, rgba(102,126,234,0.06), rgba(118,75,162,0.06));
+    border: 1px dashed rgba(102,126,234,0.25);
+}
+

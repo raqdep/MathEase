@@ -1,0 +1,215 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36" version="28.2.7">
+  <diagram name="MathEase Complete User Flow" id="mathEaseCompleteFlow">
+    <mxGraphModel dx="2135" dy="1023" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2400" pageHeight="1600" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="MathEase - Complete System User Flow" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=28;fontStyle=1;fontColor=#1f2937;" parent="1" vertex="1">
+          <mxGeometry x="700" y="30" width="600" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="legend" value="LEGEND" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#64748b;fontSize=16;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="50" y="100" width="200" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="legendStart" value="Start/End (Oval)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e5e7eb;strokeColor=#374151;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="50" y="150" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="legendProcess" value="Process (Rectangle)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e5e7eb;strokeColor=#374151;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="140" y="150" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="legendDecision" value="Decision (Diamond)" style="diamond;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="230" y="150" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="legendInput" value="Input/Output (Parallelogram)" style="shape=parallelogram;whiteSpace=wrap;html=1;fillColor=#e5e7eb;strokeColor=#374151;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="320" y="150" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="legendDatabase" value="Database (Cylinder)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#e5e7eb;strokeColor=#374151;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="410" y="160" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="studentFlowTitle" value="STUDENT JOURNEY" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#1e40af;fontSize=20;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="10" y="200" width="300" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="studentStart" value="START&#xa;Visit MathEase&#xa;Landing Page" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e0f2fe;strokeColor=#0369a1;fontSize=14;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="50" y="260" width="150" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="studentRegister" value="Create Student Account&#xa;&#xa;• Personal Information&#xa;• Email &amp; Password&#xa;• Student Details" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e0f2fe;strokeColor=#0369a1;fontSize=12;align=left;" parent="1" vertex="1">
+          <mxGeometry x="50" y="440" width="150" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="SAFmVFoL0WOi5N6e93w2-4" value="YES" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;fontStyle=1" edge="1" parent="1" source="emailVerification" target="studentLogin">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="230" y="670" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="emailVerification" value="Email&#xa;Verification&#xa;Required?" style="diamond;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="50" y="620" width="150" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="SAFmVFoL0WOi5N6e93w2-5" value="&lt;b&gt;YES&lt;/b&gt;" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="studentLogin" target="studentDashboard">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="studentLogin" value="Login to&#xa;Student Dashboard" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e0f2fe;strokeColor=#0369a1;fontSize=14;" parent="1" vertex="1">
+          <mxGeometry x="270" y="630" width="150" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="enrollmentCheck" value="Enrolled in&#xa;Class?" style="diamond;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="270" y="280" width="150" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="SAFmVFoL0WOi5N6e93w2-16" value="" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="joinClass" target="accessTopics">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="joinClass" value="" style="shape=parallelogram;whiteSpace=wrap;html=1;fillColor=#e0f2fe;strokeColor=#0369a1;fontSize=12;align=left;" parent="1" vertex="1">
+          <mxGeometry x="472.5" y="270" width="205" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="accessTopics" value="Study Topics&#xa;&#xa;• Functions&#xa;• Pre-Calculus&#xa;• Interactive Lessons" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e0f2fe;strokeColor=#0369a1;fontSize=12;align=left;" parent="1" vertex="1">
+          <mxGeometry x="500" y="440" width="150" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="topicLockCheck" value="Topic&#xa;Available?" style="diamond;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="500" y="630" width="150" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="studyTopic" value="Learn &amp; Practice&#xa;&#xa;• Interactive Content&#xa;• Step-by-step Guide&#xa;• Visual Examples" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e0f2fe;strokeColor=#0369a1;fontSize=12;align=left;" parent="1" vertex="1">
+          <mxGeometry x="730" y="620" width="150" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="takeQuiz" value="Take Quiz&#xa;&#xa;• Test Knowledge&#xa;• Get Instant Feedback&#xa;• Track Progress" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e0f2fe;strokeColor=#0369a1;fontSize=12;align=left;" parent="1" vertex="1">
+          <mxGeometry x="720" y="440" width="150" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="progressUpdate" value="Update Progress&#xa;&#xa;• Earn Badges&#xa;• Track Scores&#xa;• Analytics" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e0f2fe;strokeColor=#0369a1;fontSize=12;align=left;" parent="1" vertex="1">
+          <mxGeometry x="740" y="265" width="150" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="studentEnd" value="END&#xa;Continue Learning" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e0f2fe;strokeColor=#0369a1;fontSize=14;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1040" y="560" width="150" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="teacherFlowTitle" value="TEACHER JOURNEY" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontSize=20;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1380" y="240" width="300" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="teacherStart" value="START&#xa;Visit MathEase&#xa;Landing Page" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontSize=14;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1380" y="320" width="150" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="teacherRegister" value="Create Teacher Account&#xa;&#xa;• Personal Information&#xa;• School Details&#xa;• Credentials" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontSize=12;align=left;" parent="1" vertex="1">
+          <mxGeometry x="1380" y="440" width="150" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="teacherLogin" value="Login to&#xa;Teacher Portal" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontSize=14;" parent="1" vertex="1">
+          <mxGeometry x="1380" y="580" width="150" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="teacherDashboard" value="Teacher Dashboard&#xa;&#xa;• Class Overview&#xa;• Student Progress&#xa;• Quick Actions" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontSize=12;align=left;" parent="1" vertex="1">
+          <mxGeometry x="1580" y="580" width="150" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="createClass" value="Create Class&#xa;&#xa;• Set Class Name&#xa;• Generate Code&#xa;• Configure Settings" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontSize=12;align=left;" parent="1" vertex="1">
+          <mxGeometry x="1580" y="440" width="150" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="manageStudents" value="Manage Students&#xa;&#xa;• View Requests&#xa;• Approve/Reject&#xa;• Send Notifications" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontSize=12;align=left;" parent="1" vertex="1">
+          <mxGeometry x="1580" y="320" width="150" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="controlTopics" value="Control Topics&#xa;&#xa;• Lock/Unlock&#xa;• Manage Access&#xa;• Set Availability" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontSize=12;align=left;" parent="1" vertex="1">
+          <mxGeometry x="1780" y="320" width="150" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="manageQuizzes" value="Manage Quizzes&#xa;&#xa;• Set Deadlines&#xa;• Configure Settings&#xa;• View Results" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontSize=12;align=left;" parent="1" vertex="1">
+          <mxGeometry x="1780" y="440" width="150" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="viewAnalytics" value="View Analytics&#xa;&#xa;• Student Performance&#xa;• Class Statistics&#xa;• Progress Reports" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontSize=12;align=left;" parent="1" vertex="1">
+          <mxGeometry x="1780" y="580" width="150" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="teacherEnd" value="END&#xa;Continue Teaching" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontSize=14;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="1980" y="580" width="150" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="systemTitle" value="SYSTEM COMPONENTS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e8ff;strokeColor=#7c3aed;fontSize=20;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="100" y="1080" width="300" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="database" value="Database (AWS RDS)&#xa;&#xa;• User Data&#xa;• Progress Tracking&#xa;• Quiz Results" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#fef3c7;strokeColor=#d97706;fontSize=12;align=left;" parent="1" vertex="1">
+          <mxGeometry x="100" y="1160" width="150" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="emailSystem" value="Email System&#xa;&#xa;• Gmail SMTP&#xa;• OTP Delivery&#xa;• Notifications" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f0f9ff;strokeColor=#0284c7;fontSize=12;align=left;" parent="1" vertex="1">
+          <mxGeometry x="300" y="1160" width="150" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="security" value="Security Features&#xa;&#xa;• Password Hashing&#xa;• Session Management&#xa;• Input Validation" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fef2f2;strokeColor=#dc2626;fontSize=12;align=left;" parent="1" vertex="1">
+          <mxGeometry x="500" y="1160" width="150" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="notifications" value="Notification System&#xa;&#xa;• Real-time Updates&#xa;• Email Alerts&#xa;• Dashboard Messages" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f3e8ff;strokeColor=#7c3aed;fontSize=12;align=left;" parent="1" vertex="1">
+          <mxGeometry x="700" y="1160" width="150" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow1" value="&lt;b&gt;YES&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=3;" parent="1" source="studentStart" target="studentRegister" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow2" value="&lt;b&gt;YES&lt;/b&gt;" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=3;" parent="1" source="studentRegister" target="emailVerification" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=3;" parent="1" source="accessTopics" target="topicLockCheck" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=3;" parent="1" source="takeQuiz" target="progressUpdate" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow11b" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=3;" parent="1" source="progressUpdate" target="studentEnd" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=3;" parent="1" source="teacherStart" target="teacherRegister" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=3;" parent="1" source="teacherRegister" target="teacherLogin" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=3;" parent="1" source="teacherLogin" target="teacherDashboard" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=3;" parent="1" source="teacherDashboard" target="createClass" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=3;" parent="1" source="createClass" target="manageStudents" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=3;" parent="1" source="manageStudents" target="controlTopics" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=3;" parent="1" source="controlTopics" target="manageQuizzes" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=3;" parent="1" source="manageQuizzes" target="viewAnalytics" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow19b" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=3;" parent="1" source="viewAnalytics" target="teacherEnd" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="label2" value="NO" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#dc2626;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="50" y="680" width="30" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="label4" value="YES" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#16a34a;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="200" y="320" width="30" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="crossConnection1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeColor=#7c3aed;strokeWidth=4;dashed=1;" parent="1" source="joinClass" target="manageStudents" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="crossConnection2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeColor=#7c3aed;strokeWidth=4;dashed=1;" parent="1" source="topicLockCheck" target="controlTopics" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="crossConnection3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeColor=#7c3aed;strokeWidth=4;dashed=1;" parent="1" source="takeQuiz" target="manageQuizzes" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="crossConnection4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeColor=#7c3aed;strokeWidth=4;dashed=1;" parent="1" source="progressUpdate" target="viewAnalytics" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="connectionLabel1" value="Enrollment Request" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#7c3aed;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="800" y="250" width="120" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="connectionLabel2" value="Topic Control" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#7c3aed;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="800" y="500" width="120" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="connectionLabel3" value="Quiz Management" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#7c3aed;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="800" y="400" width="120" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="connectionLabel4" value="Progress Data" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontColor=#7c3aed;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="800" y="350" width="120" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="SAFmVFoL0WOi5N6e93w2-6" value="&lt;b&gt;YES&lt;/b&gt;" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="studentDashboard" target="enrollmentCheck">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="studentDashboard" value="Student Dashboard&#xa;&#xa;• View Progress&#xa;• Access Topics&#xa;• See Achievements" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e0f2fe;strokeColor=#0369a1;fontSize=12;align=left;" parent="1" vertex="1">
+          <mxGeometry x="270" y="440" width="150" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="SAFmVFoL0WOi5N6e93w2-9" value="&lt;span style=&quot;font-size: 12px; text-align: left;&quot;&gt;Enter Class Code&lt;/span&gt;&lt;br style=&quot;font-size: 12px; text-align: left;&quot;&gt;&lt;br style=&quot;font-size: 12px; text-align: left;&quot;&gt;&lt;span style=&quot;font-size: 12px; text-align: left;&quot;&gt;• Input Class Code&lt;/span&gt;&lt;br style=&quot;font-size: 12px; text-align: left;&quot;&gt;&lt;span style=&quot;font-size: 12px; text-align: left;&quot;&gt;• Submit Request&lt;/span&gt;" style="text;strokeColor=none;fillColor=none;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="510" y="297.5" width="110" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="SAFmVFoL0WOi5N6e93w2-15" value="&lt;b&gt;NO&lt;/b&gt;" style="edgeStyle=none;curved=1;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.113;entryY=0.519;entryDx=0;entryDy=0;entryPerimeter=0;fontSize=12;startSize=8;endSize=8;" edge="1" parent="1" source="enrollmentCheck" target="joinClass">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

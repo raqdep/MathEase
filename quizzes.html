@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizzes - MathEase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                        'poppins': ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'slate': {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        },
+                        'indigo': {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            300: '#a5b4fc',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                        },
+                        'emerald': {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            300: '#6ee7b7',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        },
+                        'violet': {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                        'scale-in': 'scaleIn 0.4s ease-out',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        scaleIn: {
+                            '0%': { transform: 'scale(0.95)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-inter bg-slate-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white/80 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-xl flex items-center justify-center">
+                        <img src="css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-6 w-6">
+                    </div>
+                    <span class="text-xl font-bold text-slate-800">MathEase</span>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-1">
+                    <a href="dashboard.html" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Dashboard</a>
+                    <a href="topics.html" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Topics</a>
+                    <a href="quizzes.html" class="bg-indigo-50 text-indigo-600 font-medium px-4 py-2 rounded-lg text-sm transition-all duration-200">Quizzes</a>
+                    <a href="#progress" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Progress</a>
+                </div>
+                
+                <!-- User Menu -->
+                <div class="flex items-center space-x-4">
+                    <div class="relative group">
+                        <button class="flex items-center space-x-2 text-slate-700 hover:text-slate-900 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-50 transition-all duration-200">
+                            <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-white text-xs"></i>
+                            </div>
+                            <span id="userName">Student</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </button>
+                        <div class="absolute right-0 mt-2 w-48 bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-200/60 py-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                            <a href="profile.html" class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                                <i class="fas fa-user-cog mr-3 text-slate-400"></i>
+                                Profile
+                            </a>
+                            <a href="settings.html" class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                                <i class="fas fa-cog mr-3 text-slate-400"></i>
+                                Settings
+                            </a>
+                            <a href="php/smart-logout.php?type=student" class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors" id="logoutLink">
+                                <i class="fas fa-sign-out-alt mr-3 text-slate-400"></i>
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button type="button" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 p-2 rounded-lg transition-all duration-200">
+                        <i class="fas fa-bars text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white relative overflow-hidden">
+        <!-- Animated Background -->
+        <div class="absolute inset-0">
+            <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="1.5"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-60"></div>
+            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent transform -skew-y-1"></div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative">
+            <!-- Happy Character -->
+            <div class="happy-character-container">
+                <img src="Img/Character/happy__1_-removebg-preview.png" 
+                     alt="Happy Character" 
+                     id="happyCharacter"
+                     class="welcome-character">
+                <!-- Floating elements around the character -->
+                <div class="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full animate-ping"></div>
+                <div class="absolute -bottom-2 -left-2 w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
+                <div class="absolute top-1/2 -right-4 w-3 h-3 bg-blue-400 rounded-full animate-bounce"></div>
+            </div>
+            
+            <div class="text-center">
+                <h1 class="text-5xl font-bold mb-6 bg-gradient-to-r from-white via-blue-100 to-purple-200 bg-clip-text text-transparent">
+                    Quiz Center
+                </h1>
+                <p class="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
+                    Test your knowledge with interactive quizzes designed to reinforce your learning and track your progress.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="checkEnrollmentAndNavigate('topics/functions.html')" class="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 inline-flex items-center justify-center">
+                        <i class="fas fa-play mr-3"></i>
+                        Start Learning
+                    </button>
+                    <button onclick="openJoinClassModal()" class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 inline-flex items-center justify-center">
+                        <i class="fas fa-users mr-3"></i>
+                        Join Class
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enrollment Status Banner -->
+    <div id="enrollmentStatusBanner" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        <!-- Enrollment status will be populated by JavaScript -->
+    </div>
+
+    <!-- Quizzes Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="space-y-8">
+            <!-- Available Quizzes -->
+            <div class="bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/30 p-6 sm:p-8 hover:shadow-3xl transition-all duration-500">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
+                    <div>
+                        <h2 class="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent mb-2">Available Quizzes</h2>
+                        <p class="text-slate-600 text-sm sm:text-base">Test your knowledge and track your progress</p>
+                    </div>
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-question-circle text-lg sm:text-xl text-white"></i>
+                    </div>
+                </div>
+                
+                <!-- Quiz Categories -->
+                <div class="space-y-8">
+                    <!-- Functions Quiz -->
+                    <div class="quiz-card group bg-purple-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800" data-quiz-type="functions" onclick="checkEnrollmentAndNavigate('quiz/functions-quiz.html')">
+                        <div class="flex items-start justify-between">
+                            <!-- Left side: Quiz info -->
+                            <div class="flex-1 pr-8">
+                                <div class="flex items-center space-x-4 mb-4">
+                                    <span class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-medium">Quiz 1</span>
+                                    <span class="quiz-status bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold">Available</span>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900 mb-3">Functions Quiz</h3>
+                                <p class="text-gray-600 text-sm leading-relaxed max-w-2xl">Test your understanding of function concepts.</p>
+                                
+                                <!-- Quiz Deadline Display -->
+                                <div class="quiz-deadline mt-4">
+                                    <!-- Deadline will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <!-- Right side: Action button -->
+                            <div class="flex flex-col items-end space-y-4 ml-8">
+                                <button class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg text-sm font-medium transition-colors">Start Quiz</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Evaluating Functions Quiz -->
+                    <div class="quiz-card group bg-purple-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800" data-quiz-type="evaluating-functions" onclick="checkEnrollmentAndNavigate('quiz/evaluating-functions-quiz.html')">
+                        <div class="flex items-start justify-between">
+                            <!-- Left side: Quiz info -->
+                            <div class="flex-1 pr-8">
+                                <div class="flex items-center space-x-4 mb-4">
+                                    <span class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-medium">Quiz 2</span>
+                                    <span class="quiz-status bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold">Available</span>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900 mb-3">Evaluating Functions Quiz</h3>
+                                <p class="text-gray-600 text-sm leading-relaxed max-w-2xl">Practice evaluating functions at specific values.</p>
+                                
+                                <!-- Quiz Deadline Display -->
+                                <div class="quiz-deadline mt-4">
+                                    <!-- Deadline will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <!-- Right side: Action button -->
+                            <div class="flex flex-col items-end space-y-4 ml-8">
+                                <button class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg text-sm font-medium transition-colors">Start Quiz</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Operations on Functions Quiz -->
+                    <div class="quiz-card group bg-purple-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800" data-quiz-type="operations-on-functions" onclick="checkEnrollmentAndNavigate('quiz/operations-on-functions-quiz.html')">
+                        <div class="flex items-start justify-between">
+                            <!-- Left side: Quiz info -->
+                            <div class="flex-1 pr-8">
+                                <div class="flex items-center space-x-4 mb-4">
+                                    <span class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-medium">Quiz 3</span>
+                                    <span class="quiz-status bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold">Available</span>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900 mb-3">Operations on Functions Quiz</h3>
+                                <p class="text-gray-600 text-sm leading-relaxed max-w-2xl">Test arithmetic operations on functions.</p>
+                                
+                                <!-- Quiz Deadline Display -->
+                                <div class="quiz-deadline mt-4">
+                                    <!-- Deadline will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <!-- Right side: Action button -->
+                            <div class="flex flex-col items-end space-y-4 ml-8">
+                                <button class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg text-sm font-medium transition-colors">Start Quiz</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Real-Life Problems Quiz -->
+                    <div class="quiz-card group bg-purple-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800" data-quiz-type="real-life-problems" onclick="checkEnrollmentAndNavigate('quiz/solving-real-life-problems-quiz.html')">
+                        <div class="flex items-start justify-between">
+                            <!-- Left side: Quiz info -->
+                            <div class="flex-1 pr-8">
+                                <div class="flex items-center space-x-4 mb-4">
+                                    <span class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-medium">Quiz 4</span>
+                                    <span class="quiz-status bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold">Available</span>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900 mb-3">Real-Life Problems Quiz</h3>
+                                <p class="text-gray-600 text-sm leading-relaxed max-w-2xl">Apply functions to solve real-world scenarios.</p>
+                                
+                                <!-- Quiz Deadline Display -->
+                                <div class="quiz-deadline mt-4">
+                                    <!-- Deadline will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <!-- Right side: Action button -->
+                            <div class="flex flex-col items-end space-y-4 ml-8">
+                                <button class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg text-sm font-medium transition-colors">Start Quiz</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rational Functions Quiz -->
+                    <div class="quiz-card group bg-purple-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800" data-quiz-type="rational-functions" onclick="checkEnrollmentAndNavigate('quiz/rational-functions-quiz.html')">
+                        <div class="flex items-start justify-between">
+                            <!-- Left side: Quiz info -->
+                            <div class="flex-1 pr-8">
+                                <div class="flex items-center space-x-4 mb-4">
+                                    <span class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-medium">Quiz 5</span>
+                                    <span class="quiz-status bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold">Available</span>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900 mb-3">Rational Functions Quiz</h3>
+                                <p class="text-gray-600 text-sm leading-relaxed max-w-2xl">Explore properties and graphs of rational functions.</p>
+                                
+                                <!-- Quiz Deadline Display -->
+                                <div class="quiz-deadline mt-4">
+                                    <!-- Deadline will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <!-- Right side: Action button -->
+                            <div class="flex flex-col items-end space-y-4 ml-8">
+                                <button class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg text-sm font-medium transition-colors">Start Quiz</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Solving Rational Equations and Inequalities Quiz -->
+                    <div class="quiz-card group bg-purple-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800" data-quiz-type="solving-rational-equations-inequalities" onclick="checkEnrollmentAndNavigate('quiz/solving-rational-equations-inequalities-quiz.html')">
+                        <div class="flex items-start justify-between">
+                            <!-- Left side: Quiz info -->
+                            <div class="flex-1 pr-8">
+                                <div class="flex items-center space-x-4 mb-4">
+                                    <span class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-medium">Quiz 6</span>
+                                    <span class="quiz-status bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold">Available</span>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900 mb-3">Solving Rational Equations and Inequalities Quiz</h3>
+                                <p class="text-gray-600 text-sm leading-relaxed max-w-2xl">Master solving rational equations and inequalities with step-by-step methods.</p>
+                                
+                                <!-- Quiz Deadline Display -->
+                                <div class="quiz-deadline mt-4">
+                                    <!-- Deadline will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <!-- Right side: Action button -->
+                            <div class="flex flex-col items-end space-y-4 ml-8">
+                                <button class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg text-sm font-medium transition-colors">Start Quiz</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Representations of Rational Functions Quiz -->
+                    <div class="quiz-card group bg-purple-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800" data-quiz-type="representations-of-rational-functions" onclick="checkEnrollmentAndNavigate('quiz/representations-of-rational-functions-quiz.html')">
+                        <div class="flex items-start justify-between">
+                            <!-- Left side: Quiz info -->
+                            <div class="flex-1 pr-8">
+                                <div class="flex items-center space-x-4 mb-4">
+                                    <span class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-medium">Quiz 7</span>
+                                    <span class="quiz-status bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold">Available</span>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900 mb-3">Representations of Rational Functions Quiz</h3>
+                                <p class="text-gray-600 text-sm leading-relaxed max-w-2xl">Test your understanding of different representations of rational functions.</p>
+                                
+                                <!-- Quiz Deadline Display -->
+                                <div class="quiz-deadline mt-4">
+                                    <!-- Deadline will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <!-- Right side: Action button -->
+                            <div class="flex flex-col items-end space-y-4 ml-8">
+                                <button class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg text-sm font-medium transition-colors">Start Quiz</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Domain and Range of Rational Functions Quiz -->
+                    <div class="quiz-card group bg-purple-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800" data-quiz-type="domain-range-rational-functions" onclick="checkEnrollmentAndNavigate('quiz/domain-range-rational-functions-quiz.html')">
+                        <div class="flex items-start justify-between">
+                            <!-- Left side: Quiz info -->
+                            <div class="flex-1 pr-8">
+                                <div class="flex items-center space-x-4 mb-4">
+                                    <span class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-medium">Quiz 8</span>
+                                    <span class="quiz-status bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold">Available</span>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900 mb-3">Domain and Range of Rational Functions Quiz</h3>
+                                <p class="text-gray-600 text-sm leading-relaxed max-w-2xl">Practice finding domain and range of rational functions.</p>
+                                
+                                <!-- Quiz Deadline Display -->
+                                <div class="quiz-deadline mt-4">
+                                    <!-- Deadline will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <!-- Right side: Action button -->
+                            <div class="flex flex-col items-end space-y-4 ml-8">
+                                <button class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg text-sm font-medium transition-colors">Start Quiz</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Domain and Range of Inverse Functions Quiz -->
+                    <div class="quiz-card group bg-purple-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800" data-quiz-type="domain-range-inverse-functions" onclick="checkEnrollmentAndNavigate('quiz/domain-range-inverse-functions-quiz.html')">
+                        <div class="flex items-start justify-between">
+                            <!-- Left side: Quiz info -->
+                            <div class="flex-1 pr-8">
+                                <div class="flex items-center space-x-4 mb-4">
+                                    <span class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-medium">Quiz 9</span>
+                                    <span class="quiz-status bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold">Available</span>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900 mb-3">Domain and Range of Inverse Functions Quiz</h3>
+                                <p class="text-gray-600 text-sm leading-relaxed max-w-2xl">Explore domain and range concepts in inverse functions.</p>
+                                
+                                <!-- Quiz Deadline Display -->
+                                <div class="quiz-deadline mt-4">
+                                    <!-- Deadline will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <!-- Right side: Action button -->
+                            <div class="flex flex-col items-end space-y-4 ml-8">
+                                <button class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg text-sm font-medium transition-colors">Start Quiz</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- One-to-One Functions Quiz -->
+                    <div class="quiz-card group bg-purple-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800" data-quiz-type="one-to-one-functions" onclick="checkEnrollmentAndNavigate('quiz/one-to-one-functions-quiz.html')">
+                        <div class="flex items-start justify-between">
+                            <!-- Left side: Quiz info -->
+                            <div class="flex-1 pr-8">
+                                <div class="flex items-center space-x-4 mb-4">
+                                    <span class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-medium">Quiz 10</span>
+                                    <span class="quiz-status bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold">Available</span>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900 mb-3">One-to-One Functions Quiz</h3>
+                                <p class="text-gray-600 text-sm leading-relaxed max-w-2xl">Test your knowledge of one-to-one functions and their properties.</p>
+                                
+                                <!-- Quiz Deadline Display -->
+                                <div class="quiz-deadline mt-4">
+                                    <!-- Deadline will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            
+                            <!-- Right side: Action button -->
+                            <div class="flex flex-col items-end space-y-4 ml-8">
+                                <button class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg text-sm font-medium transition-colors">Start Quiz</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-white mt-20 relative overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.02"%3E%3Ccircle cx="30" cy="30" r="1.5"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div>
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-xl flex items-center justify-center">
+                            <img src="css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-6 w-6">
+                        </div>
+                        <h3 class="text-2xl font-bold">MathEase</h3>
+                    </div>
+                    <p class="text-slate-400 text-sm leading-relaxed">Empowering Grade 11 STEM students to master General Mathematics through interactive learning and personalized progress tracking.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-6 text-slate-200">Quick Links</h3>
+                    <ul class="space-y-3">
+                        <li><a href="index.html" class="text-slate-400 hover:text-white text-sm transition-colors hover:translate-x-1 inline-block">Home</a></li>
+                        <li><a href="dashboard.html" class="text-slate-400 hover:text-white text-sm transition-colors hover:translate-x-1 inline-block">Dashboard</a></li>
+                        <li><a href="topics.html" class="text-slate-400 hover:text-white text-sm transition-colors hover:translate-x-1 inline-block">Topics</a></li>
+                        <li><a href="quizzes.html" class="text-slate-400 hover:text-white text-sm transition-colors hover:translate-x-1 inline-block">Quizzes</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-6 text-slate-200">Contact</h3>
+                    <div class="space-y-3">
+                        <p class="text-slate-400 text-sm">Minuyan National High School</p>
+                        <p class="text-slate-400 text-sm">Email: mathease@school.edu.ph</p>
+                        <div class="flex space-x-4 mt-4">
+                            <a href="#" class="w-8 h-8 bg-slate-800 hover:bg-indigo-600 rounded-lg flex items-center justify-center transition-colors">
+                                <i class="fab fa-facebook-f text-sm"></i>
+                            </a>
+                            <a href="#" class="w-8 h-8 bg-slate-800 hover:bg-indigo-600 rounded-lg flex items-center justify-center transition-colors">
+                                <i class="fab fa-twitter text-sm"></i>
+                            </a>
+                            <a href="#" class="w-8 h-8 bg-slate-800 hover:bg-indigo-600 rounded-lg flex items-center justify-center transition-colors">
+                                <i class="fab fa-linkedin-in text-sm"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-slate-800 mt-12 pt-8 text-center">
+                <p class="text-slate-400 text-sm">&copy; 2024 MathEase. All rights reserved. Made with ❤️ for students.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/join-class-modal.js"></script>
+    <script src="js/student-enrollment-check.js"></script>
+    <script src="js/session-manager.js"></script>
+    
+    <script>
+        // Auth guard and user recognition
+        document.addEventListener('DOMContentLoaded', async function() {
+            if (window.MathEase && window.MathEase.showLoading) window.MathEase.showLoading();
+            try {
+                const res = await fetch('php/user.php', { credentials: 'include', cache: 'no-store' });
+                if (res.status === 401) { 
+                    console.log('Authentication failed - redirecting to login');
+                    window.location.href = 'login.html'; 
+                    return; 
+                }
+                const data = await res.json();
+                if (!data.success) { 
+                    console.log('User data not available - redirecting to login');
+                    window.location.href = 'login.html'; 
+                    return; 
+                }
+                const user = data.user || {};
+                
+                // Update user name in navigation
+                const userNameEl = document.getElementById('userName');
+                if (userNameEl && user.first_name) {
+                    userNameEl.textContent = `${user.first_name} ${user.last_name || ''}`.trim();
+                }
+                
+                // Show welcome message for students
+                if (user.role === 'student') {
+                    console.log('Welcome, student!', user.first_name);
+                    
+                    // Show default deadline information immediately
+                    showDefaultDeadlines();
+                    
+                    // Check completed quizzes and update UI
+                    await checkCompletedQuizzes();
+                    
+                    // Load quiz settings and deadlines
+                    await loadQuizSettings();
+                    
+                    // Load quiz status
+                    await loadQuizStatus();
+                }
+                
+                // Initialize session manager
+                if (window.SessionManager) {
+                    window.sessionManager = new SessionManager();
+                    console.log('Session manager initialized');
+                }
+                
+                // Add event listener for page visibility changes
+                document.addEventListener('visibilitychange', function() {
+                    if (!document.hidden) {
+                        console.log('Page became visible - force refreshing quiz data');
+                        // Page became visible, force refresh quiz data immediately
+                        setTimeout(() => {
+                            refreshQuizData();
+                        }, 100); // Small delay to ensure page is fully visible
+                    }
+                });
+                
+                // Add event listener for window focus
+                window.addEventListener('focus', function() {
+                    console.log('Window focused - refreshing quiz data');
+                    refreshQuizData();
+                });
+                
+                // Set up frequent refresh to catch teacher changes quickly
+                setInterval(refreshQuizData, 5000); // Refresh every 5 seconds
+                
+                // Start session monitoring
+                startSessionMonitoring();
+                
+                console.log('Quiz page initialization completed successfully');
+            } catch (e) {
+                console.error('Auth error:', e);
+                window.location.href = 'login.html';
+            } finally {
+                if (window.MathEase && window.MathEase.hideLoading) window.MathEase.hideLoading();
+            }
+        });
+
+        // Store previous quiz data to detect changes
+        let previousQuizData = {
+            settings: null,
+            status: null,
+            attempts: null
+        };
+
+        // Show default deadline information immediately
+        function showDefaultDeadlines() {
+            const quizTypes = ['functions', 'evaluating-functions', 'operations-on-functions', 'real-life-problems', 'rational-functions', 'solving-rational-equations-inequalities', 'representations-of-rational-functions', 'domain-range-rational-functions', 'domain-range-inverse-functions', 'one-to-one-functions'];
+            
+            quizTypes.forEach(quizType => {
+                const quizCard = document.querySelector(`[data-quiz-type="${quizType}"]`);
+                if (!quizCard) return;
+
+                let deadlineElement = quizCard.querySelector('.quiz-deadline');
+                if (!deadlineElement) {
+                    deadlineElement = document.createElement('div');
+                    deadlineElement.className = 'quiz-deadline mb-3';
+                    // Insert after the header section
+                    const headerSection = quizCard.querySelector('.flex.items-start.justify-between');
+                    if (headerSection) {
+                        headerSection.parentNode.insertBefore(deadlineElement, headerSection.nextSibling);
+                    }
+                }
+
+                // Show loading state
+                deadlineElement.innerHTML = `
+                    <div class="flex items-center justify-between p-3 rounded-lg border text-blue-600 bg-blue-50">
+                        <div class="flex items-center">
+                            <i class="fas fa-clock mr-2 text-sm"></i>
+                            <span class="text-sm font-medium">Loading deadline...</span>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold text-blue-600 bg-blue-100">Please wait</span>
+                    </div>
+                `;
+            });
+        }
+
+        // Refresh quiz data when page regains focus
+        async function refreshQuizData() {
+            try {
+                console.log('Refreshing quiz data...');
+                
+                // Try to refresh quiz data without checking authentication first
+                // This prevents session conflicts from affecting the user experience
+                const results = await Promise.allSettled([
+                    checkCompletedQuizzes(),
+                    loadQuizSettings(),
+                    loadQuizStatus()
+                ]);
+                
+                // Check if any data changed and update UI accordingly
+                results.forEach((result, index) => {
+                    if (result.status === 'fulfilled') {
+                        console.log(`Quiz data refresh ${index + 1} completed successfully`);
+                    } else {
+                        console.log(`Quiz data refresh ${index + 1} failed:`, result.reason);
+                    }
+                });
+                
+                console.log('Quiz data refresh cycle completed');
+            } catch (error) {
+                console.error('Error refreshing quiz data:', error);
+                // Don't redirect on refresh errors, just log them
+            }
+        }
+
+        // Handle session conflicts silently - just refresh data
+        function handleSessionConflict(error) {
+            console.log('Session conflict detected, refreshing data silently:', error);
+            // Silently refresh quiz data without showing notifications
+            refreshQuizData();
+        }
+
+        // Silent session monitoring - only refresh data, no notifications
+        function startSessionMonitoring() {
+            // Check session status every 30 seconds and refresh data if needed
+            setInterval(async () => {
+                try {
+                    const response = await fetch('php/user.php', { 
+                        credentials: 'include', 
+                        cache: 'no-store',
+                        method: 'HEAD'
+                    });
+                    
+                    if (response.status === 401) {
+                        console.log('Session expired - refreshing data silently');
+                        // Just refresh data without showing any notifications
+                        refreshQuizData();
+                    }
+                } catch (error) {
+                    console.log('Session check failed:', error);
+                    // Don't handle network errors as session conflicts
+                }
+            }, 30000);
+        }
+
+        // Check completed quizzes and update UI
+        async function checkCompletedQuizzes() {
+            try {
+                const response = await fetch('php/quiz-management.php?action=get_student_history', {
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                // Handle authentication errors silently - just skip this update
+                if (result.error_code === 'AUTH_REQUIRED' || result.error_code === 'TEACHER_AUTH_REQUIRED') {
+                    console.log('Authentication required for quiz history, skipping update');
+                    return;
+                }
+                
+                if (result.success && result.attempts) {
+                    // Update quiz cards based on completion status and deadline
+                    await updateQuizCardsWithDeadlineCheck(result.attempts);
+                }
+                
+                // Ensure Operations on Functions Quiz is in correct state
+                resetOperationsOnFunctionsQuizCard();
+            } catch (error) {
+                console.error('Error checking completed quizzes:', error);
+                // Don't show notifications, just log the error
+            }
+        }
+        
+        // Reset Operations on Functions Quiz card to default state
+        function resetOperationsOnFunctionsQuizCard() {
+            const operationsCard = document.querySelector('[data-quiz-type="operations-on-functions"]');
+            if (!operationsCard) return;
+            
+            // Reset status badge
+            const statusBadge = operationsCard.querySelector('.quiz-status');
+            if (statusBadge) {
+                statusBadge.className = 'quiz-status text-sm bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full mb-2 font-semibold';
+                statusBadge.textContent = 'Available';
+            }
+            
+            // Reset arrow icon
+            const arrowIcon = operationsCard.querySelector('.fas.fa-arrow-right, .fas.fa-check-circle, .fas.fa-eye');
+            if (arrowIcon) {
+                arrowIcon.className = 'fas fa-arrow-right text-purple-500 text-lg group-hover:translate-x-1 transition-transform';
+            }
+            
+            // Remove any score/review info
+            const scoreInfo = operationsCard.querySelector('.mt-2.text-sm.text-blue-600, .mt-2.text-sm.text-orange-600');
+            if (scoreInfo) {
+                scoreInfo.remove();
+            }
+            
+            // Ensure onclick is set correctly
+            operationsCard.setAttribute('onclick', "checkEnrollmentAndNavigate('quiz/operations-on-functions-quiz.html')");
+            operationsCard.style.cursor = 'pointer';
+            operationsCard.style.opacity = '1';
+            operationsCard.classList.remove('closed');
+            
+            console.log('Operations on Functions Quiz card reset to default state');
+        }
+
+        // Load quiz settings and deadlines
+        async function loadQuizSettings() {
+            try {
+                const response = await fetch('php/quiz-management.php?action=get_quiz_settings', {
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                // Handle authentication errors silently - just skip this update
+                if (result.error_code === 'AUTH_REQUIRED' || result.error_code === 'TEACHER_AUTH_REQUIRED') {
+                    console.log('Authentication required for quiz settings, skipping update');
+                    return;
+                }
+                
+                if (result.success && result.settings) {
+                    // Check if settings have changed
+                    const currentSettings = JSON.stringify(result.settings);
+                    if (previousQuizData.settings !== currentSettings) {
+                        console.log('Quiz settings changed, updating UI');
+                        previousQuizData.settings = currentSettings;
+                        
+                        // Update quiz cards with deadline information
+                        updateQuizCardsWithDeadlines(result.settings);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading quiz settings:', error);
+                // Don't show notifications, just log the error
+            }
+        }
+
+        // Load quiz status (open/closed)
+        async function loadQuizStatus() {
+            try {
+                const response = await fetch('php/quiz-management.php?action=get_quiz_status', {
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                // Handle authentication errors silently - just skip this update
+                if (result.error_code === 'AUTH_REQUIRED' || result.error_code === 'TEACHER_AUTH_REQUIRED') {
+                    console.log('Authentication required for quiz status, skipping update');
+                    return;
+                }
+                
+                if (result.success && result.status) {
+                    // Check if status has changed
+                    const currentStatus = JSON.stringify(result.status);
+                    if (previousQuizData.status !== currentStatus) {
+                        console.log('Quiz status changed, updating UI');
+                        previousQuizData.status = currentStatus;
+                        
+                        // Update quiz cards with status information
+                        updateQuizCardsWithStatus(result.status);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading quiz status:', error);
+                // Don't show notifications, just log the error
+            }
+        }
+
+        // Update quiz cards with deadline information
+        function updateQuizCardsWithDeadlines(settings) {
+            // Update Functions Quiz deadline
+            if (settings.functions) {
+                updateQuizDeadline('functions', settings.functions);
+            }
+            
+            // Update other quiz deadlines as they become available
+            Object.keys(settings).forEach(quizType => {
+                if (quizType !== 'functions') {
+                    updateQuizDeadline(quizType, settings[quizType]);
+                }
+            });
+        }
+
+        // Update quiz cards with status information
+        function updateQuizCardsWithStatus(status) {
+            // Update Functions Quiz status
+            if (status.functions !== undefined) {
+                updateQuizStatus('functions', status.functions);
+            }
+            
+            // Update other quiz statuses as they become available
+            Object.keys(status).forEach(quizType => {
+                if (quizType !== 'functions') {
+                    updateQuizStatus(quizType, status[quizType]);
+                }
+            });
+        }
+
+        // Update individual quiz card with deadline
+        function updateQuizDeadline(quizType, settings) {
+            const quizCard = document.querySelector(`[data-quiz-type="${quizType}"]`);
+            if (!quizCard) return;
+
+            const deadline = new Date(settings.deadline);
+            const now = new Date();
+            const timeRemaining = deadline - now;
+
+            // Find or create deadline display element
+            let deadlineElement = quizCard.querySelector('.quiz-deadline');
+            const previousDeadline = deadlineElement ? deadlineElement.innerHTML : null;
+            
+            if (!deadlineElement) {
+                deadlineElement = document.createElement('div');
+                deadlineElement.className = 'quiz-deadline mb-3';
+                // Insert after the header section
+                const headerSection = quizCard.querySelector('.flex.items-start.justify-between');
+                if (headerSection) {
+                    headerSection.parentNode.insertBefore(deadlineElement, headerSection.nextSibling);
+                }
+            }
+
+            let newDeadlineHTML = '';
+            if (timeRemaining > 0) {
+                // Quiz is still available
+                const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+
+                let timeText = '';
+                let urgencyClass = '';
+                if (days > 0) {
+                    timeText = `${days} day${days > 1 ? 's' : ''} left`;
+                    urgencyClass = days <= 1 ? 'text-orange-600 bg-orange-50' : 'text-blue-600 bg-blue-50';
+                } else if (hours > 0) {
+                    timeText = `${hours} hour${hours > 1 ? 's' : ''} left`;
+                    urgencyClass = hours <= 2 ? 'text-orange-600 bg-orange-50' : 'text-blue-600 bg-blue-50';
+                } else {
+                    timeText = `${minutes} minute${minutes > 1 ? 's' : ''} left`;
+                    urgencyClass = 'text-red-600 bg-red-50';
+                }
+
+                let deadlineClass = 'quiz-deadline';
+                if (days <= 1 || hours <= 2) {
+                    deadlineClass += ' urgent';
+                }
+
+                newDeadlineHTML = `
+                    <div class="flex items-center justify-between p-3 rounded-lg border ${urgencyClass} ${deadlineClass}">
+                        <div class="flex items-center">
+                            <i class="fas fa-clock mr-2 text-sm"></i>
+                            <span class="text-sm font-medium">Due: ${deadline.toLocaleDateString()} at ${deadline.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold ${urgencyClass}">${timeText}</span>
+                    </div>
+                `;
+            } else {
+                // Quiz deadline has passed
+                newDeadlineHTML = `
+                    <div class="flex items-center justify-between p-3 rounded-lg border text-red-600 bg-red-50 quiz-deadline expired">
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-triangle mr-2 text-sm"></i>
+                            <span class="text-sm font-medium">Deadline passed: ${deadline.toLocaleDateString()} at ${deadline.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold text-red-600 bg-red-100">Expired</span>
+                    </div>
+                `;
+            }
+
+            // Check if deadline has changed
+            if (previousDeadline !== newDeadlineHTML) {
+                deadlineElement.innerHTML = newDeadlineHTML;
+                
+                // Add visual feedback for deadline change
+                deadlineElement.style.transition = 'all 0.3s ease';
+                deadlineElement.style.transform = 'scale(1.02)';
+                
+                setTimeout(() => {
+                    deadlineElement.style.transform = 'scale(1)';
+                }, 300);
+                
+                console.log(`Quiz ${quizType} deadline updated by teacher`);
+            }
+        }
+
+        // Update individual quiz card with status
+        function updateQuizStatus(quizType, isOpen) {
+            const quizCard = document.querySelector(`[data-quiz-type="${quizType}"]`);
+            if (!quizCard) return;
+
+            const statusBadge = quizCard.querySelector('.quiz-status');
+            const arrowIcon = quizCard.querySelector('.fas.fa-arrow-right, .fas.fa-lock');
+            
+            // Store previous state to detect changes
+            const wasOpen = !quizCard.style.cursor || quizCard.style.cursor !== 'not-allowed';
+            const statusChanged = wasOpen !== isOpen;
+            
+            if (!isOpen) {
+                // Quiz is closed
+                if (statusBadge) {
+                    statusBadge.className = 'quiz-status text-xs sm:text-sm bg-red-100 text-red-700 px-2 sm:px-3 py-1 rounded-full mr-2 sm:mr-3 whitespace-nowrap';
+                    statusBadge.textContent = 'Closed';
+                }
+                
+                if (arrowIcon) {
+                    arrowIcon.className = 'fas fa-lock text-red-500 text-sm sm:text-lg group-hover:translate-x-1 transition-transform';
+                }
+                
+                // Remove onclick to prevent navigation
+                quizCard.removeAttribute('onclick');
+                quizCard.style.cursor = 'not-allowed';
+                quizCard.style.opacity = '0.7';
+                quizCard.classList.add('closed');
+                
+                // Add visual feedback for status change
+                if (statusChanged) {
+                    quizCard.style.transition = 'all 0.3s ease';
+                    quizCard.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        quizCard.style.transform = 'scale(1)';
+                    }, 300);
+                    console.log(`Quiz ${quizType} was closed by teacher`);
+                }
+                
+                // Add click handler to show closed message
+                quizCard.addEventListener('click', function() {
+                    Swal.fire({
+                        title: 'Quiz Closed',
+                        text: 'This quiz is currently closed by your teacher.',
+                        icon: 'info',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#6366f1',
+                        background: '#ffffff',
+                        customClass: {
+                            popup: 'rounded-2xl',
+                            title: 'text-slate-800',
+                            content: 'text-slate-600'
+                        }
+                    });
+                });
+            } else {
+                // Quiz is open - restore normal functionality
+                if (statusBadge) {
+                    statusBadge.className = 'quiz-status text-xs sm:text-sm bg-emerald-100 text-emerald-700 px-2 sm:px-3 py-1 rounded-full mr-2 sm:mr-3 whitespace-nowrap';
+                    statusBadge.textContent = 'Available';
+                }
+                
+                if (arrowIcon) {
+                    arrowIcon.className = 'fas fa-arrow-right text-indigo-500 text-sm sm:text-lg group-hover:translate-x-1 transition-transform';
+                }
+                
+                // Restore onclick functionality
+                if (quizType === 'functions') {
+                    quizCard.setAttribute('onclick', "checkEnrollmentAndNavigate('quiz/functions-quiz.html')");
+                } else if (quizType === 'evaluating-functions') {
+                    quizCard.setAttribute('onclick', "checkEnrollmentAndNavigate('quiz/evaluating-functions-quiz.html')");
+                } else if (quizType === 'operations-on-functions') {
+                    quizCard.setAttribute('onclick', "checkEnrollmentAndNavigate('quiz/operations-on-functions-quiz.html')");
+                } else if (quizType === 'real-life-problems') {
+                    quizCard.setAttribute('onclick', "checkEnrollmentAndNavigate('quiz/solving-real-life-problems-quiz.html')");
+                } else if (quizType === 'rational-functions') {
+                    quizCard.setAttribute('onclick', "checkEnrollmentAndNavigate('quiz/rational-functions-quiz.html')");
+                } else if (quizType === 'solving-rational-equations-inequalities') {
+                    quizCard.setAttribute('onclick', "checkEnrollmentAndNavigate('quiz/solving-rational-equations-inequalities-quiz.html')");
+                } else if (quizType === 'representations-of-rational-functions') {
+                    quizCard.setAttribute('onclick', "checkEnrollmentAndNavigate('quiz/representations-of-rational-functions-quiz.html')");
+                } else if (quizType === 'domain-range-rational-functions') {
+                    quizCard.setAttribute('onclick', "checkEnrollmentAndNavigate('quiz/domain-range-rational-functions-quiz.html')");
+                } else if (quizType === 'domain-range-inverse-functions') {
+                    quizCard.setAttribute('onclick', "checkEnrollmentAndNavigate('quiz/domain-range-inverse-functions-quiz.html')");
+                } else if (quizType === 'one-to-one-functions') {
+                    quizCard.setAttribute('onclick', "checkEnrollmentAndNavigate('quiz/one-to-one-functions-quiz.html')");
+                }
+                
+                quizCard.style.cursor = 'pointer';
+                quizCard.style.opacity = '1';
+                quizCard.classList.remove('closed');
+                
+                // Add visual feedback for status change
+                if (statusChanged) {
+                    quizCard.style.transition = 'all 0.3s ease';
+                    quizCard.style.transform = 'scale(1.02)';
+                    setTimeout(() => {
+                        quizCard.style.transform = 'scale(1)';
+                    }, 300);
+                    console.log(`Quiz ${quizType} was opened by teacher`);
+                }
+            }
+        }
+
+        // Update quiz cards based on completion status and deadline check
+        async function updateQuizCardsWithDeadlineCheck(attempts) {
+            // Create a map of completed quiz types
+            const completedQuizzes = {};
+            attempts.forEach(attempt => {
+                if (attempt.status === 'completed') {
+                    // Add debugging for Operations on Functions Quiz
+                    if (attempt.quiz_type === 'operations-on-functions') {
+                        console.log('Found completed Operations on Functions attempt:', attempt);
+                    }
+                    completedQuizzes[attempt.quiz_type] = attempt;
+                }
+            });
+            
+            console.log('Completed quizzes detected:', Object.keys(completedQuizzes));
+            console.log('All quiz attempts received:', attempts.map(a => ({ quiz_type: a.quiz_type, status: a.status })));
+
+            // Get quiz settings to check deadlines
+            let quizSettings = {};
+            try {
+                const settingsResponse = await fetch('php/quiz-management.php?action=get_quiz_settings', {
+                    credentials: 'include'
+                });
+                const settingsResult = await settingsResponse.json();
+                if (settingsResult.success && settingsResult.settings) {
+                    quizSettings = settingsResult.settings;
+                }
+            } catch (error) {
+                console.error('Error getting quiz settings for deadline check:', error);
+            }
+
+            // Update each quiz card
+            const quizCards = document.querySelectorAll('[data-quiz-type]');
+            quizCards.forEach(card => {
+                // Get quiz type directly from data attribute
+                const quizType = card.getAttribute('data-quiz-type');
+                console.log(`Checking quiz card for type: ${quizType}, completed: ${!!completedQuizzes[quizType]}`);
+
+                if (completedQuizzes[quizType]) {
+                    // Temporary fix: Skip Operations on Functions Quiz completion check
+                    // until database issues are resolved
+                    if (quizType === 'operations-on-functions') {
+                        console.log('Skipping Operations on Functions Quiz completion check - database issue');
+                        return;
+                    }
+                    
+                    // Check if deadline has passed
+                    const isDeadlinePassed = checkIfDeadlinePassed(quizType, quizSettings);
+                    
+                    if (isDeadlinePassed) {
+                        // Deadline passed - allow review access
+                        updateCompletedQuizCardForReview(card, completedQuizzes[quizType]);
+                    } else {
+                        // Deadline not passed - show completed status
+                        updateCompletedQuizCard(card, completedQuizzes[quizType]);
+                    }
+                }
+            });
+        }
+
+        // Check if quiz deadline has passed
+        function checkIfDeadlinePassed(quizType, quizSettings) {
+            if (quizSettings[quizType] && quizSettings[quizType].deadline) {
+                const deadline = new Date(quizSettings[quizType].deadline);
+                const now = new Date();
+                return now > deadline;
+            }
+            return false;
+        }
+
+        // Update quiz card for completed quiz (deadline not passed)
+        function updateCompletedQuizCard(card, attempt) {
+            // Remove onclick to prevent navigation
+            card.removeAttribute('onclick');
+            card.style.cursor = 'default';
+            
+            // Update status badge
+            const statusBadge = card.querySelector('.bg-emerald-100');
+            if (statusBadge) {
+                statusBadge.className = 'text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full mr-3';
+                statusBadge.textContent = 'Completed';
+            }
+            
+            // Update arrow icon
+            const arrowIcon = card.querySelector('.fas.fa-arrow-right');
+            if (arrowIcon) {
+                arrowIcon.className = 'fas fa-check-circle text-blue-500 text-lg';
+            }
+            
+            // Add score information
+            const scoreInfo = document.createElement('div');
+            scoreInfo.className = 'mt-2 text-sm text-blue-600 font-medium';
+            scoreInfo.innerHTML = `<i class="fas fa-trophy mr-1"></i>Score: ${attempt.score}/${attempt.total_questions} (${attempt.percentage}%)`;
+            
+            // Insert score info before the existing info
+            const existingInfo = card.querySelector('.flex.items-center.space-x-6');
+            if (existingInfo) {
+                existingInfo.parentNode.insertBefore(scoreInfo, existingInfo);
+            }
+            
+            // Add click handler to show completion message
+            card.addEventListener('click', function() {
+                Swal.fire({
+                    title: 'Quiz Already Completed',
+                    text: `You have already completed this quiz with a score of ${attempt.score}/${attempt.total_questions} (${attempt.percentage}%).`,
+                    icon: 'info',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#6366f1',
+                    background: '#ffffff',
+                    customClass: {
+                        popup: 'rounded-2xl',
+                        title: 'text-slate-800',
+                        content: 'text-slate-600'
+                    }
+                });
+            });
+        }
+
+        // Update quiz card for completed quiz (deadline passed - allow review)
+        function updateCompletedQuizCardForReview(card, attempt) {
+            // Keep onclick functionality for review access
+            const onclick = card.getAttribute('onclick');
+            if (!onclick) {
+                // Restore onclick if it was removed
+                const quizType = card.getAttribute('data-quiz-type');
+                if (quizType === 'functions') {
+                    card.setAttribute('onclick', "checkEnrollmentAndNavigate('quiz/functions-quiz.html')");
+                } else if (quizType === 'evaluating-functions') {
+                    card.setAttribute('onclick', "checkEnrollmentAndNavigate('quiz/evaluating-functions-quiz.html')");
+                }
+            }
+            card.style.cursor = 'pointer';
+            
+            // Update status badge to show review available
+            const statusBadge = card.querySelector('.bg-emerald-100, .bg-blue-100');
+            if (statusBadge) {
+                statusBadge.className = 'text-sm bg-orange-100 text-orange-700 px-3 py-1 rounded-full mr-3';
+                statusBadge.textContent = 'Review Available';
+            }
+            
+            // Update arrow icon
+            const arrowIcon = card.querySelector('.fas.fa-arrow-right, .fas.fa-check-circle');
+            if (arrowIcon) {
+                arrowIcon.className = 'fas fa-eye text-orange-500 text-lg';
+            }
+            
+            // Add review information
+            const reviewInfo = document.createElement('div');
+            reviewInfo.className = 'mt-2 text-sm text-orange-600 font-medium';
+            reviewInfo.innerHTML = `<i class="fas fa-eye mr-1"></i>Review Mode: Score ${attempt.score}/${attempt.total_questions} (${attempt.percentage}%)`;
+            
+            // Remove existing score info if present
+            const existingScoreInfo = card.querySelector('.mt-2.text-sm.text-blue-600');
+            if (existingScoreInfo) {
+                existingScoreInfo.remove();
+            }
+            
+            // Insert review info before the existing info
+            const existingInfo = card.querySelector('.flex.items-center.space-x-6');
+            if (existingInfo) {
+                existingInfo.parentNode.insertBefore(reviewInfo, existingInfo);
+            }
+            
+            // Add click handler to show review message
+            card.addEventListener('click', function(e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Review Quiz',
+                    html: `
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-eye text-orange-500 text-2xl"></i>
+                            </div>
+                            <p class="text-lg text-gray-700 mb-4">Quiz deadline has passed. You can now review your answers!</p>
+                            <div class="bg-orange-50 rounded-lg p-4 mb-4">
+                                <div class="text-2xl font-bold text-orange-600">${attempt.score}/${attempt.total_questions}</div>
+                                <div class="text-sm text-orange-500">Your Score: ${attempt.percentage}%</div>
+                                <div class="text-xs text-gray-500 mt-1">Completed on ${attempt.quiz_date}</div>
+                            </div>
+                            <p class="text-sm text-gray-600">In review mode, you can see your answers and the correct solutions.</p>
+                        </div>
+                    `,
+                    showCancelButton: true,
+                    confirmButtonText: 'Review Quiz',
+                    cancelButtonText: 'Cancel',
+                    confirmButtonColor: '#f59e0b',
+                    cancelButtonColor: '#6b7280',
+                    background: '#ffffff',
+                    customClass: {
+                        popup: 'rounded-2xl',
+                        title: 'text-slate-800',
+                        content: 'text-slate-600'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Navigate to quiz for review
+                        const quizType = card.getAttribute('data-quiz-type');
+                        if (quizType === 'functions') {
+                            window.location.href = 'quiz/functions-quiz.html';
+                        } else if (quizType === 'evaluating-functions') {
+                            window.location.href = 'quiz/evaluating-functions-quiz.html';
+                        } else if (quizType === 'operations-on-functions') {
+                            window.location.href = 'quiz/operations-on-functions-quiz.html';
+                        } else if (quizType === 'real-life-problems') {
+                            window.location.href = 'quiz/solving-real-life-problems-quiz.html';
+                        } else if (quizType === 'rational-functions') {
+                            window.location.href = 'quiz/rational-functions-quiz.html';
+                        } else if (quizType === 'solving-rational-equations-inequalities') {
+                            window.location.href = 'quiz/solving-rational-equations-inequalities-quiz.html';
+                        } else if (quizType === 'representations-of-rational-functions') {
+                            window.location.href = 'quiz/representations-of-rational-functions-quiz.html';
+                        } else if (quizType === 'domain-range-rational-functions') {
+                            window.location.href = 'quiz/domain-range-rational-functions-quiz.html';
+                        } else if (quizType === 'domain-range-inverse-functions') {
+                            window.location.href = 'quiz/domain-range-inverse-functions-quiz.html';
+                        } else if (quizType === 'one-to-one-functions') {
+                            window.location.href = 'quiz/one-to-one-functions-quiz.html';
+                        }
+                    }
+                });
+            });
+        }
+        // Enrollment check function
+        async function checkEnrollmentAndNavigate(url) {
+            if (window.studentEnrollmentCheck) {
+                if (window.studentEnrollmentCheck.enrollmentStatus && window.studentEnrollmentCheck.enrollmentStatus.has_approved_enrollment) {
+                    // Student is enrolled, check deadline
+                    await checkQuizDeadline(url);
+                } else {
+                    // Student is not enrolled, show modal
+                    window.studentEnrollmentCheck.showEnrollmentRequiredModal();
+                }
+            } else {
+                // Fallback - show alert
+                Swal.fire({
+                    title: 'Enrollment Required',
+                    text: 'You need to join a class to access quizzes. Please ask your teacher for the class code.',
+                    icon: 'info',
+                    confirmButtonText: 'Join Class',
+                    confirmButtonColor: '#6366f1',
+                    background: '#ffffff',
+                    customClass: {
+                        popup: 'rounded-2xl',
+                        title: 'text-slate-800',
+                        content: 'text-slate-600'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        openJoinClassModal();
+                    }
+                });
+            }
+        }
+
+        // Check quiz deadline and status before allowing access
+        async function checkQuizDeadline(url) {
+            try {
+                // Check both settings and status
+                const [settingsResponse, statusResponse] = await Promise.all([
+                    fetch('php/quiz-management.php?action=get_quiz_settings', { credentials: 'include' }),
+                    fetch('php/quiz-management.php?action=get_quiz_status', { credentials: 'include' })
+                ]);
+                
+                const [settingsResult, statusResult] = await Promise.all([
+                    settingsResponse.json(),
+                    statusResponse.json()
+                ]);
+                
+                // Handle authentication errors silently - just allow navigation
+                if (settingsResult.error_code === 'AUTH_REQUIRED' || settingsResult.error_code === 'TEACHER_AUTH_REQUIRED' ||
+                    statusResult.error_code === 'AUTH_REQUIRED' || statusResult.error_code === 'TEACHER_AUTH_REQUIRED') {
+                    console.log('Authentication required during quiz access check, allowing navigation');
+                    // Allow navigation without showing notifications
+                    window.location.href = url;
+                    return;
+                }
+                
+                // Determine quiz type from URL
+                let quizType = '';
+                if (url.includes('evaluating-functions-quiz.html')) {
+                    quizType = 'evaluating-functions';
+                } else if (url.includes('functions-quiz.html')) {
+                    quizType = 'functions';
+                } else if (url.includes('operations-on-functions-quiz.html')) {
+                    quizType = 'operations-on-functions';
+                } else if (url.includes('solving-real-life-problems.html')) {
+                    quizType = 'real-life-problems';
+                } else if (url.includes('rational-functions-quiz.html')) {
+                    quizType = 'rational-functions';
+                } else if (url.includes('solving-rational-equations-inequalities-quiz.html')) {
+                    quizType = 'solving-rational-equations-inequalities';
+                } else if (url.includes('representations-of-rational-functions-quiz.html')) {
+                    quizType = 'representations-of-rational-functions';
+                } else if (url.includes('domain-range-rational-functions-quiz.html')) {
+                    quizType = 'domain-range-rational-functions';
+                } else if (url.includes('domain-range-inverse-functions-quiz.html')) {
+                    quizType = 'domain-range-inverse-functions';
+                } else if (url.includes('one-to-one-functions-quiz.html')) {
+                    quizType = 'one-to-one-functions';
+                }
+                
+                // Check if quiz is closed
+                if (quizType && statusResult.success && statusResult.status && statusResult.status[quizType] === false) {
+                    Swal.fire({
+                        title: 'Quiz Closed',
+                        text: 'This quiz is currently closed by your teacher.',
+                        icon: 'info',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#6366f1',
+                        background: '#ffffff',
+                        customClass: {
+                            popup: 'rounded-2xl',
+                            title: 'text-slate-800',
+                            content: 'text-slate-600'
+                        }
+                    });
+                    return;
+                }
+                
+                // Check deadline
+                if (quizType && settingsResult.success && settingsResult.settings && settingsResult.settings[quizType]) {
+                    const deadline = new Date(settingsResult.settings[quizType].deadline);
+                    const now = new Date();
+                    
+                    if (now > deadline) {
+                        // Quiz deadline has passed
+                        Swal.fire({
+                            title: 'Quiz Deadline Passed',
+                            text: `This quiz deadline has passed. The quiz was due on ${deadline.toLocaleDateString()} at ${deadline.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}.`,
+                            icon: 'warning',
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#6366f1',
+                            background: '#ffffff',
+                            customClass: {
+                                popup: 'rounded-2xl',
+                                title: 'text-slate-800',
+                                content: 'text-slate-600'
+                            }
+                        });
+                        return;
+                    }
+                }
+                
+                // All checks passed, allow navigation
+                window.location.href = url;
+            } catch (error) {
+                console.error('Error checking quiz access:', error);
+                // On error, allow navigation
+                window.location.href = url;
+            }
+        }
+
+        // Interactive functions
+        function showComingSoon() {
+            Swal.fire({
+                title: 'Coming Soon!',
+                text: 'This quiz is currently under development. Stay tuned for updates!',
+                icon: 'info',
+                confirmButtonText: 'Got it!',
+                confirmButtonColor: '#6366f1',
+                background: '#ffffff',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    title: 'text-slate-800',
+                    content: 'text-slate-600'
+                }
+            });
+        }
+
+        // Add smooth scrolling and animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effects to quiz cards
+            const quizCards = document.querySelectorAll('[onclick*="quiz"]');
+            quizCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+
+        // Add CSS for animations and layout improvements
+        const style = document.createElement('style');
+        style.textContent = `
+            .hover\\:scale-102:hover {
+                transform: scale(1.02);
+            }
+            
+            .scale-102 {
+                transform: scale(1.02);
+            }
+            
+            .line-clamp-2 {
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            
+            .quiz-card {
+                min-height: 280px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .quiz-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 0;
+                background: transparent;
+                opacity: 0;
+                transition: none;
+            }
+            
+            .quiz-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            }
+            
+            .quiz-card:hover::before {
+                opacity: 1;
+            }
+            
+            @media (max-width: 768px) {
+                .quiz-card {
+                    min-height: 240px;
+                }
+            }
+            
+            .quiz-icon {
+                transition: transform 0.3s ease;
+            }
+            
+            .quiz-card:hover .quiz-icon {
+                transform: scale(1.1);
+            }
+            
+            .quiz-deadline {
+                border-left: 4px solid #bfdbfe; /* blue-200 */
+                background: #eff6ff; /* blue-50 */
+            }
+            
+            .quiz-deadline.urgent {
+                border-left-color: #fcd34d; /* amber-300 */
+                background: #fffbeb; /* amber-50 */
+                animation: pulse-urgent 2s infinite;
+            }
+            
+            .quiz-deadline.expired {
+                border-left-color: #fecaca; /* red-200 */
+                background: #fef2f2; /* red-50 */
+            }
+            
+            @keyframes pulse-urgent {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.8; }
+            }
+            
+            .quiz-status {
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+            
+            .quiz-card.closed {
+                position: relative;
+            }
+            
+            .quiz-card.closed::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(239, 68, 68, 0.1);
+                border-radius: 1rem;
+                pointer-events: none;
+            }
+            
+            /* Happy Character Styles */
+            .happy-character-container {
+                position: absolute;
+                bottom: 40px;
+                right: 40px;
+                z-index: 10;
+            }
+            
+            .welcome-character {
+                width: 200px;
+                height: auto;
+                filter: drop-shadow(0 15px 30px rgba(0,0,0,0.2));
+                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                cursor: pointer;
+                animation: happyFloat 3s ease-in-out infinite, happyWiggle 2s ease-in-out infinite;
+            }
+            
+            .welcome-character:hover {
+                transform: scale(1.1) rotate(5deg);
+                filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3));
+                animation-play-state: paused;
+            }
+            
+            @keyframes happyFloat {
+                0%, 100% { transform: translateY(0px) rotate(0deg); }
+                25% { transform: translateY(-8px) rotate(1deg); }
+                50% { transform: translateY(-12px) rotate(0deg); }
+                75% { transform: translateY(-8px) rotate(-1deg); }
+            }
+            
+            @keyframes happyWiggle {
+                0%, 100% { transform: rotate(0deg); }
+                25% { transform: rotate(2deg); }
+                50% { transform: rotate(0deg); }
+                75% { transform: rotate(-2deg); }
+            }
+            
+            /* Floating elements animations */
+            .happy-character-container > div:nth-child(2) { animation-delay: 0.5s; }
+            .happy-character-container > div:nth-child(3) { animation-delay: 1s; }
+            .happy-character-container > div:nth-child(4) { animation-delay: 1.5s; }
+            
+            /* Responsive adjustments for happy character */
+            @media (max-width: 768px) {
+                .welcome-character { width: 150px; }
+                .happy-character-container { bottom: 20px; right: 20px; }
+            }
+            
+            @media (max-width: 480px) {
+                .welcome-character { width: 120px; }
+                .happy-character-container { bottom: 15px; right: 15px; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

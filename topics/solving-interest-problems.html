@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solving Problems Involving Simple and Compound Interest | MathEase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="solving-interest-problems.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 'poppins': ['Poppins', 'sans-serif'] },
+                    colors: { 'primary': '#667eea', 'secondary': '#764ba2', 'accent': '#f093fb' }
+                }
+            }
+        }
+    </script>
+    <style>
+        .lesson-section{display:none}
+        .lesson-section.active{display:block}
+    </style>
+</head>
+<body class="font-poppins bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="../index.html" class="flex items-center space-x-2">
+                        <img src="../css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-8 w-8">
+                        <span class="text-xl font-bold text-primary">MathEase</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="../dashboard.html" class="text-gray-700 hover:text-primary transition-colors">
+                        <i class="fas fa-home mr-2"></i>Dashboard
+                    </a>
+                    <a href="../topics.html" class="text-primary font-semibold">
+                        <i class="fas fa-book mr-2"></i>Topics
+                    </a>
+                    <span class="text-gray-600">
+                        <i class="fas fa-user mr-2"></i><span id="userName">Student</span>
+                    </span>
+                    <a href="../php/logout.php" class="text-gray-700 hover:text-red-600 transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="gradient-bg text-white py-16 bg-gradient-to-br from-primary via-secondary to-accent">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
+                    <i class="fas fa-piggy-bank mr-2"></i>
+                    <span class="font-semibold">General Mathematics 11</span>
+                </div>
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">Solving Problems Involving Simple and Compound Interest</h1>
+                <p class="text-xl md:text-2xl text-white/90 mb-8 max-w-4xl mx-auto">
+                    Real-life banking and finance computations for interest, present value, and maturity value aligned with DepEd MELCs 2025-2026
+                </p>
+                <div class="flex justify-center">
+                    <div class="bg-white/20 backdrop-blur-sm rounded-full px-8 py-3">
+                        <span class="text-lg font-semibold">5 Interactive Lessons</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Lesson Navigation -->
+        <div class="mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="1">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-coins text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 1</h3>
+                        <p class="text-sm text-gray-600">Introduction & MELCs</p>
+                    </div>
+                </button>
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="2">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-percent text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 2</h3>
+                        <p class="text-sm text-gray-600">Simple Interest Problems</p>
+                    </div>
+                </button>
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="3">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-hand-holding-dollar text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 3</h3>
+                        <p class="text-sm text-gray-600">Present & Maturity Value</p>
+                    </div>
+                </button>
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="4">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-chart-line text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 4</h3>
+                        <p class="text-sm text-gray-600">Compound Interest Problems</p>
+                    </div>
+                </button>
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="5">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-briefcase text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 5</h3>
+                        <p class="text-sm text-gray-600">Applications & Proposal</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Lesson Content -->
+        <div class="lesson-content">
+            <!-- Lesson 1 -->
+            <section id="lesson1" class="lesson-section active">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-coins text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 1: Introduction & DepEd MELCs</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">Differentiate simple vs compound interest; identify present value (P), rate (r), time (t), and maturity value (F).</p>
+                    </div>
+                    <div class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4"><i class="fas fa-graduation-cap text-primary mr-2"></i>DepEd MELCs 2025-2026 Alignment</h3>
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <p class="text-gray-700 mb-2"><strong>Learning Competency:</strong></p>
+                            <p class="text-gray-600 mb-3">GM11-IIa-1: Solves problems involving simple interest and related measures</p>
+                            <p class="text-gray-600 mb-3">GM11-IIa-2: Solves problems involving compound interest</p>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8 text-center">
+                        <p class="text-gray-600 mb-4">Mark this lesson as completed to unlock the next lesson.</p>
+                        <button onclick="sip_completeLesson(1)" class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold"><i class="fas fa-check mr-2"></i>Mark as Complete</button>
+                    </div>
+                    <div class="flex justify-between items-center mb-2">
+                        <button id="prevLessonBtn" onclick="sip_navigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"><i class="fas fa-chevron-left mr-2"></i>Previous Lesson</button>
+                        <div class="flex items-center space-x-4"><div class="text-lg font-semibold text-primary"><span id="currentLessonNum">1</span> of 5</div><div class="w-32 bg-gray-200 rounded-full h-2"><div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 20%"></div></div></div>
+                        <button id="nextLessonBtn" onclick="sip_navigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Next Lesson<i class="fas fa-chevron-right ml-2"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lesson 2: Simple Interest Problems -->
+            <section id="lesson2" class="lesson-section">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-percent text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 2: Simple Interest Problem Solver</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">Use Is = Prt and F = P(1 + rt) to solve real-life banking problems.</p>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div class="bg-white rounded-xl p-6 shadow-lg">
+                            <h4 class="text-lg font-semibold text-gray-800 mb-4">Inputs</h4>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Principal (P)</label>
+                                    <input type="number" id="sip_siP" value="20000" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Rate (r in %)</label>
+                                    <input type="number" id="sip_siR" value="5" step="0.01" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Time (t in years)</label>
+                                    <input type="number" id="sip_siT" value="3" step="0.01" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono">
+                                </div>
+                                <button onclick="sip_calculateSimpleInterest()" class="w-full bg-primary text-white py-3 px-6 rounded-lg hover:bg-secondary transition-colors font-semibold"><i class="fas fa-calculator mr-2"></i>Compute</button>
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white">
+                            <h4 class="text-lg font-semibold mb-4">Results</h4>
+                            <div class="bg-white/20 rounded-lg p-3 mb-3"><p class="text-sm">Simple Interest Is</p><p id="sip_siIs" class="font-mono text-lg">₱ 0.00</p></div>
+                            <div class="bg-white/20 rounded-lg p-3"><p class="text-sm">Maturity Value F</p><p id="sip_siF" class="font-mono text-lg">₱ 0.00</p></div>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 my-8 text-center">
+                        <button onclick="sip_completeLesson(2)" class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold"><i class="fas fa-check mr-2"></i>Mark as Complete</button>
+                    </div>
+                    <div class="flex justify-between items-center mb-2">
+                        <button id="prevLessonBtn" onclick="sip_navigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"><i class="fas fa-chevron-left mr-2"></i>Previous Lesson</button>
+                        <div class="flex items-center space-x-4"><div class="text-lg font-semibold text-primary"><span id="currentLessonNum">2</span> of 5</div><div class="w-32 bg-gray-200 rounded-full h-2"><div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 40%"></div></div></div>
+                        <button id="nextLessonBtn" onclick="sip_navigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Next Lesson<i class="fas fa-chevron-right ml-2"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lesson 3: Present & Maturity Value -->
+            <section id="lesson3" class="lesson-section">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-hand-holding-dollar text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 3: Present and Maturity Value (Simple)</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">Use P = Is/(rt), r = Is/(Pt), t = Is/(Pr), and F = P + Is.</p>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div class="bg-white rounded-xl p-6 shadow-lg">
+                            <h4 class="text-lg font-semibold text-gray-800 mb-4">Inputs</h4>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Given Is (optional)</label>
+                                    <input type="number" id="sip_is" value="0" step="0.01" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono">
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">P</label>
+                                        <input type="number" id="sip_p" value="18500" step="0.01" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">r (%)</label>
+                                        <input type="number" id="sip_r" value="3" step="0.01" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">t (years)</label>
+                                    <input type="number" id="sip_t" value="5" step="0.01" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono">
+                                </div>
+                                <button onclick="sip_solveSimpleRelations()" class="w-full bg-primary text-white py-3 px-6 rounded-lg hover:bg-secondary transition-colors font-semibold"><i class="fas fa-equals mr-2"></i>Compute Relations</button>
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white">
+                            <h4 class="text-lg font-semibold mb-4">Results</h4>
+                            <div class="bg-white/20 rounded-lg p-3 mb-3"><p class="text-sm">Is</p><p id="sip_rel_is" class="font-mono text-lg">₱ 0.00</p></div>
+                            <div class="bg-white/20 rounded-lg p-3 mb-3"><p class="text-sm">P (from F and Is)</p><p id="sip_rel_p" class="font-mono text-lg">₱ 0.00</p></div>
+                            <div class="bg-white/20 rounded-lg p-3 mb-3"><p class="text-sm">r or t if missing</p><p id="sip_rel_rt" class="font-mono text-lg">–</p></div>
+                            <div class="bg-white/20 rounded-lg p-3"><p class="text-sm">F = P + Is</p><p id="sip_rel_f" class="font-mono text-lg">₱ 0.00</p></div>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 my-8 text-center">
+                        <button onclick="sip_completeLesson(3)" class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold"><i class="fas fa-check mr-2"></i>Mark as Complete</button>
+                    </div>
+                    <div class="flex justify-between items-center mb-2">
+                        <button id="prevLessonBtn" onclick="sip_navigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"><i class="fas fa-chevron-left mr-2"></i>Previous Lesson</button>
+                        <div class="flex items-center space-x-4"><div class="text-lg font-semibold text-primary"><span id="currentLessonNum">3</span> of 5</div><div class="w-32 bg-gray-200 rounded-full h-2"><div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 60%"></div></div></div>
+                        <button id="nextLessonBtn" onclick="sip_navigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Next Lesson<i class="fas fa-chevron-right ml-2"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lesson 4: Compound Interest Problems -->
+            <section id="lesson4" class="lesson-section">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-chart-line text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 4: Compound Interest Problem Solver</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">Use F = P(1 + r/n)^(nt), Ic = F − P, and P = F/(1 + r/n)^(nt); handle frequencies.</p>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div class="bg-white rounded-xl p-6 shadow-lg">
+                            <h4 class="text-lg font-semibold text-gray-800 mb-4">Inputs</h4>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Principal (P)</label>
+                                    <input type="number" id="sip_ciP" value="35000" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono">
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">r (%)</label>
+                                        <input type="number" id="sip_ciR" value="3" step="0.01" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">t (years)</label>
+                                        <input type="number" id="sip_ciT" value="3" step="0.01" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">n (times per year)</label>
+                                    <select id="sip_ciN" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none">
+                                        <option value="1">Annually (1)</option>
+                                        <option value="2">Semi-annually (2)</option>
+                                        <option value="4">Quarterly (4)</option>
+                                        <option value="12">Monthly (12)</option>
+                                        <option value="365">Daily (365)</option>
+                                    </select>
+                                </div>
+                                <button onclick="sip_calculateCompound()" class="w-full bg-primary text-white py-3 px-6 rounded-lg hover:bg-secondary transition-colors font-semibold"><i class="fas fa-calculator mr-2"></i>Compute</button>
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white">
+                            <h4 class="text-lg font-semibold mb-4">Results</h4>
+                            <div class="bg-white/20 rounded-lg p-3 mb-3"><p class="text-sm">F</p><p id="sip_ciF" class="font-mono text-lg">₱ 0.00</p></div>
+                            <div class="bg-white/20 rounded-lg p-3 mb-3"><p class="text-sm">Ic = F − P</p><p id="sip_ciIc" class="font-mono text-lg">₱ 0.00</p></div>
+                            <div class="bg-white/20 rounded-lg p-3"><p class="text-sm">Present Value from F</p><div class="flex gap-2 mt-2"><input type="number" id="sip_ciFInput" placeholder="Enter F" class="flex-1 px-3 py-2 rounded text-slate-900"><button class="px-3 py-2 bg-white/30 rounded" onclick="sip_computePVFromF()">Compute PV</button></div><p id="sip_ciPV" class="font-mono text-lg mt-2">₱ 0.00</p></div>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 my-8 text-center">
+                        <button onclick="sip_completeLesson(4)" class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold"><i class="fas fa-check mr-2"></i>Mark as Complete</button>
+                    </div>
+                    <div class="flex justify-between items-center mb-2">
+                        <button id="prevLessonBtn" onclick="sip_navigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"><i class="fas fa-chevron-left mr-2"></i>Previous Lesson</button>
+                        <div class="flex items-center space-x-4"><div class="text-lg font-semibold text-primary"><span id="currentLessonNum">4</span> of 5</div><div class="w-32 bg-gray-200 rounded-full h-2"><div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 80%"></div></div></div>
+                        <button id="nextLessonBtn" onclick="sip_navigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Next Lesson<i class="fas fa-chevron-right ml-2"></i></button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lesson 5: Applications & Proposal -->
+            <section id="lesson5" class="lesson-section">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-briefcase text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 5: Applications & Proposal</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">Compare options, create proposals, and justify choices using computed values.</p>
+                    </div>
+                    <div class="bg-orange-50 border-l-4 border-orange-400 p-6 mb-6 text-sm text-gray-800 space-y-3">
+                        <p><strong>Task:</strong> For ₱50,000, compare: 1.10% (3y), 1.25% (5y), 1.75% (8y). Compute final amounts and discuss liquidity, goals, and risks.</p>
+                        <p><strong>Tip:</strong> Use simple or compound as specified; for time deposits, compounding is typically quarterly or annually.</p>
+                    </div>
+                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 my-8 text-center">
+                        <button onclick="sip_completeLesson(5)" class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold"><i class="fas fa-check mr-2"></i>Finish Topic</button>
+                    </div>
+                    <div class="flex justify-between items-center mb-2">
+                        <button id="prevLessonBtn" onclick="sip_navigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"><i class="fas fa-chevron-left mr-2"></i>Previous Lesson</button>
+                        <div class="flex items-center space-x-4"><div class="text-lg font-semibold text-primary"><span id="currentLessonNum">5</span> of 5</div><div class="w-32 bg-gray-200 rounded-full h-2"><div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 100%"></div></div></div>
+                        <button id="nextLessonBtn" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>Next Lesson<i class="fas fa-chevron-right ml-2"></i></button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2024 MathEase. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="solving-interest-problems.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,977 @@
+/* Solving Rational Equations and Inequalities - Custom Styles */
+
+/* Gradient Backgrounds */
+.gradient-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Lesson Card Animations */
+.lesson-card {
+    transition: all 0.3s ease;
+}
+
+.lesson-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15);
+}
+
+/* Virtual Aid Styling */
+.virtual-aid {
+    background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
+    border: 2px solid #e1e8ff;
+}
+
+/* Function Machine Styling */
+.function-machine {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Graph Canvas Styling */
+.graph-canvas {
+    border: 2px solid #e1e8ff;
+    border-radius: 12px;
+}
+
+/* Lesson Section Management */
+.lesson-section {
+    display: none;
+}
+
+.lesson-section.active {
+    display: block;
+}
+
+/* Smooth Scrolling and Progress */
+html {
+    scroll-behavior: smooth;
+}
+
+#sreiLessonProgressBar {
+    transition: width 0.5s ease-in-out;
+}
+
+/* Custom Button Styles */
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(118, 75, 162, 0.3);
+}
+
+/* Rational Equation Specific Styling */
+.rational-equation-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.rational-equation-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+}
+
+/* Solution Steps */
+.solution-step {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    border-radius: 8px;
+    padding: 20px;
+    border-left: 4px solid #667eea;
+    margin: 16px 0;
+}
+
+.solution-step h5 {
+    color: #1e293b;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.solution-step ul {
+    list-style: none;
+    padding: 0;
+}
+
+.solution-step li {
+    padding: 4px 0;
+    color: #475569;
+    font-size: 14px;
+}
+
+/* Inequality Solver Styling */
+.inequality-solver {
+    background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+    border-radius: 16px;
+    padding: 32px;
+    border: 2px solid #d8b4fe;
+}
+
+/* Number Line Styling */
+.number-line {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 8px;
+    padding: 20px;
+    border: 1px solid #e2e8f0;
+    font-family: 'Courier New', monospace;
+}
+
+/* Sign Analysis */
+.sign-positive {
+    background: #10b981;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.sign-negative {
+    background: #ef4444;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+/* Extraneous Solution Warning */
+.extraneous-warning {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border-radius: 8px;
+    padding: 16px;
+    border-left: 4px solid #ef4444;
+    margin: 12px 0;
+}
+
+.extraneous-warning h5 {
+    color: #991b1b;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+/* Rational Equation Examples */
+.rational-example {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-radius: 12px;
+    padding: 24px;
+    border: 2px solid #bae6fd;
+    transition: all 0.3s ease;
+}
+
+.rational-example:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(14, 165, 233, 0.15);
+}
+
+/* Graph Controls */
+.graph-controls {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid #e2e8f0;
+}
+
+/* Interactive Elements */
+.interactive-element {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.interactive-element:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Enhanced Step-by-Step Process */
+.step-process {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 16px;
+    border-left: 4px solid #667eea;
+    margin: 12px 0;
+}
+
+.step-solution {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    border-radius: 12px;
+    padding: 20px;
+    border-left: 4px solid #667eea;
+    margin: 16px 0;
+    transition: all 0.3s ease;
+}
+
+.step-solution:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
+}
+
+.step-number {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 16px;
+    font-size: 14px;
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+}
+
+.step-number:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Enhanced Interactive Equation Solver */
+.equation-solver {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-radius: 16px;
+    padding: 32px;
+    border: 2px solid #bae6fd;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(14, 165, 233, 0.1);
+}
+
+.equation-solver:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(14, 165, 233, 0.2);
+}
+
+/* Equation Input Styling */
+.equation-input {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 12px;
+    padding: 20px;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.equation-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Readonly inputs: hide text caret for better UX */
+input[readonly] {
+    caret-color: transparent;
+}
+
+/* Helper text for clarity under inputs */
+.helper-text {
+    font-size: 12px;
+    color: #6b7280; /* gray-500 */
+}
+
+/* Quick Examples Styling */
+.quick-examples {
+    background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+    border-radius: 12px;
+    padding: 20px;
+    border: 2px solid #d8b4fe;
+    transition: all 0.3s ease;
+}
+
+.quick-examples:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(168, 85, 247, 0.15);
+}
+
+.example-button {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+}
+
+.example-button:hover {
+    background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+    border-color: #d8b4fe;
+    transform: translateX(4px);
+    box-shadow: 0 4px 15px rgba(168, 85, 247, 0.1);
+}
+
+/* Small info badge */
+.info-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+    color: #3730a3;
+    font-weight: 600;
+    font-size: 10px;
+    letter-spacing: .02em;
+    padding: 4px 8px;
+    border-radius: 9999px;
+}
+
+/* Solution Results */
+.solution-results {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 12px;
+    padding: 24px;
+    border-left: 4px solid #3b82f6;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.solution-results:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+.valid-solutions-card {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 16px;
+    transition: all 0.3s ease;
+}
+
+.valid-solutions-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(34, 197, 94, 0.1);
+}
+
+.extraneous-solutions-card {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 16px;
+    transition: all 0.3s ease;
+}
+
+.extraneous-solutions-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.1);
+}
+
+.domain-restrictions-card {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 1px solid #fcd34d;
+    border-radius: 8px;
+    padding: 16px;
+    transition: all 0.3s ease;
+}
+
+.domain-restrictions-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.1);
+}
+
+/* Enhanced Button Styles */
+.btn-equation {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-equation::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-equation:hover::before {
+    left: 100%;
+}
+
+.btn-equation:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+}
+
+.btn-steps {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-steps::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-steps:hover::before {
+    left: 100%;
+}
+
+.btn-steps:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+}
+
+/* Equation Steps Styling */
+.equation-steps {
+    background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+    border-radius: 12px;
+    padding: 24px;
+    border: 2px solid #d8b4fe;
+    animation: slideInUp 0.5s ease-out;
+}
+
+.equation-step {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    border-radius: 8px;
+    padding: 16px;
+    border-left: 4px solid #667eea;
+    margin: 12px 0;
+    transition: all 0.3s ease;
+}
+
+.equation-step:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
+}
+
+/* Responsive Design for Equation Solver */
+@media (max-width: 768px) {
+    .equation-solver {
+        padding: 20px;
+    }
+    
+    .equation-input {
+        padding: 16px;
+    }
+    
+    .quick-examples {
+        padding: 16px;
+    }
+    
+    .example-button {
+        padding: 10px;
+        font-size: 14px;
+    }
+}
+
+/* Enhanced Analysis Results */
+.analysis-result {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.analysis-result:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Step-by-Step Analysis */
+.step-by-step-analysis {
+    background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+    border-radius: 12px;
+    padding: 24px;
+    border: 2px solid #d8b4fe;
+    animation: slideInUp 0.5s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Interactive Graph Features */
+.graph-features {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid #e2e8f0;
+    font-family: 'Courier New', monospace;
+}
+
+/* Enhanced Button Styles */
+.btn-enhanced {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-enhanced::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-enhanced:hover::before {
+    left: 100%;
+}
+
+.btn-enhanced:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* Animation Controls */
+.animate-graph {
+    animation: drawGraph 2s ease-in-out;
+}
+
+@keyframes drawGraph {
+    from {
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 1000;
+    }
+    to {
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 0;
+    }
+}
+
+/* Enhanced Visual Feedback */
+.visual-feedback {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-radius: 8px;
+    padding: 16px;
+    border-left: 4px solid #f59e0b;
+    margin: 12px 0;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.8;
+    }
+}
+
+/* Interactive Elements */
+.interactive-enhanced {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.interactive-enhanced:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Graph Legend */
+.graph-legend {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 12px;
+    backdrop-filter: blur(10px);
+}
+
+.graph-legend ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.graph-legend li {
+    padding: 2px 0;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.graph-legend li::before {
+    content: '';
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    margin-right: 8px;
+    display: inline-block;
+}
+
+.graph-legend li:nth-child(1)::before {
+    background: #3b82f6;
+}
+
+.graph-legend li:nth-child(2)::before {
+    background: #ef4444;
+}
+
+.graph-legend li:nth-child(3)::before {
+    background: #10b981;
+}
+
+.graph-legend li:nth-child(4)::before {
+    background: #667eea;
+}
+
+/* MELC Alignment Badges */
+.melc-badge {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+    margin: 8px 0;
+}
+
+/* Animation Classes */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.slide-in-left {
+    animation: slideInLeft 0.5s ease-out;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.slide-in-right {
+    animation: slideInRight 0.5s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .lesson-card {
+        margin-bottom: 16px;
+    }
+    
+    .rational-equation-card {
+        padding: 16px;
+    }
+    
+    .graph-canvas {
+        height: 200px;
+    }
+    
+    .number-line {
+        font-size: 12px;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .virtual-aid,
+    .interactive-element {
+        display: none;
+    }
+    
+    .lesson-section {
+        display: block !important;
+    }
+    
+    .gradient-bg {
+        background: #667eea !important;
+    }
+}
+
+/* Accessibility Improvements */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Focus States */
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    .gradient-bg {
+        background: #000080;
+    }
+    
+    .btn-primary {
+        background: #000080;
+        border: 2px solid #ffffff;
+    }
+    
+    .rational-equation-card {
+        border: 2px solid #000000;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .lesson-card,
+    .interactive-element,
+    .btn-primary,
+    .btn-secondary,
+    .rational-equation-card {
+        transition: none;
+    }
+    
+    .fade-in,
+    .slide-in-left,
+    .slide-in-right {
+        animation: none;
+    }
+}
+
+/* Rational Equation Specific Animations */
+.rational-graph-animation {
+    animation: drawGraph 2s ease-in-out;
+}
+
+@keyframes drawGraph {
+    from {
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 1000;
+    }
+    to {
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 0;
+    }
+}
+
+/* Solution Highlighting */
+.solution-highlight {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-radius: 8px;
+    padding: 16px;
+    border-left: 4px solid #f59e0b;
+    margin: 12px 0;
+}
+
+.solution-highlight h5 {
+    color: #92400e;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+/* Error States */
+.error-state {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border-radius: 8px;
+    padding: 16px;
+    border-left: 4px solid #ef4444;
+    margin: 12px 0;
+}
+
+.error-state h5 {
+    color: #991b1b;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+/* Success States */
+.success-state {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border-radius: 8px;
+    padding: 16px;
+    border-left: 4px solid #22c55e;
+    margin: 12px 0;
+}
+
+.success-state h5 {
+    color: #166534;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+/* Application Cards */
+.application-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.application-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+}
+
+.application-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    font-size: 20px;
+    color: white;
+}
+
+/* Real-world Problem Styling */
+.problem-statement {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-radius: 12px;
+    padding: 24px;
+    border: 2px solid #bae6fd;
+    margin: 16px 0;
+}
+
+.problem-solution {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border-radius: 12px;
+    padding: 24px;
+    border: 2px solid #bbf7d0;
+    margin: 16px 0;
+}
+
+/* Intersection Points */
+.intersection-point {
+    fill: #10b981;
+    stroke: #ffffff;
+    stroke-width: 2;
+}
+
+.intersection-point-label {
+    font-size: 12px;
+    fill: #374151;
+    font-weight: 600;
+}
+
+/* Critical Points */
+.critical-point {
+    fill: #ef4444;
+    stroke: #ffffff;
+    stroke-width: 2;
+}
+
+.critical-point-label {
+    font-size: 12px;
+    fill: #374151;
+    font-weight: 600;
+}
+
+/* Asymptote Lines */
+.asymptote-line {
+    stroke-dasharray: 5, 5;
+    stroke-width: 2;
+}
+
+.asymptote-vertical {
+    stroke: #ef4444;
+}
+
+.asymptote-horizontal {
+    stroke: #3b82f6;
+}
+
+/* Domain and Range Display */
+.domain-range-display {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-radius: 8px;
+    padding: 16px;
+    border-left: 4px solid #0ea5e9;
+    margin: 12px 0;
+}
+
+.domain-range-display h5 {
+    color: #0c4a6e;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
