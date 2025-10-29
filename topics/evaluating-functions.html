@@ -1,0 +1,2865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluating Functions - General Mathematics 11 | MathEase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#667eea',
+                        'secondary': '#764ba2',
+                        'accent': '#f093fb',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .lesson-card {
+            transition: all 0.3s ease;
+        }
+        .lesson-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15);
+        }
+        .virtual-aid {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
+            border: 2px solid #e1e8ff;
+        }
+        .function-machine {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .graph-canvas {
+            border: 2px solid #e1e8ff;
+            border-radius: 12px;
+        }
+        .lesson-section {
+            display: none;
+        }
+        .lesson-section.active {
+            display: block;
+        }
+        .melc-badge {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        .step-indicator {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .function-evaluator {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
+            border: 2px solid #e1e8ff;
+            border-radius: 15px;
+            padding: 2rem;
+        }
+        .input-group {
+            margin-bottom: 1rem;
+        }
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .result-display {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+        }
+        .step-by-step {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 10px 10px 0;
+        }
+        .step-by-step h4 {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+        .step-by-step p {
+            color: #2c3e50;
+            margin: 0.25rem 0;
+        }
+        .interactive-demo {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 3rem;
+        }
+        .demo-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .demo-controls select, .demo-controls input {
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        .demo-controls select:focus, .demo-controls input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .practice-exercise {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .exercise-question {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .exercise-question h4 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        .exercise-question p {
+            color: #2c3e50;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        .answer-input {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .answer-input input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+        .answer-input button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .answer-input button:hover {
+            background: #5a67d8;
+        }
+        .feedback {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            display: none;
+        }
+        .feedback.correct {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .feedback.incorrect {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        .achievement-badge {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            margin: 2rem 0;
+            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3);
+            animation: badgeUnlock 1s ease;
+        }
+        @keyframes badgeUnlock {
+            0% { transform: scale(0) rotate(-180deg); }
+            50% { transform: scale(1.2) rotate(0deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .achievement-badge i {
+            font-size: 2.5rem;
+            color: #b8860b;
+            margin-bottom: 1rem;
+        }
+        .achievement-badge h4 {
+            color: #b8860b;
+            margin-bottom: 0.5rem;
+        }
+        .achievement-badge p {
+            color: #b8860b;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body class="font-poppins bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="../index.html" class="flex items-center space-x-2">
+                        <img src="../css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-8 w-8">
+                        <span class="text-xl font-bold text-primary">MathEase</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="../dashboard.html" class="text-gray-700 hover:text-primary transition-colors">
+                        <i class="fas fa-home mr-2"></i>Dashboard
+                    </a>
+                    <a href="../topics.html" class="text-primary font-semibold">
+                        <i class="fas fa-book mr-2"></i>Topics
+                    </a>
+                    <span class="text-gray-600">
+                        <i class="fas fa-user mr-2"></i><span id="userName">Student</span>
+                    </span>
+                    <a href="../php/logout.php" class="text-gray-700 hover:text-red-600 transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="gradient-bg text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
+                    <i class="fas fa-calculator mr-2"></i>
+                    <span class="font-semibold">General Mathematics 11</span>
+                </div>
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">Evaluating Functions</h1>
+                <p class="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto">
+                    Master the art of evaluating functions through interactive lessons and virtual aids
+                </p>
+                <div class="flex justify-center">
+                    <div class="bg-white/20 backdrop-blur-sm rounded-full px-8 py-3">
+                        <span class="text-lg font-semibold">4 Interactive Lessons</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Lesson Navigation -->
+        <div class="mb-12">
+            <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson Navigation</h2>
+                    <p class="text-lg text-gray-600">Click on any lesson to start learning. Complete lessons to track your progress.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="1">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-play text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 1</h3>
+                            <p class="text-sm text-gray-600">Introduction to Function Evaluation</p>
+                        </div>
+                    </button>
+                    
+                    <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="2">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-cogs text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 2</h3>
+                            <p class="text-sm text-gray-600">Types of Functions</p>
+                        </div>
+                    </button>
+                    
+                    <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="3">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-calculator text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 3</h3>
+                            <p class="text-sm text-gray-600">Evaluation Process</p>
+                        </div>
+                    </button>
+                    
+                    <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="4">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-gamepad text-2xl"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 4</h3>
+                            <p class="text-sm text-gray-600">Interactive Practice</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Lesson Content -->
+        <div class="lesson-content">
+
+            <!-- Lesson 1: Introduction to Function Evaluation -->
+            <section id="lesson1" class="lesson-section active">
+            <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-play text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 1: Introduction to Function Evaluation</h2>
+                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                        Learn the fundamental concepts of function evaluation, including the process of substitution and how to find function values at specific inputs.
+                    </p>
+                </div>
+
+                <!-- Learning Objectives -->
+                <div class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                        <i class="fas fa-target mr-2"></i>Learning Objectives
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Understand what function evaluation means
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Learn the step-by-step process of substitution
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Master the order of operations (PEMDAS)
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Apply function evaluation in real-world problems
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Detailed Explanation -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-book-open text-blue-500 mr-3"></i>Understanding Function Evaluation: A Complete Guide
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                        <div class="bg-white rounded-lg p-6 shadow-lg">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>What is Function Evaluation?
+                            </h4>
+                            <p class="text-gray-700 mb-4">
+                                Function evaluation is the process of finding the output value of a function when you substitute a specific input value. 
+                                It's like using a mathematical machine - you put in a number, and it gives you back exactly one result.
+                            </p>
+                            <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                <p class="text-sm text-gray-600 mb-2">Function Notation:</p>
+                                <p class="text-lg font-mono text-primary">f(x) = 2x + 1</p>
+                                <p class="text-sm text-gray-600 mt-2">To evaluate f(3), substitute x = 3</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 shadow-lg">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-cogs text-green-500 mr-2"></i>Function Machine Analogy
+                            </h4>
+                            <p class="text-gray-700 mb-4">
+                                A function works like a machine:
+                            </p>
+                            <div class="space-y-2 text-gray-700">
+                                <div class="flex items-center">
+                                    <span class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-3">1</span>
+                                    You put in a number (input)
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-3">2</span>
+                                    The machine follows the rule
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-3">3</span>
+                                    You get out exactly one result (output)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Real-World Examples -->
+                    <div class="bg-white rounded-lg p-6 shadow-lg mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-globe text-purple-500 mr-2"></i>Real-World Examples
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-green-50 rounded-lg p-4">
+                                <h5 class="font-semibold text-gray-800 mb-2">Temperature Conversion</h5>
+                                <p class="text-sm text-gray-700 mb-2">Celsius to Fahrenheit: F(C) = (9/5)C + 32</p>
+                                <p class="text-xs text-gray-600">Evaluate F(25) = (9/5)(25) + 32 = 45 + 32 = 77°F</p>
+                            </div>
+                            <div class="bg-blue-50 rounded-lg p-4">
+                                <h5 class="font-semibold text-gray-800 mb-2">Distance Formula</h5>
+                                <p class="text-sm text-gray-700 mb-2">Distance = Speed × Time: d(s,t) = s × t</p>
+                                <p class="text-xs text-gray-600">Evaluate d(60, 2) = 60 × 2 = 120 miles</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step-by-Step Function Evaluation -->
+                    <div class="bg-white rounded-lg p-6 shadow-lg">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-calculator text-orange-500 mr-2"></i>Step-by-Step Function Evaluation
+                        </h4>
+                        <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                            <p class="text-lg font-semibold text-gray-800 mb-2">Example: Evaluate f(x) = 3x - 2 for x = 5</p>
+                            <div class="space-y-3">
+                                <div class="flex items-center">
+                                    <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">1</span>
+                                    <span class="text-gray-700">Substitute x = 5 into the function</span>
+                                </div>
+                                <div class="ml-11 text-gray-600 font-mono">f(5) = 3(5) - 2</div>
+                                
+                                <div class="flex items-center">
+                                    <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">2</span>
+                                    <span class="text-gray-700">Multiply first (order of operations)</span>
+                                </div>
+                                <div class="ml-11 text-gray-600 font-mono">f(5) = 15 - 2</div>
+                                
+                                <div class="flex items-center">
+                                    <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">3</span>
+                                    <span class="text-gray-700">Subtract to get the final answer</span>
+                                </div>
+                                <div class="ml-11 text-gray-600 font-mono">f(5) = 13</div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-green-50 rounded-lg p-4">
+                            <h5 class="font-semibold text-gray-800 mb-2">Key Points to Remember:</h5>
+                            <ul class="text-sm text-gray-700 space-y-1">
+                                <li>• Always follow the order of operations (PEMDAS)</li>
+                                <li>• Replace every x with the given value</li>
+                                <li>• Check your work by substituting back</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                
+
+                <!-- Virtual Function Machine -->
+                <div class="function-evaluator mb-8">
+                    <h3 class="text-2xl font-bold text-center mb-6">
+                        <i class="fas fa-cogs mr-2"></i>Interactive Function Machine
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <div class="input-group">
+                                <label for="function-input">Enter Function (e.g., 2x + 3):</label>
+                                <input type="text" id="function-input" placeholder="2x + 3" value="2x + 3" readonly onkeydown="return false;" onpaste="return false;" ondrop="return false;" aria-readonly="true" class="cursor-not-allowed">
+                                <div class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                    <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono text-sm" onclick="setMachine('2x + 3', 5)">2x + 3</button>
+                                    <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono text-sm" onclick="setMachine('3x - 2', 4)">3x - 2</button>
+                                    <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono text-sm" onclick="setMachine('x^2 + 1', -2)">x^2 + 1</button>
+                                    <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono text-sm" onclick="setMachine('|x - 2|', -1)">|x - 2|</button>
+                                    <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono text-sm" onclick="setMachine('(x + 1)/(x - 2)', 3)">(x+1)/(x-2)</button>
+                                    <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono text-sm" onclick="setMachine('2^x', 3)">2^x</button>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="x-value">Enter x value:</label>
+                                <input type="number" id="x-value" placeholder="5" value="5" readonly onkeydown="return false;" onpaste="return false;" ondrop="return false;" aria-readonly="true" class="cursor-not-allowed">
+                                <div class="mt-2 flex flex-wrap gap-2">
+                                    <button type="button" class="px-3 py-1.5 border rounded-lg hover:border-primary text-sm" onclick="setX(-2)">-2</button>
+                                    <button type="button" class="px-3 py-1.5 border rounded-lg hover:border-primary text-sm" onclick="setX(0)">0</button>
+                                    <button type="button" class="px-3 py-1.5 border rounded-lg hover:border-primary text-sm" onclick="setX(1)">1</button>
+                                    <button type="button" class="px-3 py-1.5 border rounded-lg hover:border-primary text-sm" onclick="setX(2)">2</button>
+                                    <button type="button" class="px-3 py-1.5 border rounded-lg hover:border-primary text-sm" onclick="setX(3)">3</button>
+                                    <button type="button" class="px-3 py-1.5 border rounded-lg hover:border-primary text-sm" onclick="setX(5)">5</button>
+                                </div>
+                            </div>
+                            <button onclick="evaluateFunction()" class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                                <i class="fas fa-calculator mr-2"></i>Evaluate Function
+                            </button>
+                        </div>
+                        <div>
+                            <div class="result-display" id="result-display">
+                                <h4 class="font-bold mb-2">Result:</h4>
+                                <p id="result-text">Click "Evaluate Function" to see the result</p>
+                            </div>
+                            <div class="step-by-step" id="step-by-step" style="display: none;">
+                                <h4 class="font-bold mb-2">Step-by-Step Solution:</h4>
+                                <div id="steps-content"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Practice Examples -->
+                <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                        <i class="fas fa-pencil-alt text-orange-500 mr-2"></i>Practice Examples
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-lg p-4 border-2 border-orange-200">
+                            <h4 class="font-semibold text-gray-800 mb-2">Example 1: Linear Function</h4>
+                            <p class="text-gray-700 mb-2">Given: f(x) = 3x - 2</p>
+                            <p class="text-gray-700 mb-2">Find: f(4)</p>
+                            <div class="bg-gray-50 rounded p-3 font-mono text-sm">
+                                f(4) = 3(4) - 2 = 12 - 2 = 10
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 border-2 border-orange-200">
+                            <h4 class="font-semibold text-gray-800 mb-2">Example 2: Quadratic Function</h4>
+                            <p class="text-gray-700 mb-2">Given: g(x) = x² + 1</p>
+                            <p class="text-gray-700 mb-2">Find: g(-2)</p>
+                            <div class="bg-gray-50 rounded p-3 font-mono text-sm">
+                                g(-2) = (-2)² + 1 = 4 + 1 = 5
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- References -->
+                <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-book text-indigo-500 mr-2"></i>References & Additional Resources
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <h4 class="font-semibold text-gray-800 mb-2">Academic Sources</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• Stewart, J. (2015). <em>Precalculus: Mathematics for Calculus</em>. Cengage Learning.</li>
+                                <li>• Larson, R. (2018). <em>Precalculus with Limits</em>. Cengage Learning.</li>
+                                <li>• Blitzer, R. (2019). <em>Precalculus</em>. Pearson Education.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <h4 class="font-semibold text-gray-800 mb-2">Online Resources</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• Khan Academy: Function Evaluation</li>
+                                <li>• Purplemath: Function Notation</li>
+                                <li>• Math is Fun: Function Evaluation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lesson Completion -->
+                <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
+                        <i class="fas fa-check-circle text-emerald-500 mr-2"></i>Complete This Lesson
+                    </h3>
+                    <p class="text-gray-600 text-center mb-6">
+                        Mark this lesson as completed to track your progress and unlock the next lesson.
+                    </p>
+                    <div class="text-center">
+                        <button onclick="completeLesson(1)" 
+                                class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold inline-flex items-center">
+                            <i class="fas fa-check mr-2"></i>
+                            Mark Lesson 1 Complete
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lesson Navigation Controls -->
+                <div class="flex justify-center items-center mb-8">
+                    <div class="flex items-center space-x-4">
+                        <div class="text-center">
+                            <div class="text-sm text-gray-600">Lesson Progress</div>
+                            <div class="text-lg font-semibold text-primary">
+                                <span id="currentLessonNum">1</span> of 4
+                            </div>
+                        </div>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 25%"></div>
+                        </div>
+                    </div>
+                    <button id="nextLessonBtn" onclick="navigateLesson(1)" 
+                            class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed ml-8">
+                        Next Lesson
+                        <i class="fas fa-chevron-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+            <!-- Lesson 2: Types of Functions -->
+            <section id="lesson2" class="lesson-section">
+            <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-cogs text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 2: Types of Functions</h2>
+                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                        Learn about different types of functions and how to evaluate each type. Understanding function types helps you choose the right evaluation strategy.
+                    </p>
+                </div>
+
+                <!-- Learning Objectives -->
+                <div class="bg-green-50 border-l-4 border-green-500 p-6 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                        <i class="fas fa-target mr-2"></i>Learning Objectives
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Identify different types of functions
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Understand evaluation strategies for each type
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Apply appropriate evaluation methods
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Comprehensive Function Types Guide -->
+                <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-cogs text-green-500 mr-3"></i>Function Types: Complete Understanding
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                        <!-- Constant Function -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg border-l-4 border-blue-500">
+                            <div class="text-center mb-4">
+                                <i class="fas fa-equals text-4xl text-blue-500 mb-3"></i>
+                                <h4 class="text-xl font-bold text-gray-800">Constant Function</h4>
+                            </div>
+                            <p class="text-gray-600 mb-4">Always returns the same value regardless of input.</p>
+                            <div class="bg-blue-50 p-3 rounded-lg mb-4">
+                                <code class="text-sm font-mono">f(x) = 5</code>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg mb-4">
+                                <p class="text-sm font-semibold text-gray-800 mb-1">Evaluation:</p>
+                                <p class="text-xs text-gray-600">f(3) = 5, f(-10) = 5, f(100) = 5</p>
+                            </div>
+                            <div class="bg-yellow-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-600"><strong>Key Point:</strong> No matter what x is, the answer is always the same!</p>
+                            </div>
+                        </div>
+
+                        <!-- Linear Function -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg border-l-4 border-green-500">
+                            <div class="text-center mb-4">
+                                <i class="fas fa-chart-line text-4xl text-green-500 mb-3"></i>
+                                <h4 class="text-xl font-bold text-gray-800">Linear Function</h4>
+                            </div>
+                            <p class="text-gray-600 mb-4">Degree one, creates a straight line when graphed.</p>
+                            <div class="bg-green-50 p-3 rounded-lg mb-4">
+                                <code class="text-sm font-mono">f(x) = 2x + 3</code>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg mb-4">
+                                <p class="text-sm font-semibold text-gray-800 mb-1">Evaluation:</p>
+                                <p class="text-xs text-gray-600">f(4) = 2(4) + 3 = 11</p>
+                            </div>
+                            <div class="bg-yellow-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-600"><strong>Key Point:</strong> Multiply first, then add!</p>
+                            </div>
+                        </div>
+
+                        <!-- Quadratic Function -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg border-l-4 border-purple-500">
+                            <div class="text-center mb-4">
+                                <i class="fas fa-chart-area text-4xl text-purple-500 mb-3"></i>
+                                <h4 class="text-xl font-bold text-gray-800">Quadratic Function</h4>
+                            </div>
+                            <p class="text-gray-600 mb-4">Degree two, creates a parabola when graphed.</p>
+                            <div class="bg-purple-50 p-3 rounded-lg mb-4">
+                                <code class="text-sm font-mono">f(x) = x² + 2x + 1</code>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg mb-4">
+                                <p class="text-sm font-semibold text-gray-800 mb-1">Evaluation:</p>
+                                <p class="text-xs text-gray-600">f(3) = (3)² + 2(3) + 1 = 9 + 6 + 1 = 16</p>
+                            </div>
+                            <div class="bg-yellow-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-600"><strong>Key Point:</strong> Exponents first, then multiply, then add!</p>
+                            </div>
+                        </div>
+
+                        <!-- Exponential Function -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg border-l-4 border-orange-500">
+                            <div class="text-center mb-4">
+                                <i class="fas fa-chart-line text-4xl text-orange-500 mb-3"></i>
+                                <h4 class="text-xl font-bold text-gray-800">Exponential Function</h4>
+                            </div>
+                            <p class="text-gray-600 mb-4">Variable is in the exponent position.</p>
+                            <div class="bg-orange-50 p-3 rounded-lg mb-4">
+                                <code class="text-sm font-mono">f(x) = 2ˣ</code>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg mb-4">
+                                <p class="text-sm font-semibold text-gray-800 mb-1">Evaluation:</p>
+                                <p class="text-xs text-gray-600">f(3) = 2³ = 2 × 2 × 2 = 8</p>
+                            </div>
+                            <div class="bg-yellow-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-600"><strong>Key Point:</strong> Calculate the exponent first!</p>
+                            </div>
+                        </div>
+
+                        <!-- Rational Function -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg border-l-4 border-red-500">
+                            <div class="text-center mb-4">
+                                <i class="fas fa-divide text-4xl text-red-500 mb-3"></i>
+                                <h4 class="text-xl font-bold text-gray-800">Rational Function</h4>
+                            </div>
+                            <p class="text-gray-600 mb-4">Ratio of two polynomials (fraction).</p>
+                            <div class="bg-red-50 p-3 rounded-lg mb-4">
+                                <code class="text-sm font-mono">f(x) = (x+1)/(x-2)</code>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg mb-4">
+                                <p class="text-sm font-semibold text-gray-800 mb-1">Evaluation:</p>
+                                <p class="text-xs text-gray-600">f(3) = (3+1)/(3-2) = 4/1 = 4</p>
+                            </div>
+                            <div class="bg-yellow-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-600"><strong>Key Point:</strong> Watch out for division by zero!</p>
+                            </div>
+                        </div>
+
+                        <!-- Absolute Value Function -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg border-l-4 border-indigo-500">
+                            <div class="text-center mb-4">
+                                <i class="fas fa-arrows-alt-h text-4xl text-indigo-500 mb-3"></i>
+                                <h4 class="text-xl font-bold text-gray-800">Absolute Value</h4>
+                            </div>
+                            <p class="text-gray-600 mb-4">Always returns the non-negative value.</p>
+                            <div class="bg-indigo-50 p-3 rounded-lg mb-4">
+                                <code class="text-sm font-mono">f(x) = |x|</code>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg mb-4">
+                                <p class="text-sm font-semibold text-gray-800 mb-1">Evaluation:</p>
+                                <p class="text-xs text-gray-600">f(-5) = |-5| = 5, f(3) = |3| = 3</p>
+                            </div>
+                            <div class="bg-yellow-50 p-3 rounded-lg">
+                                <p class="text-xs text-gray-600"><strong>Key Point:</strong> Always positive or zero!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step-by-Step Evaluation Examples -->
+                    <div class="bg-white rounded-lg p-6 shadow-lg mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-calculator text-orange-500 mr-2"></i>Step-by-Step Evaluation Examples
+                        </h4>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Constant Function Example -->
+                            <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-6 border-l-4 border-blue-500">
+                                <h5 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                    <i class="fas fa-equals text-blue-500 mr-2"></i>
+                                    Constant Function Example
+                                </h5>
+                                <div class="bg-white rounded-lg p-4 mb-4">
+                                    <p class="text-sm text-gray-600 mb-2">Given: f(x) = 5</p>
+                                    <p class="text-sm text-gray-600 mb-2">Find: f(3)</p>
+                                </div>
+                                
+                                <div class="space-y-3">
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">1</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Substitute x = 3</p>
+                                            <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                f(3) = 5
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">2</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">No calculation needed!</p>
+                                            <div class="bg-blue-100 rounded-lg p-3 font-mono text-lg text-blue-800 font-bold">
+                                                f(3) = 5
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Linear Function Example -->
+                            <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border-l-4 border-green-500">
+                                <h5 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                    <i class="fas fa-chart-line text-green-500 mr-2"></i>
+                                    Linear Function Example
+                                </h5>
+                                <div class="bg-white rounded-lg p-4 mb-4">
+                                    <p class="text-sm text-gray-600 mb-2">Given: f(x) = 3x - 2</p>
+                                    <p class="text-sm text-gray-600 mb-2">Find: f(4)</p>
+                                </div>
+                                
+                                <div class="space-y-3">
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">1</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Substitute x = 4</p>
+                                            <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                f(4) = 3(4) - 2
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">2</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Multiply first</p>
+                                            <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                f(4) = 12 - 2
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">3</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Subtract</p>
+                                            <div class="bg-green-100 rounded-lg p-3 font-mono text-lg text-green-800 font-bold">
+                                                f(4) = 10
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Quadratic Function Example -->
+                            <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border-l-4 border-purple-500">
+                                <h5 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                    <i class="fas fa-chart-area text-purple-500 mr-2"></i>
+                                    Quadratic Function Example
+                                </h5>
+                                <div class="bg-white rounded-lg p-4 mb-4">
+                                    <p class="text-sm text-gray-600 mb-2">Given: g(x) = x² - 3x + 2</p>
+                                    <p class="text-sm text-gray-600 mb-2">Find: g(2)</p>
+                                </div>
+                                
+                                <div class="space-y-3">
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">1</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Substitute x = 2</p>
+                                            <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                g(2) = (2)² - 3(2) + 2
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">2</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Calculate exponents and multiply</p>
+                                            <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                g(2) = 4 - 6 + 2
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">3</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Add and subtract</p>
+                                            <div class="bg-purple-100 rounded-lg p-3 font-mono text-lg text-purple-800 font-bold">
+                                                g(2) = 0
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Exponential Function Example -->
+                            <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-6 border-l-4 border-orange-500">
+                                <h5 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                    <i class="fas fa-chart-line text-orange-500 mr-2"></i>
+                                    Exponential Function Example
+                                </h5>
+                                <div class="bg-white rounded-lg p-4 mb-4">
+                                    <p class="text-sm text-gray-600 mb-2">Given: h(x) = 2ˣ</p>
+                                    <p class="text-sm text-gray-600 mb-2">Find: h(3)</p>
+                                </div>
+                                
+                                <div class="space-y-3">
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">1</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Substitute x = 3</p>
+                                            <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                h(3) = 2³
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">2</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Calculate the exponent</p>
+                                            <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                h(3) = 2 × 2 × 2
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">3</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Multiply</p>
+                                            <div class="bg-orange-100 rounded-lg p-3 font-mono text-lg text-orange-800 font-bold">
+                                                h(3) = 8
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Rational Function Example -->
+                            <div class="bg-gradient-to-br from-red-50 to-pink-50 rounded-xl p-6 border-l-4 border-red-500">
+                                <h5 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                    <i class="fas fa-divide text-red-500 mr-2"></i>
+                                    Rational Function Example
+                                </h5>
+                                <div class="bg-white rounded-lg p-4 mb-4">
+                                    <p class="text-sm text-gray-600 mb-2">Given: k(x) = (x+1)/(x-2)</p>
+                                    <p class="text-sm text-gray-600 mb-2">Find: k(3)</p>
+                                </div>
+                                
+                                <div class="space-y-3">
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">1</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Substitute x = 3</p>
+                                            <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                k(3) = (3+1)/(3-2)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">2</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Evaluate numerator and denominator</p>
+                                            <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                k(3) = 4/1
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">3</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Divide</p>
+                                            <div class="bg-red-100 rounded-lg p-3 font-mono text-lg text-red-800 font-bold">
+                                                k(3) = 4
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Absolute Value Function Example -->
+                            <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-6 border-l-4 border-indigo-500">
+                                <h5 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                    <i class="fas fa-arrows-alt-h text-indigo-500 mr-2"></i>
+                                    Absolute Value Function Example
+                                </h5>
+                                <div class="bg-white rounded-lg p-4 mb-4">
+                                    <p class="text-sm text-gray-600 mb-2">Given: m(x) = |x - 2|</p>
+                                    <p class="text-sm text-gray-600 mb-2">Find: m(-1)</p>
+                                </div>
+                                
+                                <div class="space-y-3">
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-indigo-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">1</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Substitute x = -1</p>
+                                            <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                m(-1) = |-1 - 2|
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-indigo-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">2</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Evaluate inside absolute value</p>
+                                            <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                m(-1) = |-3|
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-indigo-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">3</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Take absolute value</p>
+                                            <div class="bg-indigo-100 rounded-lg p-3 font-mono text-lg text-indigo-800 font-bold">
+                                                m(-1) = 3
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Common Evaluation Strategies -->
+                    <div class="bg-white rounded-lg p-6 shadow-lg">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>Common Evaluation Strategies
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-3">
+                                <div class="bg-blue-50 rounded-lg p-3 border-l-4 border-blue-500">
+                                    <h5 class="font-semibold text-gray-800">Constant Functions</h5>
+                                    <p class="text-sm text-gray-700">Always return the same value - no calculation needed!</p>
+                                </div>
+                                <div class="bg-green-50 rounded-lg p-3 border-l-4 border-green-500">
+                                    <h5 class="font-semibold text-gray-800">Linear Functions</h5>
+                                    <p class="text-sm text-gray-700">Multiply first, then add/subtract</p>
+                                </div>
+                                <div class="bg-purple-50 rounded-lg p-3 border-l-4 border-purple-500">
+                                    <h5 class="font-semibold text-gray-800">Quadratic Functions</h5>
+                                    <p class="text-sm text-gray-700">Exponents first, then multiply, then add/subtract</p>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="bg-orange-50 rounded-lg p-3 border-l-4 border-orange-500">
+                                    <h5 class="font-semibold text-gray-800">Exponential Functions</h5>
+                                    <p class="text-sm text-gray-700">Calculate the exponent first</p>
+                                </div>
+                                <div class="bg-red-50 rounded-lg p-3 border-l-4 border-red-500">
+                                    <h5 class="font-semibold text-gray-800">Rational Functions</h5>
+                                    <p class="text-sm text-gray-700">Evaluate numerator and denominator separately</p>
+                                </div>
+                                <div class="bg-indigo-50 rounded-lg p-3 border-l-4 border-indigo-500">
+                                    <h5 class="font-semibold text-gray-800">Absolute Value</h5>
+                                    <p class="text-sm text-gray-700">Evaluate inside first, then take absolute value</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- References -->
+                <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-book text-green-500 mr-2"></i>References & Additional Resources
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <h4 class="font-semibold text-gray-800 mb-2">Academic Sources</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• Sullivan, M. (2019). <em>Precalculus: Enhanced with Graphing Utilities</em>. Pearson.</li>
+                                <li>• Zill, D. (2018). <em>Precalculus with Calculus Previews</em>. Jones & Bartlett Learning.</li>
+                                <li>• Demana, F. (2019). <em>Precalculus: Graphical, Numerical, Algebraic</em>. Pearson.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <h4 class="font-semibold text-gray-800 mb-2">Online Resources</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• Khan Academy: Function Types</li>
+                                <li>• Mathway: Function Calculator</li>
+                                <li>• Desmos: Function Grapher</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lesson Completion -->
+                <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
+                        <i class="fas fa-check-circle text-emerald-500 mr-2"></i>Complete This Lesson
+                    </h3>
+                    <p class="text-gray-600 text-center mb-6">
+                        Mark this lesson as completed to track your progress and unlock the next lesson.
+                    </p>
+                    <div class="text-center">
+                        <button onclick="completeLesson(2)" 
+                                class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold inline-flex items-center">
+                            <i class="fas fa-check mr-2"></i>
+                            Mark Lesson 2 Complete
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lesson Navigation Controls -->
+                <div class="flex justify-center items-center mb-8">
+                    <button id="prevLessonBtn" onclick="navigateLesson(-1)" 
+                            class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-chevron-left mr-2"></i>
+                        Previous Lesson
+                    </button>
+                    
+                    <div class="flex items-center space-x-4 mx-8">
+                        <div class="text-center">
+                            <div class="text-sm text-gray-600">Lesson Progress</div>
+                            <div class="text-lg font-semibold text-primary">
+                                <span id="currentLessonNum">2</span> of 4
+                            </div>
+                        </div>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 50%"></div>
+                        </div>
+                    </div>
+                    
+                    <button id="nextLessonBtn" onclick="navigateLesson(1)" 
+                            class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        Next Lesson
+                        <i class="fas fa-chevron-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+            <!-- Lesson 3: The Evaluation Process -->
+            <section id="lesson3" class="lesson-section">
+                <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-calculator text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 3: The Evaluation Process</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                            Master the systematic approach to evaluating functions. Learn the step-by-step process that works for any function type.
+                        </p>
+                    </div>
+
+                <!-- Learning Objectives -->
+                <div class="bg-purple-50 border-l-4 border-purple-500 p-6 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                        <i class="fas fa-target mr-2"></i>Learning Objectives
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-purple-500 mr-3"></i>
+                            Master the systematic evaluation process
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-purple-500 mr-3"></i>
+                            Apply PEMDAS correctly in function evaluation
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-purple-500 mr-3"></i>
+                            Handle complex expressions with confidence
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Comprehensive Evaluation Process Guide -->
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-calculator text-purple-500 mr-3"></i>The Evaluation Process: Complete Guide
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                        <div class="bg-white rounded-lg p-6 shadow-lg">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-list-ol text-purple-500 mr-2"></i>Step-by-Step Process
+                            </h4>
+                            <div class="space-y-4">
+                                <div class="flex items-start space-x-4">
+                                    <div class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">1</div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-800">Replace the variable</h4>
+                                        <p class="text-gray-600">Substitute the given value for x in the function</p>
+                                        <div class="bg-gray-50 p-2 rounded mt-2">
+                                            <code class="text-sm">f(x) = 2x + 3 → f(5) = 2(5) + 3</code>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-4">
+                                    <div class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">2</div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-800">Follow order of operations</h4>
+                                        <p class="text-gray-600">Use PEMDAS: Parentheses, Exponents, Multiplication/Division, Addition/Subtraction</p>
+                                        <div class="bg-gray-50 p-2 rounded mt-2">
+                                            <code class="text-sm">f(5) = 2(5) + 3 = 10 + 3</code>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-4">
+                                    <div class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">3</div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-800">Simplify</h4>
+                                        <p class="text-gray-600">Combine like terms and perform all operations</p>
+                                        <div class="bg-gray-50 p-2 rounded mt-2">
+                                            <code class="text-sm">f(5) = 10 + 3 = 13</code>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 shadow-lg">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>PEMDAS Reminder
+                            </h4>
+                            <div class="space-y-3">
+                                <div class="bg-red-50 rounded-lg p-3 border-l-4 border-red-500">
+                                    <h5 class="font-semibold text-gray-800">P - Parentheses</h5>
+                                    <p class="text-sm text-gray-700">Work inside parentheses first</p>
+                                </div>
+                                <div class="bg-orange-50 rounded-lg p-3 border-l-4 border-orange-500">
+                                    <h5 class="font-semibold text-gray-800">E - Exponents</h5>
+                                    <p class="text-sm text-gray-700">Calculate powers and roots</p>
+                                </div>
+                                <div class="bg-yellow-50 rounded-lg p-3 border-l-4 border-yellow-500">
+                                    <h5 class="font-semibold text-gray-800">MD - Multiply/Divide</h5>
+                                    <p class="text-sm text-gray-700">From left to right</p>
+                                </div>
+                                <div class="bg-green-50 rounded-lg p-3 border-l-4 border-green-500">
+                                    <h5 class="font-semibold text-gray-800">AS - Add/Subtract</h5>
+                                    <p class="text-sm text-gray-700">From left to right</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Examples -->
+                    <div class="bg-white rounded-lg p-6 shadow-lg mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-calculator text-orange-500 mr-2"></i>Detailed Evaluation Examples
+                        </h4>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Linear Example -->
+                            <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border-l-4 border-green-500">
+                                <h5 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                    <i class="fas fa-chart-line text-green-500 mr-2"></i>
+                                    Linear Function: f(x) = 3x - 2, find f(4)
+                                </h5>
+                                
+                                <div class="space-y-4">
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">1</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Substitute x = 4</p>
+                                            <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                f(4) = 3(4) - 2
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">2</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Multiply first (PEMDAS)</p>
+                                            <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                f(4) = 12 - 2
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">3</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Subtract</p>
+                                            <div class="bg-green-100 rounded-lg p-3 font-mono text-lg text-green-800 font-bold">
+                                                f(4) = 10
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Quadratic Example -->
+                            <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border-l-4 border-purple-500">
+                                <h5 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                    <i class="fas fa-chart-area text-purple-500 mr-2"></i>
+                                    Quadratic Function: g(x) = x² + 2x - 1, find g(3)
+                                </h5>
+                                
+                                <div class="space-y-4">
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">1</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Substitute x = 3</p>
+                                            <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                g(3) = (3)² + 2(3) - 1
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">2</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Calculate exponents first</p>
+                                            <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                g(3) = 9 + 2(3) - 1
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">3</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Multiply, then add/subtract</p>
+                                            <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                g(3) = 9 + 6 - 1
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">4</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Final calculation</p>
+                                            <div class="bg-purple-100 rounded-lg p-3 font-mono text-lg text-purple-800 font-bold">
+                                                g(3) = 14
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Common Mistakes to Avoid -->
+                    <div class="bg-white rounded-lg p-6 shadow-lg">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>Common Mistakes to Avoid
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-3">
+                                <div class="bg-red-50 rounded-lg p-3 border-l-4 border-red-500">
+                                    <h5 class="font-semibold text-gray-800">Wrong Order of Operations</h5>
+                                    <p class="text-sm text-gray-700">❌ f(2) = 3(2) + 1 = 3(3) = 9</p>
+                                    <p class="text-sm text-gray-700">✅ f(2) = 3(2) + 1 = 6 + 1 = 7</p>
+                                </div>
+                                <div class="bg-red-50 rounded-lg p-3 border-l-4 border-red-500">
+                                    <h5 class="font-semibold text-gray-800">Forgetting Parentheses</h5>
+                                    <p class="text-sm text-gray-700">❌ f(-2) = -2² = -4</p>
+                                    <p class="text-sm text-gray-700">✅ f(-2) = (-2)² = 4</p>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="bg-red-50 rounded-lg p-3 border-l-4 border-red-500">
+                                    <h5 class="font-semibold text-gray-800">Sign Errors</h5>
+                                    <p class="text-sm text-gray-700">❌ f(-3) = 2(-3) - 1 = -6 - 1 = -5</p>
+                                    <p class="text-sm text-gray-700">✅ f(-3) = 2(-3) - 1 = -6 - 1 = -7</p>
+                                </div>
+                                <div class="bg-red-50 rounded-lg p-3 border-l-4 border-red-500">
+                                    <h5 class="font-semibold text-gray-800">Incomplete Substitution</h5>
+                                    <p class="text-sm text-gray-700">❌ f(2) = 3x + 1 (forgot to substitute)</p>
+                                    <p class="text-sm text-gray-700">✅ f(2) = 3(2) + 1 = 7</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- References -->
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-book text-purple-500 mr-2"></i>References & Additional Resources
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <h4 class="font-semibold text-gray-800 mb-2">Academic Sources</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• Anton, H. (2018). <em>Calculus: Early Transcendentals</em>. Wiley.</li>
+                                <li>• Thomas, G. (2019). <em>Thomas' Calculus</em>. Pearson Education.</li>
+                                <li>• Rogawski, J. (2019). <em>Calculus: Early Transcendentals</em>. W.H. Freeman.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <h4 class="font-semibold text-gray-800 mb-2">Online Resources</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• Wolfram Alpha: Function Evaluation</li>
+                                <li>• Symbolab: Function Calculator</li>
+                                <li>• Math Planet: Function Evaluation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lesson Completion -->
+                <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
+                        <i class="fas fa-check-circle text-emerald-500 mr-2"></i>Complete This Lesson
+                    </h3>
+                    <p class="text-gray-600 text-center mb-6">
+                        Mark this lesson as completed to track your progress and unlock the next lesson.
+                    </p>
+                    <div class="text-center">
+                        <button onclick="completeLesson(3)" 
+                                class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold inline-flex items-center">
+                            <i class="fas fa-check mr-2"></i>
+                            Mark Lesson 3 Complete
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lesson Navigation Controls -->
+                <div class="flex justify-center items-center mb-8">
+                    <button id="prevLessonBtn" onclick="navigateLesson(-1)" 
+                            class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-chevron-left mr-2"></i>
+                        Previous Lesson
+                    </button>
+                    
+                    <div class="flex items-center space-x-4 mx-8">
+                        <div class="text-center">
+                            <div class="text-sm text-gray-600">Lesson Progress</div>
+                            <div class="text-lg font-semibold text-primary">
+                                <span id="currentLessonNum">3</span> of 4
+                            </div>
+                        </div>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    
+                    <button id="nextLessonBtn" onclick="navigateLesson(1)" 
+                            class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        Next Lesson
+                        <i class="fas fa-chevron-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+            <!-- Lesson 4: How to Solve Function Evaluation Problems -->
+            <section id="lesson4" class="lesson-section">
+                <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-graduation-cap text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 4: How to Solve Function Evaluation Problems</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                            Master the art of solving function evaluation problems with our comprehensive step-by-step tutorials. Learn the strategies that work for every function type.
+                        </p>
+                    </div>
+
+                    <!-- Learning Objectives -->
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-target mr-2"></i>Learning Objectives
+                        </h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-blue-500 mr-3"></i>
+                                Master step-by-step solving strategies for all function types
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-blue-500 mr-3"></i>
+                                Learn to identify and apply the correct evaluation method
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-blue-500 mr-3"></i>
+                                Develop problem-solving confidence through guided tutorials
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Tutorial Introduction -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-graduation-cap text-blue-500 mr-3"></i>Step-by-Step Solving Tutorials
+                        </h3>
+                        <p class="text-gray-700 mb-4">
+                            Welcome to the Function Evaluation Learning Lab! 🧪 Here you'll learn the exact strategies and techniques 
+                            used by math experts to solve any function evaluation problem. Each tutorial breaks down the solving process 
+                            into clear, manageable steps.
+                        </p>
+                        
+                        <!-- Tutorial Navigation -->
+                        <div class="bg-white rounded-lg p-4 border-l-4 border-blue-500">
+                            <h4 class="font-semibold text-gray-800 mb-3">📚 Choose Your Learning Path:</h4>
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                <button onclick="showTutorial('linear')" class="tutorial-btn bg-green-50 hover:bg-green-100 p-3 rounded-lg border border-green-200 transition-colors">
+                                    <i class="fas fa-chart-line text-green-500 mb-1"></i>
+                                    <p class="text-sm font-semibold">Linear Functions</p>
+                                </button>
+                                <button onclick="showTutorial('quadratic')" class="tutorial-btn bg-purple-50 hover:bg-purple-100 p-3 rounded-lg border border-purple-200 transition-colors">
+                                    <i class="fas fa-chart-area text-purple-500 mb-1"></i>
+                                    <p class="text-sm font-semibold">Quadratic Functions</p>
+                                </button>
+                                <button onclick="showTutorial('exponential')" class="tutorial-btn bg-orange-50 hover:bg-orange-100 p-3 rounded-lg border border-orange-200 transition-colors">
+                                    <i class="fas fa-chart-line text-orange-500 mb-1"></i>
+                                    <p class="text-sm font-semibold">Exponential Functions</p>
+                                </button>
+                                <button onclick="showTutorial('rational')" class="tutorial-btn bg-red-50 hover:bg-red-100 p-3 rounded-lg border border-red-200 transition-colors">
+                                    <i class="fas fa-divide text-red-500 mb-1"></i>
+                                    <p class="text-sm font-semibold">Rational Functions</p>
+                                </button>
+                                <button onclick="showTutorial('absolute')" class="tutorial-btn bg-indigo-50 hover:bg-indigo-100 p-3 rounded-lg border border-indigo-200 transition-colors">
+                                    <i class="fas fa-arrows-alt-h text-indigo-500 mb-1"></i>
+                                    <p class="text-sm font-semibold">Absolute Value</p>
+                                </button>
+                                <button onclick="showTutorial('interactive')" class="tutorial-btn bg-yellow-50 hover:bg-yellow-100 p-3 rounded-lg border border-yellow-200 transition-colors">
+                                    <i class="fas fa-calculator text-yellow-500 mb-1"></i>
+                                    <p class="text-sm font-semibold">Interactive Solver</p>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tutorial Content Area -->
+                    <div id="tutorial-content" class="space-y-8">
+                        
+                        <!-- Linear Function Tutorial -->
+                        <div id="tutorial-linear" class="tutorial-section" style="display: none;">
+                            <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-8 border-l-4 border-green-500">
+                                <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                                    <i class="fas fa-chart-line text-green-500 mr-3"></i>
+                                    How to Solve Linear Function Problems
+                                </h3>
+                                
+                                <div class="bg-white rounded-lg p-6 mb-6">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">📝 Example Problem:</h4>
+                                    <p class="text-lg text-gray-700 mb-4">Given f(x) = 3x - 2, find f(5)</p>
+                                    
+                                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                        <h5 class="font-semibold text-gray-800 mb-3">🎯 Step-by-Step Solution:</h5>
+                                        <div class="space-y-4">
+                                            <div class="flex items-start space-x-4">
+                                                <div class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">1</div>
+                                                <div>
+                                                    <h6 class="font-semibold text-gray-800">Substitute the value</h6>
+                                                    <p class="text-gray-600">Replace x with 5 in the function</p>
+                                                    <div class="bg-white rounded p-3 mt-2 font-mono text-lg">
+                                                        f(5) = 3(5) - 2
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="flex items-start space-x-4">
+                                                <div class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">2</div>
+                                                <div>
+                                                    <h6 class="font-semibold text-gray-800">Follow PEMDAS</h6>
+                                                    <p class="text-gray-600">Multiply first, then subtract</p>
+                                                    <div class="bg-white rounded p-3 mt-2 font-mono text-lg">
+                                                        f(5) = 15 - 2
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="flex items-start space-x-4">
+                                                <div class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">3</div>
+                                                <div>
+                                                    <h6 class="font-semibold text-gray-800">Simplify</h6>
+                                                    <p class="text-gray-600">Perform the final calculation</p>
+                                                    <div class="bg-green-100 rounded p-3 mt-2 font-mono text-lg font-bold text-green-800">
+                                                        f(5) = 13
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                        <h5 class="font-semibold text-gray-800 mb-2">💡 Key Strategy for Linear Functions:</h5>
+                                        <ul class="text-sm text-gray-700 space-y-1">
+                                            <li>• Always substitute first</li>
+                                            <li>• Multiply before adding/subtracting</li>
+                                            <li>• Check your work by substituting back</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quadratic Function Tutorial -->
+                        <div id="tutorial-quadratic" class="tutorial-section" style="display: none;">
+                            <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-8 border-l-4 border-purple-500">
+                                <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                                    <i class="fas fa-chart-area text-purple-500 mr-3"></i>
+                                    How to Solve Quadratic Function Problems
+                                </h3>
+                                
+                                <div class="bg-white rounded-lg p-6 mb-6">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">📝 Example Problem:</h4>
+                                    <p class="text-lg text-gray-700 mb-4">Given f(x) = x² - 3x + 2, find f(4)</p>
+                                    
+                                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                        <h5 class="font-semibold text-gray-800 mb-3">🎯 Step-by-Step Solution:</h5>
+                                        <div class="space-y-4">
+                                            <div class="flex items-start space-x-4">
+                                                <div class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">1</div>
+                                                <div>
+                                                    <h6 class="font-semibold text-gray-800">Substitute the value</h6>
+                                                    <p class="text-gray-600">Replace x with 4 in the function</p>
+                                                    <div class="bg-white rounded p-3 mt-2 font-mono text-lg">
+                                                        f(4) = (4)² - 3(4) + 2
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="flex items-start space-x-4">
+                                                <div class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">2</div>
+                                                <div>
+                                                    <h6 class="font-semibold text-gray-800">Calculate exponents first</h6>
+                                                    <p class="text-gray-600">Remember: (4)² = 4 × 4 = 16</p>
+                                                    <div class="bg-white rounded p-3 mt-2 font-mono text-lg">
+                                                        f(4) = 16 - 3(4) + 2
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="flex items-start space-x-4">
+                                                <div class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">3</div>
+                                                <div>
+                                                    <h6 class="font-semibold text-gray-800">Multiply next</h6>
+                                                    <p class="text-gray-600">Calculate 3(4) = 12</p>
+                                                    <div class="bg-white rounded p-3 mt-2 font-mono text-lg">
+                                                        f(4) = 16 - 12 + 2
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="flex items-start space-x-4">
+                                                <div class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">4</div>
+                                                <div>
+                                                    <h6 class="font-semibold text-gray-800">Add and subtract</h6>
+                                                    <p class="text-gray-600">From left to right: 16 - 12 = 4, then 4 + 2 = 6</p>
+                                                    <div class="bg-purple-100 rounded p-3 mt-2 font-mono text-lg font-bold text-purple-800">
+                                                        f(4) = 6
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                        <h5 class="font-semibold text-gray-800 mb-2">💡 Key Strategy for Quadratic Functions:</h5>
+                                        <ul class="text-sm text-gray-700 space-y-1">
+                                            <li>• Exponents first (PEMDAS)</li>
+                                            <li>• Then multiplication/division</li>
+                                            <li>• Finally addition/subtraction</li>
+                                            <li>• Watch out for negative signs!</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Exponential Function Tutorial -->
+                        <div id="tutorial-exponential" class="tutorial-section" style="display: none;">
+                            <div class="bg-gradient-to-r from-orange-50 to-red-50 rounded-xl p-8 border-l-4 border-orange-500">
+                                <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                                    <i class="fas fa-chart-line text-orange-500 mr-3"></i>
+                                    How to Solve Exponential Function Problems
+                                </h3>
+                                
+                                <div class="bg-white rounded-lg p-6 mb-6">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">📝 Example Problem:</h4>
+                                    <p class="text-lg text-gray-700 mb-4">Given f(x) = 2ˣ, find f(3)</p>
+                                    
+                                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                        <h5 class="font-semibold text-gray-800 mb-3">🎯 Step-by-Step Solution:</h5>
+                                        <div class="space-y-4">
+                                            <div class="flex items-start space-x-4">
+                                                <div class="bg-orange-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">1</div>
+                                                <div>
+                                                    <h6 class="font-semibold text-gray-800">Substitute the value</h6>
+                                                    <p class="text-gray-600">Replace x with 3 in the function</p>
+                                                    <div class="bg-white rounded p-3 mt-2 font-mono text-lg">
+                                                        f(3) = 2³
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="flex items-start space-x-4">
+                                                <div class="bg-orange-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">2</div>
+                                                <div>
+                                                    <h6 class="font-semibold text-gray-800">Calculate the exponent</h6>
+                                                    <p class="text-gray-600">Remember: 2³ = 2 × 2 × 2</p>
+                                                    <div class="bg-white rounded p-3 mt-2 font-mono text-lg">
+                                                        f(3) = 2 × 2 × 2
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="flex items-start space-x-4">
+                                                <div class="bg-orange-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">3</div>
+                                                <div>
+                                                    <h6 class="font-semibold text-gray-800">Multiply step by step</h6>
+                                                    <p class="text-gray-600">First: 2 × 2 = 4, then: 4 × 2 = 8</p>
+                                                    <div class="bg-orange-100 rounded p-3 mt-2 font-mono text-lg font-bold text-orange-800">
+                                                        f(3) = 8
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                        <h5 class="font-semibold text-gray-800 mb-2">💡 Key Strategy for Exponential Functions:</h5>
+                                        <ul class="text-sm text-gray-700 space-y-1">
+                                            <li>• Calculate the exponent first</li>
+                                            <li>• Break down large exponents: 2⁵ = 2 × 2 × 2 × 2 × 2</li>
+                                            <li>• Use the pattern: 2¹ = 2, 2² = 4, 2³ = 8, 2⁴ = 16...</li>
+                                            <li>• For negative exponents: 2⁻³ = 1/(2³) = 1/8</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rational Function Tutorial -->
+                        <div id="tutorial-rational" class="tutorial-section" style="display: none;">
+                            <div class="bg-gradient-to-r from-red-50 to-pink-50 rounded-xl p-8 border-l-4 border-red-500">
+                                <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                                    <i class="fas fa-divide text-red-500 mr-3"></i>
+                                    How to Solve Rational Function Problems
+                                </h3>
+                                
+                                <div class="bg-white rounded-lg p-6 mb-6">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">📝 Example Problem:</h4>
+                                    <p class="text-lg text-gray-700 mb-4">Given f(x) = (x + 1)/(x - 2), find f(3)</p>
+                                    
+                                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                        <h5 class="font-semibold text-gray-800 mb-3">🎯 Step-by-Step Solution:</h5>
+                                        <div class="space-y-4">
+                                            <div class="flex items-start space-x-4">
+                                                <div class="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">1</div>
+                                                <div>
+                                                    <h6 class="font-semibold text-gray-800">Substitute the value</h6>
+                                                    <p class="text-gray-600">Replace x with 3 in both numerator and denominator</p>
+                                                    <div class="bg-white rounded p-3 mt-2 font-mono text-lg">
+                                                        f(3) = (3 + 1)/(3 - 2)
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="flex items-start space-x-4">
+                                                <div class="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">2</div>
+                                                <div>
+                                                    <h6 class="font-semibold text-gray-800">Evaluate numerator</h6>
+                                                    <p class="text-gray-600">Calculate the top part: 3 + 1 = 4</p>
+                                                    <div class="bg-white rounded p-3 mt-2 font-mono text-lg">
+                                                        f(3) = 4/(3 - 2)
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="flex items-start space-x-4">
+                                                <div class="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">3</div>
+                                                <div>
+                                                    <h6 class="font-semibold text-gray-800">Evaluate denominator</h6>
+                                                    <p class="text-gray-600">Calculate the bottom part: 3 - 2 = 1</p>
+                                                    <div class="bg-white rounded p-3 mt-2 font-mono text-lg">
+                                                        f(3) = 4/1
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="flex items-start space-x-4">
+                                                <div class="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">4</div>
+                                                <div>
+                                                    <h6 class="font-semibold text-gray-800">Divide</h6>
+                                                    <p class="text-gray-600">4 ÷ 1 = 4</p>
+                                                    <div class="bg-red-100 rounded p-3 mt-2 font-mono text-lg font-bold text-red-800">
+                                                        f(3) = 4
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                        <h5 class="font-semibold text-gray-800 mb-2">💡 Key Strategy for Rational Functions:</h5>
+                                        <ul class="text-sm text-gray-700 space-y-1">
+                                            <li>• Evaluate numerator and denominator separately</li>
+                                            <li>• Watch out for division by zero (denominator = 0)</li>
+                                            <li>• Simplify fractions when possible</li>
+                                            <li>• Check your answer by substituting back</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Absolute Value Function Tutorial -->
+                        <div id="tutorial-absolute" class="tutorial-section" style="display: none;">
+                            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-8 border-l-4 border-indigo-500">
+                                <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                                    <i class="fas fa-arrows-alt-h text-indigo-500 mr-3"></i>
+                                    How to Solve Absolute Value Function Problems
+                                </h3>
+                                
+                                <div class="bg-white rounded-lg p-6 mb-6">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">📝 Example Problem:</h4>
+                                    <p class="text-lg text-gray-700 mb-4">Given f(x) = |x - 2|, find f(-1)</p>
+                                    
+                                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                        <h5 class="font-semibold text-gray-800 mb-3">🎯 Step-by-Step Solution:</h5>
+                                        <div class="space-y-4">
+                                            <div class="flex items-start space-x-4">
+                                                <div class="bg-indigo-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">1</div>
+                                                <div>
+                                                    <h6 class="font-semibold text-gray-800">Substitute the value</h6>
+                                                    <p class="text-gray-600">Replace x with -1 in the function</p>
+                                                    <div class="bg-white rounded p-3 mt-2 font-mono text-lg">
+                                                        f(-1) = |-1 - 2|
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="flex items-start space-x-4">
+                                                <div class="bg-indigo-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">2</div>
+                                                <div>
+                                                    <h6 class="font-semibold text-gray-800">Evaluate inside absolute value</h6>
+                                                    <p class="text-gray-600">Calculate -1 - 2 = -3</p>
+                                                    <div class="bg-white rounded p-3 mt-2 font-mono text-lg">
+                                                        f(-1) = |-3|
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="flex items-start space-x-4">
+                                                <div class="bg-indigo-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm">3</div>
+                                                <div>
+                                                    <h6 class="font-semibold text-gray-800">Take absolute value</h6>
+                                                    <p class="text-gray-600">Absolute value makes any number positive: |-3| = 3</p>
+                                                    <div class="bg-indigo-100 rounded p-3 mt-2 font-mono text-lg font-bold text-indigo-800">
+                                                        f(-1) = 3
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                        <h5 class="font-semibold text-gray-800 mb-2">💡 Key Strategy for Absolute Value Functions:</h5>
+                                        <ul class="text-sm text-gray-700 space-y-1">
+                                            <li>• Always evaluate inside the absolute value first</li>
+                                            <li>• Absolute value makes any number positive or zero</li>
+                                            <li>• |positive number| = positive number</li>
+                                            <li>• |negative number| = positive number</li>
+                                            <li>• |0| = 0</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Function Solver -->
+                        <div id="tutorial-interactive" class="tutorial-section" style="display: none;">
+                            <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-8 border-l-4 border-yellow-500">
+                                <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                                    <i class="fas fa-calculator text-yellow-500 mr-3"></i>
+                                    Interactive Function Solver
+                                </h3>
+                                
+                                <div class="bg-white rounded-lg p-6 mb-6">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">🧮 Try It Yourself:</h4>
+                                    <p class="text-gray-700 mb-6">Enter any function and value to see the step-by-step solution process!</p>
+                                    
+                                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                        <div class="space-y-4">
+                                            <div>
+                                                <label class="block text-sm font-semibold text-gray-700 mb-2">Function f(x):</label>
+                                                <input type="text" id="solver-function" placeholder="e.g., 2x + 3, x² - 1, 3ˣ" 
+                                                       class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-yellow-500 focus:outline-none text-lg cursor-not-allowed" readonly onkeydown="return false;" onpaste="return false;" ondrop="return false;" aria-readonly="true">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-semibold text-gray-700 mb-2">Value of x:</label>
+                                                <input type="number" id="solver-x-value" placeholder="e.g., 5, -2, 0" 
+                                                       class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-yellow-500 focus:outline-none text-lg cursor-not-allowed" readonly onkeydown="return false;" onpaste="return false;" ondrop="return false;" aria-readonly="true">
+                                            </div>
+                                            <button onclick="solveFunction()" class="w-full bg-yellow-500 text-white py-3 px-4 rounded-lg hover:bg-yellow-600 transition-colors font-semibold">
+                                                <i class="fas fa-calculator mr-2"></i>Solve Step-by-Step
+                                            </button>
+                                        </div>
+                                        
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">Solution Steps:</label>
+                                            <div id="solver-steps" class="bg-gray-50 rounded-lg p-4 min-h-[200px] border-2 border-dashed border-gray-300">
+                                                <p class="text-gray-500 text-center">Enter a function and value above to see the solution steps here!</p>
+                                            </div>
+                                            <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-2">
+                                                <button onclick="loadExample('2x + 5', 3)" class="bg-white hover:bg-gray-50 p-2 rounded border text-left transition-colors text-sm">
+                                                    <strong>Linear:</strong> f(x) = 2x + 5, x = 3
+                                                </button>
+                                                <button onclick="loadExample('x^2 - 3x + 2', 4)" class="bg-white hover:bg-gray-50 p-2 rounded border text-left transition-colors text-sm">
+                                                    <strong>Quadratic:</strong> f(x) = x² - 3x + 2, x = 4
+                                                </button>
+                                                <button onclick="loadExample('2^x', 3)" class="bg-white hover:bg-gray-50 p-2 rounded border text-left transition-colors text-sm">
+                                                    <strong>Exponential:</strong> f(x) = 2ˣ, x = 3
+                                                </button>
+                                                <button onclick="loadExample('(x + 1)/(x - 2)', 3)" class="bg-white hover:bg-gray-50 p-2 rounded border text-left transition-colors text-sm">
+                                                    <strong>Rational:</strong> f(x) = (x+1)/(x-2), x = 3
+                                                </button>
+                                                <button onclick="loadExample('|x - 2|', -1)" class="bg-white hover:bg-gray-50 p-2 rounded border text-left transition-colors text-sm">
+                                                    <strong>Absolute:</strong> f(x) = |x - 2|, x = -1
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-6 bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                        <h5 class="font-semibold text-gray-800 mb-2">💡 How to Use the Solver:</h5>
+                                        <ul class="text-sm text-gray-700 space-y-1">
+                                            <li>• Enter functions like: 2x + 3, x² - 1, 3ˣ, |x - 2|</li>
+                                            <li>• Use ^ for exponents: x^2, 2^x</li>
+                                            <li>• Use | | for absolute value: |x - 1|</li>
+                                            <li>• The solver will show each step of the evaluation process</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <!-- Quick Examples -->
+                                    <div class="mt-6 bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                                        <h5 class="font-semibold text-gray-800 mb-3">🚀 Try These Examples:</h5>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <button onclick="loadExample('2x + 5', 3)" class="bg-white hover:bg-gray-50 p-3 rounded border text-left transition-colors">
+                                                <strong>Linear:</strong> f(x) = 2x + 5, x = 3
+                                            </button>
+                                            <button onclick="loadExample('x^2 - 3x + 2', 4)" class="bg-white hover:bg-gray-50 p-3 rounded border text-left transition-colors">
+                                                <strong>Quadratic:</strong> f(x) = x² - 3x + 2, x = 4
+                                            </button>
+                                            <button onclick="loadExample('2^x', 3)" class="bg-white hover:bg-gray-50 p-3 rounded border text-left transition-colors">
+                                                <strong>Exponential:</strong> f(x) = 2ˣ, x = 3
+                                            </button>
+                                            <button onclick="loadExample('(x + 1)/(x - 2)', 3)" class="bg-white hover:bg-gray-50 p-3 rounded border text-left transition-colors">
+                                                <strong>Rational:</strong> f(x) = (x+1)/(x-2), x = 3
+                                            </button>
+                                            <button onclick="loadExample('|x - 2|', -1)" class="bg-white hover:bg-gray-50 p-3 rounded border text-left transition-colors">
+                                                <strong>Absolute Value:</strong> f(x) = |x - 2|, x = -1
+                                            </button>
+                                            <button onclick="loadExample('3x^2 + 2x - 1', 2)" class="bg-white hover:bg-gray-50 p-3 rounded border text-left transition-colors">
+                                                <strong>Complex:</strong> f(x) = 3x² + 2x - 1, x = 2
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                <!-- Lesson Completion -->
+                <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
+                        <i class="fas fa-check-circle text-emerald-500 mr-2"></i>Complete This Lesson
+                    </h3>
+                    <p class="text-gray-600 text-center mb-6">
+                        Mark this lesson as completed to track your progress and unlock the next lesson.
+                    </p>
+                    <div class="text-center">
+                        <button onclick="completeLesson(4)" 
+                                class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold inline-flex items-center">
+                            <i class="fas fa-check mr-2"></i>
+                            Mark Lesson 4 Complete
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Topic Completion Section (initially hidden) -->
+                <div id="topicCompletionSection" class="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl p-6 mb-8" style="display: none;">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
+                        <i class="fas fa-trophy text-purple-500 mr-2"></i>Complete This Topic
+                    </h3>
+                    <p class="text-gray-600 text-center mb-6">
+                        Congratulations! You've completed all lessons in the Evaluating Functions topic. Mark this topic as complete to update your progress.
+                    </p>
+                    <div class="text-center">
+                        <button onclick="completeTopic()" 
+                                class="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-8 py-3 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition-colors font-semibold inline-flex items-center">
+                            <i class="fas fa-trophy mr-2"></i>
+                            Mark This Topic About Evaluating Functions Complete
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lesson Navigation Controls -->
+                <div class="flex justify-center items-center mb-8">
+                    <button id="prevLessonBtn" onclick="navigateLesson(-1)" 
+                            class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-chevron-left mr-2"></i>
+                        Previous Lesson
+                    </button>
+                    
+                    <div class="flex items-center space-x-4 ml-8">
+                        <div class="text-center">
+                            <div class="text-sm text-gray-600">Lesson Progress</div>
+                            <div class="text-lg font-semibold text-primary">
+                                <span id="currentLessonNum">4</span> of 4
+                            </div>
+                        </div>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2024 MathEase. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Global variables for lesson management
+        let currentLesson = 1;
+        let completedLessons = new Set();
+        let totalLessons = 4;
+
+        // Function evaluation logic
+        function evaluateFunction() {
+            const functionInput = document.getElementById('function-input').value;
+            const xValue = parseFloat(document.getElementById('x-value').value);
+            const resultDisplay = document.getElementById('result-display');
+            const stepByStep = document.getElementById('step-by-step');
+            const stepsContent = document.getElementById('steps-content');
+
+            if (!functionInput || isNaN(xValue)) {
+                alert('Please enter a valid function and x value');
+                return;
+            }
+
+            try {
+                let steps = [];
+                let stepNum = 1;
+                // 1) Rule
+                steps.push(`<div class=\"mb-2 p-3 bg-white rounded border-l-4 border-blue-500\"><span class=\"font-semibold\">${stepNum++}) Rule:</span> <code class=\"font-mono\">f(x) = ${escapeHtml(functionInput)}</code></div>`);
+
+                // Build a display expression and a calc expression
+                let displayExpr = functionInput.replace(/x/g, `(${xValue})`).replace(/\|/g, '|').replace(/²/g,'^2');
+                // Normalize for calc
+                let expr = functionInput.trim();
+                expr = expr.replace(/([0-9])x/g, '$1*x');
+                expr = expr.replace(/\)x/g, ')*x');
+                expr = expr.replace(/x\(/g, 'x*(');
+                expr = expr.replace(/x([0-9])/g, 'x*$1');
+                expr = expr.replace(/x/g, `(${xValue})`);
+                expr = expr.replace(/²/g, '^2');
+
+                // 2) Substitute
+                steps.push(`<div class=\"mb-2 p-3 bg-white rounded border-l-4 border-blue-500\"><span class=\"font-semibold\">${stepNum++}) Substitute:</span> <code class=\"font-mono\">f(${xValue}) = ${escapeHtml(displayExpr)}</code></div>`);
+
+                // Handle absolute value first
+                while (/\|[^|]+\|/.test(displayExpr)) {
+                    const m = displayExpr.match(/\|([^|]+)\|/);
+                    if (!m) break;
+                    const inside = m[1];
+                    const insideVal = eval(inside.replace(/\^/g,'**'));
+                    displayExpr = displayExpr.replace(m[0], insideVal);
+                    expr = expr.replace(/\|[^|]+\|/, insideVal);
+                    steps.push(`<div class=\"mb-2 p-3 bg-white rounded border-l-4 border-indigo-500\"><span class=\"font-semibold\">${stepNum++}) Absolute value:</span> <code class=\"font-mono\">|${escapeHtml(inside)}| = ${insideVal}</code><br><code class=\"font-mono\">${escapeHtml(displayExpr)}</code></div>`);
+                }
+
+                // Handle exponents with caret ^
+                let expMatch;
+                const expRegex = /(\(?-?\d+(?:\.\d+)?\)?)[\s]*\^[\s]*(\(?-?\d+(?:\.\d+)?\)?)/;
+                while ((expMatch = displayExpr.match(expRegex))) {
+                    const baseStr = expMatch[1].replace(/[()]/g,'');
+                    const expStr = expMatch[2].replace(/[()]/g,'');
+                    const expVal = Math.pow(parseFloat(baseStr), parseFloat(expStr));
+                    displayExpr = displayExpr.replace(expRegex, expVal);
+                    expr = expr.replace(expRegex, expVal);
+                    steps.push(`<div class=\"mb-2 p-3 bg-white rounded border-l-4 border-orange-500\"><span class=\"font-semibold\">${stepNum++}) Exponent:</span> <code class=\"font-mono\">${baseStr}^${expStr} = ${expVal}</code><br><code class=\"font-mono\">${escapeHtml(displayExpr)}</code></div>`);
+                }
+                // Convert remaining ^ to ** for JS
+                expr = expr.replace(/\^/g, '**');
+
+                // Handle multiplication/division left-to-right
+                let mdRegex = /(\-?\d+(?:\.\d+)?)\s*([*/])\s*(\-?\d+(?:\.\d+)?)/;
+                let mdMatch;
+                while ((mdMatch = expr.match(mdRegex))) {
+                    const a = parseFloat(mdMatch[1]);
+                    const op = mdMatch[2];
+                    const b = parseFloat(mdMatch[3]);
+                    const val = op === '*' ? a * b : a / b;
+                    expr = expr.replace(mdRegex, val);
+                    // mirror to displayExpr loosely
+                    displayExpr = displayExpr.replace(mdRegex, val);
+                    steps.push(`<div class=\"mb-2 p-3 bg-white rounded border-l-4 border-yellow-500\"><span class=\"font-semibold\">${stepNum++}) ${op === '*' ? 'Multiply' : 'Divide'}:</span> <code class=\"font-mono\">${a} ${op} ${b} = ${val}</code><br><code class=\"font-mono\">${escapeHtml(displayExpr)}</code></div>`);
+                }
+
+                // Handle addition/subtraction left-to-right
+                let asRegex = /(\-?\d+(?:\.\d+)?)\s*([+-])\s*(\-?\d+(?:\.\d+)?)/;
+                let asMatch;
+                while ((asMatch = expr.match(asRegex))) {
+                    const a = parseFloat(asMatch[1]);
+                    const op = asMatch[2];
+                    const b = parseFloat(asMatch[3]);
+                    const val = op === '+' ? a + b : a - b;
+                    expr = expr.replace(asRegex, val);
+                    displayExpr = displayExpr.replace(asRegex, val);
+                    steps.push(`<div class=\"mb-2 p-3 bg-white rounded border-l-4 border-green-500\"><span class=\"font-semibold\">${stepNum++}) ${op === '+' ? 'Add' : 'Subtract'}:</span> <code class=\"font-mono\">${a} ${op} ${b} = ${val}</code><br><code class=\"font-mono\">${escapeHtml(displayExpr)}</code></div>`);
+                }
+
+                const result = parseFloat(expr);
+                steps.push(`<div class=\"mt-2 p-3 rounded bg-gray-100 border-l-4 border-gray-500\"><span class=\"font-semibold\">${stepNum++}) Final answer:</span> <code class=\"font-mono text-black text-lg font-bold\">f(${xValue}) = ${result}</code></div>`);
+
+                document.getElementById('result-text').textContent = `f(${xValue}) = ${result}`;
+                stepsContent.innerHTML = steps.join('');
+                stepByStep.style.display = 'block';
+
+            } catch (error) {
+                document.getElementById('result-text').textContent = 'Error: Invalid function format';
+                stepByStep.style.display = 'none';
+            }
+        }
+
+        function setMachine(func, x) {
+            document.getElementById('function-input').value = func;
+            document.getElementById('x-value').value = x;
+            evaluateFunction();
+        }
+
+        function setX(x) {
+            document.getElementById('x-value').value = x;
+            evaluateFunction();
+        }
+
+        function escapeHtml(s) {
+            return String(s)
+                .replace(/&/g,'&amp;')
+                .replace(/</g,'&lt;')
+                .replace(/>/g,'&gt;');
+        }
+
+        // Demo function examples
+        function demoFunction(type) {
+            const examples = {
+                'constant': { func: '5', x: 3, result: 5 },
+                'linear': { func: '2x + 3', x: 4, result: 11 },
+                'quadratic': { func: 'x^2 + 2x + 1', x: 3, result: 16 },
+                'exponential': { func: '2^x', x: 3, result: 8 },
+                'rational': { func: '(x + 1)/(x - 2)', x: 3, result: 4 },
+                'absolute': { func: '|x|', x: -5, result: 5 }
+            };
+
+            const example = examples[type];
+            document.getElementById('function-input').value = example.func;
+            document.getElementById('x-value').value = example.x;
+            evaluateFunction();
+        }
+
+        // Show example solutions
+        function showExample(exampleId) {
+            const element = document.getElementById(exampleId);
+            element.classList.toggle('hidden');
+        }
+
+        // Tutorial system functions
+        function showTutorial(tutorialType) {
+            // Hide all tutorial sections
+            const allTutorials = document.querySelectorAll('.tutorial-section');
+            allTutorials.forEach(tutorial => {
+                tutorial.style.display = 'none';
+            });
+            
+            // Show selected tutorial
+            const selectedTutorial = document.getElementById(`tutorial-${tutorialType}`);
+            if (selectedTutorial) {
+                selectedTutorial.style.display = 'block';
+                selectedTutorial.scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            // Update tutorial button styles
+            const allButtons = document.querySelectorAll('.tutorial-btn');
+            allButtons.forEach(btn => {
+                btn.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-100');
+            });
+            
+            // Highlight selected button
+            event.target.closest('.tutorial-btn').classList.add('ring-2', 'ring-blue-500', 'bg-blue-100');
+        }
+
+        // Load example into solver
+        function loadExample(functionText, xValue) {
+            document.getElementById('solver-function').value = functionText;
+            document.getElementById('solver-x-value').value = xValue;
+            solveFunction();
+        }
+
+        // Enhanced interactive function solver
+        function solveFunction() {
+            const functionInput = document.getElementById('solver-function').value;
+            const xValue = parseFloat(document.getElementById('solver-x-value').value);
+            const stepsDiv = document.getElementById('solver-steps');
+
+            if (!functionInput || isNaN(xValue)) {
+                stepsDiv.innerHTML = '<p class="text-red-500 text-center">Please enter both a function and a value for x!</p>';
+                return;
+            }
+
+            try {
+                let steps = [];
+                let result;
+                let stepCount = 1;
+                
+                // Parse and solve the function
+                if (functionInput.includes('x')) {
+                    // Replace x with the value
+                    let expression = functionInput.replace(/x/g, xValue);
+                    steps.push(`<div class="step-item mb-3 p-3 bg-white rounded border-l-4 border-blue-500">
+                        <strong>Step ${stepCount++}:</strong> Substitute x = ${xValue}<br>
+                        <code class="text-lg">f(${xValue}) = ${expression}</code>
+                    </div>`);
+                    
+                    // Handle absolute value
+                    if (expression.includes('|')) {
+                        let absMatch = expression.match(/\|([^|]+)\|/);
+                        if (absMatch) {
+                            let insideAbs = absMatch[1];
+                            let absResult = Math.abs(eval(insideAbs));
+                            expression = expression.replace(/\|[^|]+\|/g, absResult);
+                            steps.push(`<div class="step-item mb-3 p-3 bg-white rounded border-l-4 border-indigo-500">
+                                <strong>Step ${stepCount++}:</strong> Evaluate absolute value |${insideAbs}| = ${absResult}<br>
+                                <code class="text-lg">f(${xValue}) = ${expression}</code>
+                            </div>`);
+                        }
+                    }
+                    
+                    // Handle exponents
+                    while (expression.includes('^')) {
+                        let expMatch = expression.match(/(\d+(?:\.\d+)?)\^(\d+(?:\.\d+)?)/);
+                        if (expMatch) {
+                            let base = parseFloat(expMatch[1]);
+                            let exponent = parseFloat(expMatch[2]);
+                            let expResult = Math.pow(base, exponent);
+                            expression = expression.replace(expMatch[0], expResult);
+                            steps.push(`<div class="step-item mb-3 p-3 bg-white rounded border-l-4 border-orange-500">
+                                <strong>Step ${stepCount++}:</strong> Calculate exponent ${base}^${exponent} = ${expResult}<br>
+                                <code class="text-lg">f(${xValue}) = ${expression}</code>
+                            </div>`);
+                        } else {
+                            break;
+                        }
+                    }
+                    
+                    // Handle multiplication and division
+                    while (expression.includes('*') || expression.includes('/')) {
+                        let multDivMatch = expression.match(/(\d+(?:\.\d+)?)\s*([*/])\s*(\d+(?:\.\d+)?)/);
+                        if (multDivMatch) {
+                            let num1 = parseFloat(multDivMatch[1]);
+                            let operator = multDivMatch[2];
+                            let num2 = parseFloat(multDivMatch[3]);
+                            let result = operator === '*' ? num1 * num2 : num1 / num2;
+                            expression = expression.replace(multDivMatch[0], result);
+                            steps.push(`<div class="step-item mb-3 p-3 bg-white rounded border-l-4 border-yellow-500">
+                                <strong>Step ${stepCount++}:</strong> ${num1} ${operator} ${num2} = ${result}<br>
+                                <code class="text-lg">f(${xValue}) = ${expression}</code>
+                            </div>`);
+                        } else {
+                            break;
+                        }
+                    }
+                    
+                    // Handle addition and subtraction
+                    while (expression.includes('+') || (expression.includes('-') && !expression.startsWith('-'))) {
+                        let addSubMatch = expression.match(/(\d+(?:\.\d+)?)\s*([+-])\s*(\d+(?:\.\d+)?)/);
+                        if (addSubMatch) {
+                            let num1 = parseFloat(addSubMatch[1]);
+                            let operator = addSubMatch[2];
+                            let num2 = parseFloat(addSubMatch[3]);
+                            let result = operator === '+' ? num1 + num2 : num1 - num2;
+                            expression = expression.replace(addSubMatch[0], result);
+                            steps.push(`<div class="step-item mb-3 p-3 bg-white rounded border-l-4 border-green-500">
+                                <strong>Step ${stepCount++}:</strong> ${num1} ${operator} ${num2} = ${result}<br>
+                                <code class="text-lg">f(${xValue}) = ${expression}</code>
+                            </div>`);
+                        } else {
+                            break;
+                        }
+                    }
+                    
+                    result = parseFloat(expression);
+                    steps.push(`<div class="step-item mb-3 p-3 rounded bg-gray-100 border-l-4 border-gray-500">
+                        <strong>Final Result:</strong><br>
+                        <code class="text-lg font-bold text-black">f(${xValue}) = ${result}</code>
+                    </div>`);
+                } else {
+                    // Constant function
+                    result = parseFloat(functionInput);
+                    steps.push(`<div class="step-item mb-3 p-3 bg-white rounded border-l-4 border-blue-500">
+                        <strong>Step 1:</strong> Constant function<br>
+                        <code class="text-lg">f(x) = ${functionInput}</code>
+                    </div>`);
+                    steps.push(`<div class="step-item mb-3 p-3 rounded bg-gray-100 border-l-4 border-gray-500">
+                        <strong>Final Result:</strong><br>
+                        <code class="text-lg font-bold text-black">f(${xValue}) = ${result}</code>
+                    </div>`);
+                }
+
+                stepsDiv.innerHTML = steps.join('');
+                
+            } catch (error) {
+                stepsDiv.innerHTML = '<p class="text-red-500 text-center">Error: Unable to solve this function. Please check your input format.</p>';
+            }
+        }
+
+        // Check assessment answers
+        function checkAssessment(questionNum, correctAnswer) {
+            const answerInput = document.getElementById(`assessment${questionNum}-answer`);
+            const feedback = document.getElementById(`assessment${questionNum}-feedback`);
+            const userAnswer = parseFloat(answerInput.value);
+
+            if (userAnswer === correctAnswer) {
+                feedback.className = 'feedback correct';
+                feedback.innerHTML = '<i class="fas fa-check-circle mr-2"></i>Correct! Well done!';
+                feedback.style.display = 'block';
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.innerHTML = '<i class="fas fa-times-circle mr-2"></i>Incorrect. Try again!';
+                feedback.style.display = 'block';
+            }
+        }
+
+        // Lesson Management Functions
+        async function loadCompletedLessons() {
+            console.log('Loading completed lessons for evaluating-functions topic');
+            
+            try {
+                const requestData = {
+                    topic: 'evaluating-functions',
+                    action: 'get_completed'
+                };
+                
+                console.log('Sending request:', requestData);
+                
+                const response = await fetch('../php/complete-lesson.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData),
+                    credentials: 'include'
+                });
+
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const text = await response.text();
+                console.log('Raw response:', text);
+                
+                let data;
+                
+                try {
+                    data = JSON.parse(text);
+                    console.log('Parsed response:', data);
+                } catch (parseError) {
+                    console.error('Invalid JSON response:', text);
+                    console.error('Parse error:', parseError);
+                    // Don't show error to user, just log it
+                    // The lesson completion will still work, just won't show previous completions
+                    return;
+                }
+                
+                if (data.success && data.completed_lessons) {
+                    console.log('Successfully loaded completed lessons:', data.completed_lessons);
+                    completedLessons = new Set(data.completed_lessons);
+                    updateLessonNavigation();
+                    
+                    // Check if all lessons are completed and show topic completion option
+                    if (completedLessons.size === totalLessons) {
+                        showTopicCompletionOption();
+                    }
+                } else if (!data.success) {
+                    console.warn('Failed to load completed lessons:', data.message);
+                    // Don't show error to user, just log it
+                }
+            } catch (error) {
+                console.error('Error loading completed lessons:', error);
+                // Don't show error to user, just log it
+                // The lesson completion will still work, just won't show previous completions
+            }
+        }
+
+        async function completeLesson(lessonNum) {
+            console.log('Attempting to complete lesson:', lessonNum);
+            
+            try {
+                const requestData = {
+                    topic: 'evaluating-functions',
+                    lesson: lessonNum,
+                    action: 'complete'
+                };
+                
+                console.log('Sending request:', requestData);
+                
+                const response = await fetch('../php/complete-lesson.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData),
+                    credentials: 'include'
+                });
+
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const text = await response.text();
+                console.log('Raw response:', text);
+                
+                let data;
+                
+                try {
+                    data = JSON.parse(text);
+                    console.log('Parsed response:', data);
+                } catch (parseError) {
+                    console.error('Invalid JSON response:', text);
+                    console.error('Parse error:', parseError);
+                    
+                    Swal.fire({
+                        title: 'Server Error',
+                        html: `
+                            <div class="text-left">
+                                <p class="mb-2">The server returned an invalid response.</p>
+                                <p class="mb-2"><strong>Possible causes:</strong></p>
+                                <ul class="list-disc list-inside mb-4 text-sm">
+                                    <li>Database tables are missing</li>
+                                    <li>PHP error occurred</li>
+                                    <li>Server configuration issue</li>
+                                </ul>
+                                <p class="mb-2"><strong>Raw response:</strong></p>
+                                <pre class="bg-gray-100 p-2 rounded text-xs overflow-auto max-h-32">${text.substring(0, 500)}</pre>
+                                <p class="mt-2 text-sm">
+                                    <a href="../fix-complete-button.html" class="text-blue-500 underline">
+                                        Click here to fix this issue
+                                    </a>
+                                </p>
+                            </div>
+                        `,
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#ef4444',
+                        background: '#ffffff',
+                        customClass: {
+                            popup: 'rounded-2xl',
+                            title: 'text-slate-800',
+                            content: 'text-slate-600'
+                        }
+                    });
+                    return;
+                }
+                
+                if (data.success) {
+                    console.log('Lesson completion successful');
+                    
+                    // Add to completed lessons
+                    completedLessons.add(lessonNum);
+                    
+                    // Show completion status
+                    showCompletionStatus();
+                    
+                    // Update lesson navigation
+                    updateLessonNavigation();
+                    
+                    // Check if all lessons are completed
+                    if (completedLessons.size === totalLessons) {
+                        // Show topic completion option
+                        showTopicCompletionOption();
+                    }
+                    
+                    // Show success message
+                    Swal.fire({
+                        title: 'Lesson Completed!',
+                        text: `Great job completing Lesson ${lessonNum}!`,
+                        icon: 'success',
+                        confirmButtonText: 'Continue Learning',
+                        confirmButtonColor: '#10b981',
+                        background: '#ffffff',
+                        customClass: {
+                            popup: 'rounded-2xl',
+                            title: 'text-slate-800',
+                            content: 'text-slate-600'
+                        }
+                    });
+                } else {
+                    console.error('Server returned error:', data);
+                    throw new Error(data.message || 'Failed to complete lesson');
+                }
+            } catch (error) {
+                console.error('Error completing lesson:', error);
+                
+                Swal.fire({
+                    title: 'Error Completing Lesson',
+                    html: `
+                        <div class="text-left">
+                            <p class="mb-2"><strong>Error:</strong> ${error.message}</p>
+                            <p class="mb-2"><strong>Lesson:</strong> ${lessonNum}</p>
+                            <p class="mb-4">Please try the following:</p>
+                            <ol class="list-decimal list-inside mb-4 text-sm space-y-1">
+                                <li>Make sure you're logged in</li>
+                                <li>Check your internet connection</li>
+                                <li>Try refreshing the page</li>
+                                <li>Contact support if the problem persists</li>
+                            </ol>
+                            <p class="text-sm">
+                                <a href="../fix-complete-button.html" class="text-blue-500 underline">
+                                    Click here to run diagnostic tools
+                                </a>
+                            </p>
+                        </div>
+                    `,
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#ef4444',
+                    background: '#ffffff',
+                    customClass: {
+                        popup: 'rounded-2xl',
+                        title: 'text-slate-800',
+                        content: 'text-slate-600'
+                    }
+                });
+            }
+        }
+
+        async function completeTopic() {
+            console.log('Attempting to complete topic: evaluating-functions');
+            
+            try {
+                const requestData = {
+                    topic: 'evaluating-functions',
+                    action: 'complete_topic'
+                };
+                
+                console.log('Sending request:', requestData);
+                
+                const response = await fetch('../php/complete-lesson.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData),
+                    credentials: 'include'
+                });
+
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const text = await response.text();
+                console.log('Raw response:', text);
+                
+                let data;
+                
+                try {
+                    data = JSON.parse(text);
+                    console.log('Parsed response:', data);
+                } catch (parseError) {
+                    console.error('Invalid JSON response:', text);
+                    console.error('Parse error:', parseError);
+                    
+                    Swal.fire({
+                        title: 'Server Error',
+                        html: `
+                            <div class="text-left">
+                                <p class="mb-2">The server returned an invalid response.</p>
+                                <p class="mb-2"><strong>Possible causes:</strong></p>
+                                <ul class="list-disc list-inside mb-4 text-sm">
+                                    <li>Database tables are missing</li>
+                                    <li>PHP error occurred</li>
+                                    <li>Server configuration issue</li>
+                                </ul>
+                                <p class="mb-2"><strong>Raw response:</strong></p>
+                                <pre class="bg-gray-100 p-2 rounded text-xs overflow-auto max-h-32">${text.substring(0, 500)}</pre>
+                                <p class="mt-2 text-sm">
+                                    <a href="../fix-complete-button.html" class="text-blue-500 underline">
+                                        Click here to fix this issue
+                                    </a>
+                                </p>
+                            </div>
+                        `,
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#ef4444',
+                        background: '#ffffff',
+                        customClass: {
+                            popup: 'rounded-2xl',
+                            title: 'text-slate-800',
+                            content: 'text-slate-600'
+                        }
+                    });
+                    return;
+                }
+                
+                if (data.success) {
+                    console.log('Topic completion successful');
+                    
+                    // Show success message
+                    Swal.fire({
+                        title: 'Topic Completed!',
+                        text: 'Congratulations! You have successfully completed the Evaluating Functions topic. Your progress has been updated.',
+                        icon: 'success',
+                        confirmButtonText: 'View Progress',
+                        confirmButtonColor: '#8b5cf6',
+                        background: '#ffffff',
+                        customClass: {
+                            popup: 'rounded-2xl',
+                            title: 'text-slate-800',
+                            content: 'text-slate-600'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Redirect to dashboard to show updated progress
+                            window.location.href = '../dashboard.html#progress';
+                        }
+                    });
+                } else {
+                    console.error('Server returned error:', data);
+                    throw new Error(data.message || 'Failed to complete topic');
+                }
+            } catch (error) {
+                console.error('Error completing topic:', error);
+                
+                Swal.fire({
+                    title: 'Error Completing Topic',
+                    html: `
+                        <div class="text-left">
+                            <p class="mb-2"><strong>Error:</strong> ${error.message}</p>
+                            <p class="mb-2"><strong>Topic:</strong> evaluating-functions</p>
+                            <p class="mb-4">Please try the following:</p>
+                            <ol class="list-decimal list-inside mb-4 text-sm space-y-1">
+                                <li>Make sure you're logged in</li>
+                                <li>Check your internet connection</li>
+                                <li>Try refreshing the page</li>
+                                <li>Contact support if the problem persists</li>
+                            </ol>
+                            <p class="text-sm">
+                                <a href="../fix-complete-button.html" class="text-blue-500 underline">
+                                    Click here to run diagnostic tools
+                                </a>
+                            </p>
+                        </div>
+                    `,
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#ef4444',
+                    background: '#ffffff',
+                    customClass: {
+                        popup: 'rounded-2xl',
+                        title: 'text-slate-800',
+                        content: 'text-slate-600'
+                    }
+                });
+            }
+        }
+
+        function showCompletionStatus() {
+            // Update lesson navigation to show completed status
+            updateLessonNavigation();
+        }
+
+        function updateLessonNavigation() {
+            const lessonNavBtns = document.querySelectorAll('.lesson-nav-btn');
+            lessonNavBtns.forEach(btn => {
+                const lessonNum = parseInt(btn.dataset.lesson);
+                const icon = btn.querySelector('.w-16');
+                
+                if (completedLessons.has(lessonNum)) {
+                    icon.classList.remove('bg-primary', 'text-white', 'bg-gray-300', 'text-gray-600');
+                    icon.classList.add('bg-green-500', 'text-white');
+                } else {
+                    icon.classList.remove('bg-primary', 'text-white', 'bg-green-500', 'text-white');
+                    icon.classList.add('bg-gray-300', 'text-gray-600');
+                }
+            });
+        }
+
+        function showTopicCompletionOption() {
+            const topicCompletionSection = document.getElementById('topicCompletionSection');
+            if (topicCompletionSection) {
+                topicCompletionSection.style.display = 'block';
+            }
+        }
+
+        function navigateLesson(direction) {
+            const newLesson = currentLesson + direction;
+            if (newLesson >= 1 && newLesson <= totalLessons) {
+                showLesson(newLesson);
+            }
+        }
+
+        function showLesson(lessonNum) {
+            const lessonNavBtns = document.querySelectorAll('.lesson-nav-btn');
+            const lessonSections = document.querySelectorAll('.lesson-section');
+            
+            currentLesson = lessonNum;
+            
+            // Update navigation buttons
+            lessonNavBtns.forEach(b => {
+                const btnLessonNum = parseInt(b.dataset.lesson);
+                b.classList.remove('border-primary', 'bg-primary');
+                b.classList.add('border-transparent');
+                const icon = b.querySelector('.w-16');
+                
+                if (completedLessons.has(btnLessonNum)) {
+                    icon.classList.remove('bg-primary', 'text-white', 'bg-gray-300', 'text-gray-600');
+                    icon.classList.add('bg-green-500', 'text-white');
+                } else {
+                    icon.classList.remove('bg-primary', 'text-white', 'bg-green-500', 'text-white');
+                    icon.classList.add('bg-gray-300', 'text-gray-600');
+                }
+            });
+            
+            // Highlight current lesson
+            const currentBtn = document.querySelector(`[data-lesson="${lessonNum}"]`);
+            if (currentBtn) {
+                currentBtn.classList.add('border-primary', 'bg-primary');
+                currentBtn.classList.remove('border-transparent');
+                const icon = currentBtn.querySelector('.w-16');
+                icon.classList.add('bg-primary', 'text-white');
+                icon.classList.remove('bg-gray-300', 'text-gray-600', 'bg-green-500');
+            }
+            
+            // Show selected lesson
+            lessonSections.forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(`lesson${lessonNum}`).classList.add('active');
+            
+            // Update progress indicators
+            updateProgressIndicators();
+            updateNavigationButtons();
+            
+            // Scroll to the top of the lesson
+            setTimeout(() => {
+                const lessonSection = document.getElementById(`lesson${lessonNum}`);
+                if (lessonSection) {
+                    lessonSection.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start' 
+                    });
+                }
+            }, 100);
+        }
+
+        function updateProgressIndicators() {
+            const currentLessonNum = document.getElementById('currentLessonNum');
+            const lessonProgressBar = document.getElementById('lessonProgressBar');
+            
+            if (currentLessonNum) {
+                currentLessonNum.textContent = currentLesson;
+            }
+            
+            if (lessonProgressBar) {
+                const progressPercentage = (currentLesson / totalLessons) * 100;
+                lessonProgressBar.style.width = `${progressPercentage}%`;
+            }
+        }
+
+        function updateNavigationButtons() {
+            const prevBtn = document.getElementById('prevLessonBtn');
+            const nextBtn = document.getElementById('nextLessonBtn');
+            
+            if (prevBtn) {
+                prevBtn.style.display = currentLesson === 1 ? 'none' : 'flex';
+            }
+            
+            if (nextBtn) {
+                nextBtn.style.display = currentLesson === totalLessons ? 'none' : 'flex';
+            }
+        }
+
+        // Auth guard and Lesson Navigation
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const res = await fetch('../php/user.php', { credentials: 'include', cache: 'no-store' });
+                if (res.status === 401) { window.location.href = '../login.html'; return; }
+                const data = await res.json();
+                if (!data.success) { window.location.href = '../login.html'; return; }
+                const u = data.user || {};
+                const gradeOk = !u.grade_level || String(u.grade_level) === '11';
+                const strandOk = !u.strand || String(u.strand).toUpperCase() === 'STEM';
+                if (!gradeOk || !strandOk) { window.location.href = '../dashboard.html'; return; }
+                
+                // Update user name
+                const userNameEl = document.getElementById('userName');
+                if (userNameEl && u.first_name) {
+                    userNameEl.textContent = `${u.first_name} ${u.last_name || ''}`.trim();
+                }
+                
+                // Load completed lessons
+                await loadCompletedLessons();
+                
+                // Initialize lesson navigation
+                const lessonNavBtns = document.querySelectorAll('.lesson-nav-btn');
+                const lessonSections = document.querySelectorAll('.lesson-section');
+                
+                lessonNavBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const lessonNum = parseInt(this.dataset.lesson);
+                        showLesson(lessonNum);
+                    });
+                });
+                
+                // Initialize first lesson as active
+                showLesson(1);
+                
+            } catch (e) {
+                window.location.href = '../login.html';
+            }
+        });
+    </script>
+</body>
+</html>

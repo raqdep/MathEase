@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Test - MathEase</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="register-page">
+    <section class="auth-section" style="padding-top:60px;">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h2>Registration Test</h2>
+                    <p>Test the registration form</p>
+                </div>
+
+                <form class="auth-form" id="test-register-form" action="php/register.php" method="POST" novalidate>
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="firstName" name="firstName" required placeholder="Enter first name">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="lastName" name="lastName" required placeholder="Enter last name">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <div class="input-group">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="email" name="email" required placeholder="Enter your email">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lrn">LRN (Learner Reference Number)</label>
+                        <div class="input-group">
+                            <i class="fas fa-id-card"></i>
+                            <input type="text" id="lrn" name="lrn" required placeholder="Enter your LRN">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gradeLevel">Grade Level</label>
+                        <div class="input-group">
+                            <i class="fas fa-graduation-cap"></i>
+                            <select id="gradeLevel" name="gradeLevel" required>
+                                <option value="">Select Grade Level</option>
+                                <option value="11">Grade 11</option>
+                                <option value="12">Grade 12</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="strand">Strand</label>
+                        <div class="input-group">
+                            <i class="fas fa-book"></i>
+                            <select id="strand" name="strand" required>
+                                <option value="">Select Strand</option>
+                                <option value="STEM">STEM</option>
+                                <option value="ABM">ABM</option>
+                                <option value="HUMSS">HUMSS</option>
+                                <option value="GAS">GAS</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="password" name="password" required placeholder="Enter password">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Confirm password">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-full">
+                            <i class="fas fa-user-plus"></i>
+                            Test Registration
+                        </button>
+                    </div>
+                </form>
+
+                <div class="auth-footer">
+                    <p><a href="debug-registration.php">Debug Form Data</a> | <a href="register.html">Back to Register</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/auth.js"></script>
+    <script>
+        // Test form submission
+        document.getElementById('test-register-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            console.log('Form data being sent:');
+            for (let [key, value] of formData.entries()) {
+                console.log(key + ': ' + value);
+            }
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Testing...';
+            submitBtn.disabled = true;
+            
+            try {
+                const response = await fetch('php/register.php', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin',
+                    cache: 'no-store'
+                });
+
+                const respText = await response.text();
+                console.log('Server response:', respText);
+                
+                try {
+                    const data = JSON.parse(respText);
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Registration Test Successful!',
+                            text: 'The form is working correctly.',
+                            confirmButtonText: 'OK'
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Registration Test Failed',
+                            text: data.message || 'Unknown error occurred',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                } catch (parseErr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Server Error',
+                        html: '<pre style="white-space:pre-wrap;">' + respText + '</pre>',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Network Error',
+                    text: 'An error occurred while testing registration.',
+                    confirmButtonText: 'OK'
+                });
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gmail Setup for Verification Codes - MathEase</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .header { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .section { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .step { margin: 15px 0; padding: 15px; background: #f8f9fa; border-left: 4px solid #667eea; }
+        .btn { background: #667eea; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 5px; }
+        .btn:hover { background: #5a6fd8; }
+        .status { padding: 15px; border-radius: 5px; margin-bottom: 15px; }
+        .status.success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .status.error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .code { background: #f8f9fa; padding: 10px; border-radius: 5px; font-family: monospace; margin: 10px 0; }
+        .highlight { background: #fff3cd; padding: 15px; border-radius: 5px; border-left: 4px solid #ffc107; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📧 Gmail Setup for Verification Codes</h1>
+            <p>Complete guide to send verification codes directly to Gmail</p>
+        </div>
+
+        <div class="section">
+            <h2>🎯 Current Status</h2>
+            <div class="status success">
+                <strong>✅ Gmail SMTP System Ready!</strong><br>
+                - Dedicated Gmail SMTP function created<br>
+                - Registration system updated<br>
+                - Verification codes will be sent to user's Gmail<br>
+                - File backup system in place
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔑 Step-by-Step Gmail Setup</h2>
+            
+            <div class="step">
+                <h3>Step 1: Enable 2-Factor Authentication</h3>
+                <p>Go to your Google Account security settings:</p>
+                <a href="https://myaccount.google.com/security" target="_blank" class="btn">Open Google Account Security</a>
+                <ol>
+                    <li>Click on "2-Step Verification"</li>
+                    <li>Follow the setup process if not already enabled</li>
+                    <li><strong>Make sure it's turned ON</strong></li>
+                </ol>
+            </div>
+
+            <div class="step">
+                <h3>Step 2: Generate App Password</h3>
+                <p>Create a new App Password for MathEase:</p>
+                <a href="https://myaccount.google.com/apppasswords" target="_blank" class="btn">Open App Passwords</a>
+                <ol>
+                    <li>Select "Mail" as the app type</li>
+                    <li>Select "Other (custom name)"</li>
+                    <li>Enter "MathEase" as the name</li>
+                    <li>Click "Generate"</li>
+                    <li><strong>Copy the 16-character password</strong> (no spaces)</li>
+                </ol>
+            </div>
+
+            <div class="step">
+                <h3>Step 3: Update Configuration</h3>
+                <p>Update your <code>php/config.php</code> file:</p>
+                <div class="code">
+                    define('MAIL_PASSWORD', getenv('MAIL_PASSWORD') ?: 'YOUR_NEW_16_CHAR_PASSWORD');
+                </div>
+                <p><strong>Important:</strong> Remove all spaces from the App Password!</p>
+            </div>
+
+            <div class="step">
+                <h3>Step 4: Test Gmail SMTP</h3>
+                <p>Test the Gmail SMTP configuration:</p>
+                <a href="gmail-smtp-test.php" class="btn">Test Gmail SMTP</a>
+                <p>Enter your Gmail address and click "Send Gmail Test Email"</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🧪 Testing Process</h2>
+            
+            <div class="highlight">
+                <h3>Quick Test Steps:</h3>
+                <ol>
+                    <li><strong>Generate App Password</strong> for matheasenc@gmail.com</li>
+                    <li><strong>Update php/config.php</strong> with new password</li>
+                    <li><strong>Go to Gmail SMTP Test</strong>: <a href="gmail-smtp-test.php">gmail-smtp-test.php</a></li>
+                    <li><strong>Enter your Gmail address</strong> and send test email</li>
+                    <li><strong>Check your Gmail inbox</strong> for the test email</li>
+                    <li><strong>Try registration</strong> to see verification codes in Gmail</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📧 How It Works Now</h2>
+            
+            <div class="step">
+                <h3>Registration Process:</h3>
+                <ol>
+                    <li>User registers with their email address</li>
+                    <li>System generates OTP code and verification link</li>
+                    <li><strong>Gmail SMTP sends verification email directly to user's Gmail</strong></li>
+                    <li>User receives email in their Gmail inbox</li>
+                    <li>User uses OTP code or clicks verification link</li>
+                    <li>Account is verified and user can login</li>
+                </ol>
+            </div>
+
+            <div class="step">
+                <h3>Fallback System:</h3>
+                <p>If Gmail SMTP fails for any reason:</p>
+                <ul>
+                    <li>Email is automatically saved to file</li>
+                    <li>User can view it at <a href="email-viewer.php">email-viewer.php</a></li>
+                    <li>Verification process continues normally</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔧 Troubleshooting</h2>
+            
+            <div class="step">
+                <h3>If Gmail Test Fails:</h3>
+                <ul>
+                    <li><strong>Check App Password:</strong> Make sure it's exactly 16 characters, no spaces</li>
+                    <li><strong>Verify 2FA:</strong> Ensure 2-Factor Authentication is enabled</li>
+                    <li><strong>Try Different Account:</strong> Use a different Gmail account</li>
+                    <li><strong>Check Logs:</strong> Look at server error logs for details</li>
+                </ul>
+            </div>
+
+            <div class="step">
+                <h3>Alternative Solutions:</h3>
+                <ul>
+                    <li><strong>Use File System:</strong> Continue using <a href="email-viewer.php">email-viewer.php</a></li>
+                    <li><strong>Different Gmail:</strong> Try with a personal Gmail account</li>
+                    <li><strong>Email Service:</strong> Consider SendGrid, Mailgun, or Amazon SES</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🚀 Ready to Test!</h2>
+            <p>Your Gmail SMTP system is ready. Follow these steps:</p>
+            
+            <div class="highlight">
+                <h3>Action Items:</h3>
+                <ol>
+                    <li>Generate Gmail App Password</li>
+                    <li>Update configuration</li>
+                    <li>Test Gmail SMTP</li>
+                    <li>Try user registration</li>
+                </ol>
+            </div>
+
+            <a href="gmail-smtp-test.php" class="btn">Test Gmail SMTP Now</a>
+            <a href="gmail-setup-guide.html" class="btn">Detailed Setup Guide</a>
+            <a href="email-viewer.php" class="btn">View Saved Emails</a>
+        </div>
+    </div>
+</body>
+</html>

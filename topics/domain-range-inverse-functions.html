@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domain and Range of Inverse Functions - General Mathematics 11 | MathEase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="domain-range-inverse-functions.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#667eea',
+                        'secondary': '#764ba2',
+                        'accent': '#f093fb',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-poppins bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="../index.html" class="flex items-center space-x-2">
+                        <img src="../css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-8 w-8">
+                        <span class="text-xl font-bold text-primary">MathEase</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="../dashboard.html" class="text-gray-700 hover:text-primary transition-colors">
+                        <i class="fas fa-home mr-2"></i>Dashboard
+                    </a>
+                    <a href="../topics.html" class="text-primary font-semibold">
+                        <i class="fas fa-book mr-2"></i>Topics
+                    </a>
+                    <span class="text-gray-600">
+                        <i class="fas fa-user mr-2"></i><span id="userName">Student</span>
+                    </span>
+                    <a href="../php/logout.php" class="text-gray-700 hover:text-red-600 transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="gradient-bg text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
+                    <i class="fas fa-exchange-alt mr-2"></i>
+                    <span class="font-semibold">General Mathematics 11</span>
+                </div>
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">Domain and Range of Inverse Functions</h1>
+                <p class="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto">
+                    Master the concepts of domain and range for inverse functions through interactive lessons aligned with DepEd MELCs 2025-2026
+                </p>
+                <div class="flex justify-center">
+                    <div class="bg-white/20 backdrop-blur-sm rounded-full px-8 py-3">
+                        <span class="text-lg font-semibold">4 Interactive Lessons</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Lesson Navigation -->
+        <div class="mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="1">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-undo text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 1</h3>
+                        <p class="text-sm text-gray-600">Understanding Inverse Functions</p>
+                    </div>
+                </button>
+                
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="2">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-search text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 2</h3>
+                        <p class="text-sm text-gray-600">Finding Domain of Inverse</p>
+                    </div>
+                </button>
+                
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="3">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-chart-bar text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 3</h3>
+                        <p class="text-sm text-gray-600">Finding Range of Inverse</p>
+                    </div>
+                </button>
+                
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="4">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-globe text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 4</h3>
+                        <p class="text-sm text-gray-600">Applications & Problem Solving</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Lesson Content -->
+        <div class="lesson-content">
+            <!-- Lesson 1: Understanding Inverse Functions -->
+            <section id="lesson1" class="lesson-section active">
+            <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-undo text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 1: Understanding Inverse Functions</h2>
+                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                        Learn what inverse functions are, how they relate to original functions, and the fundamental relationship between their domains and ranges.
+                    </p>
+                </div>
+                
+
+                    <!-- Learning Objectives -->
+                    <div class="bg-green-50 border-l-4 border-green-500 p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-target mr-2"></i>Learning Objectives
+                        </h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Define inverse function and its properties
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Understand the relationship between function and its inverse
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Identify one-to-one functions that have inverses
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Analyze the domain-range relationship in inverse functions
+                            </li>
+                        </ul>
+                    </div>
+
+                <!-- Detailed Explanation -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-book-open text-blue-500 mr-3"></i>What are Inverse Functions?
+                    </h3>
+                    
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Definition</h4>
+                        <p class="text-gray-700 mb-4 leading-relaxed">
+                            An <strong>inverse function</strong> is a function that "undoes" the action of another function. If f is a function, then its inverse function f⁻¹ satisfies the property that f⁻¹(f(x)) = x and f(f⁻¹(x)) = x for all x in their respective domains.
+                        </p>
+                        <div class="bg-white rounded-lg p-6 shadow-md mb-4">
+                            <div class="text-center">
+                                <span class="text-2xl font-bold text-primary">f⁻¹(f(x)) = x and f(f⁻¹(x)) = x</span>
+                            </div>
+                            <p class="text-sm text-gray-600 mt-2 text-center">
+                                where f⁻¹ is the inverse function of f
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Key Properties of Inverse Functions</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h5 class="font-semibold text-gray-800 mb-3">
+                                    <i class="fas fa-exchange-alt text-blue-500 mr-2"></i>Domain-Range Swap
+                                </h5>
+                                <p class="text-gray-700 text-sm">
+                                    The domain of f becomes the range of f⁻¹, and the range of f becomes the domain of f⁻¹.
+                                </p>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h5 class="font-semibold text-gray-800 mb-3">
+                                    <i class="fas fa-chart-line text-green-500 mr-2"></i>Graph Reflection
+                                </h5>
+                                <p class="text-gray-700 text-sm">
+                                    The graph of f⁻¹ is the reflection of the graph of f across the line y = x.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Conditions for Inverse Functions</h4>
+                        <div class="space-y-4">
+                            <div class="bg-white rounded-lg p-4 shadow-md">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <span class="text-lg font-semibold text-gray-800">One-to-One Function</span>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-sm text-gray-500">Required for inverse</span>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-gray-600 mt-2">A function must be one-to-one (injective) to have an inverse. This means each output corresponds to exactly one input.</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow-md">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <span class="text-lg font-semibold text-gray-800">Horizontal Line Test</span>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-sm text-gray-500">Verification method</span>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-gray-600 mt-2">If any horizontal line intersects the graph of a function at most once, then the function is one-to-one and has an inverse.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Examples -->
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-lightbulb text-green-500 mr-3"></i>Worked Examples
+                    </h3>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-lg p-6 shadow-md">
+                            <h4 class="text-lg font-semibold text-gray-800 mb-4">Example 1: Linear Function</h4>
+                            <p class="text-gray-700 mb-4">
+                                Find the inverse of f(x) = 2x + 3 and determine the relationship between their domains and ranges.
+                            </p>
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <p class="text-gray-700 mb-2"><strong>Solution:</strong></p>
+                                <p class="text-gray-700 mb-2">Step 1: Replace f(x) with y: y = 2x + 3</p>
+                                <p class="text-gray-700 mb-2">Step 2: Swap x and y: x = 2y + 3</p>
+                                <p class="text-gray-700 mb-2">Step 3: Solve for y: y = (x - 3)/2</p>
+                                <p class="text-gray-700 mb-2">Therefore: f⁻¹(x) = (x - 3)/2</p>
+                                <p class="text-gray-700"><strong>Domain of f:</strong> All real numbers</p>
+                                <p class="text-gray-700"><strong>Range of f:</strong> All real numbers</p>
+                                <p class="text-gray-700"><strong>Domain of f⁻¹:</strong> All real numbers (same as range of f)</p>
+                                <p class="text-gray-600 text-sm mt-2"><strong>Range of f⁻¹:</strong> All real numbers (same as domain of f)</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 shadow-md">
+                            <h4 class="text-lg font-semibold text-gray-800 mb-4">Example 2: Quadratic Function (Restricted)</h4>
+                            <p class="text-gray-700 mb-4">
+                                Find the inverse of f(x) = x² for x ≥ 0 and analyze the domain-range relationship.
+                            </p>
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <p class="text-gray-700 mb-2"><strong>Solution:</strong></p>
+                                <p class="text-gray-700 mb-2">Step 1: Replace f(x) with y: y = x², x ≥ 0</p>
+                                <p class="text-gray-700 mb-2">Step 2: Swap x and y: x = y², y ≥ 0</p>
+                                <p class="text-gray-700 mb-2">Step 3: Solve for y: y = √x</p>
+                                <p class="text-gray-700 mb-2">Therefore: f⁻¹(x) = √x</p>
+                                <p class="text-gray-700"><strong>Domain of f:</strong> x ≥ 0</p>
+                                <p class="text-gray-700"><strong>Range of f:</strong> y ≥ 0</p>
+                                <p class="text-gray-700"><strong>Domain of f⁻¹:</strong> x ≥ 0 (same as range of f)</p>
+                                <p class="text-gray-600 text-sm mt-2"><strong>Range of f⁻¹:</strong> y ≥ 0 (same as domain of f)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Virtual Aid: Inverse Function Analyzer -->
+                <div class="virtual-aid rounded-2xl p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                        <i class="fas fa-cogs text-primary mr-3"></i>Inverse Function Analyzer
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Input Section -->
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Enter Function:</label>
+                                <input type="text" id="inverseFunctionInput" placeholder="e.g., 2x+3" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Domain Restriction (optional):</label>
+                                <input type="text" id="domainRestrictionInput" placeholder="e.g., x≥0" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <button onclick="analyzeInverseFunction()" 
+                                    class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105">
+                                <i class="fas fa-search mr-2"></i>Analyze Inverse Function
+                            </button>
+                        </div>
+                        
+                        <!-- Results Section -->
+                        <div class="space-y-4">
+                            <div id="originalFunctionDisplay" class="bg-white rounded-lg p-4 shadow-md">
+                                <h4 class="font-semibold text-gray-800 mb-2">Original Function:</h4>
+                                <div class="text-lg font-mono text-primary">f(x) = </div>
+                            </div>
+                            <div id="inverseFunctionDisplay" class="bg-white rounded-lg p-4 shadow-md">
+                                <h4 class="font-semibold text-gray-800 mb-2">Inverse Function:</h4>
+                                <div class="text-gray-700">Enter a function to analyze</div>
+                            </div>
+                            <div id="domainRangeAnalysis" class="bg-white rounded-lg p-4 shadow-md">
+                                <h4 class="font-semibold text-gray-800 mb-2">Domain-Range Analysis:</h4>
+                                <div class="text-gray-700">Enter a function to analyze</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lesson 2: Finding Domain of Inverse -->
+        <section id="lesson2" class="lesson-section">
+            <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-search text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 2: Finding Domain of Inverse Functions</h2>
+                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                        Learn systematic methods for determining the domain of inverse functions and understand the relationship with the original function's range.
+                    </p>
+                </div>
+                
+                <!-- Learning Objectives -->
+                <div class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                        <i class="fas fa-target mr-2"></i>Learning Objectives (MELC: M11GM-Ib-2)
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Determine the domain of inverse functions
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Understand the domain-range relationship
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Apply systematic methods to find inverse domains
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Express domains in proper notation
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Detailed Explanation -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-search text-blue-500 mr-3"></i>Finding Domain of Inverse Functions
+                    </h3>
+                    
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Fundamental Relationship</h4>
+                        <p class="text-gray-700 mb-4 leading-relaxed">
+                            The <strong>domain of f⁻¹</strong> is equal to the <strong>range of f</strong>. This is because the inverse function takes outputs from the original function as its inputs.
+                        </p>
+                        <div class="bg-white rounded-lg p-6 shadow-md mb-4">
+                            <div class="text-center">
+                                <span class="text-2xl font-bold text-primary">Domain of f⁻¹ = Range of f</span>
+                            </div>
+                            <p class="text-sm text-gray-600 mt-2 text-center">
+                                This relationship is fundamental to understanding inverse functions
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Step-by-Step Process</h4>
+                        <div class="space-y-4">
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h5 class="font-semibold text-gray-800 mb-3">
+                                    <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">1</span>
+                                    Find the Range of Original Function
+                                </h5>
+                                <p class="text-gray-700">Determine all possible output values of the original function f(x).</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h5 class="font-semibold text-gray-800 mb-3">
+                                    <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">2</span>
+                                    Apply Domain-Range Relationship
+                                </h5>
+                                <p class="text-gray-700">The domain of f⁻¹ is exactly the range of f.</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h5 class="font-semibold text-gray-800 mb-3">
+                                    <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">3</span>
+                                    Consider Restrictions
+                                </h5>
+                                <p class="text-gray-700">Apply any additional restrictions based on the context or problem requirements.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Common Domain Patterns</h4>
+                        <div class="space-y-4">
+                            <div class="bg-white rounded-lg p-4 shadow-md">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <span class="text-lg font-semibold text-gray-800">f(x) = 2x + 3</span>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-sm text-gray-500">Domain of f⁻¹: All real numbers</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow-md">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <span class="text-lg font-semibold text-gray-800">f(x) = x², x ≥ 0</span>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-sm text-gray-500">Domain of f⁻¹: x ≥ 0</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow-md">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <span class="text-lg font-semibold text-gray-800">f(x) = 1/x</span>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-sm text-gray-500">Domain of f⁻¹: x ≠ 0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Virtual Aid: Domain Finder -->
+                <div class="virtual-aid rounded-2xl p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                        <i class="fas fa-search text-primary mr-3"></i>Domain of Inverse Function Finder
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Input Section -->
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Enter Original Function:</label>
+                                <input type="text" id="domainOriginalFunction" placeholder="e.g., x²" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Domain of Original Function:</label>
+                                <input type="text" id="originalDomain" placeholder="e.g., x≥0" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <button onclick="findInverseDomain()" 
+                                    class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105">
+                                <i class="fas fa-search mr-2"></i>Find Domain of Inverse
+                            </button>
+                        </div>
+                        
+                        <!-- Results Section -->
+                        <div class="space-y-4">
+                            <div id="originalFunctionInfo" class="bg-white rounded-lg p-4 shadow-md">
+                                <h4 class="font-semibold text-gray-800 mb-2">Original Function:</h4>
+                                <div class="text-gray-700">Enter a function to analyze</div>
+                            </div>
+                            <div id="rangeOfOriginal" class="bg-white rounded-lg p-4 shadow-md">
+                                <h4 class="font-semibold text-gray-800 mb-2">Range of Original Function:</h4>
+                                <div class="text-gray-700">Enter a function to analyze</div>
+                            </div>
+                            <div id="domainOfInverse" class="bg-white rounded-lg p-4 shadow-md">
+                                <h4 class="font-semibold text-gray-800 mb-2">Domain of Inverse Function:</h4>
+                                <div class="text-gray-700">Enter a function to analyze</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lesson 3: Finding Range of Inverse -->
+        <section id="lesson3" class="lesson-section">
+            <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-chart-bar text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 3: Finding Range of Inverse Functions</h2>
+                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                        Learn how to determine the range of inverse functions and understand how it relates to the original function's domain.
+                    </p>
+                </div>
+                
+                <!-- Learning Objectives -->
+                <div class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                        <i class="fas fa-target mr-2"></i>Learning Objectives (MELC: M11GM-Ib-2)
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Determine the range of inverse functions
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Apply the range-domain relationship
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Use systematic methods for range analysis
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Express ranges in proper notation
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Detailed Explanation -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-chart-bar text-blue-500 mr-3"></i>Finding Range of Inverse Functions
+                    </h3>
+                    
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Fundamental Relationship</h4>
+                        <p class="text-gray-700 mb-4 leading-relaxed">
+                            The <strong>range of f⁻¹</strong> is equal to the <strong>domain of f</strong>. This is because the inverse function produces outputs that correspond to the inputs of the original function.
+                        </p>
+                        <div class="bg-white rounded-lg p-6 shadow-md mb-4">
+                            <div class="text-center">
+                                <span class="text-2xl font-bold text-primary">Range of f⁻¹ = Domain of f</span>
+                            </div>
+                            <p class="text-sm text-gray-600 mt-2 text-center">
+                                This relationship is the complement to the domain-range relationship
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Step-by-Step Process</h4>
+                        <div class="space-y-4">
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h5 class="font-semibold text-gray-800 mb-3">
+                                    <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">1</span>
+                                    Identify the Domain of Original Function
+                                </h5>
+                                <p class="text-gray-700">Determine all possible input values of the original function f(x).</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h5 class="font-semibold text-gray-800 mb-3">
+                                    <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">2</span>
+                                    Apply Range-Domain Relationship
+                                </h5>
+                                <p class="text-gray-700">The range of f⁻¹ is exactly the domain of f.</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h5 class="font-semibold text-gray-800 mb-3">
+                                    <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">3</span>
+                                    Verify with Function Analysis
+                                </h5>
+                                <p class="text-gray-700">Confirm the range by analyzing the behavior of the inverse function.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Common Range Patterns</h4>
+                        <div class="space-y-4">
+                            <div class="bg-white rounded-lg p-4 shadow-md">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <span class="text-lg font-semibold text-gray-800">f(x) = 2x + 3</span>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-sm text-gray-500">Range of f⁻¹: All real numbers</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow-md">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <span class="text-lg font-semibold text-gray-800">f(x) = x², x ≥ 0</span>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-sm text-gray-500">Range of f⁻¹: y ≥ 0</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow-md">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <span class="text-lg font-semibold text-gray-800">f(x) = 1/x, x > 0</span>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-sm text-gray-500">Range of f⁻¹: y > 0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Virtual Aid: Range Finder -->
+                <div class="virtual-aid rounded-2xl p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                        <i class="fas fa-chart-line text-primary mr-3"></i>Range of Inverse Function Finder
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Input Section -->
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Enter Original Function:</label>
+                                <input type="text" id="rangeOriginalFunction" placeholder="e.g., x²" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Domain of Original Function:</label>
+                                <input type="text" id="rangeOriginalDomain" placeholder="e.g., x≥0" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <button onclick="findInverseRange()" 
+                                    class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105">
+                                <i class="fas fa-chart-line mr-2"></i>Find Range of Inverse
+                            </button>
+                        </div>
+                        
+                        <!-- Results Section -->
+                        <div class="space-y-4">
+                            <div id="rangeOriginalFunctionInfo" class="bg-white rounded-lg p-4 shadow-md">
+                                <h4 class="font-semibold text-gray-800 mb-2">Original Function:</h4>
+                                <div class="text-gray-700">Enter a function to analyze</div>
+                            </div>
+                            <div id="domainOfOriginal" class="bg-white rounded-lg p-4 shadow-md">
+                                <h4 class="font-semibold text-gray-800 mb-2">Domain of Original Function:</h4>
+                                <div class="text-gray-700">Enter a function to analyze</div>
+                            </div>
+                            <div id="rangeOfInverse" class="bg-white rounded-lg p-4 shadow-md">
+                                <h4 class="font-semibold text-gray-800 mb-2">Range of Inverse Function:</h4>
+                                <div class="text-gray-700">Enter a function to analyze</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lesson 4: Applications & Problem Solving -->
+        <section id="lesson4" class="lesson-section">
+            <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-globe text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 4: Applications & Problem Solving</h2>
+                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                        Apply domain and range concepts of inverse functions to solve real-world problems in various fields including physics, economics, and engineering.
+                    </p>
+                </div>
+                
+                <!-- Learning Objectives -->
+                <div class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                        <i class="fas fa-target mr-2"></i>Learning Objectives (MELC: M11GM-Ib-2)
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Apply inverse function concepts to real-world problems
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Interpret domain and range in practical contexts
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Solve optimization problems using inverse functions
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Analyze inverse relationships in applied situations
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Detailed Explanation -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-globe text-blue-500 mr-3"></i>Real-World Applications
+                    </h3>
+                    
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Physics Applications</h4>
+                        <div class="space-y-4">
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h5 class="font-semibold text-gray-800 mb-3">
+                                    <i class="fas fa-thermometer-half text-red-500 mr-2"></i>Temperature Conversion
+                                </h5>
+                                <p class="text-gray-700 mb-3">Converting between Celsius and Fahrenheit: F = (9/5)C + 32 and C = (5/9)(F - 32)</p>
+                                <div class="bg-gray-50 rounded p-4">
+                                    <p class="text-sm text-gray-600"><strong>Domain of F(C):</strong> All real numbers</p>
+                                    <p class="text-sm text-gray-600"><strong>Range of F(C):</strong> All real numbers</p>
+                                    <p class="text-sm text-gray-600"><strong>Domain of C(F):</strong> All real numbers (same as range of F)</p>
+                                    <p class="text-sm text-gray-600"><strong>Range of C(F):</strong> All real numbers (same as domain of F)</p>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h5 class="font-semibold text-gray-800 mb-3">
+                                    <i class="fas fa-weight text-blue-500 mr-2"></i>Kinetic Energy and Velocity
+                                </h5>
+                                <p class="text-gray-700 mb-3">KE = (1/2)mv² and v = √(2KE/m) for velocity from kinetic energy</p>
+                                <div class="bg-gray-50 rounded p-4">
+                                    <p class="text-sm text-gray-600"><strong>Domain of v(KE):</strong> KE ≥ 0 (non-negative kinetic energy)</p>
+                                    <p class="text-sm text-gray-600"><strong>Range of v(KE):</strong> v ≥ 0 (non-negative velocity)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Economics Applications</h4>
+                        <div class="space-y-4">
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h5 class="font-semibold text-gray-800 mb-3">
+                                    <i class="fas fa-chart-line text-green-500 mr-2"></i>Supply and Demand
+                                </h5>
+                                <p class="text-gray-700 mb-3">Price as a function of quantity: P = f(Q) and quantity as a function of price: Q = f⁻¹(P)</p>
+                                <div class="bg-gray-50 rounded p-4">
+                                    <p class="text-sm text-gray-600"><strong>Domain of Q(P):</strong> P ≥ 0 (non-negative prices)</p>
+                                    <p class="text-sm text-gray-600"><strong>Range of Q(P):</strong> Q ≥ 0 (non-negative quantities)</p>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h5 class="font-semibold text-gray-800 mb-3">
+                                    <i class="fas fa-percentage text-purple-500 mr-2"></i>Interest Rate Calculations
+                                </h5>
+                                <p class="text-gray-700 mb-3">Compound interest: A = P(1 + r)ᵗ and solving for rate: r = (A/P)^(1/t) - 1</p>
+                                <div class="bg-gray-50 rounded p-4">
+                                    <p class="text-sm text-gray-600"><strong>Domain of r(A):</strong> A > P (amount greater than principal)</p>
+                                    <p class="text-sm text-gray-600"><strong>Range of r(A):</strong> r > 0 (positive interest rates)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Engineering Applications</h4>
+                        <div class="space-y-4">
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h5 class="font-semibold text-gray-800 mb-3">
+                                    <i class="fas fa-cog text-gray-500 mr-2"></i>Signal Processing
+                                </h5>
+                                <p class="text-gray-700 mb-3">Frequency and wavelength relationship: f = c/λ and λ = c/f</p>
+                                <div class="bg-gray-50 rounded p-4">
+                                    <p class="text-sm text-gray-600"><strong>Domain of λ(f):</strong> f > 0 (positive frequencies)</p>
+                                    <p class="text-sm text-gray-600"><strong>Range of λ(f):</strong> λ > 0 (positive wavelengths)</p>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h5 class="font-semibold text-gray-800 mb-3">
+                                    <i class="fas fa-car text-red-500 mr-2"></i>Vehicle Performance
+                                </h5>
+                                <p class="text-gray-700 mb-3">Speed and fuel consumption: C = f(v) and optimal speed: v = f⁻¹(min C)</p>
+                                <div class="bg-gray-50 rounded p-4">
+                                    <p class="text-sm text-gray-600"><strong>Domain of v(C):</strong> C > 0 (positive fuel consumption)</p>
+                                    <p class="text-sm text-gray-600"><strong>Range of v(C):</strong> v > 0 (positive speeds)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Virtual Aid: Application Problem Solver -->
+                <div class="virtual-aid rounded-2xl p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                        <i class="fas fa-calculator text-primary mr-3"></i>Inverse Function Application Solver
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Problem Selection -->
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Select Application Type:</label>
+                                <select id="inverseApplicationType" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <option value="">Choose an application...</option>
+                                    <option value="temperature">Temperature Conversion</option>
+                                    <option value="kinetic">Kinetic Energy</option>
+                                    <option value="supply">Supply and Demand</option>
+                                    <option value="interest">Interest Rate</option>
+                                    <option value="signal">Signal Processing</option>
+                                    <option value="vehicle">Vehicle Performance</option>
+                                </select>
+                            </div>
+                            <div id="inverseApplicationInputs" class="space-y-4">
+                                <!-- Dynamic inputs will be populated here -->
+                            </div>
+                            <button onclick="solveInverseApplicationProblem()" 
+                                    class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105">
+                                <i class="fas fa-calculator mr-2"></i>Solve Problem
+                            </button>
+                        </div>
+                        
+                        <!-- Solution Display -->
+                        <div class="space-y-4">
+                            <div id="inverseApplicationDescription" class="bg-white rounded-lg p-4 shadow-md">
+                                <h4 class="font-semibold text-gray-800 mb-2">Problem Description:</h4>
+                                <div class="text-gray-700">Select an application type to see the description</div>
+                            </div>
+                            <div id="inverseDomainAnalysis" class="bg-white rounded-lg p-4 shadow-md">
+                                <h4 class="font-semibold text-gray-800 mb-2">Domain Analysis:</h4>
+                                <div class="text-gray-700">Enter values and click solve to see domain analysis</div>
+                            </div>
+                            <div id="inverseRangeAnalysis" class="bg-white rounded-lg p-4 shadow-md">
+                                <h4 class="font-semibold text-gray-800 mb-2">Range Analysis:</h4>
+                                <div class="text-gray-700">Enter values and click solve to see range analysis</div>
+                            </div>
+                            <div id="inversePracticalImplications" class="bg-white rounded-lg p-4 shadow-md">
+                                <h4 class="font-semibold text-gray-800 mb-2">Practical Implications:</h4>
+                                <div class="text-gray-700">Solution will appear here</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="flex items-center justify-center space-x-2 mb-4">
+                    <img src="../css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-8 w-8">
+                    <span class="text-2xl font-bold">MathEase</span>
+                </div>
+                <p class="text-gray-400 text-sm">Empowering Grade 11 STEM students to master General Mathematics through interactive learning and personalized progress tracking.</p>
+             
+            </div>
+        </div>
+    </footer>
+
+    <script src="domain-range-inverse-functions.js"></script>
+</body>
+</html>

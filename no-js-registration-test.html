@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>No-JS Registration Test - MathEase</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="register-page">
+    <section class="auth-section" style="padding-top:60px;">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h2>No-JS Registration Test</h2>
+                    <p>This form bypasses all JavaScript validation</p>
+                </div>
+
+                <form class="auth-form" id="no-js-register-form" action="php/register.php" method="POST">
+                    <div class="form-columns">
+                        <div class="form-column form-column-left">
+                            <div class="form-group">
+                                <label for="firstName">First Name</label>
+                                <div class="input-group">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" id="firstName" name="firstName" value="John" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="lastName">Last Name</label>
+                                <div class="input-group">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" id="lastName" name="lastName" value="Doe" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <div class="input-group">
+                                    <i class="fas fa-envelope"></i>
+                                    <input type="email" id="email" name="email" value="test@example.com" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="lrn">LRN (Learner Reference Number)</label>
+                                <div class="input-group">
+                                    <i class="fas fa-id-card"></i>
+                                    <input type="text" id="lrn" name="lrn" value="123456789012" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-column form-column-right">
+                            <div class="form-group">
+                                <label for="gradeLevel">Grade Level</label>
+                                <div class="input-group">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    <select id="gradeLevel" name="gradeLevel" required>
+                                        <option value="11" selected>Grade 11</option>
+                                        <option value="12">Grade 12</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="strand">Strand</label>
+                                <div class="input-group">
+                                    <i class="fas fa-book"></i>
+                                    <select id="strand" name="strand" required>
+                                        <option value="STEM" selected>STEM</option>
+                                        <option value="ABM">ABM</option>
+                                        <option value="HUMSS">HUMSS</option>
+                                        <option value="GAS">GAS</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <div class="input-group">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="password" name="password" value="testpassword123" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm Password</label>
+                                <div class="input-group">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="confirmPassword" name="confirmPassword" value="testpassword123" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-full">
+                            <i class="fas fa-user-plus"></i>
+                            Test Registration (No JavaScript)
+                        </button>
+                    </div>
+                </form>
+
+                <div class="auth-footer">
+                    <p><a href="form-debug-test.html">Debug Form Test</a> | <a href="register.html">Back to Register</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

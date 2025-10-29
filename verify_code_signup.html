@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Account - MathEase</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="register-page">
+    <section class="auth-section" style="padding-top:60px;">
+        <div class="auth-container">
+            <div class="auth-card" id="verifyContainer">
+                <div class="auth-header">
+                    <div class="auth-logo">
+                        <img src="css/nav-logo/logo-mid.png" alt="MathEase Logo" class="auth-logo-img">
+                        <h1>MathEase</h1>
+                    </div>
+                    <h2>Verify your Account</h2>
+                    <p>Please check your email and click the verification link to activate your account.</p>
+                </div>
+
+                <div class="auth-form">
+                    <div class="verification-instructions">
+                        <div class="instruction-step">
+                            <div class="step-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="step-content">
+                                <h3>Check Your Email</h3>
+                                <p>We've sent a verification link to your email address.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="instruction-step">
+                            <div class="step-icon">
+                                <i class="fas fa-link"></i>
+                            </div>
+                            <div class="step-content">
+                                <h3>Click the Link</h3>
+                                <p>Open the email and click the "Verify Account" button or link.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="instruction-step">
+                            <div class="step-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="step-content">
+                                <h3>Account Activated</h3>
+                                <p>Once verified, you can sign in to your MathEase account.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button class="btn btn-outline" id="resendEmailBtn">Resend Email</button>
+                        <button class="btn btn-primary" id="checkEmailBtn">I've Verified My Email</button>
+                    </div>
+                    
+                    <div id="verificationMessage" style="color:#666;margin-bottom:0.5rem;font-size:0.95rem;"></div>
+                </div>
+
+                <div class="auth-footer">
+                    <p>Didn't receive the email? Check your spam folder or <a href="#" id="resendLink">resend verification email</a></p>
+                    <p>Return to <a href="login.html">Sign in</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .verification-instructions {
+            margin: 2rem 0;
+        }
+        
+        .instruction-step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .step-icon {
+            margin-right: 1rem;
+            margin-top: 0.25rem;
+        }
+        
+        .step-icon i {
+            font-size: 1.5rem;
+            color: #667eea;
+        }
+        
+        .step-content h3 {
+            margin: 0 0 0.5rem 0;
+            color: #333;
+            font-size: 1.1rem;
+        }
+        
+        .step-content p {
+            margin: 0;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .auth-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        
+        .auth-logo-img {
+            width: 40px;
+            height: 40px;
+            margin-right: 0.5rem;
+        }
+        
+        .auth-logo h1 {
+            margin: 0;
+            color: #667eea;
+            font-size: 1.5rem;
+        }
+    </style>
+
+    <script src="js/verify-signup.js"></script>
+</body>
+</html>

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Interest - MathEase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="operations-on-functions.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#667eea',
+                        'secondary': '#764ba2',
+                        'accent': '#f093fb',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-poppins bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="../index.html" class="flex items-center space-x-2">
+                        <img src="../css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-8 w-8">
+                        <span class="text-xl font-bold text-primary">MathEase</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="../dashboard.html" class="text-gray-700 hover:text-primary transition-colors">
+                        <i class="fas fa-home mr-2"></i>Dashboard
+                    </a>
+                    <a href="../topics.html" class="text-primary font-semibold">
+                        <i class="fas fa-book mr-2"></i>Topics
+                    </a>
+                    <span class="text-gray-600">
+                        <i class="fas fa-user mr-2"></i><span id="userName">Student</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="gradient-bg text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
+                    <i class="fas fa-percent mr-2"></i>
+                    <span class="font-semibold">General Mathematics 11</span>
+                </div>
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">Simple Interest</h1>
+                <p class="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto">
+                    Master simple interest through interactive lessons aligned with DepEd MELCs 2025-2026
+                </p>
+                <div class="flex justify-center">
+                    <div class="bg-white/20 backdrop-blur-sm rounded-full px-8 py-3">
+                        <span class="text-lg font-semibold">5 Interactive Lessons</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Lesson Navigation -->
+        <div class="mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="1">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-book-open text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 1</h3>
+                        <p class="text-sm text-gray-600">Introduction</p>
+                    </div>
+                </button>
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="2">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-calculator text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 2</h3>
+                        <p class="text-sm text-gray-600">I = P × R × T</p>
+                    </div>
+                </button>
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="3">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-search text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 3</h3>
+                        <p class="text-sm text-gray-600">Solve P, R, or T</p>
+                    </div>
+                </button>
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="4">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-briefcase text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 4</h3>
+                        <p class="text-sm text-gray-600">Applications</p>
+                    </div>
+                </button>
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="5">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-tasks text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 5</h3>
+                        <p class="text-sm text-gray-600">Practice/Quiz</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Lesson Content Container -->
+        <div class="lesson-content">
+            <!-- Lesson 1 -->
+            <section id="lesson1" class="lesson-section active">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-book-open text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 1: Introduction to Simple Interest</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">Understand the concept, where it is used, and the core formula structure.</p>
+                    </div>
+
+                    <!-- Existing content (explanation + example) moved here -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                        <div class="bg-white rounded-lg p-6 shadow-lg">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-info-circle text-green-500 mr-2"></i>What is Simple Interest?
+                            </h4>
+                            <p class="text-gray-700 mb-4">Simple interest is calculated only on the principal amount.</p>
+                            <div class="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                                <p class="text-sm text-gray-600 mb-2">Formula:</p>
+                                <p class="text-lg font-mono text-primary">I = P × R × T</p>
+                                <p class="text-sm text-gray-600 mt-2">P = Principal, R = Rate per year, T = Time in years</p>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg p-6 shadow-lg">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>When is it used?
+                            </h4>
+                            <ul class="list-disc list-inside text-gray-700 space-y-2">
+                                <li>Short-term loans</li>
+                                <li>Basic savings computations</li>
+                                <li>Discounted bills and notes</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Calculator (virtual aid) remains below -->
+                    <!-- Interactive Virtual Aid: Simple Interest Calculator -->
+                    <!-- (kept as previously inserted) -->
+                </div>
+
+                <!-- Navigation controls for lesson 1 -->
+                <div class="flex justify-between items-center mb-8">
+                    <button id="prevLessonBtn" onclick="navigateLesson(-1)" 
+                            class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-chevron-left mr-2"></i>
+                        Previous Lesson
+                    </button>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-center">
+                            <div class="text-lg font-semibold text-primary">
+                                <span id="currentLessonNum">1</span> of 5
+                            </div>
+                        </div>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 20%"></div>
+                        </div>
+                    </div>
+                    <button id="nextLessonBtn" onclick="navigateLesson(1)" 
+                            class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        Next Lesson
+                        <i class="fas fa-chevron-right ml-2"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Placeholder Lessons 2-5 (locked/coming soon content) -->
+            <section id="lesson2" class="lesson-section">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-calculator text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 2: Using I = P × R × T</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">Compute interest (I) and amount (A) given principal, annual rate, and time in years.</p>
+                    </div>
+
+                    <div class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-2"><i class="fas fa-graduation-cap text-primary mr-2"></i>DepEd MELCs 2025-2026 Alignment</h3>
+                        <p class="text-gray-700">GM11-IIa-1: Solves problems involving simple interest</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                        <div class="bg-white rounded-lg p-6 shadow-lg">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4"><i class="fas fa-equals text-green-500 mr-2"></i>Step-by-step</h4>
+                            <ol class="text-gray-700 space-y-2 list-decimal list-inside">
+                                <li>Convert rate R% to decimal r = R / 100</li>
+                                <li>Compute I = P × r × T</li>
+                                <li>Compute A = P + I</li>
+                            </ol>
+                        </div>
+                        <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border-l-4 border-green-500">
+                            <h5 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-calculator text-green-500 mr-2"></i>Example
+                            </h5>
+                            <p class="text-gray-700">P = 15,000, R = 7%, T = 1.5 years</p>
+                            <div class="bg-white rounded-lg p-4 mt-3 font-mono text-gray-800 space-y-1">
+                                <div>r = 0.07</div>
+                                <div>I = 15000 × 0.07 × 1.5 = 1,575</div>
+                                <div>A = 15000 + 1575 = 16,575</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3"><i class="fas fa-exclamation-triangle text-orange-500 mr-2"></i>Common Pitfalls</h3>
+                        <ul class="text-gray-700 list-disc list-inside space-y-1">
+                            <li>For months, convert T to years (e.g., 6 months = 0.5 years)</li>
+                            <li>Always convert R% to decimal</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8 text-center">
+                        <p class="text-gray-600 mb-4">Mark this lesson as completed to track your progress and unlock the next lesson.</p>
+                        <button onclick="completeLesson(2)" class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold">
+                            <i class="fas fa-check mr-2"></i>Mark as Complete
+                        </button>
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                        <button id="prevLessonBtn" onclick="navigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fas fa-chevron-left mr-2"></i>Previous Lesson
+                        </button>
+                        <div class="flex items-center space-x-4">
+                            <div class="text-lg font-semibold text-primary"><span id="currentLessonNum">2</span> of 5</div>
+                            <div class="w-32 bg-gray-200 rounded-full h-2"><div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 40%"></div></div>
+                        </div>
+                        <button id="nextLessonBtn" onclick="navigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Next Lesson<i class="fas fa-chevron-right ml-2"></i></button>
+                    </div>
+                </div>
+            </section>
+            <section id="lesson3" class="lesson-section">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-search text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 3: Solving for Unknowns</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">Rearrange the formula to solve for P, R, or T given the other values.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-white rounded-lg p-6 shadow-lg">
+                            <h4 class="font-semibold text-gray-800 mb-2">Solve for P</h4>
+                            <p class="text-sm text-gray-700">P = I / (R × T)</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-6 shadow-lg">
+                            <h4 class="font-semibold text-gray-800 mb-2">Solve for R</h4>
+                            <p class="text-sm text-gray-700">R = I / (P × T)</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-6 shadow-lg">
+                            <h4 class="font-semibold text-gray-800 mb-2">Solve for T</h4>
+                            <p class="text-sm text-gray-700">T = I / (P × R)</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8 text-center">
+                        <p class="text-gray-600 mb-4">Mark this lesson as completed to track your progress and unlock the next lesson.</p>
+                        <button onclick="completeLesson(3)" class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold">
+                            <i class="fas fa-check mr-2"></i>Mark as Complete
+                        </button>
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                        <button id="prevLessonBtn" onclick="navigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"><i class="fas fa-chevron-left mr-2"></i>Previous Lesson</button>
+                        <div class="flex items-center space-x-4"><div class="text-lg font-semibold text-primary"><span id="currentLessonNum">3</span> of 5</div><div class="w-32 bg-gray-200 rounded-full h-2"><div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 60%"></div></div></div>
+                        <button id="nextLessonBtn" onclick="navigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Next Lesson<i class="fas fa-chevron-right ml-2"></i></button>
+                    </div>
+                </div>
+            </section>
+            <section id="lesson4" class="lesson-section">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-briefcase text-3xl"></i>
+                        </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 4: Real-World Applications</h2>
+                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">Loans, simple notes, bank discounts, and basic investments.</p>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-6 shadow-lg mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4"><i class="fas fa-university text-blue-500 mr-2"></i>Bank Discount (Simple Discount)</h4>
+                        <p class="text-gray-700">D = M × d × t, Proceeds = M − D, where M is maturity value.</p>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8 text-center">
+                        <p class="text-gray-600 mb-4">Mark this lesson as completed to track your progress and unlock the next lesson.</p>
+                        <button onclick="completeLesson(4)" class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold"><i class="fas fa-check mr-2"></i>Mark as Complete</button>
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                        <button id="prevLessonBtn" onclick="navigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"><i class="fas fa-chevron-left mr-2"></i>Previous Lesson</button>
+                        <div class="flex items-center space-x-4"><div class="text-lg font-semibold text-primary"><span id="currentLessonNum">4</span> of 5</div><div class="w-32 bg-gray-200 rounded-full h-2"><div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 80%"></div></div></div>
+                        <button id="nextLessonBtn" onclick="navigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Next Lesson<i class="fas fa-chevron-right ml-2"></i></button>
+                    </div>
+                </div>
+            </section>
+            <section id="lesson5" class="lesson-section">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-tasks text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 5: Practice & Quiz</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">Work through practice problems; verify with the calculator.</p>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4"><i class="fas fa-pencil-alt text-orange-500 mr-2"></i>Practice</h3>
+                        <ul class="text-gray-700 space-y-2">
+                            <li>1) P = 8,000; R = 5%; T = 9 months → Find I and A</li>
+                            <li>2) I = 2,400; R = 12%; T = 2 years → Find P</li>
+                            <li>3) P = 10,000; I = 1,000; T = 1 year → Find R</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8 text-center">
+                        <p class="text-gray-600 mb-4">Mark this lesson as completed to finish the topic.</p>
+                        <button onclick="completeLesson(5)" class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold"><i class="fas fa-check mr-2"></i>Mark as Complete</button>
+                    </div>
+
+                    <div class="flex justify-between items-center">
+                        <button id="prevLessonBtn" onclick="navigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"><i class="fas fa-chevron-left mr-2"></i>Previous Lesson</button>
+                        <div class="flex items-center space-x-4"><div class="text-lg font-semibold text-primary"><span id="currentLessonNum">5</span> of 5</div><div class="w-32 bg-gray-200 rounded-full h-2"><div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 100%"></div></div></div>
+                        <button id="nextLessonBtn" onclick="navigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>Next Lesson<i class="fas fa-chevron-right ml-2"></i></button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        // Lesson navigation + completion (localStorage-based)
+        let currentLesson = 1;
+        const totalLessons = 5;
+        let completedLessons = new Set(JSON.parse(localStorage.getItem('si_completed_lessons') || '[]'));
+
+        function saveCompleted(){ localStorage.setItem('si_completed_lessons', JSON.stringify(Array.from(completedLessons))); }
+
+        function setCompleteButtonState(lessonNum){
+            const sec = document.getElementById(`lesson${lessonNum}`);
+            if (!sec) return;
+            const btn = sec.querySelector('button[onclick="completeLesson(' + lessonNum + ')"]');
+            if (!btn) return;
+            if (completedLessons.has(lessonNum)) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-check mr-2"></i>Completed';
+                btn.classList.remove('bg-emerald-500','hover:bg-emerald-600');
+                btn.classList.add('bg-gray-400');
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check mr-2"></i>Mark as Complete';
+                btn.classList.add('bg-emerald-500');
+                btn.classList.remove('bg-gray-400');
+            }
+        }
+
+        function updateLessonCompletionStatus(){
+            document.querySelectorAll('.lesson-nav-btn').forEach(btn=>{
+                const n = parseInt(btn.dataset.lesson);
+                const icon = btn.querySelector('.w-16');
+                if (!icon) return;
+                if (completedLessons.has(n)) {
+                    icon.innerHTML = '<i class="fas fa-check text-lg"></i>';
+                    icon.classList.remove('bg-gray-300','text-gray-600');
+                    icon.classList.add('bg-green-500','text-white');
+                } else {
+                    if (n === currentLesson) {
+                        icon.innerHTML = icon.innerHTML || '<i class="fas fa-book-open text-2xl"></i>';
+                        icon.classList.remove('bg-gray-300','text-gray-600','bg-green-500');
+                        icon.classList.add('bg-primary','text-white');
+                    } else {
+                        icon.classList.remove('bg-primary','text-white','bg-green-500');
+                        icon.classList.add('bg-gray-300','text-gray-600');
+                    }
+                }
+            });
+        }
+
+        function updateControlsForActiveSection(){
+            const sec = document.querySelector('.lesson-section.active');
+            if (!sec) return;
+            const prev = sec.querySelector('#prevLessonBtn');
+            const next = sec.querySelector('#nextLessonBtn');
+            const num = sec.querySelector('#currentLessonNum');
+            const bar = sec.querySelector('#lessonProgressBar');
+            if (prev) prev.disabled = currentLesson <= 1;
+            if (next) next.disabled = currentLesson >= totalLessons;
+            if (num) num.textContent = String(currentLesson);
+            if (bar) bar.style.width = ((currentLesson/totalLessons)*100) + '%';
+        }
+
+        function showLesson(lessonNum){
+            currentLesson = lessonNum;
+            document.querySelectorAll('.lesson-section').forEach(s=>s.classList.remove('active'));
+            const act = document.getElementById(`lesson${lessonNum}`);
+            if (act) act.classList.add('active');
+            updateControlsForActiveSection();
+            document.querySelectorAll('.lesson-nav-btn').forEach(btn=>{
+                const n = parseInt(btn.dataset.lesson);
+                const icon = btn.querySelector('.w-16');
+                btn.classList.remove('border-primary','bg-primary');
+                btn.classList.add('border-transparent');
+                icon?.classList.remove('bg-primary','text-white');
+                icon?.classList.add('bg-gray-300','text-gray-600');
+                if (n === lessonNum) {
+                    btn.classList.add('border-primary','bg-primary');
+                    btn.classList.remove('border-transparent');
+                    icon?.classList.add('bg-primary','text-white');
+                    icon?.classList.remove('bg-gray-300','text-gray-600');
+                }
+            });
+            // Sync complete button states for all lessons
+            for (let i=1;i<=totalLessons;i++){ setCompleteButtonState(i); }
+            updateLessonCompletionStatus();
+        }
+
+        function navigateLesson(dir){
+            const next = currentLesson + dir;
+            if (next>=1 && next<=totalLessons) showLesson(next);
+        }
+
+        function completeLesson(lessonNum){
+            completedLessons.add(lessonNum);
+            saveCompleted();
+            setCompleteButtonState(lessonNum);
+            updateLessonCompletionStatus();
+            // Auto-advance if not last
+            if (lessonNum < totalLessons) navigateLesson(1);
+        }
+
+        document.querySelectorAll('.lesson-nav-btn').forEach(btn=>{
+            btn.addEventListener('click', ()=> showLesson(parseInt(btn.dataset.lesson)));
+        });
+        // Initialize
+        showLesson(1);
+    </script>
+    <script>
+        // Load user name (kept)
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('../php/user.php', { credentials: 'include' })
+                .then(r => r.json())
+                .then(data => { if (data.success && data.user) { document.getElementById('userName').textContent = data.user.first_name; } })
+                .catch(() => {});
+        });
+    </script>
+    <script>
+        // Calculator logic
+        const siP = document.getElementById('siP');
+        const siR = document.getElementById('siR');
+        const siT = document.getElementById('siT');
+        const fP = document.getElementById('fP');
+        const fR = document.getElementById('fR');
+        const fT = document.getElementById('fT');
+        const fI = document.getElementById('fI');
+        const resI = document.getElementById('resI');
+        const resA = document.getElementById('resA');
+        const vizP = document.getElementById('vizP');
+        const vizI = document.getElementById('vizI');
+        const vizLabel = document.getElementById('vizLabel');
+
+        function formatMoney(n){
+            return '₱' + (Number(n).toLocaleString(undefined,{minimumFractionDigits:2, maximumFractionDigits:2}));
+        }
+
+        function updateCalc(){
+            const P = Math.max(0, Number(siP.value)||0);
+            const R = Math.max(0, Number(siR.value)||0) / 100; // convert to decimal
+            const T = Math.max(0, Number(siT.value)||0);
+            const I = P * R * T;
+            const A = P + I;
+
+            fP.textContent = P.toLocaleString();
+            fR.textContent = R.toFixed(2);
+            fT.textContent = T.toString();
+            fI.textContent = I.toFixed(2);
+
+            resI.textContent = formatMoney(I);
+            resA.textContent = formatMoney(A);
+
+            const total = A || 1;
+            const pPct = (P/total)*100;
+            const iPct = (I/total)*100;
+            vizP.style.width = pPct + '%';
+            vizI.style.width = iPct + '%';
+            vizLabel.textContent = `P ${pPct.toFixed(2)}% • I ${iPct.toFixed(2)}%`;
+        }
+
+        [siP, siR, siT].forEach(el=> el.addEventListener('input', updateCalc));
+        updateCalc();
+    </script>
+</body>
+</html>
+

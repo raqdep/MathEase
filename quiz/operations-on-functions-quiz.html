@@ -1,0 +1,3370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operations on Functions Quiz - MathEase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#667eea',
+                        'secondary': '#764ba2',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .question-card {
+            transition: all 0.3s ease;
+        }
+        .question-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.15);
+        }
+        .option-selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        .option-correct {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-color: #10b981;
+        }
+        .option-incorrect {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border-color: #ef4444;
+        }
+        .option-review {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+        .review-mode .option {
+            pointer-events: none;
+        }
+        .review-mode .option input {
+            pointer-events: none;
+        }
+        .review-mode .option input[type="number"] {
+            pointer-events: none;
+        }
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+        .question-card {
+            animation: slideInUp 0.6s ease-out;
+        }
+        .option {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .option:hover::before {
+            left: 100%;
+        }
+        .option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Podium Styles */
+        .podium-block {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .podium-block:hover {
+            transform: translateY(-5px);
+        }
+        
+        .podium-1 {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            width: 120px;
+            height: 140px;
+            border-radius: 12px 12px 0 0;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+        
+        .podium-2 {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            width: 100px;
+            height: 110px;
+            border-radius: 12px 12px 0 0;
+            position: relative;
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        .podium-3 {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            width: 100px;
+            height: 80px;
+            border-radius: 12px 12px 0 0;
+            position: relative;
+            box-shadow: 0 6px 15px rgba(245, 158, 11, 0.3);
+        }
+        
+        .podium-rank {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .podium-rank-1 {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+        
+        .podium-rank-2 {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        
+        .podium-rank-3 {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+        
+        .podium-avatar {
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border: 3px solid white;
+        }
+        
+        .podium-crown {
+            position: absolute;
+            top: -45px;
+            right: -5px;
+            color: #fbbf24;
+            font-size: 16px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .podium-info {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .podium-name {
+            font-weight: bold;
+            color: #374151;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+        
+        .podium-points {
+            font-size: 16px;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        
+        /* Detailed Leaderboard Styles */
+        .leaderboard-entry {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e7eb;
+            transition: all 0.2s ease;
+        }
+        
+        .leaderboard-entry:hover {
+            background-color: #f9fafb;
+        }
+        
+        .leaderboard-entry:last-child {
+            border-bottom: none;
+        }
+        
+        .leaderboard-entry.you {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border-radius: 8px;
+            margin: 4px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+        
+        .leaderboard-rank {
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: 500;
+            min-width: 30px;
+        }
+        
+        .leaderboard-entry.you .leaderboard-rank {
+            color: white;
+        }
+        
+        .leaderboard-student {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            margin-left: 12px;
+        }
+        
+        .leaderboard-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+        
+        .leaderboard-name {
+            font-weight: 600;
+            color: #374151;
+            font-size: 14px;
+        }
+        
+        .leaderboard-entry.you .leaderboard-name {
+            color: white;
+        }
+        
+        .leaderboard-points {
+            font-weight: bold;
+            color: #3b82f6;
+            font-size: 16px;
+        }
+        
+        .leaderboard-entry.you .leaderboard-points {
+            color: white;
+        }
+        
+        /* Cheating entry styling */
+        .leaderboard-entry.cheating-entry {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border-left: 4px solid #ef4444;
+            border-radius: 8px;
+            margin: 4px 0;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.1);
+        }
+        
+        .leaderboard-entry.cheating-entry .leaderboard-name {
+            color: #dc2626;
+            font-weight: 600;
+        }
+        
+        .leaderboard-entry.cheating-entry .leaderboard-points {
+            color: #dc2626;
+            font-weight: bold;
+        }
+        
+        /* Badge notification styles */
+        .badge-notification {
+            border-radius: 20px !important;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        .badge-notification .swal2-html-container {
+            margin: 0 !important;
+        }
+        
+        .badge-notification .swal2-title {
+            color: #10b981 !important;
+            font-size: 2rem !important;
+            margin-bottom: 1rem !important;
+        }
+        
+        /* Character animations */
+        .tips-character {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .results-character {
+            transition: all 0.5s ease;
+        }
+        
+        .results-character.motivate {
+            animation: bounce 1s ease-in-out infinite;
+        }
+        
+        .results-character.celebrate {
+            animation: celebrate 2s ease-in-out infinite;
+        }
+        
+        .results-character.sad {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        .results-character.happy {
+            animation: wiggle 1s ease-in-out infinite;
+        }
+        
+        .warning-character {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        @keyframes celebrate {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.1) rotate(-5deg); }
+            75% { transform: scale(1.1) rotate(5deg); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0px); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-3deg); }
+            75% { transform: rotate(3deg); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .podium-block {
+                margin: 0 8px;
+            }
+            
+            .podium-1 {
+                width: 100px;
+                height: 120px;
+            }
+            
+            .podium-2 {
+                width: 85px;
+                height: 95px;
+            }
+            
+            .podium-3 {
+                width: 85px;
+                height: 70px;
+            }
+            
+            .podium-avatar {
+                width: 40px;
+                height: 40px;
+                top: -30px;
+            }
+            
+            .podium-rank {
+                width: 35px;
+                height: 35px;
+                font-size: 16px;
+            }
+            
+            .podium-name {
+                font-size: 12px;
+            }
+            
+            .podium-points {
+                font-size: 14px;
+            }
+            
+            .leaderboard-entry {
+                padding: 10px 12px;
+            }
+            
+            .leaderboard-avatar {
+                width: 28px;
+                height: 28px;
+                font-size: 10px;
+                margin-right: 8px;
+            }
+            
+            .leaderboard-name {
+                font-size: 13px;
+            }
+            
+            .leaderboard-points {
+                font-size: 14px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .podium-block {
+                margin: 0 4px;
+            }
+            
+            .podium-1 {
+                width: 80px;
+                height: 100px;
+            }
+            
+            .podium-2 {
+                width: 70px;
+                height: 80px;
+            }
+            
+            .podium-3 {
+                width: 70px;
+                height: 60px;
+            }
+            
+            .podium-avatar {
+                width: 35px;
+                height: 35px;
+                top: -25px;
+            }
+            
+            .podium-rank {
+                width: 30px;
+                height: 30px;
+                font-size: 14px;
+            }
+            
+            .podium-name {
+                font-size: 11px;
+            }
+            
+            .podium-points {
+                font-size: 12px;
+            }
+        }
+        
+        .math-expression {
+            font-family: 'Times New Roman', serif;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body class="font-inter bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="../dashboard.html" class="flex items-center space-x-2">
+                        <img src="../css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-8 w-8">
+                        <span class="text-xl font-bold text-primary">MathEase</span>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-600">
+                        <i class="fas fa-user mr-2"></i><span id="userName">Student</span>
+                    </span>
+                    <a href="../php/logout.php" class="text-gray-700 hover:text-red-600 transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Review Mode Banner -->
+    <div id="reviewModeBanner" class="hidden bg-gradient-to-r from-orange-500 to-red-500 text-white py-4">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-center space-x-3">
+                <i class="fas fa-eye text-2xl"></i>
+                <div class="text-center">
+                    <h2 class="text-xl font-bold">Review Mode</h2>
+                    <p class="text-sm text-orange-100">Quiz deadline has passed. You can review your answers but cannot submit.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Header -->
+    <header class="gradient-bg text-white py-12">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
+                    <i class="fas fa-calculator mr-2"></i>
+                    <span class="font-semibold">Operations on Functions Quiz</span>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-bold mb-4" id="quizTitle">Master Function Operations</h1>
+                <p class="text-xl text-white/90 mb-6" id="quizDescription">
+                    10 Multiple Choice Questions + 1 Problem Solving Question
+                </p>
+                <div class="flex justify-center space-x-6 text-sm">
+                    <div class="flex items-center">
+                        <i class="fas fa-clock mr-2"></i>
+                        <span id="timeLimit">30 minutes</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-star mr-2"></i>
+                        <span>Intermediate Level</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-trophy mr-2"></i>
+                        <span>15 points total</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Progress Bar and Timer - Sticky -->
+    <div class="bg-white shadow-md border-b border-gray-200 sticky top-0 z-40">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center space-x-6">
+                    <div class="flex items-center bg-indigo-50 rounded-lg px-3 py-2">
+                        <i class="fas fa-tasks text-indigo-600 mr-2"></i>
+                        <span class="text-sm font-medium text-gray-700">Progress:</span>
+                        <span class="text-sm font-bold text-indigo-600 ml-2" id="progressText">0/11</span>
+                    </div>
+                    <div class="flex items-center bg-purple-50 rounded-lg px-3 py-2">
+                        <i class="fas fa-clock text-purple-600 mr-2"></i>
+                        <span class="text-sm font-medium text-gray-700">Time:</span>
+                        <span class="text-lg font-bold text-purple-600 ml-2" id="quizTimer">00:00</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg px-3 py-2 border border-green-200">
+                        <i class="fas fa-play-circle text-green-600 mr-2"></i>
+                        <span class="text-xs text-gray-600">Started at</span>
+                        <span class="text-sm font-semibold text-green-600 ml-1" id="startTime">--:--</span>
+                    </div>
+                </div>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-3 shadow-inner">
+                <div class="bg-gradient-to-r from-primary to-secondary h-3 rounded-full progress-bar transition-all duration-300" id="progressBar" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tips Section -->
+    <div id="tipsContainer" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <div class="text-center mb-8 relative">
+                <div class="w-32 h-32 mx-auto mb-6 flex items-center justify-center relative">
+                    <img src="../Img/Character/tips_approved-removebg-preview.png" 
+                         alt="Tips Approved Character" 
+                         class="w-full h-full object-contain tips-character"
+                         style="filter: drop-shadow(0 15px 30px rgba(0,0,0,0.15));">
+                    
+                    <!-- Floating elements around the character -->
+                    <div class="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full animate-ping"></div>
+                    <div class="absolute -bottom-2 -left-2 w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
+                    <div class="absolute top-1/2 -right-4 w-3 h-3 bg-blue-400 rounded-full animate-bounce"></div>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Quiz Tips & Guidelines</h2>
+                <p class="text-lg text-gray-600">Read these tips before starting your Operations on Functions Quiz</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-clock text-blue-500 mr-3"></i>Time Management
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Take your time to read each question carefully</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Don't rush through the problem solving section</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Review your answers before submitting</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-calculator text-green-500 mr-3"></i>Function Operations
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Remember the order of operations (PEMDAS)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Use FOIL method for multiplication</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Check domain restrictions for division</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-question-circle text-purple-500 mr-3"></i>Multiple Choice
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Eliminate obviously wrong answers first</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Remember function composition order matters</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Think about domain restrictions</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-exclamation-triangle text-yellow-500 mr-3"></i>Important Notes
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Quiz has 11 total questions (10 multiple choice + 1 problem solving)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Multiple choice: 1 point each, Problem solving: 5 points, 15 points total</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Timer starts when you click "Start Quiz"</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="startQuiz()" class="bg-gradient-to-r from-primary to-secondary text-white px-12 py-4 rounded-xl font-semibold text-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                    <i class="fas fa-play mr-3"></i>
+                    Start Quiz
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Content -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div id="quizContainer" class="hidden">
+            <!-- Question 1 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="1">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 1 of 12</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        Given the functions f(x) = 3x - 2 and g(x) = x² + 1, what is (f + g)(x)?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q1" value="a" class="mr-3">
+                            <span class="math-expression">x² + 3x + 1</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q1" value="b" class="mr-3">
+                            <span class="math-expression">3x² - 2x + 1</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q1" value="c" class="mr-3">
+                            <span class="math-expression">x² + 3x - 1</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q1" value="d" class="mr-3">
+                            <span class="math-expression">x² - 3x + 1</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 2: Subtraction of Functions -->
+            <div class="question-card bg-white rounded-2xl shadow-xl p-8 mb-8" data-question="2">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">2</div>
+                        <h3 class="text-xl font-semibold text-gray-800">Subtraction of Functions</h3>
+                    </div>
+                    <div class="text-sm text-gray-500">1 point</div>
+                </div>
+                
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">Given the functions:</p>
+                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                        <p class="math-expression text-center">f(x) = x² + 2x</p>
+                        <p class="math-expression text-center">g(x) = x + 1</p>
+                    </div>
+                    <p class="text-lg text-gray-700">What is (f - g)(x)?</p>
+                </div>
+
+                <div class="space-y-3">
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q2" value="A" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">x² + 3x + 1</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q2" value="B" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">x² + x - 1</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q2" value="C" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">x² - x + 1</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q2" value="D" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">x² + x + 1</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 3: Multiplication of Functions -->
+            <div class="question-card bg-white rounded-2xl shadow-xl p-8 mb-8" data-question="3">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">3</div>
+                        <h3 class="text-xl font-semibold text-gray-800">Multiplication of Functions</h3>
+                    </div>
+                    <div class="text-sm text-gray-500">1 point</div>
+                </div>
+                
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">Given the functions:</p>
+                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                        <p class="math-expression text-center">f(x) = 2x + 1</p>
+                        <p class="math-expression text-center">g(x) = x - 3</p>
+                    </div>
+                    <p class="text-lg text-gray-700">What is (f • g)(x)?</p>
+                </div>
+
+                <div class="space-y-3">
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q3" value="A" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">2x² - 6x + x - 3</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q3" value="B" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">2x² - 7x - 3</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q3" value="C" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">2x² - 5x - 3</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q3" value="D" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">2x² + 5x - 3</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 4: Division of Functions -->
+            <div class="question-card bg-white rounded-2xl shadow-xl p-8 mb-8" data-question="4">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">4</div>
+                        <h3 class="text-xl font-semibold text-gray-800">Division of Functions</h3>
+                    </div>
+                    <div class="text-sm text-gray-500">1 point</div>
+                </div>
+                
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">Given the functions:</p>
+                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                        <p class="math-expression text-center">f(x) = x² - 4</p>
+                        <p class="math-expression text-center">g(x) = x - 2</p>
+                    </div>
+                    <p class="text-lg text-gray-700">What is (f / g)(x)?</p>
+                </div>
+
+                <div class="space-y-3">
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q4" value="A" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">x - 2, where x ≠ 2</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q4" value="B" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">x² - 2, where x ≠ 2</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q4" value="C" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">x + 4, where x ≠ 2</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q4" value="D" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">x + 2, where x ≠ 2</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 5: Composition of Functions (f ∘ g) -->
+            <div class="question-card bg-white rounded-2xl shadow-xl p-8 mb-8" data-question="5">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">5</div>
+                        <h3 class="text-xl font-semibold text-gray-800">Composition of Functions</h3>
+                    </div>
+                    <div class="text-sm text-gray-500">1 point</div>
+                </div>
+                
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">Given the functions:</p>
+                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                        <p class="math-expression text-center">f(x) = 2x + 1</p>
+                        <p class="math-expression text-center">g(x) = x - 3</p>
+                    </div>
+                    <p class="text-lg text-gray-700">What is (f ∘ g)(x)?</p>
+                </div>
+
+                <div class="space-y-3">
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q5" value="A" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">2x - 2</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q5" value="B" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">2x - 5</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q5" value="C" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">2x + 4</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q5" value="D" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">2x - 6</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 6: Composition of Functions (g ∘ f) -->
+            <div class="question-card bg-white rounded-2xl shadow-xl p-8 mb-8" data-question="6">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">6</div>
+                        <h3 class="text-xl font-semibold text-gray-800">Composition of Functions</h3>
+                    </div>
+                    <div class="text-sm text-gray-500">1 point</div>
+                </div>
+                
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">Using the same functions from Question 5:</p>
+                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                        <p class="math-expression text-center">f(x) = 2x + 1</p>
+                        <p class="math-expression text-center">g(x) = x - 3</p>
+                    </div>
+                    <p class="text-lg text-gray-700">What is (g ∘ f)(x)?</p>
+                </div>
+
+                <div class="space-y-3">
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q6" value="A" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">2x - 5</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q6" value="B" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">2x + 4</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q6" value="C" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">2x - 2</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q6" value="D" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">2x - 6</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 7: Domain of Combined Functions -->
+            <div class="question-card bg-white rounded-2xl shadow-xl p-8 mb-8" data-question="7">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">7</div>
+                        <h3 class="text-xl font-semibold text-gray-800">Domain of Combined Functions</h3>
+                    </div>
+                    <div class="text-sm text-gray-500">1 point</div>
+                </div>
+                
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">Given the functions:</p>
+                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                        <p class="math-expression text-center">f(x) = √x (domain: x ≥ 0)</p>
+                        <p class="math-expression text-center">g(x) = 1/x (domain: x ≠ 0)</p>
+                    </div>
+                    <p class="text-lg text-gray-700">What is the domain of (f + g)(x)?</p>
+                </div>
+
+                <div class="space-y-3">
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q7" value="A" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">x ≥ 0</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q7" value="B" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">x > 0</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q7" value="C" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">x ≠ 0</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q7" value="D" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">All real numbers</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 8: FOIL Method -->
+            <div class="question-card bg-white rounded-2xl shadow-xl p-8 mb-8" data-question="8">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">8</div>
+                        <h3 class="text-xl font-semibold text-gray-800">FOIL Method</h3>
+                    </div>
+                    <div class="text-sm text-gray-500">1 point</div>
+                </div>
+                
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">What does FOIL stand for when multiplying binomials?</p>
+                </div>
+
+                <div class="space-y-3">
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q8" value="A" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span>First, Order, Inner, Last</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q8" value="B" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span>First, Outer, Inverse, Last</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q8" value="C" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span>First, Outer, Inner, Last</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q8" value="D" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span>First, Order, Inverse, Last</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 9: Rational Functions -->
+            <div class="question-card bg-white rounded-2xl shadow-xl p-8 mb-8" data-question="9">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">9</div>
+                        <h3 class="text-xl font-semibold text-gray-800">Rational Functions</h3>
+                    </div>
+                    <div class="text-sm text-gray-500">1 point</div>
+                </div>
+                
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">Given the functions:</p>
+                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                        <p class="math-expression text-center">f(x) = x² - 9</p>
+                        <p class="math-expression text-center">g(x) = x + 3</p>
+                    </div>
+                    <p class="text-lg text-gray-700">What is (f / g)(x) simplified?</p>
+                </div>
+
+                <div class="space-y-3">
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q9" value="A" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">x + 3, where x ≠ -3</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q9" value="B" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">x² - 3, where x ≠ -3</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q9" value="C" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">x - 9, where x ≠ -3</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q9" value="D" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span class="math-expression">x - 3, where x ≠ -3</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 10: Order of Composition -->
+            <div class="question-card bg-white rounded-2xl shadow-xl p-8 mb-8" data-question="10">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">10</div>
+                        <h3 class="text-xl font-semibold text-gray-800">Order of Composition</h3>
+                    </div>
+                    <div class="text-sm text-gray-500">1 point</div>
+                </div>
+                
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">Which statement is true about function composition?</p>
+                </div>
+
+                <div class="space-y-3">
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q10" value="A" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span>(f ∘ g)(x) ≠ (g ∘ f)(x) in general</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q10" value="B" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span>(f ∘ g)(x) = (g ∘ f)(x) for all functions</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q10" value="C" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span>Function composition is always commutative</span>
+                        </div>
+                    </label>
+                    <label class="option block w-full p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="q10" value="D" class="hidden">
+                        <div class="flex items-center">
+                            <span class="w-6 h-6 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                                <span class="w-3 h-3 bg-primary rounded-full opacity-0"></span>
+                            </span>
+                            <span>Function composition is always associative</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Problem Solving Question -->
+            <div class="question-card bg-white rounded-2xl shadow-xl p-8 mb-8" data-question="11">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full flex items-center justify-center font-bold">11</div>
+                        <h3 class="text-xl font-semibold text-gray-800">Problem Solving</h3>
+                    </div>
+                    <div class="text-sm text-gray-500">5 points</div>
+                </div>
+                
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">Given the functions:</p>
+                    <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                        <p class="math-expression text-center">f(x) = 2x + 3</p>
+                        <p class="math-expression text-center">g(x) = x - 1</p>
+                        <p class="math-expression text-center">h(x) = x²</p>
+                    </div>
+                    <p class="text-lg text-gray-700 mb-4">Find the value of (f ∘ g)(2) + h(3). Show your complete solution step by step.</p>
+                    
+                    <!-- Step-by-step guide -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-4">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-list-ol text-blue-500 mr-3"></i>Step-by-Step Guide
+                        </h4>
+                        <div class="space-y-3">
+                            <div class="flex items-start">
+                                <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-1">1</span>
+                                <div>
+                                    <p class="font-medium text-gray-800">Find g(2):</p>
+                                    <p class="text-sm text-gray-600">Substitute x = 2 into g(x) = x - 1</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-1">2</span>
+                                <div>
+                                    <p class="font-medium text-gray-800">Find f(g(2)):</p>
+                                    <p class="text-sm text-gray-600">Use the result from step 1 in f(x) = 2x + 3</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-1">3</span>
+                                <div>
+                                    <p class="font-medium text-gray-800">Find h(3):</p>
+                                    <p class="text-sm text-gray-600">Substitute x = 3 into h(x) = x²</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-1">4</span>
+                                <div>
+                                    <p class="font-medium text-gray-800">Add the results:</p>
+                                    <p class="text-sm text-gray-600">Add f(g(2)) + h(3) to get your final answer</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-4">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-lightbulb text-green-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-green-700">
+                                    <strong>Remember:</strong> Function composition (f ∘ g)(x) means f(g(x)). Work from the inside out!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label for="ps-answer" class="block text-sm font-medium text-gray-700 mb-2">Your Answer:</label>
+                        <textarea 
+                            id="ps-answer" 
+                            name="ps-answer" 
+                            rows="8" 
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors resize-none"
+                            placeholder="Show your complete solution here..."
+                        ></textarea>
+                </div>
+                
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+                    </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-yellow-700">
+                                    <strong>Note:</strong> Make sure to show all your work clearly. Partial credit will be given for correct steps even if the final answer is wrong.
+                                </p>
+                </div>
+                        </div>
+                        </div>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center mb-8">
+            <button id="submitQuiz" class="bg-gradient-to-r from-primary to-secondary text-white px-12 py-4 rounded-xl font-semibold text-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                <i class="fas fa-paper-plane mr-2"></i>Submit Quiz
+            </button>
+            </div>
+        </div>
+    </main>
+
+
+    <!-- Results Container -->
+    <div id="resultsContainer" class="hidden">
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <div class="text-center mb-8">
+                <div id="resultsCharacter" class="w-24 h-24 mx-auto mb-4 flex items-center justify-center">
+                    <img src="../Img/Character/tips_approved-removebg-preview.png" 
+                         alt="Results Character" 
+                         class="w-full h-full object-contain results-character"
+                         style="filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));">
+                </div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">Quiz Complete!</h2>
+                <p class="text-lg text-gray-600">Here's how you performed</p>
+            </div>
+
+            <!-- Score Summary -->
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 text-center">
+                    <div class="text-3xl font-bold text-blue-600 mb-2" id="totalScore">0/15</div>
+                    <div class="text-sm text-gray-600">Total Score</div>
+                </div>
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 text-center">
+                    <div class="text-3xl font-bold text-green-600 mb-2" id="correctAnswers">0</div>
+                    <div class="text-sm text-gray-600">Correct Answers</div>
+                </div>
+                <div class="bg-gradient-to-r from-red-50 to-pink-50 rounded-xl p-6 text-center">
+                    <div class="text-3xl font-bold text-red-600 mb-2" id="incorrectAnswers">0</div>
+                    <div class="text-sm text-gray-600">Incorrect Answers</div>
+                </div>
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 text-center">
+                    <div class="text-3xl font-bold text-purple-600 mb-2" id="completionTime">0:00</div>
+                    <div class="text-sm text-gray-600">Completion Time</div>
+                </div>
+                <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 text-center">
+                    <div class="text-3xl font-bold text-yellow-600 mb-2" id="studentRank">--</div>
+                    <div class="text-sm text-gray-600">Your Rank</div>
+                </div>
+            </div>
+
+            <!-- Detailed Performance Analysis -->
+            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 mb-8">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">
+                    <i class="fas fa-chart-line text-indigo-500 mr-2"></i>Performance Analysis
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-800 mb-3">Multiple Choice Questions</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Questions:</span>
+                                <span class="font-semibold">10</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Points per question:</span>
+                                <span class="font-semibold">1 point</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Total possible:</span>
+                                <span class="font-semibold">10 points</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-800 mb-3">Problem Solving</h4>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Questions:</span>
+                                <span class="font-semibold">1</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Points per question:</span>
+                                <span class="font-semibold">5 points</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Total possible:</span>
+                                <span class="font-semibold">5 points</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 bg-white rounded-lg p-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Overall Grade:</span>
+                        <span class="text-2xl font-bold text-indigo-600" id="overallGrade">0%</span>
+                    </div>
+                    <div class="mt-2">
+                        <div class="w-full bg-gray-200 rounded-full h-3">
+                            <div class="bg-indigo-500 h-3 rounded-full transition-all duration-1000" id="gradeProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button onclick="showLeaderboard()" class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
+                    <i class="fas fa-trophy mr-2"></i>
+                    View Leaderboard
+                </button>
+                <button onclick="goToDashboard()" class="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
+                    <i class="fas fa-home mr-2"></i>
+                    Back to Dashboard
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard Container -->
+    <div id="leaderboardContainer" class="hidden">
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-trophy text-3xl"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">Class Leaderboard</h2>
+                <p class="text-lg text-gray-600">Top performers in your class ranked by score and speed</p>
+                <p class="text-sm text-gray-500 mt-2">Showing only students from your class and teacher</p>
+            </div>
+
+            <!-- Leaderboard Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 text-center">
+                    <div class="text-3xl font-bold text-blue-600 mb-2" id="totalParticipants">0</div>
+                    <div class="text-sm text-gray-600">Total Participants</div>
+                </div>
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 text-center">
+                    <div class="text-3xl font-bold text-green-600 mb-2" id="averageScore">0%</div>
+                    <div class="text-sm text-gray-600">Average Score</div>
+                </div>
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 text-center">
+                    <div class="text-3xl font-bold text-purple-600 mb-2" id="fastestTime">0:00</div>
+                    <div class="text-sm text-gray-600">Fastest Time</div>
+                </div>
+            </div>
+
+            <!-- Podium Section -->
+            <div class="mb-8">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Top Performers</h3>
+                <div class="flex justify-center items-end space-x-4 mb-8" id="podiumContainer">
+                    <!-- Podium will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Detailed Leaderboard -->
+            <div class="mb-8">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6">Complete Rankings</h3>
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div id="detailedLeaderboard" class="divide-y divide-gray-200">
+                        <!-- Leaderboard entries will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button onclick="hideLeaderboard()" class="bg-gradient-to-r from-primary to-secondary text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Back to Results
+                </button>
+                <button onclick="goToDashboard()" class="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
+                    <i class="fas fa-home mr-2"></i>
+                    Back to Dashboard
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Quiz data and answers
+        const quizData = {
+            answers: {
+                q1: 'c', // x² + 3x - 1
+                q2: 'B', // x² + x - 1
+                q3: 'C', // 2x² - 5x - 3
+                q4: 'D', // x + 2, where x ≠ 2
+                q5: 'B', // 2x - 5
+                q6: 'C', // 2x - 2
+                q7: 'B', // x > 0
+                q8: 'C', // First, Outer, Inner, Last
+                q9: 'D', // x - 3, where x ≠ -3
+                q10: 'A', // (f ∘ g)(x) ≠ (g ∘ f)(x) in general
+                'ps-answer': '16' // Problem solving answer: (f ∘ g)(2) + h(3) = 7 + 9 = 16
+            },
+            points: {
+                q1: 1, q2: 1, q3: 1, q4: 1, q5: 1, q6: 1, q7: 1, q8: 1, q9: 1, q10: 1,
+                'ps-answer': 5
+            }
+        };
+
+        let quizStartTime = null;
+        let quizTimer = null;
+        let userAnswers = {};
+        let isReviewMode = false;
+        let quizDuration = 0;
+        let currentAttemptId = null;
+        let isQuizCompleted = false;
+        let autoSubmitTimeout = null;
+
+        // Anti-cheating variables
+        let tabSwitchCount = 0;
+        let focusLostTime = null;
+        let isPageVisible = true;
+        let hasExitedQuiz = false;
+        let hasLoggedOut = false;
+        let isQuizActive = false;
+        let maxAllowedTabSwitches = 2; // Allow 2 tab switches before marking as cheating
+        let maxAllowedFocusLoss = 30000; // 30 seconds max focus loss
+        let heartbeatInterval = null;
+        let lastHeartbeat = null;
+
+        // Check for existing quiz attempt
+        async function checkExistingQuizAttempt() {
+            try {
+                const response = await fetch('../php/quiz-management.php?action=check_existing_attempt&quiz_type=operations-on-functions', {
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success && result.attempt) {
+                    return result.attempt;
+                }
+                return null;
+            } catch (error) {
+                console.error('Error checking existing attempt:', error);
+                return null;
+            }
+        }
+
+        // Load saved answers
+        async function loadSavedAnswers() {
+            try {
+                const response = await fetch(`../php/quiz-management.php?action=get_quiz_answers&attempt_id=${currentAttemptId}`, {
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success && result.answers) {
+                    // Load multiple choice answers
+                    for (let i = 1; i <= 10; i++) {
+                        const answer = result.answers[`q${i}`];
+                        if (answer) {
+                            const input = document.querySelector(`input[name="q${i}"][value="${answer}"]`);
+                            if (input) {
+                                input.checked = true;
+                                input.closest('.option').classList.add('option-selected');
+                                userAnswers[`q${i}`] = answer;
+                            }
+                        }
+                    }
+                    
+                    // Load problem solving answer
+                    const psAnswer = result.answers['ps-answer'];
+                    if (psAnswer) {
+                        const psTextarea = document.getElementById('ps-answer');
+                        if (psTextarea) {
+                            psTextarea.value = psAnswer;
+                            userAnswers['ps-answer'] = psAnswer;
+                        }
+                    }
+                    
+                    console.log('✅ Saved answers loaded successfully');
+                    updateProgress();
+                }
+            } catch (error) {
+                console.error('Error loading saved answers:', error);
+            }
+        }
+
+        // Start quiz function
+        async function startQuiz() {
+            try {
+                // Check if there's an existing attempt
+                const existingAttempt = await checkExistingQuizAttempt();
+                
+                if (existingAttempt) {
+                    console.log('Found existing attempt:', existingAttempt);
+                    currentAttemptId = existingAttempt.attempt_id;
+                    
+                    // Load saved answers
+                    await loadSavedAnswers();
+                    
+                    // Resume timer from saved time
+                    if (existingAttempt.completion_time > 0) {
+                        quizDuration = existingAttempt.completion_time;
+                        updateTimerDisplay();
+                    }
+                    
+                    // Show quiz container
+                    document.getElementById('tipsContainer').classList.add('hidden');
+                    document.getElementById('quizContainer').classList.remove('hidden');
+                    document.getElementById('progressBar').style.width = '0%';
+                    
+                    // Start timer - use original start time if available, otherwise use current time
+                    if (existingAttempt.start_time) {
+                        quizStartTime = new Date(existingAttempt.start_time);
+                    } else {
+                        quizStartTime = new Date();
+                    }
+                    startTimer();
+                    setupEventListeners();
+                    setupAutoSubmitHandlers(); // Setup auto-submit handlers
+                    
+                    // Initialize anti-cheating system
+                    initializeAntiCheating();
+                    
+                    // Show message that quiz was resumed
+                    Swal.fire({
+                        title: 'Quiz Resumed',
+                        text: 'Your previous quiz attempt has been resumed. You can continue where you left off.',
+                        icon: 'info',
+                        confirmButtonText: 'Continue Quiz',
+                        confirmButtonColor: '#6366f1'
+                    });
+                    return;
+                }
+                
+                console.log('Starting new quiz in database...');
+                const formData = new FormData();
+                formData.append('action', 'start_quiz');
+                formData.append('quiz_type', 'operations-on-functions');
+                
+                const response = await fetch('../php/quiz-management.php', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+                
+                console.log('Start quiz response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('Start quiz result:', result);
+                
+                if (result.success) {
+                    currentAttemptId = result.attempt_id;
+                    console.log('✅ Quiz started successfully with attempt ID:', currentAttemptId);
+                } else {
+                    console.error('Failed to create quiz attempt:', result.message);
+                    if (result.message.includes('already exists') || result.message.includes('already have')) {
+                        // Show message that quiz is already in progress
+                    Swal.fire({
+                            title: 'Quiz Already in Progress',
+                            text: 'You already have a quiz attempt in progress. Please complete it first.',
+                            icon: 'warning',
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#6366f1'
+                        });
+                    } else {
+                        // Show generic error
+                        Swal.fire({
+                            title: 'Quiz Start Error',
+                            text: 'Unable to start the quiz. Please refresh the page and try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#6366f1'
+                    });
+                    }
+                    return;
+                }
+            } catch (error) {
+                console.error('Error starting quiz:', error);
+                Swal.fire({
+                    title: 'Connection Error',
+                    text: 'Unable to connect to the server. Please check your internet connection and try again.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#6366f1'
+                });
+                return;
+            }
+            
+            document.getElementById('tipsContainer').classList.add('hidden');
+            document.getElementById('quizContainer').classList.remove('hidden');
+            document.getElementById('progressBar').style.width = '0%';
+            
+            quizStartTime = new Date();
+            startTimer();
+            setupEventListeners();
+            setupAutoSubmitHandlers(); // Setup auto-submit handlers
+            
+            // Initialize anti-cheating system
+            initializeAntiCheating();
+        }
+
+        // Check if student has already completed this quiz
+        async function checkQuizCompletion() {
+            try {
+                console.log('Checking quiz completion for operations-on-functions...');
+                
+                const response = await fetch('../php/quiz-management.php?action=get_student_history&quiz_type=operations-on-functions', {
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                console.log('Quiz completion check result:', result);
+                
+                if (result.success && result.attempts && result.attempts.length > 0) {
+                    // Filter for only completed attempts with status 'completed'
+                    const completedAttempts = result.attempts.filter(attempt => 
+                        attempt.status === 'completed' && 
+                        attempt.quiz_type === 'operations-on-functions'
+                    );
+                    
+                    console.log('Completed attempts for operations-on-functions:', completedAttempts);
+                    
+                    if (completedAttempts.length > 0) {
+                        // Student has completed this quiz
+                        const latestAttempt = completedAttempts[0]; // Get the most recent completed attempt
+                        
+                        console.log('Latest completed attempt:', latestAttempt);
+                        
+                        // Check if deadline has passed
+                        const isDeadlinePassed = await checkQuizDeadline();
+                        
+                        if (isDeadlinePassed) {
+                            // Deadline passed - allow review access
+                            console.log('Quiz completed but deadline passed - allowing review access');
+                            return false; // Continue with quiz in review mode
+                        } else {
+                            // Deadline not passed - show completion message
+                            Swal.fire({
+                                title: 'Quiz Already Completed',
+                                text: `You have already completed this quiz with a score of ${latestAttempt.score}/${latestAttempt.total_questions} (${latestAttempt.percentage}%).`,
+                                icon: 'info',
+                                confirmButtonText: 'OK',
+                                confirmButtonColor: '#6366f1',
+                                background: '#ffffff',
+                                customClass: {
+                                    popup: 'rounded-2xl',
+                                    title: 'text-slate-800',
+                                    content: 'text-slate-600'
+                                }
+                            }).then(() => {
+                                // Redirect to dashboard
+                                window.location.href = '../dashboard.html';
+                            });
+                            return true; // Quiz already completed
+                        }
+                    }
+                }
+                
+                console.log('No completed attempts found - allowing quiz access');
+                return false; // Quiz not completed, can proceed
+            } catch (error) {
+                console.error('Error checking quiz completion:', error);
+                return false; // On error, allow quiz to proceed
+            }
+        }
+
+        // Check if quiz deadline has passed
+        async function checkQuizDeadline() {
+            try {
+                const response = await fetch('../php/quiz-management.php?action=get_quiz_settings', {
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success && result.settings && result.settings['operations-on-functions']) {
+                    const deadline = new Date(result.settings['operations-on-functions'].deadline);
+                    const now = new Date();
+                    return now > deadline;
+                }
+                
+                return false; // No deadline set, allow access
+            } catch (error) {
+                console.error('Error checking quiz deadline:', error);
+                return false; // On error, allow access
+            }
+        }
+
+        // Initialize quiz
+        async function initializeQuiz() {
+            // Check if student has already completed this quiz
+            const hasCompleted = await checkQuizCompletion();
+            if (hasCompleted) {
+                return; // Exit if already completed
+            }
+            
+            // Initialize user answers
+            for (let i = 1; i <= 10; i++) {
+                userAnswers[`q${i}`] = null;
+            }
+            userAnswers['ps-answer'] = '';
+            
+            // Initialize start time display
+            initializeStartTimeDisplay();
+        }
+
+        function setupEventListeners() {
+            // Option selection
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    if (isReviewMode) return;
+                    
+                    const questionCard = this.closest('.question-card');
+                    const questionNumber = questionCard.dataset.question;
+                    const input = this.querySelector('input');
+                    
+                    // Clear previous selection for this question
+                    questionCard.querySelectorAll('.option').forEach(opt => {
+                        opt.classList.remove('option-selected');
+                        opt.querySelector('input').checked = false;
+                    });
+                    
+                    // Select current option
+                    this.classList.add('option-selected');
+                    input.checked = true;
+                    
+                    // Store answer
+                    userAnswers[`q${questionNumber}`] = input.value;
+                    
+                    // Update progress
+                    updateProgress();
+                });
+            });
+
+            // Problem solving textarea
+            const psTextarea = document.getElementById('ps-answer');
+            if (psTextarea) {
+                psTextarea.addEventListener('input', function() {
+                    userAnswers['ps-answer'] = this.value;
+                    updateProgress();
+                });
+            }
+
+            // Submit button
+            document.getElementById('submitQuiz').addEventListener('click', function() {
+                if (isReviewMode) return;
+                submitQuiz();
+            });
+        }
+
+        function updateProgress() {
+            const answeredQuestions = Object.values(userAnswers).filter(answer => answer !== null && answer !== '').length;
+            const totalQuestions = 11;
+            const progressPercentage = (answeredQuestions / totalQuestions) * 100;
+            
+            document.getElementById('progressText').textContent = `${answeredQuestions}/${totalQuestions}`;
+            document.getElementById('progressBar').style.width = `${progressPercentage}%`;
+        }
+
+        function startTimer() {
+            // Update start time display
+            updateStartTimeDisplay();
+            
+            quizTimer = setInterval(function() {
+                if (!quizStartTime) return;
+                
+                const now = new Date();
+                const elapsed = now - quizStartTime;
+                quizDuration = Math.floor(elapsed / 1000);
+                const minutes = Math.floor(elapsed / 60000);
+                const seconds = Math.floor((elapsed % 60000) / 1000);
+                
+                document.getElementById('quizTimer').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(quizDuration / 60);
+            const seconds = quizDuration % 60;
+            const timerElement = document.getElementById('quizTimer');
+            if (timerElement) {
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+        }
+
+        function updateStartTimeDisplay() {
+            if (quizStartTime) {
+                const startTimeElement = document.getElementById('startTime');
+                if (startTimeElement) {
+                    const hours = quizStartTime.getHours();
+                    const minutes = quizStartTime.getMinutes();
+                    const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+                    startTimeElement.textContent = timeString;
+                }
+            }
+        }
+
+        function initializeStartTimeDisplay() {
+            // Set initial start time to current time if not already set
+            if (!quizStartTime) {
+                quizStartTime = new Date();
+            }
+            updateStartTimeDisplay();
+        }
+
+        // Auto-submit quiz with score 0 when student exits
+        async function autoSubmitQuiz() {
+            if (isQuizCompleted || !currentAttemptId) {
+                return;
+            }
+
+            try {
+                console.log('Auto-submitting quiz due to exit/close...');
+                
+                // Collect current answers
+                const answers = {};
+                for (let i = 1; i <= 10; i++) {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    answers[`q${i}`] = selected ? selected.value : null;
+                }
+                answers['ps-answer'] = document.getElementById('ps-answer').value || '';
+                answers._autoSubmit = true; // Flag to indicate auto-submission
+                
+                // Update global userAnswers with auto-submit flag
+                userAnswers._autoSubmit = true;
+
+                // Use the existing saveQuizResults function with auto-submit flag
+                await saveQuizResults(answers, quizDuration);
+
+                console.log('✅ Quiz auto-submitted with score 0');
+            } catch (error) {
+                console.error('Error auto-submitting quiz:', error);
+            }
+        }
+
+        // Setup auto-submit handlers
+        function setupAutoSubmitHandlers() {
+            // Handle page visibility change (tab switching)
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden && currentAttemptId && !isQuizCompleted) {
+                    console.log('Page hidden - setting up auto-submit timeout');
+                    // Give 30 seconds before auto-submitting
+                    autoSubmitTimeout = setTimeout(() => {
+                        autoSubmitQuiz();
+                    }, 30000);
+                } else if (!document.hidden && autoSubmitTimeout) {
+                    console.log('Page visible again - canceling auto-submit');
+                    clearTimeout(autoSubmitTimeout);
+                    autoSubmitTimeout = null;
+                }
+            });
+
+            // Handle page unload (closing tab, navigating away)
+            window.addEventListener('beforeunload', function(e) {
+                if (currentAttemptId && !isQuizCompleted) {
+                    // Auto-submit immediately
+                    autoSubmitQuiz();
+                    
+                    // Show warning message
+                    const message = 'You are about to leave the quiz. Your progress will be saved with a score of 0.';
+                    e.returnValue = message;
+                    return message;
+                }
+            });
+
+            // Handle page unload (alternative method)
+            window.addEventListener('unload', function() {
+                if (currentAttemptId && !isQuizCompleted) {
+                    autoSubmitQuiz();
+                }
+            });
+
+            // Handle browser back/forward navigation
+            window.addEventListener('popstate', function() {
+                if (currentAttemptId && !isQuizCompleted) {
+                    autoSubmitQuiz();
+                }
+            });
+        }
+
+        async function submitQuiz() {
+            // Prevent submission in review mode
+            if (isReviewMode) {
+                Swal.fire({
+                    title: 'Review Mode',
+                    text: 'You cannot submit the quiz in review mode. The deadline has passed.',
+                    icon: 'info',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#6366f1'
+                });
+                return;
+            }
+            
+            // Check if quiz attempt ID exists
+            if (!currentAttemptId) {
+                console.error('❌ No quiz attempt ID found');
+                Swal.fire({
+                    title: 'Quiz Error',
+                    text: 'Quiz session not properly initialized. Please refresh the page and try again.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#6366f1'
+                });
+                return;
+            }
+            
+            // Check if all questions are answered
+            const totalQuestions = 11; // 10 multiple choice + 1 problem solving question
+            let answered = 0;
+            
+            for (let i = 1; i <= 10; i++) {
+                if (document.querySelector(`input[name="q${i}"]:checked`)) {
+                    answered++;
+                }
+            }
+            
+            const psAnswer = document.getElementById('ps-answer').value.trim();
+            if (psAnswer) answered++;
+            
+            // Show confirmation dialog
+            const result = await Swal.fire({
+                title: 'Submit Quiz?',
+                html: `
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-paper-plane text-blue-500 text-2xl"></i>
+                        </div>
+                        <p class="text-lg text-gray-700 mb-4">Are you ready to submit your quiz?</p>
+                        <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                            <div class="text-2xl font-bold text-blue-600">${answered}/${totalQuestions}</div>
+                            <div class="text-sm text-gray-500">Questions Answered</div>
+                        </div>
+                        <p class="text-sm text-gray-600">You cannot change your answers after submission.</p>
+                    </div>
+                `,
+                    showCancelButton: true,
+                confirmButtonText: 'Yes, Submit Quiz',
+                cancelButtonText: 'Continue Quiz',
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: '#6b7280',
+                background: '#ffffff',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    title: 'text-slate-800',
+                    content: 'text-slate-600'
+                }
+            });
+            
+                    if (result.isConfirmed) {
+                // Show loading dialog
+                Swal.fire({
+                    title: 'Submitting Quiz...',
+                    html: `
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-spinner fa-spin text-blue-500 text-2xl"></i>
+                            </div>
+                            <p class="text-lg text-gray-700">Please wait while we process your answers...</p>
+                        </div>
+                    `,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    background: '#ffffff',
+                    customClass: {
+                        popup: 'rounded-2xl'
+                    }
+                });
+                
+                // Collect all answers
+                const answers = {};
+                for (let i = 1; i <= 10; i++) {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    answers[`q${i}`] = selected ? selected.value : null;
+                }
+                
+                // Collect problem solving answer
+                answers['ps-answer'] = document.getElementById('ps-answer').value;
+                
+                // Submit to database
+                const dbResult = await saveQuizResults(answers, quizDuration);
+                
+                // Close loading dialog
+                Swal.close();
+                
+                if (dbResult && dbResult.success) {
+                    // Mark quiz as completed to prevent auto-submit
+                    isQuizCompleted = true;
+                    // Use database results for display
+                    console.log('✅ Using database results for display');
+                    
+                    // Check and award badges for any completed quiz (backend decides which badges apply)
+                    if (!isReviewMode) {
+                        await checkAndAwardBadges(dbResult);
+                    } else {
+                        console.log('Skipping badge check - quiz in review mode');
+                    }
+                    
+                calculateResults();
+                } else {
+                    // Database submission failed - show error and don't proceed
+                    console.error('❌ Database submission failed, cannot proceed');
+                    Swal.fire({
+                        title: 'Quiz Not Saved',
+                        text: 'Your quiz could not be saved to the database. Please contact your teacher or try again later.',
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#6366f1'
+                    });
+                    return; // Don't show results if database save failed
+                }
+            }
+        }
+
+        function calculateResults() {
+            clearInterval(quizTimer);
+            
+            // Check if this is an auto-submit - if so, set score to 0
+            if (userAnswers._autoSubmit) {
+                console.log('Auto-submit detected - setting score to 0');
+                displayResults(0, 0, 0, { multipleChoice: 0, problemSolving: 0 });
+                return;
+            }
+            
+            let totalScore = 0;
+            let correctAnswers = 0;
+            const categoryScores = {
+                multipleChoice: 0,    // Questions 1-10
+                problemSolving: 0     // Question 11 (ps-answer)
+            };
+
+            // Calculate scores for multiple choice questions
+            for (let i = 1; i <= 10; i++) {
+                const questionId = `q${i}`;
+                const userAnswer = userAnswers[questionId];
+                const correctAnswer = quizData.answers[questionId];
+                const points = quizData.points[questionId];
+                
+                if (userAnswer === correctAnswer) {
+                    totalScore += points;
+                    correctAnswers++;
+                    categoryScores.multipleChoice += points;
+                }
+            }
+
+            // Calculate score for problem solving question
+            const psAnswer = userAnswers['ps-answer'];
+            const psPoints = quizData.points['ps-answer'];
+            
+            if (psAnswer && psAnswer.trim() !== '') {
+                // More sophisticated grading for problem solving
+                let psScore = 0;
+                const answer = psAnswer.toLowerCase().trim();
+                
+                // Check for correct final answer (16 is correct, 15 is close)
+                if (answer.includes('16')) {
+                    psScore = psPoints; // Full points for correct answer
+                } else if (answer.includes('15')) {
+                    psScore = psPoints * 0.8; // 80% for close answer
+                } else {
+                    // Check for partial credit based on work shown
+                    let partialCredit = 0;
+                    
+                    // Check for key steps in the solution
+                    // Step 1: Find g(2) = 2-1 = 1
+                    if (answer.includes('g(2)') || answer.includes('2-1') || answer.includes('1')) {
+                        partialCredit += 1; // 1 point for finding g(2) = 1
+                    }
+                    // Step 2: Find f(g(2)) = f(1) = 2(1) + 3 = 7
+                    if (answer.includes('f(1)') || answer.includes('2(1)+3') || answer.includes('2*1+3') || answer.includes('7')) {
+                        partialCredit += 1; // 1 point for finding f(1) = 7
+                    }
+                    // Step 3: Find h(3) = 3² = 9
+                    if (answer.includes('h(3)') || answer.includes('3²') || answer.includes('3^2') || answer.includes('9')) {
+                        partialCredit += 1; // 1 point for finding h(3) = 9
+                    }
+                    // Step 4: Add the results
+                    if (answer.includes('+') || answer.includes('add') || answer.includes('sum') || answer.includes('16')) {
+                        partialCredit += 1; // 1 point for adding or getting final result
+                    }
+                    // Step 5: Show understanding of composition
+                    if (answer.includes('(f ∘ g)') || answer.includes('f(g') || answer.includes('composition')) {
+                        partialCredit += 0.5; // 0.5 points for understanding composition
+                    }
+                    
+                    psScore = Math.min(partialCredit, psPoints); // Cap at maximum points
+                }
+                
+                totalScore += psScore;
+                categoryScores.problemSolving = psScore;
+                
+                if (psScore > 0) {
+                    correctAnswers++; // Count as answered if any points earned
+                }
+            }
+
+            const totalPossiblePoints = 15; // 10 * 1 + 5 = 15
+            const percentage = Math.round((totalScore / totalPossiblePoints) * 100);
+            const timeTaken = document.getElementById('quizTimer').textContent;
+
+            // Debug logging
+            console.log('=== QUIZ SCORING DEBUG ===');
+            console.log('Total Score:', totalScore);
+            console.log('Total Possible Points:', totalPossiblePoints);
+            console.log('Percentage:', percentage);
+            console.log('Category Scores:', categoryScores);
+            console.log('User Answers:', userAnswers);
+            console.log('========================');
+
+
+            // Display results
+            displayResults(totalScore, percentage, timeTaken, categoryScores);
+            
+            // Save results to database
+            saveQuizResults(userAnswers, quizDuration);
+        }
+
+        function displayResults(totalScore, percentage, timeTaken, categoryScores) {
+            // Show results
+            document.getElementById('quizContainer').classList.add('hidden');
+            document.getElementById('resultsContainer').classList.remove('hidden');
+            
+            // Calculate correct and incorrect answers
+            const correctAnswers = categoryScores.multipleChoice + (categoryScores.problemSolving > 0 ? 1 : 0);
+            const incorrectAnswers = 11 - correctAnswers; // Total questions - correct answers
+            
+            // Display results with null checks
+            const totalScoreEl = document.getElementById('totalScore');
+            const correctAnswersEl = document.getElementById('correctAnswers');
+            const incorrectAnswersEl = document.getElementById('incorrectAnswers');
+            const completionTimeEl = document.getElementById('completionTime');
+            
+            if (totalScoreEl) totalScoreEl.textContent = `${totalScore}/15`;
+            if (correctAnswersEl) correctAnswersEl.textContent = correctAnswers;
+            if (incorrectAnswersEl) incorrectAnswersEl.textContent = incorrectAnswers;
+            if (completionTimeEl) completionTimeEl.textContent = timeTaken;
+            
+            // Update overall grade
+            const overallGradeEl = document.getElementById('overallGrade');
+            const gradeProgressEl = document.getElementById('gradeProgress');
+            
+            if (overallGradeEl) overallGradeEl.textContent = `${percentage}%`;
+            if (gradeProgressEl) {
+                gradeProgressEl.style.width = `${percentage}%`;
+                
+                // Change progress bar color based on grade
+                if (percentage >= 80) {
+                    gradeProgressEl.className = 'bg-green-500 h-3 rounded-full transition-all duration-1000';
+                } else if (percentage >= 60) {
+                    gradeProgressEl.className = 'bg-yellow-500 h-3 rounded-full transition-all duration-1000';
+                } else {
+                    gradeProgressEl.className = 'bg-red-500 h-3 rounded-full transition-all duration-1000';
+                }
+            }
+            
+            // Update character based on performance
+            updateResultsCharacter(percentage);
+
+            // Get and display student's rank
+            setTimeout(displayStudentRank, 1000);
+        }
+
+        async function saveQuizResults(answers, timeInSeconds) {
+            try {
+                console.log('Submitting quiz to database...');
+                console.log('Attempt ID:', currentAttemptId);
+                console.log('Completion Time:', timeInSeconds);
+                console.log('Answers:', answers);
+                
+                const formData = new FormData();
+                formData.append('action', 'submit_quiz');
+                formData.append('attempt_id', currentAttemptId);
+                formData.append('completion_time', timeInSeconds);
+                
+                // Check if this is an auto-submit (from exit/close)
+                // This will be set by the autoSubmitQuiz function
+                if (answers._autoSubmit) {
+                    formData.append('auto_submit', 'true');
+                    formData.append('force_score_zero', 'true');
+                    formData.append('score', '0'); // Explicitly set score to 0
+                    formData.append('percentage', '0'); // Set percentage to 0
+                }
+                
+                // Add answers to form data
+                for (const [key, value] of Object.entries(answers)) {
+                    if (key !== '_autoSubmit') { // Don't send the internal flag
+                        formData.append(`answers[${key}]`, value);
+                    }
+                }
+                
+                console.log('Sending request to quiz-management.php...');
+                const response = await fetch('../php/quiz-management.php', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+                
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                console.log('Quiz submission result:', result);
+                
+                if (result.success) {
+                    console.log('✅ Quiz submitted successfully to database:', result);
+                    console.log('Score:', result.score, 'Total Questions:', result.total_questions);
+                    // Display student rank after saving
+                    setTimeout(displayStudentRank, 1000);
+                    return result; // Return the result for the calling function
+                } else {
+                    console.error('❌ Failed to submit quiz to database:', result.message);
+                    // Show error to user
+                    Swal.fire({
+                        title: 'Submission Error',
+                        text: 'Failed to save your quiz to the database. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#6366f1'
+                    });
+                    return null; // Return null to indicate failure
+                }
+            } catch (error) {
+                console.error('❌ Error submitting quiz to database:', error);
+                // Show error to user
+                Swal.fire({
+                    title: 'Connection Error',
+                    text: 'Unable to connect to the server. Please check your internet connection and try again.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#6366f1'
+                });
+                return null; // Return null to indicate failure
+            }
+        }
+
+        // Show leaderboard
+        function showLeaderboard() {
+            document.getElementById('resultsContainer').classList.add('hidden');
+            document.getElementById('leaderboardContainer').classList.remove('hidden');
+            loadLeaderboard();
+            
+            // Scroll to leaderboard
+            document.getElementById('leaderboardContainer').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Hide leaderboard
+        function hideLeaderboard() {
+            document.getElementById('leaderboardContainer').classList.add('hidden');
+            document.getElementById('resultsContainer').classList.remove('hidden');
+        }
+
+        // Load leaderboard data
+        async function loadLeaderboard() {
+            const podiumContainer = document.getElementById('podiumContainer');
+            const detailedLeaderboard = document.getElementById('detailedLeaderboard');
+            
+            try {
+                const response = await fetch('../php/quiz-management.php?action=get_leaderboard&quiz_type=operations-on-functions&limit=20&same_class_only=true', {
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success && result.leaderboard) {
+                    const leaderboardData = result.leaderboard;
+                    
+                    if (leaderboardData.length === 0) {
+                        // Show empty state
+                        document.getElementById('totalParticipants').textContent = '0';
+                        document.getElementById('averageScore').textContent = '0%';
+                        document.getElementById('fastestTime').textContent = '0:00';
+                        
+                        podiumContainer.innerHTML = `
+                            <div class="text-center py-8">
+                                <i class="fas fa-trophy text-6xl text-gray-300 mb-4"></i>
+                                <p class="text-lg text-gray-500">No quiz attempts yet</p>
+                                <p class="text-sm text-gray-400">Be the first to take the quiz!</p>
+                            </div>
+                        `;
+                        
+                        detailedLeaderboard.innerHTML = `
+                            <div class="px-6 py-8 text-center text-gray-500">
+                                <i class="fas fa-trophy text-4xl mb-4 text-gray-300"></i>
+                                <p class="text-lg">No quiz attempts yet</p>
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    // Update stats
+                    document.getElementById('totalParticipants').textContent = leaderboardData.length;
+                    const averageScore = leaderboardData.length > 0 ? Math.round(leaderboardData.reduce((sum, student) => sum + parseFloat(student.percentage), 0) / leaderboardData.length) : 0;
+                    document.getElementById('averageScore').textContent = averageScore + '%';
+                    
+                    const fastestTime = leaderboardData.length > 0 ? leaderboardData.reduce((fastest, student) => {
+                        const studentTime = parseFloat(student.formatted_time.replace(':', '.'));
+                        const fastestTime = parseFloat(fastest.replace(':', '.'));
+                        return studentTime < fastestTime ? student.formatted_time : fastest;
+                    }, leaderboardData[0].formatted_time) : '0:00';
+                    
+                    document.getElementById('fastestTime').textContent = fastestTime;
+                    
+                    // Create podium
+                    createPodium(leaderboardData.slice(0, 3));
+                    
+                    // Create detailed leaderboard
+                    createDetailedLeaderboard(leaderboardData);
+                } else {
+                    podiumContainer.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="fas fa-exclamation-triangle text-6xl text-red-300 mb-4"></i>
+                            <p class="text-lg text-red-500">Error loading leaderboard</p>
+                        </div>
+                    `;
+                    
+                    detailedLeaderboard.innerHTML = `
+                        <div class="px-6 py-8 text-center text-red-500">
+                            <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+                            <p class="text-lg">Error loading leaderboard</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading leaderboard:', error);
+                podiumContainer.innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="fas fa-exclamation-triangle text-6xl text-red-300 mb-4"></i>
+                        <p class="text-lg text-red-500">Error loading leaderboard</p>
+                    </div>
+                `;
+                
+                detailedLeaderboard.innerHTML = `
+                    <div class="px-6 py-8 text-center text-red-500">
+                        <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+                        <p class="text-lg">Error loading leaderboard</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Create podium for top 3
+        function createPodium(topStudents) {
+            const podiumContainer = document.getElementById('podiumContainer');
+            
+            if (topStudents.length === 0) {
+                podiumContainer.innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="fas fa-trophy text-6xl text-gray-300 mb-4"></i>
+                        <p class="text-lg text-gray-500">No quiz attempts yet</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            podiumContainer.innerHTML = '';
+            
+            // Create podium blocks for top 3
+            const positions = [2, 1, 3]; // Order: 2nd, 1st, 3rd
+            positions.forEach((position, index) => {
+                const student = topStudents[position - 1];
+                if (!student) return;
+                
+                const podiumBlock = document.createElement('div');
+                podiumBlock.className = 'podium-block';
+                
+                const initials = student.student_name.split(' ').map(n => n[0]).join('').toUpperCase();
+                const isCurrentUser = student.is_current_user == 1;
+                
+                podiumBlock.innerHTML = `
+                    <div class="podium-${position}">
+                        <div class="podium-avatar">
+                            <span class="text-white font-bold text-lg">${initials}</span>
+                        </div>
+                        <div class="podium-rank podium-rank-${position}">${position}</div>
+                        ${position === 1 ? '<div class="podium-crown">👑</div>' : ''}
+                    </div>
+                    <div class="podium-info">
+                        <div class="podium-name">${student.student_name}</div>
+                        <div class="podium-points">${student.score}/${student.total_questions}</div>
+                        ${isCurrentUser ? '<div class="text-xs text-blue-600 font-medium mt-1">You</div>' : ''}
+                    </div>
+                `;
+                
+                podiumContainer.appendChild(podiumBlock);
+            });
+        }
+        
+        // Create detailed leaderboard
+        function createDetailedLeaderboard(leaderboardData) {
+            const detailedLeaderboard = document.getElementById('detailedLeaderboard');
+            
+            if (leaderboardData.length === 0) {
+                detailedLeaderboard.innerHTML = `
+                    <div class="px-6 py-8 text-center text-gray-500">
+                        <i class="fas fa-trophy text-4xl mb-4 text-gray-300"></i>
+                        <p class="text-lg">No quiz attempts yet</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            detailedLeaderboard.innerHTML = '';
+            
+            // Separate cheating students from regular students
+            const cheatingStudents = leaderboardData.filter(student => 
+                student.cheating_reason && student.cheating_reason !== null
+            );
+            const regularStudents = leaderboardData.filter(student => 
+                !student.cheating_reason || student.cheating_reason === null
+            );
+            
+            // Add regular students
+            regularStudents.forEach((student, index) => {
+                const entry = createLeaderboardEntry(student, index + 1);
+                detailedLeaderboard.appendChild(entry);
+            });
+            
+            // Add current user if not in top 5 (whether cheating or not)
+            const currentUser = leaderboardData.find(student => student.is_current_user == 1);
+            const showCurrentUser = currentUser && currentUser.rank_position > 5;
+            
+            if (showCurrentUser) {
+                const currentUserEntry = createLeaderboardEntry(currentUser, currentUser.rank_position, true);
+                detailedLeaderboard.appendChild(currentUserEntry);
+            }
+            
+            // If current user cheated and is not in top 5, also add them to cheating section
+            if (currentUser && (currentUser.cheating_reason && currentUser.cheating_reason !== null) && showCurrentUser) {
+                // Current user is already added above
+            }
+            
+            // Add cheating students section if there are any
+            if (cheatingStudents.length > 0) {
+                // Add separator
+                const separator = document.createElement('div');
+                separator.className = 'bg-gray-100 px-6 py-3';
+                separator.innerHTML = `
+                    <div class="flex items-center justify-center">
+                        <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>
+                        <span class="text-red-600 font-semibold">Students with Cheating Incidents</span>
+                    </div>
+                `;
+                detailedLeaderboard.appendChild(separator);
+                
+                // Add all cheating students
+                cheatingStudents.forEach((student, index) => {
+                    const entry = createLeaderboardEntry(student, student.rank_position, false, true);
+                    detailedLeaderboard.appendChild(entry);
+                });
+            }
+        }
+        
+        // Create individual leaderboard entry
+        function createLeaderboardEntry(student, rank, isCurrentUser = false, isCheating = false) {
+            const entry = document.createElement('div');
+            entry.className = `leaderboard-entry ${isCurrentUser ? 'you' : ''} ${isCheating ? 'cheating-entry' : ''}`;
+            
+            const initials = student.student_name.split(' ').map(n => n[0]).join('').toUpperCase();
+            
+            // Check if this student was marked as cheating
+            const cheatingIndicator = isCheating ? 
+                `<div class="text-red-600 text-xs font-medium">Cheating Detected</div>` : '';
+            
+            // For cheating students, always show score as 0
+            const displayScore = isCheating ? 0 : student.score;
+            
+            entry.innerHTML = `
+                <div class="leaderboard-rank">${rank}</div>
+                <div class="leaderboard-student">
+                    <div class="leaderboard-avatar ${isCheating ? 'bg-red-500' : ''}">${initials}</div>
+                    <div class="leaderboard-name">
+                        ${student.student_name}
+                        ${cheatingIndicator}
+                    </div>
+                </div>
+                <div class="leaderboard-points ${isCheating ? 'text-red-500' : ''}">${displayScore}</div>
+            `;
+            
+            return entry;
+        }
+
+        // Display student's rank
+        async function displayStudentRank() {
+            try {
+                const response = await fetch('../php/quiz-management.php?action=get_leaderboard&quiz_type=operations-on-functions&limit=50&same_class_only=true', {
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success && result.leaderboard) {
+                    const currentStudent = result.leaderboard.find(student => student.is_current_user == 1);
+                    
+                    if (currentStudent) {
+                        const rank = currentStudent.rank_position;
+                        let rankDisplay = '';
+                        if (rank === 1) {
+                            rankDisplay = '🥇 1st';
+                        } else if (rank === 2) {
+                            rankDisplay = '🥈 2nd';
+                        } else if (rank === 3) {
+                            rankDisplay = '🥉 3rd';
+                        } else {
+                            rankDisplay = `#${rank}`;
+                        }
+                        
+                        const rankElement = document.getElementById('studentRank');
+                        if (rankElement) {
+                            rankElement.textContent = rankDisplay;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error getting student rank:', error);
+            }
+        }
+
+        // Format time from seconds to MM:SS
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        // Check and award badges for quiz completion
+        async function checkAndAwardBadges(result) {
+            try {
+                console.log('🏆 Checking for badge eligibility...');
+                console.log('Quiz result:', result);
+                // Always check with backend; it will decide which badges qualify (completion, 50%+, perfect, etc.)
+                const userId = await getCurrentUserId();
+                if (!userId) {
+                    console.log('❌ No user ID available for badge checking');
+                    return;
+                }
+                
+                console.log('User ID:', userId);
+                console.log('Attempt ID:', currentAttemptId);
+                console.log('Submitting result to backend for badge evaluation');
+                
+                const formData = new FormData();
+                formData.append('action', 'check_and_award_badges');
+                formData.append('student_id', userId);
+                formData.append('quiz_type', 'operations-on-functions');
+                formData.append('score', result.score);
+                formData.append('total_questions', result.total_questions);
+                formData.append('attempt_id', currentAttemptId);
+                
+                console.log('Sending badge check request...');
+                const response = await fetch('../php/badge-management.php', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+                
+                console.log('Badge check response status:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Badge check result:', data);
+                    
+                    if (data.success && data.awarded_badges && data.awarded_badges.length > 0) {
+                        console.log('✅ Badges awarded:', data.awarded_badges);
+                        // Validate badge data before showing notification
+                        const validBadges = data.awarded_badges.filter(badge => {
+                            const isValid = badge && (badge.name || badge.icon_url || badge.description);
+                            if (!isValid) {
+                                console.warn('Invalid badge data found:', badge);
+                            }
+                            return isValid;
+                        });
+                        
+                        if (validBadges.length > 0) {
+                            showBadgeNotification(validBadges);
+                        } else {
+                            console.log('No valid badges to display');
+                        }
+                    } else {
+                        console.log('No badges awarded or empty badge array');
+                    }
+                } else {
+                    console.error('❌ Failed to check badges:', response.status);
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
+                }
+            } catch (error) {
+                console.error('❌ Error checking badges:', error);
+            }
+        }
+        
+        // Show badge notification
+        function showBadgeNotification(badges) {
+            if (!badges || badges.length === 0) {
+                console.log('No badges to display');
+                return;
+            }
+            
+            const badge = badges[0]; // Show the first badge
+            
+            // Validate badge data and provide fallbacks for null/undefined values
+            const badgeIcon = badge.icon_url || '🏆'; // Default trophy emoji if icon_url is null
+            const badgeName = badge.name || 'New Badge'; // Default name if null
+            const badgeDescription = badge.description || 'Congratulations on earning this badge!'; // Default description if null
+            
+            console.log('Displaying badge:', {
+                icon: badgeIcon,
+                name: badgeName,
+                description: badgeDescription
+            });
+            
+            Swal.fire({
+                title: '🎉 Congratulations!',
+                html: `
+                    <div class="text-center">
+                        <div class="text-6xl mb-4">${badgeIcon}</div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">${badgeName}</h3>
+                        <p class="text-gray-600 mb-4">${badgeDescription}</p>
+                        <p class="text-sm text-gray-500">You've earned a new badge!</p>
+                    </div>
+                `,
+                icon: 'success',
+                confirmButtonText: 'Awesome!',
+                confirmButtonColor: '#10b981',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showCloseButton: false,
+                customClass: {
+                    popup: 'badge-notification'
+                }
+            });
+        }
+
+        // Get current user ID from server
+        async function getCurrentUserId() {
+            try {
+                const response = await fetch('../php/user.php', {
+                    credentials: 'include',
+                    cache: 'no-store'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.user && data.user.id) {
+                        return data.user.id;
+                    }
+                }
+                return null;
+            } catch (error) {
+                console.error('Error getting user ID:', error);
+                return null;
+            }
+        }
+
+        // Update results character based on score
+        function updateResultsCharacter(percentage) {
+            const characterImg = document.querySelector('#resultsCharacter img');
+            if (!characterImg) return;
+            
+            // Remove existing animation classes
+            characterImg.classList.remove('sad', 'happy', 'motivate', 'celebrate');
+            
+            if (percentage < 60) {
+                // Low score - show motivate character
+                characterImg.src = '../Img/Character/motivate-removebg-preview.png';
+                characterImg.alt = 'Motivate Character - Keep Going!';
+                characterImg.classList.add('motivate');
+                console.log('💪 Showing motivate character for low score:', percentage + '%');
+            } else if (percentage >= 80) {
+                // High score - show celebrate character
+                characterImg.src = '../Img/Character/celebrate-removebg-preview.png';
+                characterImg.alt = 'Celebrate Character - Excellent Work!';
+                characterImg.classList.add('celebrate');
+                console.log('🎉 Showing celebrate character for high score:', percentage + '%');
+            } else {
+                // Medium score - show happy character
+                characterImg.src = '../Img/Character/happy__1_-removebg-preview.png';
+                characterImg.alt = 'Happy Character - Good Job!';
+                characterImg.classList.add('happy');
+                console.log('😊 Showing happy character for medium score:', percentage + '%');
+            }
+        }
+
+        // Go to dashboard
+        function goToDashboard() {
+            window.location.href = '../dashboard.html';
+        }
+
+        // ==================== ANTI-CHEATING SYSTEM ====================
+        
+        // Initialize anti-cheating monitoring
+        function initializeAntiCheating() {
+            console.log('🔧 Initializing anti-cheating system...');
+            
+            // Stop any existing anti-cheating first
+            stopAntiCheating();
+            
+            // Reset variables
+            tabSwitchCount = 0;
+            focusLostTime = null;
+            isPageVisible = true;
+            hasExitedQuiz = false;
+            hasLoggedOut = false;
+            isQuizActive = true; // Ensure quiz is marked as active
+            
+            // Start heartbeat monitoring
+            startHeartbeat();
+            
+            // Monitor page visibility - CRITICAL for tab switch detection
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+            console.log('✅ Visibility change listener attached');
+            
+            // Monitor window focus
+            window.addEventListener('focus', handleWindowFocus);
+            window.addEventListener('blur', handleWindowBlur);
+            console.log('✅ Focus/blur listeners attached');
+            
+            // Monitor beforeunload (page exit)
+            window.addEventListener('beforeunload', handleBeforeUnload);
+            
+            // Monitor page unload (logout, close tab)
+            window.addEventListener('unload', handlePageUnload);
+            
+            // Monitor new tab/window opening
+            window.addEventListener('beforeunload', handleNewTab);
+            
+            // Monitor keyboard shortcuts for new tab
+            document.addEventListener('keydown', handleKeyboardShortcuts);
+            
+            console.log('✅ Anti-cheating system initialized');
+            console.log('📊 Initial state - Tab switches: 0, Quiz active: true');
+            console.log('🔍 Event listeners attached for visibility, focus, blur, keyboard');
+            
+            // Test the visibility change detection immediately
+            console.log('🧪 Testing visibility change detection...');
+            setTimeout(() => {
+                console.log('🔍 Current document.hidden:', document.hidden);
+                console.log('🔍 Current isQuizActive:', isQuizActive);
+            }, 100);
+        }
+        
+        // Stop anti-cheating monitoring
+        function stopAntiCheating() {
+            console.log('Stopping anti-cheating system...');
+            
+            if (heartbeatInterval) {
+                clearInterval(heartbeatInterval);
+                heartbeatInterval = null;
+            }
+            
+            // Remove event listeners
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            window.removeEventListener('focus', handleWindowFocus);
+            window.removeEventListener('blur', handleWindowBlur);
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            window.removeEventListener('unload', handlePageUnload);
+            document.removeEventListener('keydown', handleKeyboardShortcuts);
+            
+            isQuizActive = false;
+            console.log('Anti-cheating system stopped');
+        }
+        
+        // Start heartbeat monitoring
+        function startHeartbeat() {
+            lastHeartbeat = Date.now();
+            
+            heartbeatInterval = setInterval(async () => {
+                if (!isQuizActive) return;
+                
+                try {
+                    // Send heartbeat to server
+                    const response = await fetch('../php/quiz-management.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `action=heartbeat&attempt_id=${currentAttemptId}`,
+                        credentials: 'include'
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        if (!result.success) {
+                            console.warn('Heartbeat failed:', result.message);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Heartbeat error:', error);
+                }
+                
+                lastHeartbeat = Date.now();
+            }, 10000); // Send heartbeat every 10 seconds
+        }
+        
+        // Handle page visibility changes
+        function handleVisibilityChange() {
+            console.log('🔍 Visibility change detected - isQuizActive:', isQuizActive, 'document.hidden:', document.hidden);
+            console.log('🔍 Current tab switch count:', tabSwitchCount);
+            console.log('🔍 Max allowed tab switches:', maxAllowedTabSwitches);
+            
+            if (!isQuizActive) {
+                console.log('❌ Quiz not active - ignoring visibility change');
+                return;
+            }
+            
+            if (document.hidden) {
+                console.log('👁️ Page became hidden - potential cheating detected');
+                focusLostTime = Date.now();
+                isPageVisible = false;
+                
+                // Only increment tab switch count if this is a real tab switch
+                // Add a small delay to avoid counting rapid visibility changes
+                setTimeout(() => {
+                    if (document.hidden && isQuizActive) {
+                        tabSwitchCount++;
+                        
+                        console.log(`📊 Tab switch count: ${tabSwitchCount}/${maxAllowedTabSwitches}`);
+                        console.log(`📊 Will trigger cheating on: ${maxAllowedTabSwitches} switches`);
+                        
+                        // Check if too many tab switches (trigger on 2nd switch)
+                        if (tabSwitchCount >= maxAllowedTabSwitches) {
+                            console.log('🚨 MAXIMUM TAB SWITCHES EXCEEDED - TERMINATING QUIZ WITH 0 SCORE');
+                            console.log(`Student switched tabs ${tabSwitchCount} times (limit: ${maxAllowedTabSwitches})`);
+                            
+                            // Stop the quiz immediately
+                            isQuizActive = false;
+                            stopTimer();
+                            
+                            // Mark as cheating
+                            markAsCheating('excessive_tab_switches');
+                            return;
+                        }
+                        
+                        // Show warning for first switch
+                        if (tabSwitchCount === 1) {
+                            console.log('⚠️ First tab switch - showing warning');
+                            showCheatingWarning('Tab Switch Detected', 
+                                `You have switched tabs ${tabSwitchCount}/${maxAllowedTabSwitches} times. 
+                                ${maxAllowedTabSwitches - tabSwitchCount} more switch will result in automatic submission with zero score.`);
+                        }
+                    }
+                }, 100); // 100ms delay to avoid rapid counting
+            } else {
+                console.log('👁️ Page became visible');
+                isPageVisible = true;
+                
+                // Check if focus was lost for too long
+                if (focusLostTime) {
+                    const focusLossDuration = Date.now() - focusLostTime;
+                    console.log(`⏱️ Focus was lost for ${focusLossDuration}ms (limit: ${maxAllowedFocusLoss}ms)`);
+                    if (focusLossDuration > maxAllowedFocusLoss) {
+                        console.log('🚨 Focus lost for too long - marking as cheating');
+                        markAsCheating('excessive_focus_loss');
+                        return;
+                    }
+                }
+                
+                focusLostTime = null;
+            }
+        }
+        
+        // Handle window focus
+        function handleWindowFocus() {
+            if (!isQuizActive) return;
+            
+            console.log('Window focused');
+            isPageVisible = true;
+            focusLostTime = null;
+        }
+        
+        // Handle window blur
+        function handleWindowBlur() {
+            if (!isQuizActive) return;
+            
+            console.log('Window blurred - potential cheating detected');
+            focusLostTime = Date.now();
+            isPageVisible = false;
+        }
+        
+        // Handle before page unload
+        function handleBeforeUnload(event) {
+            if (!isQuizActive) return;
+            
+            console.log('Page is about to unload - potential cheating detected');
+            hasExitedQuiz = true;
+            
+            // Mark as cheating immediately
+            markAsCheating('page_exit');
+            
+            // Show warning message
+            event.preventDefault();
+            event.returnValue = 'Are you sure you want to leave? This will result in a zero score.';
+            return 'Are you sure you want to leave? This will result in a zero score.';
+        }
+        
+        // Handle page unload (logout, close tab)
+        function handlePageUnload() {
+            if (!isQuizActive) return;
+            
+            console.log('Page unloaded - marking as cheating');
+            hasExitedQuiz = true;
+            markAsCheating('page_unload');
+        }
+        
+        // Handle new tab detection
+        function handleNewTab(event) {
+            if (!isQuizActive) return;
+            
+            // This is a simplified detection - in practice, you'd need more sophisticated methods
+            console.log('Potential new tab/window opened');
+        }
+        
+        // Handle keyboard shortcuts for new tab
+        function handleKeyboardShortcuts(event) {
+            if (!isQuizActive) return;
+            
+            // Detect Ctrl+T (new tab) or Ctrl+N (new window)
+            if ((event.ctrlKey || event.metaKey) && (event.key === 't' || event.key === 'n')) {
+                console.log('New tab/window shortcut detected - potential cheating');
+                event.preventDefault();
+                showCheatingWarning('Shortcut Blocked', 
+                    'Opening new tabs or windows during the quiz is not allowed and will result in a zero score.');
+            }
+        }
+        
+        // Mark attempt as cheating
+        async function markAsCheating(reason) {
+            if (!currentAttemptId) {
+                console.log('❌ No current attempt ID - trying to get current attempt...');
+                
+                // Try to get the current attempt ID
+                try {
+                    const response = await fetch('../php/quiz-management.php?action=check_existing_attempt&quiz_type=operations-on-functions', {
+                        credentials: 'include'
+                    });
+                    const result = await response.json();
+                    
+                    if (result.success && result.attempt) {
+                        currentAttemptId = result.attempt.id;
+                        console.log('✅ Retrieved current attempt ID:', currentAttemptId);
+                    } else {
+                        console.log('❌ No current attempt found - cannot mark as cheating');
+                        // Still show the cheating notification even without database update
+                        showCheatingNotification(reason);
+                        stopQuizDueToCheating();
+                        return;
+                    }
+                } catch (error) {
+                    console.error('❌ Error getting current attempt:', error);
+                    // Still show the cheating notification even without database update
+                    showCheatingNotification(reason);
+                    stopQuizDueToCheating();
+                    return;
+                }
+            }
+            
+            console.log(`🚨 Marking attempt ${currentAttemptId} as cheating - reason: ${reason}`);
+            
+            // Stop the quiz immediately to prevent further interaction
+            isQuizActive = false;
+            stopTimer();
+            stopAntiCheating();
+            
+            try {
+                const response = await fetch('../php/quiz-management.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=mark_cheating&attempt_id=${currentAttemptId}&reason=${reason}`,
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        console.log('✅ Successfully marked as cheating');
+                        
+                        // Show cheating notification
+                        showCheatingNotification(reason);
+                        
+                        // Stop the quiz completely
+                        stopQuizDueToCheating();
+                    } else {
+                        console.log('❌ Failed to mark as cheating:', result.message);
+                        // Still show the notification even if database update fails
+                        showCheatingNotification(reason);
+                        stopQuizDueToCheating();
+                    }
+                } else {
+                    console.log('❌ HTTP error marking as cheating');
+                    // Still show the notification even if database update fails
+                    showCheatingNotification(reason);
+                    stopQuizDueToCheating();
+                }
+            } catch (error) {
+                console.error('❌ Error marking as cheating:', error);
+                // Still show the notification even if database update fails
+                showCheatingNotification(reason);
+                stopQuizDueToCheating();
+            }
+        }
+        
+        // Show cheating warning
+        function showCheatingWarning(title, message) {
+            console.log('🚨 Showing cheating warning - tab switch count:', tabSwitchCount);
+            
+            Swal.fire({
+                title: title,
+                html: `
+                    <div class="text-center">
+                        <div class="w-24 h-24 mx-auto mb-4 flex items-center justify-center">
+                            <img src="../Img/Character/warning_example-removebg-preview.png" 
+                                 alt="Warning Character" 
+                                 class="w-full h-full object-contain warning-character"
+                                 style="filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));">
+                        </div>
+                        <p class="text-slate-600 text-lg leading-relaxed">${message}</p>
+                    </div>
+                `,
+                confirmButtonText: 'I Understand',
+                confirmButtonColor: '#f59e0b',
+                background: '#ffffff',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    title: 'text-slate-800',
+                    content: 'text-slate-600'
+                },
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            }).then((result) => {
+                // After the user clicks "I Understand", ensure anti-cheating is still active
+                if (result.isConfirmed) {
+                    console.log('✅ User acknowledged warning - anti-cheating system remains active');
+                    console.log(`📊 Current tab switch count: ${tabSwitchCount}/${maxAllowedTabSwitches}`);
+                    console.log(`📊 Quiz active status: ${isQuizActive}`);
+                    
+                    // Simple verification that the system is still active
+                    if (isQuizActive) {
+                        console.log('🔍 Anti-cheating system is still monitoring...');
+                        console.log(`📊 Current tab switch count: ${tabSwitchCount}/${maxAllowedTabSwitches}`);
+                        console.log('✅ System is ready to detect the next tab switch');
+                    } else {
+                        console.log('⚠️ Quiz is not active - this should not happen');
+                    }
+                }
+            });
+        }
+        
+        // Show cheating notification and results
+        function showCheatingNotification(reason) {
+            const reasonMessages = {
+                'excessive_tab_switches': 'You switched tabs too many times during the quiz.',
+                'excessive_focus_loss': 'You left the quiz page for too long.',
+                'page_exit': 'You attempted to leave the quiz page.',
+                'page_unload': 'You closed the browser or logged out during the quiz.',
+                'new_tab': 'You opened a new tab during the quiz.'
+            };
+            
+            const message = reasonMessages[reason] || 'Suspicious activity detected during the quiz.';
+            
+            // Hide quiz container and show results with 0 score
+            const quizContainer = document.getElementById('quizContainer');
+            const resultsContainer = document.getElementById('resultsContainer');
+            
+            if (quizContainer) quizContainer.classList.add('hidden');
+            if (resultsContainer) {
+                resultsContainer.classList.remove('hidden');
+                
+                // Update results with 0 score
+                const totalScoreEl = document.getElementById('totalScore');
+                const correctAnswersEl = document.getElementById('correctAnswers');
+                const incorrectAnswersEl = document.getElementById('incorrectAnswers');
+                const completionTimeEl = document.getElementById('completionTime');
+                const overallGradeEl = document.getElementById('overallGrade');
+                const gradeProgressEl = document.getElementById('gradeProgress');
+                
+                if (totalScoreEl) totalScoreEl.textContent = '0/15';
+                if (correctAnswersEl) correctAnswersEl.textContent = '0';
+                if (incorrectAnswersEl) incorrectAnswersEl.textContent = '11';
+                if (completionTimeEl) completionTimeEl.textContent = getFormattedTime();
+                if (overallGradeEl) overallGradeEl.textContent = '0%';
+                if (gradeProgressEl) {
+                    gradeProgressEl.style.width = '0%';
+                    gradeProgressEl.className = 'bg-red-500 h-3 rounded-full transition-all duration-1000';
+                }
+                
+            // Update character to show sad/cheating state
+            const characterImg = document.querySelector('#resultsCharacter img');
+            if (characterImg) {
+                characterImg.src = '../Img/Character/sad-removebg-preview.png';
+                characterImg.alt = 'Sad Character - Cheating Detected';
+                characterImg.classList.add('sad');
+                console.log('😢 Showing sad character for cheating incident');
+            }
+            
+            // Add cheating notice to results
+            const resultsContent = resultsContainer.querySelector('.bg-white.rounded-2xl.shadow-xl.p-8');
+            if (resultsContent) {
+                const cheatingNotice = document.createElement('div');
+                cheatingNotice.className = 'bg-red-50 border-l-4 border-red-500 p-4 rounded-lg mb-6';
+                cheatingNotice.innerHTML = `
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-triangle text-red-500 mr-3"></i>
+                        <div>
+                            <h4 class="font-semibold text-red-800">Quiz Terminated Due to Cheating</h4>
+                            <p class="text-sm text-red-700">${message}</p>
+                        </div>
+                    </div>
+                `;
+                resultsContent.insertBefore(cheatingNotice, resultsContent.firstChild);
+            }
+            }
+            
+            // Scroll to results
+            if (resultsContainer) {
+                resultsContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+        
+        // Stop quiz due to cheating
+        function stopQuizDueToCheating() {
+            // Stop timer
+            stopTimer();
+            
+            // Disable all quiz interactions
+            const quizContainer = document.getElementById('quizContainer');
+            if (quizContainer) {
+                quizContainer.style.pointerEvents = 'none';
+                quizContainer.style.opacity = '0.5';
+            }
+            
+            // Disable submit button
+            const submitButton = document.querySelector('[onclick="submitQuiz()"]');
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.textContent = 'Quiz Terminated';
+            }
+            
+            // Stop anti-cheating
+            stopAntiCheating();
+        }
+        
+        // Check if page was refreshed (allow continuation)
+        function isPageRefresh() {
+            // Check if the page was refreshed by looking at performance navigation
+            if (performance.navigation && performance.navigation.type === 1) {
+                return true; // Page was refreshed
+            }
+            
+            // Check if the page was refreshed by looking at performance timing
+            if (performance.timing && performance.timing.navigationStart) {
+                const navigationStart = performance.timing.navigationStart;
+                const now = Date.now();
+                const timeDiff = now - navigationStart;
+                
+                // If the page was loaded very recently, it might be a refresh
+                if (timeDiff < 5000) { // Less than 5 seconds
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+        
+        // Override the submit quiz function to check for cheating
+        const originalSubmitQuiz = submitQuiz;
+        submitQuiz = async function() {
+            // Check if student has been marked as cheating
+            if (hasExitedQuiz || hasLoggedOut) {
+                showCheatingNotification('quiz_exit');
+                return;
+            }
+            
+            // Call original submit function
+            return await originalSubmitQuiz();
+        };
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // Check authentication
+                const res = await fetch('../php/user.php', { credentials: 'include', cache: 'no-store' });
+                if (res.status === 401) { 
+                    window.location.href = '../login.html'; 
+                    return; 
+                }
+                const data = await res.json();
+                if (!data.success) { 
+                    window.location.href = '../login.html'; 
+                    return; 
+                }
+                
+                // Update user name
+                const userNameEl = document.getElementById('userName');
+                if (userNameEl && data.user && data.user.first_name) {
+                    userNameEl.textContent = `${data.user.first_name} ${data.user.last_name || ''}`.trim();
+                }
+                
+                // Initialize quiz
+                await initializeQuiz();
+                
+            } catch (e) {
+                console.error('Error:', e);
+                window.location.href = '../login.html';
+            }
+        });
+    </script>
+</body>
+</html>

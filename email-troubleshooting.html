@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Troubleshooting Guide - MathEase</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .header { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .section { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .status { padding: 15px; border-radius: 5px; margin-bottom: 15px; }
+        .status.success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .status.error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .status.warning { background: #fff3cd; border: 1px solid #ffeaa7; color: #856404; }
+        .btn { background: #667eea; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 5px; }
+        .btn:hover { background: #5a6fd8; }
+        .code { background: #f8f9fa; padding: 10px; border-radius: 5px; font-family: monospace; margin: 10px 0; }
+        .step { margin: 15px 0; padding: 15px; background: #f8f9fa; border-left: 4px solid #667eea; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Email Troubleshooting Guide</h1>
+            <p>Complete guide to fix email delivery issues in MathEase</p>
+        </div>
+
+        <div class="section">
+            <h2>📊 Current Status</h2>
+            <div class="status error">
+                <strong>❌ SMTP Issue Detected:</strong> STARTTLS not working properly with Gmail
+            </div>
+            <div class="status warning">
+                <strong>⚠️ Workaround Active:</strong> Emails are being saved to files in the <code>emails/</code> directory
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔍 Problem Analysis</h2>
+            <p>The issue is that Gmail's SMTP server is not responding correctly to the STARTTLS command. This is a common problem with Gmail SMTP configuration.</p>
+            
+            <h3>What's Happening:</h3>
+            <ul>
+                <li>✅ Connection to Gmail SMTP server works</li>
+                <li>✅ SMTP greeting is correct</li>
+                <li>❌ STARTTLS command fails</li>
+                <li>❌ Authentication cannot proceed without TLS</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>🛠️ Solutions (Try in Order)</h2>
+
+            <div class="step">
+                <h3>Solution 1: Use PHP mail() Function</h3>
+                <p>Test if your server's mail() function works:</p>
+                <a href="test-mail.php" class="btn">Test PHP mail() Function</a>
+                <p><strong>Note:</strong> This uses your server's local mail configuration instead of Gmail SMTP.</p>
+            </div>
+
+            <div class="step">
+                <h3>Solution 2: Fix Gmail App Password</h3>
+                <p>Make sure your Gmail App Password is correct:</p>
+                <ol>
+                    <li>Go to <a href="https://myaccount.google.com/security" target="_blank">Google Account Security</a></li>
+                    <li>Enable 2-Step Verification if not already enabled</li>
+                    <li>Go to App passwords</li>
+                    <li>Generate a new App Password for "Mail"</li>
+                    <li>Update the password in <code>php/config.php</code></li>
+                </ol>
+            </div>
+
+            <div class="step">
+                <h3>Solution 3: Use Different SMTP Settings</h3>
+                <p>Try alternative Gmail SMTP settings:</p>
+                <div class="code">
+                    SMTP Host: smtp.gmail.com<br>
+                    SMTP Port: 465 (instead of 587)<br>
+                    Encryption: SSL (instead of TLS)
+                </div>
+            </div>
+
+            <div class="step">
+                <h3>Solution 4: Use Email Service Provider</h3>
+                <p>Consider using a dedicated email service:</p>
+                <ul>
+                    <li><strong>SendGrid:</strong> Free tier with 100 emails/day</li>
+                    <li><strong>Mailgun:</strong> Free tier with 5,000 emails/month</li>
+                    <li><strong>Amazon SES:</strong> Very cheap, reliable</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📧 Current Workaround</h2>
+            <p>While we fix the SMTP issue, you can still use the email verification system:</p>
+            
+            <div class="status success">
+                <strong>✅ Email Verification is Working!</strong><br>
+                Emails are being generated and saved to files. You can view them and manually verify accounts.
+            </div>
+
+            <h3>How to Use the Workaround:</h3>
+            <ol>
+                <li>Register a new account</li>
+                <li>Go to <a href="email-viewer.php">Email Viewer</a></li>
+                <li>Find the latest verification email</li>
+                <li>Click "View Email" to see the OTP code</li>
+                <li>Use the OTP code to verify the account</li>
+            </ol>
+
+            <a href="email-viewer.php" class="btn">View Generated Emails</a>
+        </div>
+
+        <div class="section">
+            <h2>🧪 Testing Tools</h2>
+            <p>Use these tools to diagnose and test email functionality:</p>
+            
+            <a href="test-smtp.php" class="btn">SMTP Connection Test</a>
+            <a href="test-mail.php" class="btn">PHP mail() Test</a>
+            <a href="test-email.php" class="btn">Original Email Test</a>
+            <a href="smtp-checker.php" class="btn">SMTP Configuration Checker</a>
+            <a href="email-viewer.php" class="btn">Email Viewer</a>
+        </div>
+
+        <div class="section">
+            <h2>📞 Next Steps</h2>
+            <ol>
+                <li><strong>Test PHP mail():</strong> Try the alternative email method</li>
+                <li><strong>Check Gmail settings:</strong> Verify App Password is correct</li>
+                <li><strong>Use workaround:</strong> Continue using email viewer for now</li>
+                <li><strong>Consider alternatives:</strong> Look into email service providers</li>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>

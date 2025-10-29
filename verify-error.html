@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification Error - MathEase</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="register-page">
+    <section class="auth-section" style="padding-top:60px;">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <div class="auth-logo">
+                        <img src="css/nav-logo/logo-mid.png" alt="MathEase Logo" class="auth-logo-img">
+                        <h1>MathEase</h1>
+                    </div>
+                    <h2>Verification Error</h2>
+                    <p>There was an issue with your email verification.</p>
+                </div>
+
+                <div class="auth-form">
+                    <div style="text-align: center; margin: 30px 0;">
+                        <div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; width: 80px; height: 80px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 20px;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <h3 style="color: #e74c3c; margin: 0 0 10px 0;">Verification Failed</h3>
+                        <p id="errorMessage" style="color: #666; margin: 0;">An error occurred during verification.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <a href="register.html" class="btn btn-outline btn-full">
+                            <i class="fas fa-user-plus"></i>
+                            Register Again
+                        </a>
+                        <a href="verify_code_signup.html" class="btn btn-primary btn-full" style="margin-top: 10px;">
+                            <i class="fas fa-key"></i>
+                            Try OTP Verification
+                        </a>
+                    </div>
+                </div>
+
+                <div class="auth-footer">
+                    <p>Need help? <a href="index.html">Contact Support</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Get error from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+        
+        if (error) {
+            document.getElementById('errorMessage').textContent = decodeURIComponent(error);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gmail App Password Setup - MathEase</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .header { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .section { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .step { margin: 15px 0; padding: 15px; background: #f8f9fa; border-left: 4px solid #667eea; }
+        .btn { background: #667eea; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 5px; }
+        .btn:hover { background: #5a6fd8; }
+        .status { padding: 15px; border-radius: 5px; margin-bottom: 15px; }
+        .status.success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .status.error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .code { background: #f8f9fa; padding: 10px; border-radius: 5px; font-family: monospace; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔑 Gmail App Password Setup Guide</h1>
+            <p>Complete guide to fix Gmail SMTP authentication for MathEase</p>
+        </div>
+
+        <div class="section">
+            <h2>🎯 Quick Fix Steps</h2>
+            
+            <div class="step">
+                <h3>Step 1: Enable 2-Factor Authentication</h3>
+                <p>Go to your Google Account security settings:</p>
+                <a href="https://myaccount.google.com/security" target="_blank" class="btn">Open Google Account Security</a>
+                <ol>
+                    <li>Click on "2-Step Verification"</li>
+                    <li>Follow the setup process if not already enabled</li>
+                    <li>Make sure it's turned ON</li>
+                </ol>
+            </div>
+
+            <div class="step">
+                <h3>Step 2: Generate App Password</h3>
+                <p>Create a new App Password for MathEase:</p>
+                <a href="https://myaccount.google.com/apppasswords" target="_blank" class="btn">Open App Passwords</a>
+                <ol>
+                    <li>Select "Mail" as the app type</li>
+                    <li>Select "Other (custom name)"</li>
+                    <li>Enter "MathEase" as the name</li>
+                    <li>Click "Generate"</li>
+                    <li><strong>Copy the 16-character password</strong> (no spaces)</li>
+                </ol>
+            </div>
+
+            <div class="step">
+                <h3>Step 3: Update Configuration</h3>
+                <p>Update your <code>php/config.php</code> file:</p>
+                <div class="code">
+                    define('MAIL_PASSWORD', getenv('MAIL_PASSWORD') ?: 'YOUR_NEW_16_CHAR_PASSWORD');
+                </div>
+                <p><strong>Important:</strong> Remove all spaces from the App Password!</p>
+            </div>
+
+            <div class="step">
+                <h3>Step 4: Test the Fix</h3>
+                <p>Test the updated configuration:</p>
+                <a href="enhanced-email-test.php" class="btn">Test Enhanced Email System</a>
+                <a href="test-ssl-smtp.php" class="btn">Test SSL SMTP</a>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔧 Alternative Solutions</h2>
+            
+            <div class="step">
+                <h3>Option 1: Use Different Gmail Account</h3>
+                <p>Try with a Gmail account that you know works:</p>
+                <ul>
+                    <li>Use a personal Gmail account</li>
+                    <li>Make sure 2FA is enabled</li>
+                    <li>Generate fresh App Password</li>
+                    <li>Update configuration</li>
+                </ul>
+            </div>
+
+            <div class="step">
+                <h3>Option 2: Use Email Service Provider</h3>
+                <p>Consider using a dedicated email service:</p>
+                <ul>
+                    <li><strong>SendGrid:</strong> Free 100 emails/day</li>
+                    <li><strong>Mailgun:</strong> Free 5,000 emails/month</li>
+                    <li><strong>Amazon SES:</strong> Very cheap, reliable</li>
+                </ul>
+            </div>
+
+            <div class="step">
+                <h3>Option 3: Continue with File-Based System</h3>
+                <p>Your email verification system is working perfectly:</p>
+                <a href="email-viewer.php" class="btn">View Generated Emails</a>
+                <p>Emails are being generated and saved. You can use them immediately!</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📧 Current Status</h2>
+            <div class="status success">
+                <strong>✅ Email Verification System: WORKING</strong><br>
+                - OTP codes are being generated correctly<br>
+                - Verification emails are being created<br>
+                - Account verification process works<br>
+                - Only Gmail SMTP delivery needs fixing
+            </div>
+            
+            <div class="status error">
+                <strong>❌ Gmail SMTP: Authentication Issue</strong><br>
+                - Gmail App Password authentication failing<br>
+                - Emails saved to files as fallback<br>
+                - Need to fix App Password or use alternative
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🧪 Testing Tools</h2>
+            <a href="enhanced-email-test.php" class="btn">Enhanced Email Test</a>
+            <a href="test-ssl-smtp.php" class="btn">SSL SMTP Test</a>
+            <a href="test-smtp.php" class="btn">STARTTLS SMTP Test</a>
+            <a href="email-viewer.php" class="btn">Email Viewer</a>
+            <a href="test-mail.php" class="btn">PHP mail() Test</a>
+        </div>
+
+        <div class="section">
+            <h2>🚀 Next Steps</h2>
+            <ol>
+                <li><strong>Generate new App Password</strong> for matheasenc@gmail.com</li>
+                <li><strong>Update php/config.php</strong> with the new password</li>
+                <li><strong>Test enhanced email system</strong></li>
+                <li><strong>Try registration</strong> to see if emails are delivered</li>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>

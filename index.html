@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathEase - Interactive General Mathematics Learning Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom animations for the screenshot */
+        html { scroll-behavior: smooth; }
+        .nav-link { transition: color 200ms ease; }
+        .nav-link:hover, .nav-link:focus { color: #ffffff; }
+        .nav-link.active { color: #ffffff; font-weight: 600; }
+        .navbar.scrolled { box-shadow: 0 8px 24px rgba(0,0,0,0.08); backdrop-filter: saturate(1.2) blur(6px); }
+        @keyframes float-gentle {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-10px) rotate(1deg); }
+            50% { transform: translateY(-5px) rotate(0deg); }
+            75% { transform: translateY(-15px) rotate(-1deg); }
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+            }
+            50% { 
+                transform: scale(1.05);
+                box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+            }
+        }
+        
+        @keyframes slide-in-right {
+            0% { 
+                transform: translateX(100px);
+                opacity: 0;
+            }
+            100% { 
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Remove white background from image */
+        .screenshot-image {
+            background: transparent !important;
+            mix-blend-mode: multiply;
+            filter: contrast(1.1) brightness(1.05);
+        }
+        
+        /* Enhanced floating animation */
+        .animate-float-enhanced {
+           /* animation: float-gentle 6s ease-in-out infinite; */
+        }
+        
+        /* Glow effect for the image container */
+        .animate-glow {
+            animation: pulse-glow 4s ease-in-out infinite;
+        }
+        
+        /* Slide in animation for features */
+        .animate-slide-in-right {
+            animation: slide-in-right 0.8s ease-out;
+        }
+        
+        /* Custom hover effects */
+        .screenshot-container:hover .screenshot-image {
+            transform: scale(1.02) rotate(1deg);
+            filter: contrast(1.2) brightness(1.1) drop-shadow(0 25px 50px rgba(0,0,0,0.15));
+        }
+        
+        /* Layout improvements */
+        .feature-item {
+            min-height: 120px;
+        }
+        
+        .screenshot-container {
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        @media (max-width: 1024px) {
+            .screenshot-container {
+                min-height: 350px;
+                padding: 1rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .screenshot-container {
+                min-height: 300px;
+                padding: 0.75rem;
+            }
+            
+            .feature-item {
+                min-height: auto;
+                padding: 1.5rem;
+            }
+            
+            .feature-item .flex {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            
+            .feature-item .w-16 {
+                width: 3rem;
+                height: 3rem;
+                margin: 0 auto;
+            }
+        }
+        
+        /* Staggered animation delays */
+        .feature-item:nth-child(1) { animation-delay: 0.1s; }
+        .feature-item:nth-child(2) { animation-delay: 0.2s; }
+        .feature-item:nth-child(3) { animation-delay: 0.3s; }
+        .feature-item:nth-child(4) { animation-delay: 0.4s; }
+        
+        /* Welcome Character Styles */
+        .welcome-character-container {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            z-index: 10;
+        }
+        
+        .welcome-character {
+            width: 250px;
+            height: auto;
+            filter: drop-shadow(0 15px 30px rgba(0,0,0,0.2));
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+        
+        .welcome-character:hover {
+           /* transform: scale(1.1) rotate(5deg); */
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3));
+        }
+        
+        
+        /* Welcome Animation */
+        @keyframes welcome-bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-20px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        .welcome-character.welcome-animation {
+            animation: welcome-bounce 2s ease-in-out;
+        }
+        
+        @media (max-width: 768px) {
+            .welcome-character {
+                width: 150px;
+            }
+            .welcome-character-container {
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .welcome-character {
+                width: 120px;
+            }
+            .welcome-character-container {
+                bottom: 15px;
+                right: 15px;
+            }
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'slate': {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        },
+                        'indigo': {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            300: '#a5b4fc',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                        },
+                        'emerald': {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            300: '#6ee7b7',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        },
+                        'violet': {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                        'scale-in': 'scaleIn 0.4s ease-out',
+                        'float': 'float 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        scaleIn: {
+                            '0%': { transform: 'scale(0.95)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="css/nav-logo/nav-logo.png" alt="MathEase Logo" class="logo-img">
+                <span>MathEase</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#home" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#topics" class="nav-link">Topics</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#teachers" class="nav-link">For Teachers</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#students" class="nav-link">For Students</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#team" class="nav-link">Our Team</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#about" class="nav-link">About Us</a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="login.html" class="nav-link">Login</a>
+                </li>
+                
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">Master General Mathematics with <span class="highlight">MathEase</span></h1>
+                <p class="hero-description">
+                    An interactive learning platform designed specifically for Grade 11 STEM students. 
+                    Learn General Mathematics through gamified quizzes, step-by-step explanations, and real-time progress tracking.
+                </p>
+                <div class="hero-buttons">
+                    <a href="register.html" class="btn btn-primary">Get Started</a>
+                    <a href="#why" class="btn btn-secondary">More Info</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="math-animation">
+                    <div class="formula">Simple Interest: I = Prt</div>
+                    <div class="formula">Slope of a line: m = (y₂−y₁)/(x₂−x₁)</div>
+                    <div class="formula">Compound: A = P(1 + r/n)^{nt}</div>
+                </div>
+                <!-- Welcome Character -->
+                <div class="welcome-character-container">
+                    <img src="Img/Character/welcome-removebg-preview.png" 
+                         alt="Welcome to MathEase" 
+                         class="welcome-character animate-float-enhanced"
+                         id="welcomeCharacter">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="why" class="py-20 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-slate-800 mb-4">Why Choose MathEase?</h2>
+                <p class="text-xl text-slate-600 max-w-3xl mx-auto">Discover the features that make learning General Mathematics engaging, effective, and enjoyable for Grade 11 STEM students.</p>
+            </div>
+            
+            <!-- Animated Learning Experience -->
+            <div class="mb-16">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+                    <!-- Features List -->
+                    <div class="space-y-8 order-2 lg:order-1">
+                        <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60 feature-item">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                                    <i class="fas fa-gamepad text-2xl text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-slate-800 mb-4">Gamified Learning</h3>
+                                    <p class="text-slate-600 leading-relaxed">Interactive quizzes and challenges that make learning General Mathematics fun and engaging.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60 feature-item">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                                    <i class="fas fa-chart-line text-2xl text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-slate-800 mb-4">Progress Tracking</h3>
+                                    <p class="text-slate-600 leading-relaxed">Monitor your learning journey with detailed analytics and performance insights.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60 feature-item">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-16 h-16 bg-gradient-to-br from-violet-500 to-violet-600 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                                    <i class="fas fa-lightbulb text-2xl text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-slate-800 mb-4">Step-by-Step Solutions</h3>
+                                    <p class="text-slate-600 leading-relaxed">Clear explanations with visual aids to help you understand General Mathematics concepts.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    
+                    </div>
+                    
+                    <!-- Animated Screenshot -->
+                    <div class="relative animate-slide-up order-1 lg:order-2">
+                        <div class="relative z-10">
+                            <!-- Main Image Container with Animation -->
+                            <div class="relative overflow-hidden rounded-3xl shadow-2xl bg-gradient-to-br from-indigo-100 to-violet-100 p-6 lg:p-8 animate-glow screenshot-container">
+                                <img src="Img/Character/laptop-removebg-preview.png" 
+                                     alt="Student learning mathematics with interactive elements" 
+                                     class="w-full h-auto rounded-2xl screenshot-image animate-float-enhanced transition-all duration-700 ease-out"
+                                     style="filter: drop-shadow(0 20px 40px rgba(0,0,0,0.1));">
+                                
+                                <!-- Animated Overlay Elements -->
+                                <div class="absolute inset-0 pointer-events-none">
+                                    <!-- Floating Math Elements -->
+                                    <div class="absolute top-4 right-4 w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg animate-bounce" style="animation-delay: 0.5s;">
+                                        <i class="fas fa-calculator text-white text-lg"></i>
+                                    </div>
+                                    
+                                    <div class="absolute bottom-8 left-6 w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center shadow-lg animate-pulse" style="animation-delay: 1s;">
+                                        <i class="fas fa-chart-bar text-white text-sm"></i>
+                                    </div>
+                                    
+                                    <div class="absolute top-1/2 left-4 w-8 h-8 bg-gradient-to-br from-violet-400 to-violet-600 rounded-full flex items-center justify-center shadow-lg animate-ping" style="animation-delay: 1.5s;">
+                                        <i class="fas fa-star text-white text-xs"></i>
+                                    </div>
+                                    
+                                    <!-- Progress Indicator -->
+                                    <div class="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm rounded-xl p-3 shadow-lg">
+                                        <div class="flex items-center space-x-2">
+                                            <div class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></div>
+                                            <span class="text-xs font-semibold text-slate-700">Learning Active</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Background Decorative Elements -->
+                        <div class="absolute -top-6 -right-6 w-24 h-24 bg-gradient-to-br from-indigo-200/30 to-violet-200/30 rounded-full animate-pulse" style="animation-delay: 2s;"></div>
+                        <div class="absolute -bottom-6 -left-6 w-20 h-20 bg-gradient-to-br from-emerald-200/30 to-emerald-300/30 rounded-full animate-pulse" style="animation-delay: 2.5s;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            
+        </div>
+    </section>
+
+    <!-- Lessons Section -->
+    <section id="topics" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-slate-800 mb-4">MathEase Lessons</h2>
+                <p class="text-xl text-slate-600 max-w-3xl mx-auto">Master General Mathematics through our comprehensive lesson modules designed specifically for Grade 11 STEM students.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Functions Lessons -->
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60">
+                    <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-project-diagram text-3xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Functions</h3>
+                    <p class="text-slate-600 leading-relaxed mb-6">Master the fundamentals of functions, operations, and their properties.</p>
+                    <a href="#" onclick="showLoginNotification('Functions')" class="inline-flex items-center text-indigo-600 hover:text-indigo-700 font-semibold transition-colors group">
+                        Start Learning
+                        <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+                
+                <!-- Rational Functions Lessons -->
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.1s;">
+                    <div class="w-20 h-20 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-chart-line text-3xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Rational Functions</h3>
+                    <p class="text-slate-600 leading-relaxed mb-6">Explore domain, range, and representations of rational functions.</p>
+                    <a href="#" onclick="showLoginNotification('Rational Functions')" class="inline-flex items-center text-emerald-600 hover:text-emerald-700 font-semibold transition-colors group">
+                        Start Learning
+                        <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+                
+                <!-- One-to-One Functions -->
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.2s;">
+                    <div class="w-20 h-20 bg-gradient-to-br from-violet-500 to-violet-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-exchange-alt text-3xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">One-to-One Functions</h3>
+                    <p class="text-slate-600 leading-relaxed mb-6">Understand inverse functions and their applications in mathematics.</p>
+                    <a href="#" onclick="showLoginNotification('One-to-One Functions')" class="inline-flex items-center text-violet-600 hover:text-violet-700 font-semibold transition-colors group">
+                        Start Learning
+                        <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+                
+                <!-- Operations on Functions -->
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.3s;">
+                    <div class="w-20 h-20 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-calculator text-3xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Operations on Functions</h3>
+                    <p class="text-slate-600 leading-relaxed mb-6">Learn addition, subtraction, multiplication, and division of functions.</p>
+                    <a href="#" onclick="showLoginNotification('Operations on Functions')" class="inline-flex items-center text-amber-600 hover:text-amber-700 font-semibold transition-colors group">
+                        Start Learning
+                        <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+                
+                <!-- Simple Interest -->
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.4s;">
+                    <div class="w-20 h-20 bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-piggy-bank text-3xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Simple Interest</h3>
+                    <p class="text-slate-600 leading-relaxed mb-6">Master the basics of simple interest calculations and applications.</p>
+                    <a href="#" onclick="showLoginNotification('Simple Interest')" class="inline-flex items-center text-rose-600 hover:text-rose-700 font-semibold transition-colors group">
+                        Start Learning
+                        <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+                
+                <!-- Compound Interest -->
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.5s;">
+                    <div class="w-20 h-20 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-chart-bar text-3xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Compound Interest</h3>
+                    <p class="text-slate-600 leading-relaxed mb-6">Explore compound interest formulas and real-world applications.</p>
+                    <a href="#" onclick="showLoginNotification('Compound Interest')" class="inline-flex items-center text-teal-600 hover:text-teal-700 font-semibold transition-colors group">
+                        Start Learning
+                        <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- For Teachers Section -->
+    <section id="teachers" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-slate-800 mb-4">For Teachers</h2>
+                <p class="text-xl text-slate-600 max-w-3xl mx-auto">Enhance your mathematics classroom with powerful teaching tools and student analytics.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60">
+                    <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-chart-bar text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">Progress Tracking</h3>
+                    <p class="text-slate-600 leading-relaxed">Monitor student performance and identify areas needing attention with real-time analytics.</p>
+                </div>
+                
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.1s;">
+                    <div class="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-users-cog text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">Class Management</h3>
+                    <p class="text-slate-600 leading-relaxed">Create classes, manage student enrollment, and organize learning materials efficiently.</p>
+                </div>
+                
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.2s;">
+                    <div class="w-16 h-16 bg-gradient-to-br from-violet-500 to-violet-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-trophy text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">Gamification</h3>
+                    <p class="text-slate-600 leading-relaxed">Motivate students with leaderboards, achievements, and competitive learning elements.</p>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <a href="teacher-login.html" class="inline-flex items-center bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg">
+                    <i class="fas fa-chalkboard-teacher mr-3"></i>
+                    Teacher Login
+                    <i class="fas fa-arrow-right ml-3"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- For Students Section -->
+    <section id="students" class="py-20 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-slate-800 mb-4">For Students</h2>
+                <p class="text-xl text-slate-600 max-w-3xl mx-auto">Master General Mathematics with interactive lessons and engaging quizzes designed for Grade 11 STEM students.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60">
+                    <div class="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-play text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">Interactive Lessons</h3>
+                    <p class="text-slate-600 leading-relaxed">Step-by-step explanations with visual aids and practice problems to build your understanding.</p>
+                </div>
+                
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.1s;">
+                    <div class="w-16 h-16 bg-gradient-to-br from-violet-500 to-violet-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-medal text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">Achievement System</h3>
+                    <p class="text-slate-600 leading-relaxed">Earn badges and unlock rewards as you complete lessons and quizzes successfully.</p>
+                </div>
+                
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.2s;">
+                    <div class="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fas fa-chart-line text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">Progress Tracking</h3>
+                    <p class="text-slate-600 leading-relaxed">Monitor your improvement and identify areas for focused study with detailed analytics.</p>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <a href="register.html" class="inline-flex items-center bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg">
+                    <i class="fas fa-user-plus mr-3"></i>
+                    Start Learning
+                    <i class="fas fa-arrow-right ml-3"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Team Section -->
+    <section id="team" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-slate-800 mb-4">Our Development Team</h2>
+                <p class="text-xl text-slate-600 max-w-3xl mx-auto">Meet the Computer Science students from Norzagaray College who developed MathEase as their thesis project, dedicated to creating innovative solutions for mathematics education.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+                <!-- Team Member 1 -->
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60">
+                    <div class="w-24 h-24 rounded-full overflow-hidden mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                        <img src="Img/Our Team/Solayao Edwin.png" alt="Solayao Edwin" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Edwin Solayao</h3>
+                    <p class="text-indigo-600 font-semibold mb-4">Lead Developer</p>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                        Computer Science student from Norzagaray College specializing in full-stack development and educational technology solutions.
+                    </p>
+                    <div class="flex justify-center space-x-3">
+                        <a href="https://www.facebook.com/edwin.solayao.2025" target="_blank" rel="noopener noreferrer" class="w-8 h-8 bg-slate-100 hover:bg-indigo-600 rounded-full flex items-center justify-center transition-colors group">
+                            <i class="fab fa-facebook-f text-slate-600 group-hover:text-white text-sm"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Team Member 2 -->
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.1s;">
+                    <div class="w-24 h-24 rounded-full overflow-hidden mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                        <img src="Img/Our Team/Kim.png" alt="Kim" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Kim Ocampo</h3>
+                    <p class="text-emerald-600 font-semibold mb-4">Tester / QA Analyst</p>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                        Computer Science student from Norzagaray College focused on testing features and user experience for the MathEase platform. Skilled in bug detection, feature validation, and cross-device performance checks.
+                    </p>
+                    <div class="flex justify-center space-x-3">
+                        <a href="https://www.facebook.com/kimzacharyocampo" target="_blank" rel="noopener noreferrer" class="w-8 h-8 bg-slate-100 hover:bg-emerald-600 rounded-full flex items-center justify-center transition-colors group">
+                            <i class="fab fa-facebook-f text-slate-600 group-hover:text-white text-sm"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Team Member 3 -->
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.2s;">
+                    <div class="w-24 h-24 rounded-full overflow-hidden mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                        <img src="Img/Our Team/Ram Dela Pena.jpg" alt="Ram Dela Pena" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Ram Dela Pena </h3>
+                    <p class="text-violet-600 font-semibold mb-4">Backend Developer</p>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                        Computer Science student from Norzagaray College focused on database design and server-side development for the MathEase platform.
+                    </p>
+                    <div class="flex justify-center space-x-3">
+                        <a href="https://www.facebook.com/ramquilvic.delapena" target="_blank" rel="noopener noreferrer" class="w-8 h-8 bg-slate-100 hover:bg-violet-600 rounded-full flex items-center justify-center transition-colors group">
+                            <i class="fab fa-facebook-f text-slate-600 group-hover:text-white text-sm"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Team Member 4 -->
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.3s;">
+                    <div class="w-24 h-24 rounded-full overflow-hidden mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                        <img src="Img/Our Team/Arnel Angeles.png" alt="Arnel Angeles" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Arnel Angeles</h3>
+                    <p class="text-amber-600 font-semibold mb-4">Data Analyst</p>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                        Computer Science student from Norzagaray College focused on analytics and performance tracking for student learning outcomes.
+                    </p>
+                    <div class="flex justify-center space-x-3">
+                        <a href="https://www.facebook.com/arnel650" target="_blank" rel="noopener noreferrer" class="w-8 h-8 bg-slate-100 hover:bg-amber-600 rounded-full flex items-center justify-center transition-colors group">
+                            <i class="fab fa-facebook-f text-slate-600 group-hover:text-white text-sm"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Team Member 5 -->
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.4s;">
+                    <div class="w-24 h-24 rounded-full overflow-hidden mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                        <img src="Img/Our Team/Maui Roxas.jpg" alt="Maui Roxas" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Maui Roxas</h3>
+                    <p class="text-rose-600 font-semibold mb-4">Research Coordinator</p>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                        Computer Science student from Norzagaray College coordinating research activities and educational content validation for the thesis project.
+                    </p>
+                    <div class="flex justify-center space-x-3">
+                        <a href="https://www.facebook.com/Maui.Roxas.17" target="_blank" rel="noopener noreferrer" class="w-8 h-8 bg-slate-100 hover:bg-rose-600 rounded-full flex items-center justify-center transition-colors group">
+                            <i class="fab fa-facebook-f text-slate-600 group-hover:text-white text-sm"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Team Member 6 -->
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.5s;">
+                    <div class="w-24 h-24 rounded-full overflow-hidden mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                        <img src="Img/Our Team/Solayao Edwin.png" alt="Edwin Solayao" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Edwin Solayao</h3>
+                    <p class="text-teal-600 font-semibold mb-4">Project Manager</p>
+                    <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                        Computer Science student from Norzagaray College managing project coordination and ensuring timely delivery of the MathEase thesis project.
+                    </p>
+                    <div class="flex justify-center space-x-3">
+                        <a href="https://www.facebook.com/edwin.solayao.2025" target="_blank" rel="noopener noreferrer" class="w-8 h-8 bg-slate-100 hover:bg-teal-600 rounded-full flex items-center justify-center transition-colors group">
+                            <i class="fab fa-facebook-f text-slate-600 group-hover:text-white text-sm"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Values Section -->
+            <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-3xl p-8 border border-slate-200">
+                <div class="text-center mb-8">
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Our Project Values</h3>
+                    <p class="text-slate-600 max-w-2xl mx-auto">The principles that guide our Computer Science thesis project to create innovative mathematics education solutions</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-graduation-cap text-white"></i>
+                        </div>
+                        <h4 class="font-semibold text-slate-800 mb-2">Academic Excellence</h4>
+                        <p class="text-slate-600 text-sm">We strive for academic excellence in our Computer Science thesis project and educational platform development.</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-code text-white"></i>
+                        </div>
+                        <h4 class="font-semibold text-slate-800 mb-2">Technical Innovation</h4>
+                        <p class="text-slate-600 text-sm">We apply cutting-edge Computer Science principles to create innovative educational technology solutions.</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-violet-500 to-violet-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-users text-white"></i>
+                        </div>
+                        <h4 class="font-semibold text-slate-800 mb-2">Student-Centered</h4>
+                        <p class="text-slate-600 text-sm">We design our platform with Grade 11 STEM students' learning needs and challenges in mind.</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-lightbulb text-white"></i>
+                        </div>
+                        <h4 class="font-semibold text-slate-800 mb-2">Research-Driven</h4>
+                        <p class="text-slate-600 text-sm">Our thesis project is grounded in educational research and real-world classroom insights.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about" class="py-20 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-slate-800 mb-4">About MathEase</h2>
+                <p class="text-xl text-slate-600 max-w-3xl mx-auto">A Computer Science thesis project by students from Norzagaray College, designed to empower Grade 11 STEM students through innovative mathematics education technology.</p>
+            </div>
+            
+            <!-- Educational Reference with MNHS -->
+            <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-3xl p-8 mb-16 border border-indigo-200 shadow-lg">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <div class="flex items-center mb-6">
+                            <img src="Img/MNHS-removebg-preview.png" alt="Minuyan National High School Logo" class="h-20 w-20 object-contain mr-4">
+                            <div>
+                                <h3 class="text-3xl font-bold text-slate-800">Minuyan National High School</h3>
+                                <p class="text-indigo-600 font-semibold">Our Primary Educational Reference</p>
+                            </div>
+                        </div>
+                        <p class="text-slate-700 leading-relaxed text-lg mb-6">
+                            MathEase was developed with reference to <strong>Minuyan National High School</strong>, a leading educational institution committed to excellence in STEM education. Our research and development process considers the real needs of Grade 11 STEM students and aligns with actual classroom experiences to ensure our platform addresses genuine educational challenges.
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="flex items-center">
+                                <i class="fas fa-check-circle text-emerald-500 mr-3"></i>
+                                <span class="text-slate-700">Curriculum-aligned content</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-check-circle text-emerald-500 mr-3"></i>
+                                <span class="text-slate-700">Research-based materials</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-check-circle text-emerald-500 mr-3"></i>
+                                <span class="text-slate-700">Student-focused design</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-check-circle text-emerald-500 mr-3"></i>
+                                <span class="text-slate-700">Educational standards compliance</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/50">
+                        <h4 class="text-xl font-bold text-slate-800 mb-4 text-center">Research Benefits</h4>
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center mr-3 mt-1">
+                                    <i class="fas fa-search text-indigo-600 text-sm"></i>
+                                </div>
+                                <div>
+                                    <h5 class="font-semibold text-slate-800">Educational Research</h5>
+                                    <p class="text-slate-600 text-sm">Our thesis project incorporates insights from MNHS educational practices</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center mr-3 mt-1">
+                                    <i class="fas fa-graduation-cap text-indigo-600 text-sm"></i>
+                                </div>
+                                <div>
+                                    <h5 class="font-semibold text-slate-800">Academic Standards</h5>
+                                    <p class="text-slate-600 text-sm">Content developed with reference to established educational standards</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center mr-3 mt-1">
+                                    <i class="fas fa-lightbulb text-indigo-600 text-sm"></i>
+                                </div>
+                                <div>
+                                    <h5 class="font-semibold text-slate-800">Innovation Focus</h5>
+                                    <p class="text-slate-600 text-sm">Applying Computer Science principles to educational technology challenges</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 hover:shadow-xl transition-all duration-300 animate-scale-in border border-slate-200/60">
+                    <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-graduation-cap text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Our Mission</h3>
+                    <p class="text-slate-600 leading-relaxed">To develop an innovative educational technology platform as part of our Computer Science thesis project that makes General Mathematics accessible, enjoyable, and effective for Grade 11 STEM students. Through our research and development at Norzagaray College, we aim to contribute to the field of educational technology while helping students excel in mathematics.</p>
+                </div>
+                
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 hover:shadow-xl transition-all duration-300 animate-scale-in border border-slate-200/60" style="animation-delay: 0.1s;">
+                    <div class="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-eye text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800 mb-4">Our Vision</h3>
+                    <p class="text-slate-600 leading-relaxed">To demonstrate the potential of educational technology through our Computer Science thesis project, contributing to the advancement of digital learning solutions in the Philippines. We envision MathEase as a stepping stone toward fostering confident and competent STEM students who are well-prepared for higher education and future careers in science and technology.</p>
+                </div>
+            </div>
+
+            <!-- Educational Reference Section -->
+            <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 hover:shadow-xl transition-all duration-300 animate-scale-in border border-slate-200/60">
+                <div class="text-center mb-12">
+                    <div class="w-16 h-16 bg-gradient-to-br from-violet-500 to-violet-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-book text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold text-slate-800 mb-4">Educational References</h3>
+                    <p class="text-xl text-slate-600 max-w-3xl mx-auto">Our content is developed using various educational resources and references to ensure comprehensive coverage of General Mathematics topics.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Minuyan National High School Reference -->
+                    <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl p-8 border border-indigo-200 hover:shadow-lg transition-all duration-300">
+                        <div class="flex items-center justify-center mb-6">
+                            <img src="Img/MNHS-removebg-preview.png" alt="Minuyan National High School Logo" class="h-24 w-24 object-contain">
+                        </div>
+                        <h4 class="text-2xl font-bold text-slate-800 mb-4 text-center">Minuyan National High School</h4>
+                        <p class="text-slate-600 leading-relaxed mb-6 text-center">
+                            Our primary reference institution for understanding curriculum requirements and student needs. MNHS provides valuable insights into real-world classroom challenges and helps us ensure that MathEase addresses actual educational needs of Grade 11 STEM students.
+                        </p>
+                        <div class="grid grid-cols-2 gap-4 text-center">
+                            <div class="bg-white/60 rounded-lg p-3">
+                                <div class="text-2xl font-bold text-indigo-600">Est. 1970</div>
+                                <div class="text-sm text-slate-600">Founded</div>
+                            </div>
+                            <div class="bg-white/60 rounded-lg p-3">
+                                <div class="text-2xl font-bold text-indigo-600">STEM</div>
+                                <div class="text-sm text-slate-600">Focus</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Educational Resources Reference -->
+                    <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl p-8 border border-emerald-200 hover:shadow-lg transition-all duration-300">
+                        <div class="flex items-center justify-center mb-6">
+                            <img src="Img/Deped-removebg-preview.png" alt="Department of Education Logo" class="h-24 w-24 object-contain">
+                        </div>
+                        <h4 class="text-2xl font-bold text-slate-800 mb-4 text-center">Educational Standards Reference</h4>
+                        <p class="text-slate-600 leading-relaxed mb-6 text-center">
+                            Our content is developed with reference to DepEd's K-12 curriculum guidelines and educational standards. We ensure that our General Mathematics materials align with national educational objectives while incorporating innovative learning approaches.
+                        </p>
+                        <div class="grid grid-cols-2 gap-4 text-center">
+                            <div class="bg-white/60 rounded-lg p-3">
+                                <div class="text-2xl font-bold text-emerald-600">K-12</div>
+                                <div class="text-sm text-slate-600">Referenced</div>
+                            </div>
+                            <div class="bg-white/60 rounded-lg p-3">
+                                <div class="text-2xl font-bold text-emerald-600">Standards</div>
+                                <div class="text-sm text-slate-600">Aligned</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Development Impact -->
+                <div class="mt-12 bg-gradient-to-r from-slate-50 to-slate-100 rounded-2xl p-8 border border-slate-200">
+                    <h4 class="text-2xl font-bold text-slate-800 mb-6 text-center">Project Development Goals</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-code text-2xl text-white"></i>
+                            </div>
+                            <h5 class="text-lg font-bold text-slate-800 mb-2">Innovative Learning Platform</h5>
+                            <p class="text-slate-600 text-sm">Developing an interactive platform that makes General Mathematics more engaging and accessible for students.</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-graduation-cap text-2xl text-white"></i>
+                            </div>
+                            <h5 class="text-lg font-bold text-slate-800 mb-2">Academic Research</h5>
+                            <p class="text-slate-600 text-sm">Contributing to educational technology research through our Computer Science thesis project.</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-gradient-to-br from-violet-500 to-violet-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-users text-2xl text-white"></i>
+                            </div>
+                            <h5 class="text-lg font-bold text-slate-800 mb-2">Student-Centered Design</h5>
+                            <p class="text-slate-600 text-sm">Creating solutions that address real educational challenges faced by Grade 11 STEM students.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-white relative overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.02"%3E%3Ccircle cx="30" cy="30" r="1.5"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                <div>
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-xl flex items-center justify-center">
+                            <img src="css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-6 w-6">
+                        </div>
+                        <h3 class="text-2xl font-bold">MathEase</h3>
+                    </div>
+                    <p class="text-slate-400 text-sm leading-relaxed">A Computer Science thesis project by Norzagaray College students, empowering Grade 11 STEM students to master General Mathematics through interactive learning technology.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-6 text-slate-200">Quick Links</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#home" class="text-slate-400 hover:text-white text-sm transition-colors hover:translate-x-1 inline-block">Home</a></li>
+                        <li><a href="#topics" class="text-slate-400 hover:text-white text-sm transition-colors hover:translate-x-1 inline-block">Topics</a></li>
+                        <li><a href="#teachers" class="text-slate-400 hover:text-white text-sm transition-colors hover:translate-x-1 inline-block">For Teachers</a></li>
+                        <li><a href="#students" class="text-slate-400 hover:text-white text-sm transition-colors hover:translate-x-1 inline-block">For Students</a></li>
+                        <li><a href="#team" class="text-slate-400 hover:text-white text-sm transition-colors hover:translate-x-1 inline-block">Our Team</a></li>
+                        <li><a href="#about" class="text-slate-400 hover:text-white text-sm transition-colors hover:translate-x-1 inline-block">About Us</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-6 text-slate-200">Contact</h3>
+                    <div class="space-y-3">
+                        <p class="text-slate-400 text-sm">Norzagaray College</p>
+                        <p class="text-slate-400 text-sm">Computer Science Department</p>
+                        <p class="text-slate-400 text-sm">Email: matheasenc@gmail.com</p>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" aria-label="Back to top" class="fixed bottom-6 right-6 z-40 hidden bg-indigo-600 hover:bg-indigo-700 text-white rounded-full w-12 h-12 shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Login Notification Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl p-8 max-w-md mx-4 transform transition-all duration-300 scale-95 opacity-0" id="modalContent">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-lock text-2xl text-white"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">Login Required</h3>
+                <p class="text-slate-600 leading-relaxed mb-6">
+                    To access <span id="topicName" class="font-semibold text-indigo-600"></span> lessons, please log in to your MathEase account.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <a href="login.html" class="flex-1 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg text-center">
+                        Login Now
+                    </a>
+                    <button onclick="closeLoginModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-3 rounded-xl font-semibold transition-all duration-300">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Login notification functionality
+        function showLoginNotification(topicName) {
+            document.getElementById('topicName').textContent = topicName;
+            const modal = document.getElementById('loginModal');
+            const modalContent = document.getElementById('modalContent');
+            
+            modal.classList.remove('hidden');
+            
+            // Trigger animation
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeLoginModal() {
+            const modal = document.getElementById('loginModal');
+            const modalContent = document.getElementById('modalContent');
+            
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('loginModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLoginModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLoginModal();
+            }
+        });
+
+    </script>
+    <script>
+        // Smooth scrolling, scrollspy, navbar shadow, and back-to-top
+        (function() {
+            const navbar = document.querySelector('.navbar');
+            const backToTop = document.getElementById('backToTop');
+            const navLinks = Array.from(document.querySelectorAll('.nav-link[href^="#"]'));
+            const sections = navLinks
+                .map(link => document.querySelector(link.getAttribute('href')))
+                .filter(Boolean);
+
+            function setActiveLinkBySectionId(sectionId) {
+                navLinks.forEach(link => {
+                    const isActive = link.getAttribute('href') === `#${sectionId}`;
+                    link.classList.toggle('active', isActive);
+                    link.setAttribute('aria-current', isActive ? 'true' : 'false');
+                });
+            }
+
+            // Click -> smooth scroll and set active
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const hash = this.getAttribute('href');
+                    const target = document.querySelector(hash);
+                    if (!target) return;
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    history.pushState(null, '', hash);
+                    setActiveLinkBySectionId(hash.replace('#',''));
+                });
+            });
+
+            // Scrollspy: update active link on scroll
+            const observer = new IntersectionObserver((entries) => {
+                const visible = entries
+                    .filter(en => en.isIntersecting)
+                    .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+                if (visible && visible.target && visible.target.id) {
+                    setActiveLinkBySectionId(visible.target.id);
+                }
+            }, { root: null, threshold: [0.25, 0.5, 0.75] });
+
+            sections.forEach(sec => observer.observe(sec));
+
+            // Navbar shadow + Back-to-top visibility
+            function onScroll() {
+                const y = window.scrollY || document.documentElement.scrollTop;
+                if (navbar) navbar.classList.toggle('scrolled', y > 10);
+                if (backToTop) {
+                    if (y > 400) {
+                        backToTop.classList.remove('hidden');
+                        backToTop.classList.add('animate-fade-in');
+                    } else {
+                        backToTop.classList.add('hidden');
+                        backToTop.classList.remove('animate-fade-in');
+                    }
+                }
+            }
+            window.addEventListener('scroll', onScroll, { passive: true });
+            onScroll();
+
+            // Back to top click
+            if (backToTop) {
+                backToTop.addEventListener('click', () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+        })();
+    </script>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

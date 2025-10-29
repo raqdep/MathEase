@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Debug Test - MathEase</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 50px; }
+        .form-group { margin: 20px 0; }
+        label { display: block; margin-bottom: 5px; }
+        input, select { width: 300px; padding: 10px; border: 1px solid #ccc; }
+        button { padding: 15px 30px; background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin-top: 20px; padding: 20px; background: #f8f9fa; border: 1px solid #dee2e6; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>Form Debug Test</h1>
+    <p>This form submits to a debug endpoint to see what data is received.</p>
+    
+    <form id="debug-form" action="debug-form-test.php" method="POST">
+        <div class="form-group">
+            <label for="firstName">First Name:</label>
+            <input type="text" id="firstName" name="firstName" value="John" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" name="lastName" value="Doe" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" value="test@example.com" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="lrn">LRN:</label>
+            <input type="text" id="lrn" name="lrn" value="123456789012" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="gradeLevel">Grade Level:</label>
+            <select id="gradeLevel" name="gradeLevel" required>
+                <option value="11" selected>Grade 11</option>
+                <option value="12">Grade 12</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="strand">Strand:</label>
+            <select id="strand" name="strand" required>
+                <option value="STEM" selected>STEM</option>
+                <option value="ABM">ABM</option>
+                <option value="HUMSS">HUMSS</option>
+                <option value="GAS">GAS</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" value="testpassword123" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="confirmPassword">Confirm Password:</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" value="testpassword123" required>
+        </div>
+        
+        <button type="submit">Test Form Submission</button>
+    </form>
+    
+    <div id="result" class="result" style="display: none;"></div>
+    
+    <script>
+        document.getElementById('debug-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            console.log('Form data being sent:');
+            for (let [key, value] of formData.entries()) {
+                console.log(key + ': ' + value);
+            }
+            
+            try {
+                const response = await fetch('debug-form-test.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const text = await response.text();
+                console.log('Server response:', text);
+                
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('result').textContent = text;
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('result').textContent = 'Error: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>

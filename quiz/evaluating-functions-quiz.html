@@ -1,0 +1,3236 @@
+update this <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluating Functions Quiz - MathEase</title>
+    <!-- Cache bust: v2.0 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#667eea',
+                        'secondary': '#764ba2',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .question-card {
+            transition: all 0.3s ease;
+        }
+        .question-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.15);
+        }
+        .option-selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        .option-correct {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-color: #10b981;
+        }
+        .option-incorrect {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border-color: #ef4444;
+        }
+        .option-review {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+        .review-mode .option {
+            pointer-events: none;
+        }
+        .review-mode .option input {
+            pointer-events: none;
+        }
+        .review-mode .option input[type="number"] {
+            pointer-events: none;
+        }
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+        .question-card {
+            animation: slideInUp 0.6s ease-out;
+        }
+        .option {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .option:hover::before {
+            left: 100%;
+        }
+        .option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Badge notification styles */
+        .badge-notification {
+            border-radius: 20px !important;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        .badge-notification .swal2-html-container {
+            margin: 0 !important;
+        }
+        
+        .badge-notification .swal2-title {
+            color: #10b981 !important;
+            font-size: 2rem !important;
+            margin-bottom: 1rem !important;
+        }
+        
+        /* Character animations */
+        .tips-character {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .results-character {
+            transition: all 0.5s ease;
+        }
+        
+        .results-character.motivate {
+            animation: bounce 1s ease-in-out infinite;
+        }
+        
+        .results-character.celebrate {
+            animation: celebrate 2s ease-in-out infinite;
+        }
+        
+        .results-character.sad {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        .warning-character {
+            animation: pulse 1s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        @keyframes celebrate {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.1) rotate(-5deg); }
+            75% { transform: scale(1.1) rotate(5deg); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body class="font-inter bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="../dashboard.html" class="flex items-center space-x-2">
+                        <img src="../css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-8 w-8">
+                        <span class="text-xl font-bold text-primary">MathEase</span>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-600">
+                        <i class="fas fa-user mr-2"></i><span id="userName">Student</span>
+                    </span>
+                    <a href="../php/logout.php" class="text-gray-700 hover:text-red-600 transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Review Mode Banner -->
+    <div id="reviewModeBanner" class="hidden bg-gradient-to-r from-orange-500 to-red-500 text-white py-4">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-center space-x-3">
+                <i class="fas fa-eye text-2xl"></i>
+                <div class="text-center">
+                    <h2 class="text-xl font-bold">Review Mode</h2>
+                    <p class="text-sm text-orange-100">Quiz deadline has passed. You can review your answers but cannot submit.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Header -->
+    <header class="gradient-bg text-white py-12">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
+                    <i class="fas fa-calculator mr-2"></i>
+                    <span class="font-semibold">Evaluating Functions Quiz</span>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-bold mb-4" id="quizTitle">Test Your Function Evaluation Skills</h1>
+                <p class="text-xl text-white/90 mb-6" id="quizDescription">
+                    10 Multiple Choice Questions + 1 Problem Solving
+                </p>
+                
+                    <div class="flex items-center">
+                        <i class="fas fa-trophy mr-2"></i>
+                        <span>15 points total</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Progress Bar and Timer - Sticky -->
+    <div class="bg-white shadow-md border-b border-gray-200 sticky top-0 z-40">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center space-x-6">
+                    <div class="flex items-center bg-indigo-50 rounded-lg px-3 py-2">
+                        <i class="fas fa-tasks text-indigo-600 mr-2"></i>
+                        <span class="text-sm font-medium text-gray-700">Progress:</span>
+                        <span class="text-sm font-bold text-indigo-600 ml-2" id="progressText">0/11</span>
+                    </div>
+                    <div class="flex items-center bg-purple-50 rounded-lg px-3 py-2">
+                        <i class="fas fa-clock text-purple-600 mr-2"></i>
+                        <span class="text-sm font-medium text-gray-700">Time:</span>
+                        <span class="text-lg font-bold text-purple-600 ml-2" id="quizTimer">00:00</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg px-3 py-2 border border-green-200">
+                        <i class="fas fa-play-circle text-green-600 mr-2"></i>
+                        <span class="text-xs text-gray-600">Started at</span>
+                        <span class="text-sm font-semibold text-green-600 ml-1" id="startTime">--:--</span>
+                    </div>
+                </div>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-3 shadow-inner">
+                <div class="bg-gradient-to-r from-primary to-secondary h-3 rounded-full progress-bar transition-all duration-300" id="progressBar" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tips Section -->
+    <div id="tipsContainer" class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <div class="text-center mb-8 relative">
+                <div class="w-32 h-32 mx-auto mb-6 flex items-center justify-center relative">
+                    <img src="../Img/Character/tips_approved-removebg-preview.png" 
+                         alt="Tips Approved Character" 
+                         class="w-full h-full object-contain tips-character"
+                         style="filter: drop-shadow(0 15px 30px rgba(0,0,0,0.15));">
+                    
+                    <!-- Floating elements around the character -->
+                    <div class="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full animate-ping"></div>
+                    <div class="absolute -bottom-2 -left-2 w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
+                    <div class="absolute top-1/2 -right-4 w-3 h-3 bg-blue-400 rounded-full animate-bounce"></div>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Quiz Tips & Guidelines</h2>
+                <p class="text-lg text-gray-600">Read these tips before starting your Evaluating Functions Quiz</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-clock text-blue-500 mr-3"></i>Time Management
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Take your time to read each question carefully</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Don't rush through the problem solving section</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Review your answers before submitting</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-calculator text-green-500 mr-3"></i>Function Evaluation
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Remember to substitute the given value for x</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Follow the order of operations (PEMDAS)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Check your calculations carefully</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-question-circle text-purple-500 mr-3"></i>Multiple Choice
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Eliminate obviously wrong answers first</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Remember function notation f(x)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Think about different function types</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-exclamation-triangle text-yellow-500 mr-3"></i>Important Notes
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Quiz has 11 total questions (10 MC + 1 PS)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>MC questions: 1 point each, PS question: 5 points</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Timer starts when you click "Start Quiz"</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="startQuiz()" class="bg-gradient-to-r from-primary to-secondary text-white px-12 py-4 rounded-xl font-semibold text-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                    <i class="fas fa-play mr-3"></i>
+                    Start Quiz
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Content -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div id="quizContainer" class="hidden">
+            <!-- Question 1 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="1">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 1 of 10</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        What does it mean to evaluate a function?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q1" value="a" class="mr-3">
+                            <span>To find the input value when given the output</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q1" value="b" class="mr-3">
+                            <span>To substitute a specific value for the variable and calculate the result</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q1" value="c" class="mr-3">
+                            <span>To graph the function on a coordinate plane</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q1" value="d" class="mr-3">
+                            <span>To find the domain and range of the function</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="2">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 2 of 10</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        If f(x) = 2x + 3, what is f(5)?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q2" value="a" class="mr-3">
+                            <span>10</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q2" value="b" class="mr-3">
+                            <span>13</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q2" value="c" class="mr-3">
+                            <span>15</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q2" value="d" class="mr-3">
+                            <span>17</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="3">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 3 of 10</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        If g(x) = x² - 4x + 3, what is g(2)?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q3" value="a" class="mr-3">
+                            <span>-1</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q3" value="b" class="mr-3">
+                            <span>0</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q3" value="c" class="mr-3">
+                            <span>1</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q3" value="d" class="mr-3">
+                            <span>3</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 4 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="4">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 4 of 10</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        If h(x) = 3ˣ, what is h(2)?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q4" value="a" class="mr-3">
+                            <span>6</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q4" value="b" class="mr-3">
+                            <span>9</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q4" value="c" class="mr-3">
+                            <span>12</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q4" value="d" class="mr-3">
+                            <span>27</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 5 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="5">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 5 of 10</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        If f(x) = |x - 3|, what is f(-1)?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q5" value="a" class="mr-3">
+                            <span>2</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q5" value="b" class="mr-3">
+                            <span>4</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q5" value="c" class="mr-3">
+                            <span>-4</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q5" value="d" class="mr-3">
+                            <span>1</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 6 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 6 of 10</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        If g(x) = (x + 2)/(x - 1), what is g(3)?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q6" value="a" class="mr-3">
+                            <span>2.5</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q6" value="b" class="mr-3">
+                            <span>5</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q6" value="c" class="mr-3">
+                            <span>1.5</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q6" value="d" class="mr-3">
+                            <span>3</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 7 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="7">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 7 of 10</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        If f(x) = 5, what is f(10)?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q7" value="a" class="mr-3">
+                            <span>10</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q7" value="b" class="mr-3">
+                            <span>15</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q7" value="c" class="mr-3">
+                            <span>5</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q7" value="d" class="mr-3">
+                            <span>50</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 8 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="8">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 8 of 10</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        If h(x) = 2x² - 3x + 1, what is h(-1)?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q8" value="a" class="mr-3">
+                            <span>6</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q8" value="b" class="mr-3">
+                            <span>4</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q8" value="c" class="mr-3">
+                            <span>0</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q8" value="d" class="mr-3">
+                            <span>2</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 9 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="9">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 9 of 10</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        If f(x) = √(x + 4), what is f(5)?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q9" value="a" class="mr-3">
+                            <span>3</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q9" value="b" class="mr-3">
+                            <span>9</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q9" value="c" class="mr-3">
+                            <span>√5</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q9" value="d" class="mr-3">
+                            <span>5</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 10 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="10">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 10 of 10</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        If g(x) = 4x - 7, what is g(0)?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q10" value="a" class="mr-3">
+                            <span>0</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q10" value="b" class="mr-3">
+                            <span>-7</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q10" value="c" class="mr-3">
+                            <span>7</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q10" value="d" class="mr-3">
+                            <span>4</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problem Solving Question -->
+            <div class="question-card bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl shadow-lg p-8 mb-6 border-2 border-purple-200" data-question="11">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Easy Application</h3>
+                    <span class="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-sm font-medium">5 points</span>
+                </div>
+                <div class="mb-6">
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+                        <h4 class="font-semibold text-blue-800 mb-2">📚 Real-Life Example:</h4>
+                        <p class="text-blue-700 text-sm">
+                            Imagine you have a small business selling cookies. The more cookies you sell, the more money you make, but there's a sweet spot where you make the most profit!
+                        </p>
+                    </div>
+                    
+                    <p class="text-lg text-gray-700 mb-6">
+                        <strong>Your Cookie Business:</strong> 
+                        <br>• You sell cookies in batches of 100
+                        <br>• Your profit formula is: <strong>P(x) = -2x² + 100x - 800</strong>
+                        <br>• Where x = number of batches sold (each batch = 100 cookies)
+                        <br>• P(x) = your profit in thousands of pesos
+                    </p>
+                    
+                    <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6">
+                        <h4 class="font-semibold text-green-800 mb-2">💡 What we need to find:</h4>
+                        <p class="text-green-700">
+                            How many batches should you sell to make the <strong>maximum profit</strong>?
+                        </p>
+                        <p class="text-green-600 text-sm mt-2">
+                            <strong>Hint:</strong> This is like finding the highest point on a hill! 🏔️
+                        </p>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg p-6 mb-6 border-2 border-purple-200">
+                        <h4 class="font-semibold text-gray-800 mb-4">🎯 Your Answer:</h4>
+                        <div class="space-y-3">
+                            <p class="text-gray-700">What is the maximum profit (in thousands of pesos)?</p>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-gray-600">Answer:</span>
+                                <input type="number" id="ps-answer" placeholder="Enter your answer here" class="w-32 px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none">
+                                <span class="text-gray-500 text-sm">thousand pesos</span>
+                            </div>
+                            <p class="text-xs text-gray-500">💡 Don't worry if you're not sure - just try your best!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center mb-8" id="submitButtonContainer">
+                <button onclick="submitQuiz()" class="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-12 py-4 rounded-xl font-semibold text-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                    <i class="fas fa-check mr-3"></i>
+                    Submit Quiz
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Container -->
+        <div id="resultsContainer" class="hidden">
+            <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                <div class="text-center mb-8">
+                    <div id="resultsCharacter" class="w-24 h-24 mx-auto mb-4 flex items-center justify-center">
+                        <img src="../Img/Character/tips_approved-removebg-preview.png" 
+                             alt="Results Character" 
+                             class="w-full h-full object-contain results-character"
+                             style="filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));">
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Quiz Complete!</h2>
+                    <p class="text-lg text-gray-600">Here's how you performed</p>
+                </div>
+
+                <!-- Score Summary -->
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold text-blue-600 mb-2" id="totalScore">0/15</div>
+                        <div class="text-sm text-gray-600">Total Score</div>
+                    </div>
+                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold text-green-600 mb-2" id="correctAnswers">0</div>
+                        <div class="text-sm text-gray-600">Correct Answers</div>
+                    </div>
+                    <div class="bg-gradient-to-r from-red-50 to-pink-50 rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold text-red-600 mb-2" id="incorrectAnswers">0</div>
+                        <div class="text-sm text-gray-600">Incorrect Answers</div>
+                    </div>
+                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold text-purple-600 mb-2" id="completionTime">0:00</div>
+                        <div class="text-sm text-gray-600">Completion Time</div>
+                    </div>
+                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold text-yellow-600 mb-2" id="studentRank">--</div>
+                        <div class="text-sm text-gray-600">Your Rank</div>
+                    </div>
+                </div>
+
+                <!-- Detailed Performance Analysis -->
+                <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">
+                        <i class="fas fa-chart-line text-indigo-500 mr-2"></i>Performance Analysis
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-lg p-4">
+                            <h4 class="font-semibold text-gray-800 mb-3">Multiple Choice Questions</h4>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Questions:</span>
+                                    <span class="font-semibold">10</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Points per question:</span>
+                                    <span class="font-semibold">1 point</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Total possible:</span>
+                                    <span class="font-semibold">10 points</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4">
+                            <h4 class="font-semibold text-gray-800 mb-3">Problem Solving</h4>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Questions:</span>
+                                    <span class="font-semibold">1</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Points per question:</span>
+                                    <span class="font-semibold">5 points</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Total possible:</span>
+                                    <span class="font-semibold">5 points</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-white rounded-lg p-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Overall Grade:</span>
+                            <span class="text-2xl font-bold text-indigo-600" id="overallGrade">0%</span>
+                        </div>
+                        <div class="mt-2">
+                            <div class="w-full bg-gray-200 rounded-full h-3">
+                                <div class="bg-indigo-500 h-3 rounded-full transition-all duration-1000" id="gradeProgress" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="showLeaderboard()" class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
+                        <i class="fas fa-trophy mr-2"></i>
+                        View Leaderboard
+                    </button>
+                    <button onclick="goToDashboard()" class="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
+                        <i class="fas fa-home mr-2"></i>
+                        Back to Dashboard
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboard Container -->
+        <div id="leaderboardContainer" class="hidden">
+            <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-trophy text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Class Leaderboard</h2>
+                    <p class="text-lg text-gray-600">Top performers in your class ranked by score and speed</p>
+                    <p class="text-sm text-gray-500 mt-2">Showing only students from your class and teacher</p>
+                </div>
+
+                <!-- Podium Section -->
+                <div class="mb-12 mt-8">
+                    <div class="flex justify-center items-end space-x-4 mb-8" id="podiumContainer">
+                        <!-- Podium will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Leaderboard Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold text-blue-600 mb-2" id="totalParticipants">0</div>
+                        <div class="text-sm text-gray-600">Total Participants</div>
+                    </div>
+                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold text-green-600 mb-2" id="averageScore">0%</div>
+                        <div class="text-sm text-gray-600">Average Score</div>
+                    </div>
+                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold text-purple-600 mb-2" id="fastestTime">0:00</div>
+                        <div class="text-sm text-gray-600">Fastest Time</div>
+                    </div>
+                </div>
+
+                <!-- Detailed Leaderboard List -->
+                <div class="mb-8">
+                    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-t-xl p-4">
+                        <div class="flex justify-between items-center text-white">
+                            <div class="flex items-center space-x-4">
+                                <span class="text-sm font-semibold">Rank</span>
+                                <span class="text-sm font-semibold">Students</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm font-semibold">Points</span>
+                                <i class="fas fa-info-circle text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 rounded-b-xl overflow-hidden" id="detailedLeaderboard">
+                        <!-- Detailed leaderboard entries will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="hideLeaderboard()" class="bg-gradient-to-r from-primary to-secondary text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Back to Results
+                    </button>
+                    <button onclick="goToDashboard()" class="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
+                        <i class="fas fa-home mr-2"></i>
+                        Back to Dashboard
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2024 MathEase. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Quiz state
+        let quizStarted = false;
+        let timeRemaining = 25 * 60; // 25 minutes in seconds
+        let timerInterval;
+        let startTime;
+        let currentAttemptId = null;
+        let isReviewMode = false;
+        let quizDeadline = null;
+        let quizDuration = 0; // in seconds
+
+        // Anti-cheating system variables
+        let isQuizActive = false;
+        let focusLostTime = null;
+        let tabSwitchCount = 0;
+        let maxAllowedTabSwitches = 2; // Allow 2 tab switches before marking as cheating
+        let maxAllowedFocusLoss = 30000; // 30 seconds in milliseconds
+        let heartbeatInterval = null;
+        let lastHeartbeat = null;
+        let isPageVisible = true;
+        let hasLoggedOut = false;
+        let hasExitedQuiz = false;
+
+        // Quiz data with correct answers
+        const quizData = {
+            answers: {
+                q1: 'b', // To substitute a specific value for the variable and calculate the result
+                q2: 'b', // 13 (f(5) = 2(5) + 3 = 10 + 3 = 13)
+                q3: 'a', // -1 (g(2) = (2)² - 4(2) + 3 = 4 - 8 + 3 = -1)
+                q4: 'b', // 9 (h(2) = 3² = 9)
+                q5: 'b', // 4 (f(-1) = |-1 - 3| = |-4| = 4)
+                q6: 'a', // 2.5 (g(3) = (3 + 2)/(3 - 1) = 5/2 = 2.5)
+                q7: 'c', // 5 (f(10) = 5, constant function)
+                q8: 'a', // 6 (h(-1) = 2(-1)² - 3(-1) + 1 = 2(1) + 3 + 1 = 6)
+                q9: 'a', // 3 (f(5) = √(5 + 4) = √9 = 3)
+                q10: 'b' // -7 (g(0) = 4(0) - 7 = 0 - 7 = -7)
+            },
+            problemSolving: {
+                answer: 400 // P(20) = -2(20)² + 100(20) - 800 = -800 + 2000 - 800 = 400
+            }
+        };
+
+        // Update progress with animations
+        function updateProgress() {
+            const totalQuestions = 11; // 10 multiple choice + 1 problem solving question
+            let answered = 0;
+            
+            // Count answered multiple choice questions
+            for (let i = 1; i <= 10; i++) {
+                if (document.querySelector(`input[name="q${i}"]:checked`)) {
+                    answered++;
+                }
+            }
+            
+            // Count answered problem solving question
+            const psAnswer = document.getElementById('ps-answer').value.trim();
+            
+            if (psAnswer) answered++;
+            
+            const progress = (answered / totalQuestions) * 100;
+            const progressBar = document.getElementById('progressBar');
+            
+            // Animate progress bar
+            progressBar.style.transition = 'width 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+            progressBar.style.width = progress + '%';
+            document.getElementById('progressText').textContent = `${answered}/${totalQuestions}`;
+            
+            // All questions answered
+            if (answered === totalQuestions) {
+                // Quiz is complete
+                const submitButton = document.querySelector('button[onclick="submitQuiz()"]');
+                if (submitButton) {
+                    submitButton.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                    submitButton.style.transform = 'scale(1.05)';
+                    submitButton.style.boxShadow = '0 10px 30px rgba(16, 185, 129, 0.3)';
+                }
+            }
+        }
+
+        // Start quiz function
+        function startQuiz() {
+            quizStarted = true;
+            isQuizActive = true;
+            startTime = new Date();
+            
+            // Hide tips and show quiz
+            document.getElementById('tipsContainer').classList.add('hidden');
+            document.getElementById('quizContainer').classList.remove('hidden');
+            
+            // Start timer
+            startTimer();
+            
+            // Initialize anti-cheating system
+            initializeAntiCheating();
+            
+            // Update start time display
+            const timeString = startTime.toLocaleTimeString('en-US', { 
+                hour12: false, 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            document.getElementById('startTime').textContent = timeString;
+            
+            // Add event listeners to options
+            addOptionListeners();
+            
+            // Create quiz attempt in database
+            createQuizAttempt();
+        }
+
+        // Create quiz attempt in database
+        async function createQuizAttempt() {
+            try {
+                const response = await fetch('../php/quiz-management.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    credentials: 'include',
+                    body: `action=start_quiz&quiz_type=evaluating-functions`
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    currentAttemptId = result.attempt_id;
+                    console.log('Quiz attempt created with ID:', currentAttemptId);
+                } else {
+                    console.error('Failed to create quiz attempt:', result.message);
+                }
+            } catch (error) {
+                console.error('Error creating quiz attempt:', error);
+            }
+        }
+
+        // Timer function
+        function startTimer() {
+            startTime = new Date();
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                quizDuration++;
+                
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+                
+                document.getElementById('quizTimer').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    stopTimer();
+                    submitQuiz();
+                }
+            }, 1000);
+        }
+
+        // Stop timer function
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            console.log('Timer stopped');
+        }
+
+        // Initialize anti-cheating system
+        function initializeAntiCheating() {
+            console.log('🔧 Initializing anti-cheating system...');
+            
+            // Add visibility change listener
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+            console.log('✅ Visibility change listener attached');
+            
+            // Add focus/blur listeners
+            window.addEventListener('focus', handleWindowFocus);
+            window.addEventListener('blur', handleWindowBlur);
+            console.log('✅ Focus/blur listeners attached');
+            
+            // Add beforeunload listener
+            window.addEventListener('beforeunload', handleBeforeUnload);
+            window.addEventListener('unload', handlePageUnload);
+            
+            // Add keyboard shortcut listeners
+            document.addEventListener('keydown', handleKeyboardShortcuts);
+            
+            // Start heartbeat
+            startHeartbeat();
+            
+            console.log('✅ Anti-cheating system initialized');
+            console.log('📊 Initial state - Tab switches:', tabSwitchCount, 'Quiz active:', isQuizActive);
+            console.log('🔍 Event listeners attached for visibility, focus, blur, keyboard');
+            
+            // Test visibility change detection
+            console.log('🧪 Testing visibility change detection...');
+            console.log('🔍 Current document.hidden:', document.hidden);
+            console.log('🔍 Current isQuizActive:', isQuizActive);
+        }
+
+        // Stop anti-cheating system
+        function stopAntiCheating() {
+            console.log('Stopping anti-cheating system...');
+            
+            if (heartbeatInterval) {
+                clearInterval(heartbeatInterval);
+                heartbeatInterval = null;
+            }
+            
+            // Remove event listeners
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            window.removeEventListener('focus', handleWindowFocus);
+            window.removeEventListener('blur', handleWindowBlur);
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            window.removeEventListener('unload', handlePageUnload);
+            document.removeEventListener('keydown', handleKeyboardShortcuts);
+            
+            console.log('Anti-cheating system stopped');
+        }
+
+        // Handle visibility change (tab switching)
+        function handleVisibilityChange() {
+            console.log('🔍 Visibility change detected - isQuizActive:', isQuizActive, 'document.hidden:', document.hidden);
+            console.log('🔍 Current tab switch count:', tabSwitchCount);
+            console.log('🔍 Max allowed tab switches:', maxAllowedTabSwitches);
+            
+            // Add a small delay to debounce rapid visibility changes
+            setTimeout(() => {
+                if (document.hidden && isQuizActive) {
+                    console.log('👁️ Page became hidden - potential cheating detected');
+                    tabSwitchCount++;
+                    console.log('📊 Tab switch count:', tabSwitchCount + '/' + maxAllowedTabSwitches);
+                    console.log('📊 Will trigger cheating on:', maxAllowedTabSwitches, 'switches');
+                    
+                    if (tabSwitchCount >= maxAllowedTabSwitches) {
+                        console.log('🚨 MAXIMUM TAB SWITCHES EXCEEDED - TERMINATING QUIZ WITH 0 SCORE');
+                        console.log('Student switched tabs', tabSwitchCount, 'times (limit:', maxAllowedTabSwitches + ')');
+                        stopTimer();
+                        stopAntiCheating();
+                        markAsCheating('excessive_tab_switches');
+                        return;
+                    }
+                    
+                    if (tabSwitchCount === 1) {
+                        console.log('⚠️ First tab switch - showing warning');
+                        showCheatingWarning('Tab Switch Detected', 'You have switched tabs. Please stay focused on the quiz to avoid being marked as cheating.');
+                    }
+                } else if (!document.hidden && isQuizActive) {
+                    console.log('👁️ Page became visible');
+                    
+                    // Check if focus was lost for too long
+                    if (focusLostTime) {
+                        const focusLossDuration = Date.now() - focusLostTime;
+                        console.log('⏱️ Focus was lost for', focusLossDuration + 'ms (limit:', maxAllowedFocusLoss + 'ms)');
+                        
+                        if (focusLossDuration > maxAllowedFocusLoss) {
+                            console.log('🚨 EXCESSIVE FOCUS LOSS - TERMINATING QUIZ WITH 0 SCORE');
+                            stopTimer();
+                            stopAntiCheating();
+                            markAsCheating('excessive_focus_loss');
+                            return;
+                        }
+                        
+                        focusLostTime = null;
+                    }
+                }
+            }, 100); // 100ms delay to debounce
+        }
+
+        // Handle window focus
+        function handleWindowFocus() {
+            console.log('Window focused');
+            isPageVisible = true;
+            focusLostTime = null;
+        }
+
+        // Handle window blur
+        function handleWindowBlur() {
+            console.log('Window blurred - potential cheating detected');
+            isPageVisible = false;
+            focusLostTime = Date.now();
+        }
+
+        // Handle before unload (attempting to leave page)
+        function handleBeforeUnload(event) {
+            if (isQuizActive) {
+                console.log('🚨 Attempting to leave page during quiz - marking as cheating');
+                hasExitedQuiz = true;
+                markAsCheating('page_exit');
+                
+                // Show warning
+                event.preventDefault();
+                event.returnValue = 'You are attempting to leave during the quiz. This will result in a score of 0.';
+                return 'You are attempting to leave during the quiz. This will result in a score of 0.';
+            }
+        }
+
+        // Handle page unload
+        function handlePageUnload() {
+            if (isQuizActive) {
+                console.log('🚨 Page unload detected during quiz - marking as cheating');
+                hasExitedQuiz = true;
+                markAsCheating('page_unload');
+            }
+        }
+
+        // Handle keyboard shortcuts
+        function handleKeyboardShortcuts(event) {
+            if (!isQuizActive) return;
+            
+            // Detect Ctrl+T (new tab) or Ctrl+N (new window)
+            if ((event.ctrlKey && event.key === 't') || (event.ctrlKey && event.key === 'n')) {
+                event.preventDefault();
+                console.log('🚨 Keyboard shortcut detected - marking as cheating');
+                showCheatingWarning('Keyboard Shortcut Detected', 'You attempted to use a keyboard shortcut to open a new tab/window. This is considered cheating.');
+                markAsCheating('keyboard_shortcut');
+            }
+        }
+
+        // Start heartbeat to track quiz activity
+        function startHeartbeat() {
+            heartbeatInterval = setInterval(async () => {
+                if (isQuizActive && currentAttemptId) {
+                    try {
+                        const response = await fetch('../php/quiz-management.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            credentials: 'include',
+                            body: `action=heartbeat&attempt_id=${currentAttemptId}`
+                        });
+                        
+                        if (response.ok) {
+                            const result = await response.json();
+                            if (result.success) {
+                                lastHeartbeat = new Date();
+                                console.log('💓 Heartbeat sent successfully');
+                            } else {
+                                console.log('Heartbeat failed:', result.message);
+                            }
+                        } else {
+                            console.log('Heartbeat failed: HTTP', response.status);
+                        }
+                    } catch (error) {
+                        console.log('Heartbeat failed:', error.message);
+                    }
+                }
+            }, 10000); // Send heartbeat every 10 seconds
+        }
+
+        // Mark student as cheating
+        async function markAsCheating(reason) {
+            console.log('🚨 Marking student as cheating - Reason:', reason);
+            
+            if (!currentAttemptId) {
+                console.log('❌ No current attempt ID - cannot mark as cheating');
+                // Try to get current attempt ID from database
+                try {
+                    const response = await fetch('../php/quiz-management.php?action=get_current_attempt&quiz_type=evaluating-functions', {
+                        credentials: 'include'
+                    });
+                    if (response.ok) {
+                        const result = await response.json();
+                        if (result.success && result.attempt_id) {
+                            currentAttemptId = result.attempt_id;
+                            console.log('✅ Retrieved current attempt ID:', currentAttemptId);
+                        }
+                    }
+                } catch (error) {
+                    console.log('❌ Failed to retrieve current attempt ID');
+                }
+            }
+            
+            if (!currentAttemptId) {
+                console.log('❌ Still no current attempt ID - cannot mark as cheating');
+                showCheatingNotification(reason);
+                stopQuizDueToCheating();
+                return;
+            }
+            
+            try {
+                const response = await fetch('../php/quiz-management.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    credentials: 'include',
+                    body: `action=mark_cheating&attempt_id=${currentAttemptId}&reason=${encodeURIComponent(reason)}`
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        console.log('✅ Successfully marked as cheating');
+                        
+                        // Show cheating notification
+                        showCheatingNotification(reason);
+                        
+                        // Stop the quiz completely
+                        stopQuizDueToCheating();
+                    } else {
+                        console.log('❌ Failed to mark as cheating:', result.message);
+                        // Still show the notification even if database update fails
+                        showCheatingNotification(reason);
+                        stopQuizDueToCheating();
+                    }
+                } else {
+                    console.log('❌ Failed to mark as cheating: HTTP', response.status);
+                    // Still show the notification even if database update fails
+                    showCheatingNotification(reason);
+                    stopQuizDueToCheating();
+                }
+            } catch (error) {
+                console.log('❌ Error marking as cheating:', error);
+                // Still show the notification even if database update fails
+                showCheatingNotification(reason);
+                stopQuizDueToCheating();
+            }
+        }
+
+        // Show cheating warning (first offense)
+        function showCheatingWarning(title, message) {
+            console.log('🚨 Showing cheating warning - tab switch count:', tabSwitchCount);
+            
+            Swal.fire({
+                title: title,
+                html: `
+                    <div class="text-center">
+                        <div class="w-24 h-24 mx-auto mb-4 flex items-center justify-center">
+                            <img src="../Img/Character/warning_example-removebg-preview.png" 
+                                 alt="Warning Character" 
+                                 class="w-full h-full object-contain warning-character"
+                                 style="filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));">
+                        </div>
+                        <p class="text-slate-600 text-lg leading-relaxed">${message}</p>
+                    </div>
+                `,
+                icon: false,
+                confirmButtonText: 'I Understand',
+                confirmButtonColor: '#f59e0b',
+                background: '#ffffff',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    title: 'text-slate-800',
+                    content: 'text-slate-600'
+                },
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showCloseButton: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    console.log('✅ User acknowledged cheating warning');
+                    // The anti-cheating system continues to monitor
+                    // No need to re-attach listeners as they should still be active
+                }
+            });
+        }
+
+        // Show cheating notification (final result)
+        function showCheatingNotification(reason) {
+            console.log('🚨 Showing cheating notification - Reason:', reason);
+            
+            // Hide quiz container and show results
+            const quizContainer = document.getElementById('quizContainer');
+            const resultsContainer = document.getElementById('resultsContainer');
+            
+            if (quizContainer) quizContainer.classList.add('hidden');
+            if (resultsContainer) resultsContainer.classList.remove('hidden');
+            
+            // Update results to show 0 score
+            const totalScoreEl = document.getElementById('totalScore');
+            const correctAnswersEl = document.getElementById('correctAnswers');
+            const incorrectAnswersEl = document.getElementById('incorrectAnswers');
+            const overallGradeEl = document.getElementById('overallGrade');
+            const gradeProgressEl = document.getElementById('gradeProgress');
+            
+            if (totalScoreEl) totalScoreEl.textContent = '0/15';
+            if (correctAnswersEl) correctAnswersEl.textContent = '0';
+            if (incorrectAnswersEl) incorrectAnswersEl.textContent = '15';
+            if (overallGradeEl) overallGradeEl.textContent = '0%';
+            if (gradeProgressEl) {
+                gradeProgressEl.style.width = '0%';
+                gradeProgressEl.className = 'bg-red-500 h-3 rounded-full transition-all duration-1000';
+            }
+            
+            // Update character for cheating
+            updateCheatingCharacter();
+            
+            // Add cheating notice to results
+            const resultsContent = resultsContainer.querySelector('.bg-white.rounded-2xl.shadow-xl.p-8');
+            if (resultsContent) {
+                const cheatingNotice = document.createElement('div');
+                cheatingNotice.className = 'bg-red-50 border-l-4 border-red-400 p-4 mb-6 rounded-r-lg';
+                cheatingNotice.innerHTML = `
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-triangle text-red-500 mr-3"></i>
+                        <div>
+                            <h4 class="text-red-800 font-semibold">Cheating Detected</h4>
+                            <p class="text-red-700 text-sm">Your quiz has been terminated due to suspicious activity. Score: 0/15</p>
+                        </div>
+                    </div>
+                `;
+                resultsContent.insertBefore(cheatingNotice, resultsContent.firstChild);
+            }
+            
+            // Scroll to results
+            if (resultsContainer) {
+                resultsContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Stop quiz due to cheating
+        function stopQuizDueToCheating() {
+            console.log('🛑 Stopping quiz due to cheating');
+            
+            // Stop timer
+            stopTimer();
+            
+            // Disable quiz interactions
+            const quizContainer = document.getElementById('quizContainer');
+            if (quizContainer) {
+                quizContainer.style.pointerEvents = 'none';
+                quizContainer.style.opacity = '0.5';
+            }
+            
+            // Disable submit button
+            const submitButton = document.querySelector('button[onclick="submitQuiz()"]');
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.style.opacity = '0.5';
+                submitButton.style.cursor = 'not-allowed';
+            }
+            
+            // Set quiz as inactive
+            isQuizActive = false;
+        }
+
+        // Check if page refresh (allow continuation)
+        function isPageRefresh() {
+            return performance.navigation.type === 1 || 
+                   (performance.getEntriesByType('navigation')[0] && 
+                    performance.getEntriesByType('navigation')[0].type === 'reload');
+        }
+
+        // Add event listeners to options
+        function addOptionListeners() {
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    const radio = this.querySelector('input[type="radio"]');
+                    if (radio) {
+                        radio.checked = true;
+                        updateProgress();
+                    }
+                });
+            });
+            
+            // Add event listener to problem solving input
+            const psInput = document.getElementById('ps-answer');
+            if (psInput) {
+                psInput.addEventListener('input', updateProgress);
+            }
+        }
+
+        // Submit quiz to database
+        async function submitQuizToDatabase(answers, completionTime) {
+            try {
+                console.log('Submitting quiz to database...');
+                console.log('Attempt ID:', currentAttemptId);
+                console.log('Completion Time:', completionTime);
+                console.log('Answers:', answers);
+                
+                // Convert answers to URL-encoded format
+                const formData = new URLSearchParams();
+                formData.append('action', 'submit_quiz');
+                formData.append('attempt_id', currentAttemptId);
+                formData.append('completion_time', completionTime);
+                
+                // Add answers to form data
+                Object.keys(answers).forEach(key => {
+                    formData.append(`answers[${key}]`, answers[key]);
+                });
+                
+                const response = await fetch('../php/quiz-management.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    credentials: 'include',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                console.log('Submit result:', result);
+                
+                if (result.success) {
+                    console.log('✅ Quiz submitted successfully');
+                    return result;
+                } else {
+                    console.error('❌ Failed to submit quiz:', result.message);
+                    return null;
+                }
+            } catch (error) {
+                console.error('❌ Error submitting quiz:', error);
+                return null;
+            }
+        }
+
+        // Submit quiz with confirmation
+        async function submitQuiz() {
+            // Prevent submission in review mode
+            if (isReviewMode) {
+                Swal.fire({
+                    title: 'Review Mode',
+                    text: 'You cannot submit the quiz in review mode. The deadline has passed.',
+                    icon: 'info',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#6366f1'
+                });
+                return;
+            }
+            
+            // Check if quiz was started
+            if (!quizStarted) {
+                Swal.fire({
+                    title: 'Quiz Not Started',
+                    text: 'Please start the quiz first before submitting.',
+                    icon: 'warning',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#6366f1'
+                });
+                return;
+            }
+            
+            // Show confirmation dialog
+            const result = await Swal.fire({
+                title: 'Submit Quiz?',
+                html: `
+                    <div class="text-center">
+                        <p class="text-gray-700 mb-4">Are you sure you want to submit your quiz?</p>
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <p class="text-sm text-blue-600">You cannot change your answers after submission.</p>
+                        </div>
+                    </div>
+                `,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Submit',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#10b981',
+                cancelButtonColor: '#6b7280',
+                background: '#ffffff',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    title: 'text-slate-800',
+                    content: 'text-slate-600'
+                }
+            });
+            
+            if (!result.isConfirmed) {
+                return;
+            }
+            
+            // Show loading dialog with improved design
+            Swal.fire({
+                title: 'Submitting Quiz...',
+                html: `
+                    <div class="text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+                            <i class="fas fa-spinner fa-spin text-2xl text-blue-600"></i>
+                        </div>
+                        <p class="text-gray-700 mb-2">Processing your answers...</p>
+                        <p class="text-sm text-gray-500">This may take a few moments</p>
+                    </div>
+                `,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: false,
+                background: '#ffffff',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    title: 'text-slate-800',
+                    content: 'text-slate-600'
+                }
+            });
+            
+            // Stop timer and anti-cheating system
+            stopTimer();
+            stopAntiCheating();
+            isQuizActive = false;
+            
+            // Calculate quiz duration
+            const endTime = new Date();
+            const quizDuration = Math.round((endTime - startTime) / 1000); // Duration in seconds
+            
+            // Collect answers
+            const answers = {};
+            
+            // Collect multiple choice answers
+            for (let i = 1; i <= 10; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                answers[`q${i}`] = selected ? selected.value : null;
+            }
+            
+            // Collect problem solving answer
+            answers['ps-answer'] = document.getElementById('ps-answer').value;
+            
+            // Submit to database
+            const dbResult = await submitQuizToDatabase(answers, quizDuration);
+            
+            // Close loading dialog
+            Swal.close();
+            
+            if (dbResult && dbResult.success) {
+                // Check and award badges
+                await checkAndAwardBadges(dbResult);
+                
+                // Show results using the new results display
+                showResults(dbResult);
+            } else {
+                // Show error message
+                Swal.fire({
+                    title: 'Submission Error',
+                    text: 'There was an error submitting your quiz. Please try again.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#ef4444'
+                });
+            }
+        }
+
+        // Calculate score
+        function calculateScore(answers) {
+            let score = 0;
+            let totalPoints = 15; // 10 MC (1pt each) + 1 PS (5pts) = 15 points total
+            let correct = 0;
+            let incorrect = 0;
+
+            // Check multiple choice questions (10 questions, 1 point each)
+            for (let i = 1; i <= 10; i++) {
+                const selected = answers[`q${i}`];
+                const correctAnswer = quizData.answers[`q${i}`];
+                
+                if (selected) {
+                    if (selected === correctAnswer) {
+                        score += 1;
+                        correct++;
+                    } else {
+                        incorrect++;
+                    }
+                } else {
+                    incorrect++;
+                }
+            }
+
+            // Check problem solving question (5 points)
+            const psAnswer = parseInt(answers['ps-answer']) || 0;
+            let psScore = 0;
+            let psCorrect = 0;
+            let psIncorrect = 0;
+            
+            // Problem solving question (5 points)
+            if (Math.abs(psAnswer - quizData.problemSolving.answer) <= 50) {
+                psScore += 5;
+                psCorrect++;
+            } else {
+                psIncorrect++;
+            }
+            
+            score += psScore;
+            
+            const percentage = Math.round((score / totalPoints) * 100);
+            
+            return {
+                score,
+                total_questions: totalPoints, // Return as total_questions for compatibility
+                percentage,
+                correct,
+                incorrect,
+                psCorrect,
+                psIncorrect
+            };
+        }
+
+        // Update results character based on score
+        function updateResultsCharacter(percentage) {
+            const characterImg = document.querySelector('#resultsCharacter img');
+            if (!characterImg) return;
+            
+            // Remove existing animation classes
+            characterImg.classList.remove('sad', 'happy', 'motivate', 'celebrate');
+            
+            if (percentage < 60) {
+                // Low score - show motivate character
+                characterImg.src = '../Img/Character/motivate-removebg-preview.png';
+                characterImg.alt = 'Motivate Character - Keep Going!';
+                characterImg.classList.add('motivate');
+                console.log('💪 Showing motivate character for low score:', percentage + '%');
+            } else if (percentage >= 80) {
+                // High score - show celebrate character
+                characterImg.src = '../Img/Character/celebrate-removebg-preview.png';
+                characterImg.alt = 'Celebrate Character - Excellent Score!';
+                characterImg.classList.add('celebrate');
+                console.log('🎉 Showing celebrate character for high score:', percentage + '%');
+            } else {
+                // Medium score - show neutral character
+                characterImg.src = '../Img/Character/tips_approved-removebg-preview.png';
+                characterImg.alt = 'Neutral Character - Good Score';
+                console.log('😐 Showing neutral character for medium score:', percentage + '%');
+            }
+        }
+        
+        // Update character for cheating cases
+        function updateCheatingCharacter() {
+            const characterImg = document.querySelector('#resultsCharacter img');
+            if (!characterImg) return;
+            
+            // Remove existing animation classes
+            characterImg.classList.remove('sad', 'happy', 'motivate', 'celebrate');
+            
+            // Show sad character for cheating
+            characterImg.src = '../Img/Character/sad-removebg-preview.png';
+            characterImg.alt = 'Sad Character - Cheating Detected';
+            characterImg.classList.add('sad');
+            console.log('😢 Showing sad character for cheating violation');
+        }
+
+        // Show results
+        async function showResults(result) {
+            try {
+                console.log('📊 Showing results:', result);
+                
+                // Show results
+                const quizContainer = document.getElementById('quizContainer');
+                const resultsContainer = document.getElementById('resultsContainer');
+                
+                if (quizContainer) quizContainer.classList.add('hidden');
+                if (resultsContainer) resultsContainer.classList.remove('hidden');
+                
+                // Total points is 15 (10 MC × 1pt + 1 PS × 5pts)
+                const totalPoints = 15;
+                const score = result.score || 0;
+                const percentage = Math.round((score / totalPoints) * 100);
+                
+                console.log(`Score: ${score}/${totalPoints} = ${percentage}%`);
+                
+                // Update score displays
+                const totalScoreEl = document.getElementById('totalScore');
+                const correctAnswersEl = document.getElementById('correctAnswers');
+                const incorrectAnswersEl = document.getElementById('incorrectAnswers');
+                const completionTimeEl = document.getElementById('completionTime');
+                
+                if (totalScoreEl) totalScoreEl.textContent = `${score}/${totalPoints}`;
+                if (correctAnswersEl) correctAnswersEl.textContent = result.correct_answers || 0;
+                if (incorrectAnswersEl) incorrectAnswersEl.textContent = result.incorrect_answers || 0;
+                if (completionTimeEl) completionTimeEl.textContent = getFormattedTime();
+                
+                // Update overall grade
+                const overallGradeEl = document.getElementById('overallGrade');
+                const gradeProgressEl = document.getElementById('gradeProgress');
+                
+                if (overallGradeEl) overallGradeEl.textContent = `${percentage}%`;
+                if (gradeProgressEl) {
+                    gradeProgressEl.style.width = `${percentage}%`;
+                    
+                    // Change progress bar color based on grade
+                    if (percentage >= 80) {
+                        gradeProgressEl.className = 'bg-green-500 h-3 rounded-full transition-all duration-1000';
+                    } else if (percentage >= 60) {
+                        gradeProgressEl.className = 'bg-yellow-500 h-3 rounded-full transition-all duration-1000';
+                    } else {
+                        gradeProgressEl.className = 'bg-red-500 h-3 rounded-full transition-all duration-1000';
+                    }
+                }
+
+                // Update character based on performance
+                updateResultsCharacter(percentage);
+
+                // Get and display student's rank
+                await displayStudentRank();
+
+                // Check and award badges only if quiz is successfully completed (not in review mode)
+                if (!isReviewMode && result.score > 0) {
+                    await checkAndAwardBadges(result);
+                } else {
+                    console.log('Skipping badge check - quiz in review mode or score is 0');
+                }
+
+                // Scroll to results
+                if (resultsContainer) {
+                    resultsContainer.scrollIntoView({ behavior: 'smooth' });
+                }
+            } catch (error) {
+                console.error('Error showing results:', error);
+                Swal.fire({
+                    title: 'Results Error',
+                    text: 'Unable to display quiz results. Please try again.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#6366f1'
+                });
+            }
+        }
+
+        // Enable review mode
+        function enableReviewMode() {
+            try {
+                console.log('Enabling review mode...');
+                
+                // Show review mode banner
+                const reviewBanner = document.getElementById('reviewModeBanner');
+                if (reviewBanner) {
+                    reviewBanner.classList.remove('hidden');
+                }
+                
+                // Update quiz title and description
+                const quizTitle = document.getElementById('quizTitle');
+                const quizDescription = document.getElementById('quizDescription');
+                if (quizTitle) quizTitle.textContent = 'Review Your Answers';
+                if (quizDescription) quizDescription.textContent = 'Quiz deadline has passed. Review your answers and see the correct solutions.';
+                
+                // Hide tips container completely and show quiz container
+                const tipsContainer = document.getElementById('tipsContainer');
+                const quizContainer = document.getElementById('quizContainer');
+                if (tipsContainer) {
+                    tipsContainer.classList.add('hidden');
+                    tipsContainer.style.display = 'none'; // Ensure it's completely hidden
+                }
+                if (quizContainer) {
+                    quizContainer.classList.remove('hidden');
+                    quizContainer.classList.add('review-mode');
+                }
+                
+                // Hide submit button and add back to dashboard button
+                const submitContainer = document.getElementById('submitButtonContainer');
+                if (submitContainer) {
+                    submitContainer.classList.add('hidden');
+                }
+                addBackToDashboardButton();
+                
+                // Add review mode class to body for styling
+                document.body.classList.add('review-mode');
+                
+                console.log('Review mode enabled successfully');
+            } catch (error) {
+                console.error('Error enabling review mode:', error);
+            }
+        }
+
+        // Add back to dashboard button in review mode
+        function addBackToDashboardButton() {
+            const submitContainer = document.getElementById('submitButtonContainer');
+            if (submitContainer) {
+                submitContainer.innerHTML = `
+                    <div class="text-center">
+                        <button onclick="goToDashboard()" class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-12 py-4 rounded-2xl font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105">
+                            <i class="fas fa-home mr-3"></i>
+                            Back to Dashboard
+                        </button>
+                    </div>
+                `;
+                submitContainer.classList.remove('hidden');
+            }
+        }
+
+        // Load and display correct answers in review mode
+        function loadCorrectAnswers(studentAnswers = {}) {
+            try {
+                console.log('Loading correct answers for review mode...');
+                console.log('Student answers passed to loadCorrectAnswers:', studentAnswers);
+                
+                // Show correct answers for multiple choice questions
+                for (let i = 1; i <= 10; i++) {
+                    const correctAnswer = quizData.answers[`q${i}`];
+                    // Use student answers from parameter if available, otherwise get from DOM
+                    const studentAnswer = studentAnswers[`q${i}`] || document.querySelector(`input[name="q${i}"]:checked`)?.value || null;
+                    
+                    console.log(`Question ${i}: Correct=${correctAnswer}, Student=${studentAnswer}`);
+                    
+                    // Always show the correct answer with green background and checkmark
+                    const correctInput = document.querySelector(`input[name="q${i}"][value="${correctAnswer}"]`);
+                    if (correctInput) {
+                        const correctLabel = correctInput.closest('label');
+                        if (correctLabel) {
+                            correctLabel.classList.add('option-correct');
+                            
+                            // Add checkmark icon to correct answer
+                            if (!correctLabel.querySelector('.fa-check-circle')) {
+                                const checkIcon = document.createElement('i');
+                                checkIcon.className = 'fas fa-check-circle text-white ml-2';
+                                checkIcon.title = 'Correct Answer';
+                                correctLabel.appendChild(checkIcon);
+                            }
+                        }
+                    }
+                    
+                    // Mark student's answer if they selected one
+                    if (studentAnswer) {
+                        const studentInput = document.querySelector(`input[name="q${i}"][value="${studentAnswer}"]`);
+                        if (studentInput) {
+                            const studentLabel = studentInput.closest('label');
+                            if (studentLabel) {
+                                if (studentAnswer === correctAnswer) {
+                                    // Student's answer is correct - add user check icon
+                                    if (!studentLabel.querySelector('.fa-user-check')) {
+                                        const yourAnswerIcon = document.createElement('i');
+                                        yourAnswerIcon.className = 'fas fa-user-check text-white ml-2';
+                                        yourAnswerIcon.title = 'Your Answer (Correct)';
+                                        studentLabel.appendChild(yourAnswerIcon);
+                                    }
+                                } else {
+                                    // Student's answer is incorrect - highlight in red
+                                    studentLabel.classList.add('option-incorrect');
+                                    if (!studentLabel.querySelector('.fa-times-circle')) {
+                                        const wrongIcon = document.createElement('i');
+                                        wrongIcon.className = 'fas fa-times-circle text-white ml-2';
+                                        wrongIcon.title = 'Your Answer (Incorrect)';
+                                        studentLabel.appendChild(wrongIcon);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Add explanation for each question
+                    addQuestionExplanation(i, correctAnswer, studentAnswer);
+                }
+            
+                // Show correct answer for problem solving
+                const psAnswer = document.getElementById('ps-answer');
+                if (psAnswer) {
+                    const studentAnswer = studentAnswers['ps-answer'] || psAnswer.value;
+                    const correctAnswer = quizData.problemSolving.answer;
+                    
+                    if (studentAnswer) {
+                        psAnswer.value = `${studentAnswer} (Correct: ${correctAnswer})`;
+                        
+                        if (Math.abs(parseInt(studentAnswer) - correctAnswer) <= 50) {
+                            // Student answer is correct
+                            psAnswer.style.backgroundColor = '#10b981';
+                            psAnswer.style.color = 'white';
+                            psAnswer.style.border = '3px solid #10b981';
+                            psAnswer.style.fontWeight = 'bold';
+                        } else {
+                            // Student answer is incorrect
+                            psAnswer.style.backgroundColor = '#ef4444';
+                            psAnswer.style.color = 'white';
+                            psAnswer.style.border = '3px solid #ef4444';
+                            psAnswer.style.fontWeight = 'bold';
+                            psAnswer.style.boxShadow = '0 0 10px rgba(239, 68, 68, 0.3)';
+                        }
+                    } else {
+                        // No answer provided
+                        psAnswer.value = `No answer (Correct: ${correctAnswer})`;
+                        psAnswer.style.backgroundColor = '#f59e0b';
+                        psAnswer.style.color = 'white';
+                        psAnswer.style.border = '3px solid #f59e0b';
+                        psAnswer.style.fontWeight = 'bold';
+                    }
+                }
+                
+                // Add problem solving explanation
+                addProblemSolvingExplanation();
+                
+                console.log('✅ Correct answers loaded for review mode');
+            } catch (error) {
+                console.error('❌ Error loading correct answers:', error);
+            }
+        }
+
+        // Add explanation for each question
+        function addQuestionExplanation(questionNumber, correctAnswer, studentAnswer) {
+            const questionCard = document.querySelector(`[data-question="${questionNumber}"]`);
+            if (!questionCard) return;
+            
+            // Check if explanation already exists
+            if (questionCard.querySelector('.explanation-added')) return;
+            
+            const explanations = {
+                1: {
+                    correct: "Evaluating a function means substituting a specific value for the variable and calculating the result. This is the fundamental process of function evaluation.",
+                    incorrect: "Function evaluation is about substituting values and calculating results, not finding inputs from outputs or graphing."
+                },
+                2: {
+                    correct: "f(5) = 2(5) + 3 = 10 + 3 = 13. We substitute 5 for x and follow the order of operations.",
+                    incorrect: "Remember to substitute 5 for x: f(5) = 2(5) + 3 = 13."
+                },
+                3: {
+                    correct: "g(2) = (2)² - 4(2) + 3 = 4 - 8 + 3 = -1. Follow PEMDAS: exponents first, then multiplication, then addition/subtraction.",
+                    incorrect: "For quadratic functions, calculate exponents first: g(2) = 4 - 8 + 3 = -1."
+                },
+                4: {
+                    correct: "h(2) = 3² = 9. For exponential functions, calculate the exponent first.",
+                    incorrect: "For exponential functions, remember that 3² = 3 × 3 = 9."
+                },
+                5: {
+                    correct: "f(-1) = |-1 - 3| = |-4| = 4. Absolute value always gives a non-negative result.",
+                    incorrect: "Absolute value makes any number positive: |-4| = 4."
+                },
+                6: {
+                    correct: "g(3) = (3 + 2)/(3 - 1) = 5/2 = 2.5. Evaluate numerator and denominator separately.",
+                    incorrect: "For rational functions, evaluate top and bottom separately: (3+2)/(3-1) = 5/2 = 2.5."
+                },
+                7: {
+                    correct: "f(10) = 5. Constant functions always return the same value regardless of input.",
+                    incorrect: "Constant functions always return the same value: f(x) = 5 means f(any number) = 5."
+                },
+                8: {
+                    correct: "h(-1) = 2(-1)² - 3(-1) + 1 = 2(1) + 3 + 1 = 2 + 3 + 1 = 6.",
+                    incorrect: "Be careful with signs: h(-1) = 2(1) + 3 + 1 = 6."
+                },
+                9: {
+                    correct: "f(5) = √(5 + 4) = √9 = 3. Square root of 9 is 3.",
+                    incorrect: "f(5) = √(5 + 4) = √9 = 3."
+                },
+                10: {
+                    correct: "g(0) = 4(0) - 7 = 0 - 7 = -7. Substitute 0 for x.",
+                    incorrect: "g(0) = 4(0) - 7 = -7."
+                }
+            };
+            
+            const explanation = explanations[questionNumber];
+            if (explanation) {
+                const explanationDiv = document.createElement('div');
+                explanationDiv.className = 'mt-4 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-400 explanation-added';
+                
+                const isCorrect = studentAnswer === correctAnswer;
+                const explanationText = isCorrect ? explanation.correct : explanation.incorrect;
+                const iconClass = isCorrect ? 'fa-check-circle text-green-500' : 'fa-exclamation-triangle text-orange-500';
+                const titleText = isCorrect ? 'Correct Answer!' : 'Review This Concept';
+                
+                explanationDiv.innerHTML = `
+                    <div class="flex items-start">
+                        <i class="fas ${iconClass} mt-1 mr-3"></i>
+                        <div>
+                            <h4 class="font-semibold text-blue-800 mb-2">${titleText}</h4>
+                            <p class="text-blue-700 text-sm">${explanationText}</p>
+                            ${!isCorrect ? `
+                                <div class="mt-2 p-2 bg-red-50 border border-red-200 rounded">
+                                    <p class="text-red-700 text-xs">
+                                        <strong>Your answer:</strong> ${studentAnswer ? studentAnswer.toUpperCase() : 'No answer'} | 
+                                        <strong>Correct answer:</strong> ${correctAnswer.toUpperCase()}
+                                    </p>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+                
+                const optionsContainer = questionCard.querySelector('.space-y-3');
+                if (optionsContainer) {
+                    optionsContainer.parentNode.insertBefore(explanationDiv, optionsContainer.nextSibling);
+                }
+            }
+        }
+
+        // Add problem solving explanation
+        function addProblemSolvingExplanation() {
+            const problemSolvingCard = document.querySelector('[data-question="11"]');
+            if (!problemSolvingCard) return;
+            
+            if (problemSolvingCard.querySelector('.ps-explanation-added')) return;
+            
+            const explanationDiv = document.createElement('div');
+            explanationDiv.className = 'mt-6 p-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border-2 border-purple-200 ps-explanation-added';
+            explanationDiv.innerHTML = `
+                <div class="flex items-start">
+                    <i class="fas fa-calculator text-purple-500 mt-1 mr-3 text-xl"></i>
+                    <div>
+                        <h4 class="font-bold text-purple-800 mb-4 text-lg">Problem Solving Solution:</h4>
+                        <div class="space-y-4">
+                            <div class="bg-white rounded-lg p-4">
+                                <h5 class="font-semibold text-gray-800 mb-2">P(20) = -2(20)² + 100(20) - 800</h5>
+                                <p class="text-gray-700 text-sm mb-2">= -2(400) + 2000 - 800 = -800 + 2000 - 800 = 400</p>
+                                <p class="text-gray-700 text-sm"><strong>Answer: 400 thousand pesos</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const inputsContainer = problemSolvingCard.querySelector('.bg-white.rounded-lg.p-6');
+            if (inputsContainer) {
+                inputsContainer.parentNode.insertBefore(explanationDiv, inputsContainer.nextSibling);
+            }
+        }
+
+        // Check if student has already completed this quiz
+        async function checkQuizCompletion() {
+            try {
+                const response = await fetch('../php/quiz-management.php?action=get_student_history&quiz_type=evaluating-functions', {
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success && result.attempts && result.attempts.length > 0) {
+                    const latestAttempt = result.attempts[0];
+                    const isDeadlinePassed = await checkQuizDeadline();
+                    
+                    if (isDeadlinePassed) {
+                        console.log('Quiz completed but deadline passed - allowing review access');
+                        return false;
+                    } else {
+                        Swal.fire({
+                            title: 'Quiz Already Completed',
+                            html: `
+                                <div class="text-center">
+                                    <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <i class="fas fa-check-circle text-blue-500 text-3xl"></i>
+                                    </div>
+                                    <p class="text-lg text-gray-700 mb-4">You have already completed this quiz!</p>
+                                    <div class="bg-blue-50 rounded-lg p-4 mb-4">
+                                        <div class="text-2xl font-bold text-blue-600">${latestAttempt.score}/${latestAttempt.total_questions}</div>
+                                        <div class="text-sm text-blue-500">Score: ${latestAttempt.percentage}%</div>
+                                        <div class="text-xs text-gray-500 mt-1">Completed on ${latestAttempt.quiz_date}</div>
+                                    </div>
+                                    <p class="text-sm text-gray-600">You cannot retake this quiz.</p>
+                                </div>
+                            `,
+                            icon: 'info',
+                            confirmButtonText: 'Back to Quizzes',
+                            confirmButtonColor: '#6366f1',
+                            background: '#ffffff',
+                            customClass: {
+                                popup: 'rounded-2xl',
+                                title: 'text-slate-800',
+                                content: 'text-slate-600'
+                            },
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '../quizzes.html';
+                            }
+                        });
+                        
+                        return true;
+                    }
+                }
+                
+                return false;
+            } catch (error) {
+                console.error('Error checking quiz completion:', error);
+                return false;
+            }
+        }
+
+        // Check quiz deadline and settings
+        async function checkQuizDeadline() {
+            try {
+                const response = await fetch('../php/quiz-management.php?action=get_quiz_settings', {
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success && result.settings && result.settings['evaluating-functions']) {
+                    const settings = result.settings['evaluating-functions'];
+                    quizDeadline = new Date(settings.deadline);
+                    const now = new Date();
+                    
+                    // Check if deadline has passed
+                    if (now > quizDeadline) {
+                        isReviewMode = true;
+                        enableReviewMode();
+                        return true; // Quiz is in review mode
+                    }
+                }
+                
+                return false; // Quiz is not in review mode
+            } catch (error) {
+                console.error('Error checking quiz deadline:', error);
+                return false; // On error, allow normal quiz mode
+            }
+        }
+
+        // Load completed quiz for review when deadline has passed
+        async function loadCompletedQuizForReview() {
+            try {
+                console.log('Loading completed quiz for review...');
+                
+                // Get student's quiz history
+                const response = await fetch('../php/quiz-management.php?action=get_student_history&quiz_type=evaluating-functions', {
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('Student history result:', result);
+                
+                if (result.success && result.attempts && result.attempts.length > 0) {
+                    const latestAttempt = result.attempts[0]; // Get the most recent attempt
+                    console.log('Latest attempt found:', latestAttempt);
+                    
+                    // Set current attempt ID for reference (use 'id' field, not 'attempt_id')
+                    currentAttemptId = latestAttempt.id;
+                    console.log('Set currentAttemptId to:', currentAttemptId);
+                    
+                    // Enable review mode first
+                    enableReviewMode();
+                    
+                    // Load the student's answers first
+                    await loadStudentAnswersForReview(latestAttempt.id);
+                    
+                    // Show the student's score
+                    showReviewScore(latestAttempt);
+                    
+                    // Wait a bit to ensure DOM is updated, then load correct answers
+                    setTimeout(() => {
+                        // Debug DOM elements
+                        debugQuizDOM();
+                        // Debug student answers
+                        debugStudentAnswers();
+                        // Force display of student answers first
+                        displayStudentAnswersInReview();
+                        // Force highlight student answers
+                        forceDisplayStudentAnswers();
+                        // Then load correct answers after ensuring student answers are loaded
+                        setTimeout(() => {
+                            // Get student answers from database to pass to loadCorrectAnswers
+                            getStudentAnswersForReview(latestAttempt.id).then(studentAnswers => {
+                                loadCorrectAnswers(studentAnswers);
+                            });
+                        }, 100);
+                    }, 200);
+                } else {
+                    console.log('No completed quiz found, enabling review mode only');
+                    // No completed quiz found, just enable review mode
+                    enableReviewMode();
+                    
+                    // Ensure tips are hidden in review mode
+                    const tipsContainer = document.getElementById('tipsContainer');
+                    if (tipsContainer) {
+                        tipsContainer.classList.add('hidden');
+                        tipsContainer.style.display = 'none';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading completed quiz for review:', error);
+                // Fallback to just enabling review mode
+                enableReviewMode();
+            }
+        }
+
+        // Get student answers from database (for passing to loadCorrectAnswers)
+        async function getStudentAnswersForReview(attemptId) {
+            try {
+                console.log('Getting student answers for review, attempt ID:', attemptId);
+                
+                const response = await fetch(`../php/quiz-management.php?action=get_quiz_answers&attempt_id=${attemptId}`, {
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('Student answers result:', result);
+                
+                if (result.success && result.answers) {
+                    console.log('Student answers from database:', result.answers);
+                    return result.answers;
+                } else {
+                    console.log('❌ No student answers found or failed to load');
+                    return {};
+                }
+            } catch (error) {
+                console.error('❌ Error getting student answers for review:', error);
+                return {};
+            }
+        }
+
+        // Load student's answers for review
+        async function loadStudentAnswersForReview(attemptId) {
+            try {
+                console.log('Loading student answers for review, attempt ID:', attemptId);
+                
+                const response = await fetch(`../php/quiz-management.php?action=get_quiz_answers&attempt_id=${attemptId}`, {
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('Student answers result:', result);
+                
+                if (result.success && result.answers) {
+                    console.log('Student answers from database:', result.answers);
+                    
+                    // Restore student's multiple choice answers
+                    for (let i = 1; i <= 10; i++) {
+                        const answer = result.answers[`q${i}`];
+                        console.log(`Question ${i} answer:`, answer);
+                        
+                        if (answer) {
+                            const input = document.querySelector(`input[name="q${i}"][value="${answer}"]`);
+                            console.log(`Looking for input[name="q${i}"][value="${answer}"]:`, input);
+                            if (input) {
+                                input.checked = true;
+                                console.log(`✅ Set question ${i} answer to: ${answer}`);
+                                
+                                const label = input.closest('label');
+                                if (label) {
+                                    // Add strong visual indicator for student's answer
+                                    label.style.backgroundColor = '#3b82f6';
+                                    label.style.color = 'white';
+                                    label.style.border = '3px solid #1d4ed8';
+                                    label.style.fontWeight = 'bold';
+                                    label.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
+                                    
+                                    // Add visual indicator text
+                                    if (!label.querySelector('.student-answer-indicator')) {
+                                        const indicator = document.createElement('span');
+                                        indicator.className = 'student-answer-indicator ml-2 text-sm font-medium text-white';
+                                        indicator.innerHTML = '<i class="fas fa-user mr-1"></i>YOUR ANSWER';
+                                        indicator.style.backgroundColor = '#1d4ed8';
+                                        indicator.style.padding = '4px 8px';
+                                        indicator.style.borderRadius = '6px';
+                                        indicator.style.fontWeight = 'bold';
+                                        label.appendChild(indicator);
+                                    }
+                                }
+                                
+                                // Force a change event to ensure the input is properly recognized
+                                input.dispatchEvent(new Event('change', { bubbles: true }));
+                                
+                                // Also trigger click event to ensure proper selection
+                                input.click();
+                            } else {
+                                console.log(`❌ Could not find input for question ${i} with value: ${answer}`);
+                                // List all available inputs for this question
+                                const allInputs = document.querySelectorAll(`input[name="q${i}"]`);
+                                console.log(`Available inputs for question ${i}:`, Array.from(allInputs).map(inp => inp.value));
+                            }
+                        } else {
+                            console.log(`❌ No answer found for question ${i}`);
+                        }
+                    }
+                    
+                    // Restore student's problem solving answer
+                    const psAnswerInput = document.getElementById('ps-answer');
+                    if (psAnswerInput && result.answers['ps-answer']) {
+                        psAnswerInput.value = result.answers['ps-answer'];
+                        console.log('✅ Set problem solving answer to:', result.answers['ps-answer']);
+                        
+                        // Add strong visual indicator for problem solving answer
+                        psAnswerInput.style.backgroundColor = '#3b82f6';
+                        psAnswerInput.style.color = 'white';
+                        psAnswerInput.style.border = '3px solid #1d4ed8';
+                        psAnswerInput.style.fontWeight = 'bold';
+                        psAnswerInput.style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)';
+                        
+                        // Add visual indicator for problem solving answer
+                        if (!psAnswerInput.parentNode.querySelector('.student-answer-indicator')) {
+                            const indicator = document.createElement('div');
+                            indicator.className = 'student-answer-indicator mt-2 text-sm font-medium text-white';
+                            indicator.innerHTML = '<i class="fas fa-user mr-1"></i>YOUR ANSWER';
+                            indicator.style.backgroundColor = '#1d4ed8';
+                            indicator.style.padding = '6px 12px';
+                            indicator.style.borderRadius = '6px';
+                            indicator.style.display = 'inline-block';
+                            indicator.style.fontWeight = 'bold';
+                            psAnswerInput.parentNode.appendChild(indicator);
+                        }
+                    } else {
+                        console.log('❌ No problem solving answer found or input not found');
+                    }
+                    
+                    console.log('✅ Student answers loaded for review');
+                } else {
+                    console.log('❌ No student answers found or failed to load');
+                    console.log('Result:', result);
+                }
+            } catch (error) {
+                console.error('❌ Error loading student answers for review:', error);
+            }
+        }
+
+        // Display student answers in review mode
+        function displayStudentAnswersInReview() {
+            try {
+                console.log('Displaying student answers in review mode...');
+                
+                // Check each question to see if student answered
+                for (let i = 1; i <= 10; i++) {
+                    const checkedInput = document.querySelector(`input[name="q${i}"]:checked`);
+                    if (checkedInput) {
+                        console.log(`✅ Student answered question ${i}: ${checkedInput.value}`);
+                        
+                        // Add visual indicator that this is the student's answer
+                        const label = checkedInput.closest('label');
+                        if (label && !label.querySelector('.student-answer-indicator')) {
+                            const indicator = document.createElement('span');
+                            indicator.className = 'student-answer-indicator ml-2 text-sm font-medium text-blue-600';
+                            indicator.innerHTML = '<i class="fas fa-user mr-1"></i>Your Answer';
+                            label.appendChild(indicator);
+                        }
+                    } else {
+                        console.log(`❌ Student did not answer question ${i}`);
+                    }
+                }
+                
+                // Check problem solving answer
+                const psAnswer = document.getElementById('ps-answer');
+                if (psAnswer && psAnswer.value.trim()) {
+                    console.log(`✅ Student answered problem solving: ${psAnswer.value}`);
+                } else {
+                    console.log(`❌ Student did not answer problem solving`);
+                }
+                
+                console.log('✅ Student answers display completed');
+            } catch (error) {
+                console.error('❌ Error displaying student answers:', error);
+            }
+        }
+
+        // Show review score information
+        function showReviewScore(attempt) {
+            // Add score display to the quiz header
+            const quizHeader = document.querySelector('.gradient-bg');
+            if (quizHeader) {
+                const scoreDisplay = document.createElement('div');
+                scoreDisplay.className = 'mt-4 bg-white/20 backdrop-blur-sm rounded-lg px-6 py-3';
+                scoreDisplay.innerHTML = `
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-white mb-1">Your Score: ${attempt.score}/${attempt.total_questions}</div>
+                        <div class="text-lg text-white/90">${attempt.percentage}% - Completed on ${attempt.quiz_date}</div>
+                    </div>
+                `;
+                quizHeader.appendChild(scoreDisplay);
+            }
+        }
+
+        // Debug function to check student answers (for testing)
+        function debugStudentAnswers() {
+            console.log('=== DEBUG: Checking Student Answers ===');
+            for (let i = 1; i <= 10; i++) {
+                const checkedInput = document.querySelector(`input[name="q${i}"]:checked`);
+                if (checkedInput) {
+                    console.log(`Question ${i}: ${checkedInput.value} ✅`);
+                } else {
+                    console.log(`Question ${i}: No answer ❌`);
+                }
+            }
+            
+            const psAnswer = document.getElementById('ps-answer');
+            if (psAnswer && psAnswer.value.trim()) {
+                console.log(`Problem Solving: ${psAnswer.value} ✅`);
+            } else {
+                console.log(`Problem Solving: No answer ❌`);
+            }
+            console.log('=== END DEBUG ===');
+        }
+
+        // Global debug function for browser console testing
+        window.debugQuizAnswers = function() {
+            debugStudentAnswers();
+        };
+
+        // Global function to manually test loading student answers
+        window.testLoadStudentAnswers = async function(attemptId) {
+            if (!attemptId) {
+                console.log('Please provide an attempt ID. Example: testLoadStudentAnswers(47)');
+                return;
+            }
+            
+            console.log(`Testing load student answers for attempt ID: ${attemptId}`);
+            await loadStudentAnswersForReview(attemptId);
+            
+            // Wait a bit then check results
+            setTimeout(() => {
+                debugStudentAnswers();
+                debugQuizDOM();
+            }, 100);
+        };
+
+        // Global function to force display student answers
+        window.forceDisplayStudentAnswers = function() {
+            console.log('=== FORCE DISPLAY STUDENT ANSWERS ===');
+            
+            // Check each question
+            for (let i = 1; i <= 10; i++) {
+                const inputs = document.querySelectorAll(`input[name="q${i}"]`);
+                const checkedInput = document.querySelector(`input[name="q${i}"]:checked`);
+                
+                console.log(`Question ${i}:`);
+                console.log(`  Total inputs: ${inputs.length}`);
+                console.log(`  Checked input: ${checkedInput ? checkedInput.value : 'None'}`);
+                
+                if (checkedInput) {
+                    const label = checkedInput.closest('label');
+                    if (label) {
+                        label.style.backgroundColor = '#3b82f6';
+                        label.style.color = 'white';
+                        label.style.border = '2px solid #1d4ed8';
+                        console.log(`  ✅ Highlighted question ${i} answer: ${checkedInput.value}`);
+                    }
+                } else {
+                    console.log(`  ❌ No answer found for question ${i}`);
+                }
+            }
+            
+            // Check problem solving
+            const psAnswer = document.getElementById('ps-answer');
+            if (psAnswer && psAnswer.value.trim()) {
+                psAnswer.style.backgroundColor = '#3b82f6';
+                psAnswer.style.color = 'white';
+                psAnswer.style.border = '2px solid #1d4ed8';
+                console.log(`✅ Highlighted problem solving answer: ${psAnswer.value}`);
+            } else {
+                console.log('❌ No problem solving answer found');
+            }
+            
+            console.log('=== END FORCE DISPLAY ===');
+        };
+
+        // Global function to test review mode with specific attempt
+        window.testReviewMode = async function(attemptId) {
+            if (!attemptId) {
+                console.log('Please provide an attempt ID. Example: testReviewMode(47)');
+                return;
+            }
+            
+            console.log(`Testing review mode with attempt ID: ${attemptId}`);
+            
+            // Enable review mode
+            enableReviewMode();
+            
+            // Load student answers
+            await loadStudentAnswersForReview(attemptId);
+            
+            // Get student answers and load correct answers
+            const studentAnswers = await getStudentAnswersForReview(attemptId);
+            
+            // Wait and then force display
+            setTimeout(() => {
+                forceDisplayStudentAnswers();
+                debugStudentAnswers();
+                loadCorrectAnswers(studentAnswers);
+            }, 300);
+        };
+
+        // Global function to show all available test functions
+        window.showReviewModeHelp = function() {
+            console.log('=== REVIEW MODE TESTING FUNCTIONS ===');
+            console.log('Available functions:');
+            console.log('1. testReviewMode(attemptId) - Test complete review mode');
+            console.log('2. testLoadStudentAnswers(attemptId) - Test loading student answers');
+            console.log('3. forceDisplayStudentAnswers() - Force highlight student answers');
+            console.log('4. debugStudentAnswers() - Debug current student answers');
+            console.log('5. debugQuizDOM() - Debug DOM elements');
+            console.log('');
+            console.log('Example usage:');
+            console.log('testReviewMode(49)');
+            console.log('testLoadStudentAnswers(49)');
+            console.log('forceDisplayStudentAnswers()');
+        };
+
+        // Comprehensive debug function to check DOM elements and answers
+        window.debugQuizDOM = function() {
+            console.log('=== DEBUG: Checking DOM Elements ===');
+            
+            // Check if quiz container exists
+            const quizContainer = document.getElementById('quizContainer');
+            console.log('Quiz Container:', quizContainer ? 'Found' : 'Not Found');
+            
+            // Check each question's DOM elements
+            for (let i = 1; i <= 10; i++) {
+                const questionDiv = document.querySelector(`[data-question="${i}"]`);
+                const inputs = document.querySelectorAll(`input[name="q${i}"]`);
+                const checkedInput = document.querySelector(`input[name="q${i}"]:checked`);
+                
+                console.log(`Question ${i}:`);
+                console.log(`  Question div: ${questionDiv ? 'Found' : 'Not Found'}`);
+                console.log(`  Inputs: ${inputs.length} found`);
+                console.log(`  Checked input: ${checkedInput ? checkedInput.value : 'None'}`);
+                
+                if (inputs.length > 0) {
+                    console.log(`  Available values: ${Array.from(inputs).map(inp => inp.value).join(', ')}`);
+                }
+            }
+            
+            // Check problem solving
+            const psInput = document.getElementById('ps-answer');
+            console.log(`Problem Solving Input: ${psInput ? 'Found' : 'Not Found'}`);
+            if (psInput) {
+                console.log(`  Value: "${psInput.value}"`);
+            }
+            
+            console.log('=== END DOM DEBUG ===');
+        };
+
+        // Get formatted time
+        function getFormattedTime() {
+            const minutes = Math.floor(quizDuration / 60);
+            const seconds = quizDuration % 60;
+            return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Check and award badges for quiz completion
+        async function checkAndAwardBadges(result) {
+            try {
+                console.log('🏆 Checking for badge eligibility...');
+                console.log('Quiz result:', result);
+                // Always check with backend; it will decide which badges qualify (completion, 50%+, perfect, etc.)
+                const userId = await getCurrentUserId();
+                if (!userId) {
+                    console.log('❌ No user ID available for badge checking');
+                    return;
+                }
+                
+                console.log('User ID:', userId);
+                console.log('Attempt ID:', currentAttemptId);
+                console.log('Submitting result to backend for badge evaluation');
+                
+                const formData = new FormData();
+                formData.append('action', 'check_and_award_badges');
+                formData.append('student_id', userId);
+                formData.append('quiz_type', 'evaluating-functions');
+                formData.append('score', result.score);
+                formData.append('total_questions', result.total_questions);
+                formData.append('attempt_id', currentAttemptId);
+                
+                console.log('Sending badge check request...');
+                const response = await fetch('../php/badge-management.php', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+                
+                console.log('Badge check response status:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Badge check result:', data);
+                    
+                    if (data.success && data.awarded_badges && data.awarded_badges.length > 0) {
+                        console.log('✅ Badges awarded:', data.awarded_badges);
+                        // Validate badge data before showing notification
+                        const validBadges = data.awarded_badges.filter(badge => {
+                            const isValid = badge && (badge.name || badge.icon_url || badge.description);
+                            if (!isValid) {
+                                console.warn('Invalid badge data found:', badge);
+                            }
+                            return isValid;
+                        });
+                        
+                        if (validBadges.length > 0) {
+                            showBadgeNotification(validBadges);
+                        } else {
+                            console.log('No valid badges to display');
+                        }
+                    } else {
+                        console.log('No badges awarded or empty badge array');
+                    }
+                } else {
+                    console.error('❌ Failed to check badges:', response.status);
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
+                }
+            } catch (error) {
+                console.error('❌ Error checking badges:', error);
+            }
+        }
+
+        // Show badge notification
+        function showBadgeNotification(badges) {
+            if (!badges || badges.length === 0) {
+                console.log('No badges to display');
+                return;
+            }
+            
+            const badge = badges[0]; // Show the first badge
+            
+            // Validate badge data and provide fallbacks for null/undefined values
+            const badgeIcon = badge.icon_url || '🏆'; // Default trophy emoji if icon_url is null
+            const badgeName = badge.name || 'New Badge'; // Default name if null
+            const badgeDescription = badge.description || 'Congratulations on earning this badge!'; // Default description if null
+            
+            console.log('Displaying badge:', {
+                icon: badgeIcon,
+                name: badgeName,
+                description: badgeDescription
+            });
+            
+            Swal.fire({
+                title: '🎉 Congratulations!',
+                html: `
+                    <div class="text-center">
+                        <div class="text-6xl mb-4">${badgeIcon}</div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">${badgeName}</h3>
+                        <p class="text-gray-600 mb-4">${badgeDescription}</p>
+                        <p class="text-sm text-gray-500">You've earned a new badge!</p>
+                    </div>
+                `,
+                icon: 'success',
+                confirmButtonText: 'Awesome!',
+                confirmButtonColor: '#10b981',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showCloseButton: false,
+                customClass: {
+                    popup: 'badge-notification'
+                }
+            });
+        }
+
+        // Get current user ID from server
+        async function getCurrentUserId() {
+            try {
+                const response = await fetch('../php/user.php', {
+                    credentials: 'include',
+                    cache: 'no-store'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.user) {
+                        return data.user.id;
+                    }
+                }
+                return null;
+            } catch (error) {
+                console.error('Error getting user ID:', error);
+                return null;
+            }
+        }
+
+        // Display student's rank in the leaderboard
+        async function displayStudentRank() {
+            try {
+                console.log('Fetching student rank...');
+                const response = await fetch('../php/quiz-management.php?action=get_leaderboard&quiz_type=evaluating-functions&limit=50&same_class_only=true', {
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success && result.leaderboard) {
+                    // Find the current student in the leaderboard
+                    const currentStudent = result.leaderboard.find(student => student.is_current_user == 1 || student.is_current_user === true);
+                    
+                    if (currentStudent) {
+                        const rankElement = document.getElementById('studentRank');
+                        const rank = currentStudent.rank_position;
+                        
+                        // Add rank icon based on position
+                        let rankDisplay = '';
+                        if (rank === 1) {
+                            rankDisplay = '🥇 1st';
+                        } else if (rank === 2) {
+                            rankDisplay = '🥈 2nd';
+                        } else if (rank === 3) {
+                            rankDisplay = '🥉 3rd';
+                        } else {
+                            rankDisplay = `#${rank}`;
+                        }
+                        
+                        rankElement.textContent = rankDisplay;
+                        console.log(`Student rank: ${rank}`);
+                    } else {
+                        // Student not found in leaderboard (shouldn't happen)
+                        document.getElementById('studentRank').textContent = 'N/A';
+                        console.log('Student not found in leaderboard');
+                    }
+                } else {
+                    document.getElementById('studentRank').textContent = 'N/A';
+                    console.error('Failed to get leaderboard for rank:', result.message);
+                }
+            } catch (error) {
+                console.error('Error getting student rank:', error);
+                document.getElementById('studentRank').textContent = 'N/A';
+            }
+        }
+
+        // Show leaderboard
+        function showLeaderboard() {
+            document.getElementById('resultsContainer').classList.add('hidden');
+            document.getElementById('leaderboardContainer').classList.remove('hidden');
+            loadLeaderboard();
+            
+            // Scroll to leaderboard
+            document.getElementById('leaderboardContainer').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Hide leaderboard
+        function hideLeaderboard() {
+            document.getElementById('leaderboardContainer').classList.add('hidden');
+            document.getElementById('resultsContainer').classList.remove('hidden');
+        }
+
+        // Get leaderboard from database (same class/teacher only)
+        async function getLeaderboardFromDatabase() {
+            try {
+                console.log('Fetching leaderboard from database (same class only)...');
+                const response = await fetch('../php/quiz-management.php?action=get_leaderboard&quiz_type=evaluating-functions&limit=20&same_class_only=true', {
+                    credentials: 'include'
+                });
+                
+                console.log('Leaderboard response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('Leaderboard result:', result);
+                
+                if (result.success) {
+                    console.log('Leaderboard data received:', result.leaderboard.length, 'records');
+                    console.log('Students in same class:', result.leaderboard.map(s => s.student_name + ' (Class: ' + s.class_name + ')'));
+                    return result.leaderboard;
+                } else {
+                    console.error('Failed to get leaderboard:', result.message);
+                    // Show user-friendly error message
+                    Swal.fire({
+                        title: 'Leaderboard Error',
+                        text: 'Unable to load leaderboard data. Please try again later.',
+                        icon: 'warning',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#6366f1'
+                    });
+                    return [];
+                }
+            } catch (error) {
+                console.error('Error getting leaderboard:', error);
+                // Show user-friendly error message
+                Swal.fire({
+                    title: 'Connection Error',
+                    text: 'Unable to connect to the server. Please check your internet connection and try again.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#6366f1'
+                });
+                return [];
+            }
+        }
+
+        // Get quiz statistics from database (same class only)
+        async function getQuizStatisticsFromDatabase() {
+            try {
+                const response = await fetch('../php/quiz-management.php?action=get_statistics&quiz_type=evaluating-functions&same_class_only=true', {
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    return result.statistics;
+                } else {
+                    console.error('Failed to get statistics:', result.message);
+                    return null;
+                }
+            } catch (error) {
+                console.error('Error getting statistics:', error);
+                return null;
+            }
+        }
+
+        // Load leaderboard data
+        async function loadLeaderboard() {
+            console.log('loadLeaderboard function called');
+            const detailedLeaderboard = document.getElementById('detailedLeaderboard');
+            const podiumContainer = document.getElementById('podiumContainer');
+            
+            console.log('detailedLeaderboard element:', detailedLeaderboard);
+            console.log('podiumContainer element:', podiumContainer);
+            
+            if (!detailedLeaderboard) {
+                console.error('detailedLeaderboard element not found');
+                return;
+            }
+            
+            try {
+                console.log('Loading leaderboard...');
+                
+                // Show improved loading state
+                detailedLeaderboard.innerHTML = `
+                    <div class="px-6 py-12 text-center">
+                        <div class="flex flex-col items-center">
+                            <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+                                <i class="fas fa-spinner fa-spin text-2xl text-blue-600"></i>
+                            </div>
+                            <p class="text-lg font-semibold text-gray-700 mb-2">Loading Leaderboard</p>
+                            <p class="text-sm text-gray-500">Fetching latest results...</p>
+                        </div>
+                    </div>
+                `;
+                
+                // Get leaderboard from database
+                const leaderboardData = await getLeaderboardFromDatabase();
+                console.log('Leaderboard data:', leaderboardData);
+                
+                const statistics = await getQuizStatisticsFromDatabase();
+                console.log('Statistics:', statistics);
+                
+                if (leaderboardData.length === 0) {
+                    // Show empty state
+                    document.getElementById('totalParticipants').textContent = '0';
+                    document.getElementById('averageScore').textContent = '0%';
+                    document.getElementById('fastestTime').textContent = '0:00';
+                    
+                    detailedLeaderboard.innerHTML = `
+                        <div class="px-6 py-8 text-center text-gray-500">
+                            <i class="fas fa-trophy text-4xl mb-4 text-gray-300"></i>
+                            <p class="text-lg">No quiz attempts yet</p>
+                            <p class="text-sm">Be the first to take the quiz!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Update stats
+                if (statistics && statistics.total_attempts > 0) {
+                    document.getElementById('totalParticipants').textContent = statistics.total_attempts;
+                    document.getElementById('averageScore').textContent = Math.round(statistics.average_percentage) + '%';
+                    document.getElementById('fastestTime').textContent = formatTime(statistics.fastest_time);
+                } else {
+                    // Calculate from leaderboard data
+                    const totalParticipants = leaderboardData.length;
+                    const averageScore = totalParticipants > 0 ? Math.round(leaderboardData.reduce((sum, student) => {
+                        return sum + parseFloat(student.percentage);
+                    }, 0) / totalParticipants) : 0;
+                    
+                    const fastestTime = totalParticipants > 0 ? leaderboardData.reduce((fastest, student) => {
+                        const studentTime = parseFloat(student.formatted_time.replace(':', '.'));
+                        const fastestTime = parseFloat(fastest.replace(':', '.'));
+                        return studentTime < fastestTime ? student.formatted_time : fastest;
+                    }, leaderboardData[0].formatted_time) : '0:00';
+
+                    document.getElementById('totalParticipants').textContent = totalParticipants;
+                    document.getElementById('averageScore').textContent = averageScore + '%';
+                    document.getElementById('fastestTime').textContent = fastestTime;
+                }
+
+                // Create podium for top 3 students
+                createPodium(leaderboardData.slice(0, 3));
+
+                // Create detailed leaderboard
+                createDetailedLeaderboard(leaderboardData);
+            } catch (error) {
+                console.error('Error loading leaderboard:', error);
+                console.error('Error details:', error.message);
+                console.error('Error stack:', error.stack);
+                
+                // Show error state
+                if (detailedLeaderboard) {
+                    detailedLeaderboard.innerHTML = `
+                        <div class="px-6 py-8 text-center text-red-500">
+                            <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+                            <p class="text-lg">Error loading leaderboard</p>
+                            <p class="text-sm">Please try again later</p>
+                            <p class="text-xs text-gray-500 mt-2">Error: ${error.message}</p>
+                        </div>
+                    `;
+                } else {
+                    console.error('detailedLeaderboard element not available for error display');
+                }
+            }
+        }
+
+        // Create podium for top 3 students
+        function createPodium(topStudents) {
+            const podiumContainer = document.getElementById('podiumContainer');
+            if (!podiumContainer) return;
+
+            podiumContainer.innerHTML = '';
+
+            if (topStudents.length === 0) {
+                podiumContainer.innerHTML = `
+                    <div class="text-center text-gray-500">
+                        <i class="fas fa-trophy text-4xl mb-2"></i>
+                        <p>No students yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Create podium steps
+            const podiumSteps = [
+                { rank: 2, height: 'h-16', color: 'bg-gray-400', medal: '🥈' },
+                { rank: 1, height: 'h-20', color: 'bg-yellow-400', medal: '🥇' },
+                { rank: 3, height: 'h-12', color: 'bg-orange-400', medal: '🥉' }
+            ];
+
+            podiumSteps.forEach((step, index) => {
+                const student = topStudents.find(s => s.rank_position === step.rank);
+                const podiumStep = document.createElement('div');
+                podiumStep.className = `flex flex-col items-center ${step.height} ${step.color} rounded-t-lg px-4 py-2 text-white font-bold`;
+                
+                if (student) {
+                    const initials = student.student_name.split(' ').map(n => n[0]).join('').toUpperCase();
+                    podiumStep.innerHTML = `
+                        <div class="text-2xl mb-1">${step.medal}</div>
+                        <div class="text-sm text-center">
+                            <div class="font-bold">${student.student_name.split(' ')[0]}</div>
+                            <div class="text-xs">${student.score}/${student.total_questions}</div>
+                        </div>
+                    `;
+                } else {
+                    podiumStep.innerHTML = `
+                        <div class="text-2xl mb-1">${step.medal}</div>
+                        <div class="text-sm text-center">
+                            <div class="font-bold">-</div>
+                            <div class="text-xs">-</div>
+                        </div>
+                    `;
+                }
+                
+                podiumContainer.appendChild(podiumStep);
+            });
+        }
+
+        // Create detailed leaderboard
+        function createDetailedLeaderboard(leaderboardData) {
+            const detailedLeaderboard = document.getElementById('detailedLeaderboard');
+            if (!detailedLeaderboard) return;
+
+            // Separate cheating students from regular students
+            const cheatingStudents = leaderboardData.filter(student => student.cheating_reason);
+            const regularStudents = leaderboardData.filter(student => !student.cheating_reason);
+
+            let html = '';
+
+            // Display regular students
+            regularStudents.forEach((student, index) => {
+                const isCurrentUser = student.is_current_user == 1 || student.is_current_user === true;
+                const initials = student.student_name.split(' ').map(n => n[0]).join('').toUpperCase();
+                
+                let rankIcon = '';
+                if (student.rank_position == 1) rankIcon = '🥇';
+                else if (student.rank_position == 2) rankIcon = '🥈';
+                else if (student.rank_position == 3) rankIcon = '🥉';
+                else rankIcon = `#${student.rank_position}`;
+
+                html += `
+                    <div class="flex items-center justify-between p-4 border-b border-gray-200 hover:bg-gray-50 ${isCurrentUser ? 'bg-yellow-50 border-l-4 border-yellow-400' : ''}">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex items-center">
+                                <span class="text-2xl mr-2">${rankIcon}</span>
+                                <span class="font-bold text-gray-900">${student.rank_position}</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mr-3">
+                                    <span class="text-white text-xs font-bold">${initials}</span>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-gray-900">${student.student_name}</div>
+                                    ${isCurrentUser ? '<div class="text-xs text-yellow-600 font-medium">You</div>' : ''}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="font-bold text-lg text-gray-900">${student.score}/${student.total_questions}</span>
+                            <span class="text-sm text-gray-500">(${student.percentage}%)</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Display cheating students in a separate section
+            if (cheatingStudents.length > 0) {
+                html += `
+                    <div class="p-4 bg-red-50 border-t-2 border-red-200">
+                        <div class="text-center mb-4">
+                            <h4 class="text-red-800 font-semibold mb-2">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>
+                                Students with Cheating Incidents
+                            </h4>
+                            <p class="text-red-600 text-sm">These students were caught cheating and received a score of 0</p>
+                        </div>
+                `;
+
+                cheatingStudents.forEach((student) => {
+                    const isCurrentUser = student.is_current_user == 1 || student.is_current_user === true;
+                    const initials = student.student_name.split(' ').map(n => n[0]).join('').toUpperCase();
+
+                    html += `
+                        <div class="flex items-center justify-between p-4 bg-red-50 border-l-4 border-red-400 rounded-lg mb-2 ${isCurrentUser ? 'ring-2 ring-red-300' : ''}">
+                            <div class="flex items-center space-x-4">
+                                <div class="flex items-center">
+                                    <i class="fas fa-ban mr-2 text-red-600"></i>
+                                    <span class="font-bold text-red-600">Disqualified</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center mr-3">
+                                        <span class="text-white text-xs font-bold">${initials}</span>
+                                    </div>
+                                    <div>
+                                        <div class="font-semibold text-red-800">${student.student_name}</div>
+                                        ${isCurrentUser ? '<div class="text-xs text-red-600 font-medium">You</div>' : ''}
+                                        <div class="text-xs text-red-500 mt-1">
+                                            <i class="fas fa-exclamation-triangle mr-1"></i>
+                                            Cheating Detected
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="font-bold text-lg text-red-600">0/${student.total_questions}</span>
+                                <span class="text-sm text-red-500">(0%)</span>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `</div>`;
+            }
+
+            detailedLeaderboard.innerHTML = html;
+        }
+        
+        // Format time from seconds to MM:SS
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        // Go to dashboard
+        function goToDashboard() {
+            window.location.href = '../dashboard.html';
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // Check authentication
+                const res = await fetch('../php/user.php', { credentials: 'include', cache: 'no-store' });
+                if (res.status === 401) { 
+                    window.location.href = '../login.html'; 
+                    return; 
+                }
+                const data = await res.json();
+                if (!data.success) { 
+                    window.location.href = '../login.html'; 
+                    return; 
+                }
+                
+                // Update user name
+                const userNameEl = document.getElementById('userName');
+                if (userNameEl && data.user && data.user.first_name) {
+                    userNameEl.textContent = `${data.user.first_name} ${data.user.last_name || ''}`.trim();
+                }
+                
+                // Check if this is a page refresh (allow continuation)
+                const isRefresh = isPageRefresh();
+                console.log('Page refresh detected:', isRefresh);
+                
+                // Check if deadline has passed first
+                const isDeadlinePassed = await checkQuizDeadline();
+                
+                // Check if quiz is already completed
+                const completionCheck = await checkQuizCompletion();
+                
+                // If quiz is completed AND deadline has passed, load review mode
+                if (completionCheck === false && isDeadlinePassed) {
+                    // Quiz completed and deadline passed - load review mode with completed answers
+                    console.log('Quiz completed and deadline passed - loading review mode');
+                    await loadCompletedQuizForReview();
+                    return;
+                }
+                
+                // If deadline passed but quiz not completed, enable review mode
+                if (isDeadlinePassed) {
+                    // Deadline passed - enable review mode
+                    console.log('Deadline passed - enabling review mode');
+                    await loadCompletedQuizForReview();
+                    return;
+                }
+                
+                // If quiz is completed but deadline not passed, show completion message
+                if (completionCheck) {
+                    return; // Stop execution - already shown message in checkQuizCompletion
+                }
+                
+                // If this is a page refresh, allow continuation
+                if (isRefresh) {
+                    console.log('Page refresh detected - allowing quiz continuation');
+                    // Check if there's an existing quiz attempt
+                    try {
+                        const response = await fetch('../php/quiz-management.php?action=get_current_attempt&quiz_type=evaluating-functions', {
+                            credentials: 'include'
+                        });
+                        if (response.ok) {
+                            const result = await response.json();
+                            if (result.success && result.attempt_id) {
+                                currentAttemptId = result.attempt_id;
+                                console.log('Resuming existing quiz attempt:', currentAttemptId);
+                                // Initialize anti-cheating system for resumed quiz
+                                initializeAntiCheating();
+                            }
+                        }
+                    } catch (error) {
+                        console.log('No existing quiz attempt found');
+                    }
+                }
+                
+            } catch (e) {
+                console.error('Error:', e);
+                window.location.href = '../login.html';
+            }
+        });
+    </script>
+</body>
+</html>
+

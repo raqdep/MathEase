@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - MathEase (General Mathematics)</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="register-page">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="css/nav-logo/nav-logo.png" alt="MathEase Logo" class="logo-img">
+                <span>MathEase</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="index.html#topics" class="nav-link">Topics</a>
+                </li>
+                <li class="nav-item">
+                    <a href="index.html#teachers" class="nav-link">For Teachers</a>
+                </li>
+                <li class="nav-item">
+                    <a href="index.html#students" class="nav-link">For Students</a>
+                </li>
+                <li class="nav-item">
+                    <a href="index.html#team" class="nav-link">Our Team</a>
+                </li>
+                <li class="nav-item">
+                    <a href="index.html#about" class="nav-link">About Us</a>
+                </li>
+              
+                <li class="nav-item">
+                    <a href="login.html" class="nav-link">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a href="register.html" class="nav-link active">Register</a>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Registration Section -->
+    <section class="auth-section">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <div class="auth-logo">
+                        <img src="css/nav-logo/logo-mid.png" alt="MathEase Logo" class="auth-logo-img">
+                        <h1>MathEase</h1>
+                    </div>
+                    <h2>Join MathEase Today!</h2>
+                    <p>Create your account and start mastering General Mathematics</p>
+                </div>
+
+                <form class="auth-form" id="register-form" action="php/register.php" method="POST" novalidate>
+                    <div class="form-columns">
+                        <div class="form-column form-column-left">
+                            <div class="form-group">
+                                <label for="firstName">First Name</label>
+                                <div class="input-group">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" id="firstName" name="firstName" required placeholder="Enter first name" autocomplete="off" autofill="off">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="lastName">Last Name</label>
+                                <div class="input-group">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" id="lastName" name="lastName" required placeholder="Enter last name" autocomplete="off" autofill="off">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <div class="input-group">
+                                    <i class="fas fa-envelope"></i>
+                                    <input type="email" id="email" name="email" required placeholder="Enter your email" autocomplete="off" autofill="off">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="lrn">LRN (Learner Reference Number)</label>
+                                <div class="input-group">
+                                    <i class="fas fa-id-card"></i>
+                                    <input type="text" id="lrn" name="lrn" required placeholder="Enter 12-digit LRN" autocomplete="off" autofill="off" maxlength="12" pattern="[0-9]{12}" inputmode="numeric">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="gradeLevelDisplay">Grade Level</label>
+                                <div class="input-group">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    <input type="text" id="gradeLevelDisplay" value="Grade 11" readonly>
+                                    <input type="hidden" id="gradeLevel" name="gradeLevel" value="11">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-column form-column-right">
+                            <div class="form-group">
+                                <label for="strandDisplay">Strand</label>
+                                <div class="input-group">
+                                    <i class="fas fa-book"></i>
+                                    <input type="text" id="strandDisplay" value="STEM" readonly>
+                                    <input type="hidden" id="strand" name="strand" value="STEM">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <div class="input-group">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="password" name="password" required placeholder="Create a password" autocomplete="new-password" autofill="off">
+                                    <button type="button" class="toggle-password">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="password-strength">
+                                    <div class="strength-bar">
+                                        <div class="strength-fill" id="strengthFill"></div>
+                                    </div>
+                                    <div class="strength-info">
+                                        <span class="strength-text" id="strengthText">Password strength</span>
+                                    </div>
+                                    <div class="password-requirements" id="passwordRequirements">
+                                        <div class="requirement" data-requirement="length">
+                                            <i class="fas fa-circle"></i>
+                                            <span>At least 8 characters</span>
+                                        </div>
+                                        <div class="requirement" data-requirement="lowercase">
+                                            <i class="fas fa-circle"></i>
+                                            <span>One lowercase letter</span>
+                                        </div>
+                                        <div class="requirement" data-requirement="uppercase">
+                                            <i class="fas fa-circle"></i>
+                                            <span>One uppercase letter</span>
+                                        </div>
+                                        <div class="requirement" data-requirement="number">
+                                            <i class="fas fa-circle"></i>
+                                            <span>One number</span>
+                                        </div>
+                                        <div class="requirement" data-requirement="special">
+                                            <i class="fas fa-circle"></i>
+                                            <span>One special character</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm Password</label>
+                                <div class="input-group">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Confirm your password" autocomplete="new-password" autofill="off">
+                                    <button type="button" class="toggle-password">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="form-options">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" name="terms" id="terms" required>
+                                    <span class="checkmark"></span>
+                                    <span class="checkbox-text">
+                                        I agree to the <a href="#" class="modal-link" data-modal="termsModal">Terms of Service</a> and <a href="#" class="modal-link" data-modal="privacyModal">Privacy Policy</a>
+                                    </span>
+                                </label>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-full">
+                                <i class="fas fa-user-plus"></i>
+                                Create Account
+                            </button>
+
+                        </div>
+                    </div>
+                </form>
+
+                <div class="auth-footer">
+                    <p>Already have an account? <a href="login.html">Sign in here</a></p>
+                </div>
+            </div>
+
+            <div class="auth-image">
+                <div class="math-visual">
+                    <div class="floating-formula">y = mx + b</div>
+                    <div class="floating-formula">a² + b² = c²</div>
+                    <div class="floating-formula">e^(iπ) + 1 = 0</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+   
+            </div>
+        </div>
+    </section>
+
+    <!-- Terms of Service Modal -->
+    <div id="termsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Terms of Service</h2>
+                <span class="close" data-modal="termsModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>1. Acceptance of Terms</h3>
+                <p>By accessing and using MathEase, you accept and agree to be bound by the terms and provision of this agreement.</p>
+                
+                <h3>2. Use License</h3>
+                <p>Permission is granted to temporarily download one copy of MathEase for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:</p>
+                <ul>
+                    <li>modify or copy the materials</li>
+                    <li>use the materials for any commercial purpose or for any public display</li>
+                    <li>attempt to reverse engineer any software contained on the website</li>
+                    <li>remove any copyright or other proprietary notations from the materials</li>
+                </ul>
+                
+                <h3>3. Disclaimer</h3>
+                <p>The materials on MathEase are provided on an 'as is' basis. MathEase makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.</p>
+                
+                <h3>4. Limitations</h3>
+                <p>In no event shall MathEase or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on MathEase, even if MathEase or an authorized representative has been notified orally or in writing of the possibility of such damage.</p>
+                
+                <h3>5. Accuracy of Materials</h3>
+                <p>The materials appearing on MathEase could include technical, typographical, or photographic errors. MathEase does not warrant that any of the materials on its website are accurate, complete, or current.</p>
+                
+                <h3>6. Links</h3>
+                <p>MathEase has not reviewed all of the sites linked to our website and is not responsible for the contents of any such linked site. The inclusion of any link does not imply endorsement by MathEase of the site.</p>
+                
+                <h3>7. Modifications</h3>
+                <p>MathEase may revise these terms of service for its website at any time without notice. By using this website you are agreeing to be bound by the then current version of these terms of service.</p>
+                
+                <h3>8. Governing Law</h3>
+                <p>These terms and conditions are governed by and construed in accordance with the laws and you irrevocably submit to the exclusive jurisdiction of the courts in that state or location.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-modal="termsModal">I Understand</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div id="privacyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Privacy Policy</h2>
+                <span class="close" data-modal="privacyModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>1. Information We Collect</h3>
+                <p>We collect information you provide directly to us, such as when you create an account, use our services, or contact us for support. This may include:</p>
+                <ul>
+                    <li>Name and contact information (email address)</li>
+                    <li>Student ID and academic information (grade level, strand)</li>
+                    <li>Account credentials (password)</li>
+                    <li>Usage data and learning progress</li>
+                </ul>
+                
+                <h3>2. How We Use Your Information</h3>
+                <p>We use the information we collect to:</p>
+                <ul>
+                    <li>Provide, maintain, and improve our services</li>
+                    <li>Process transactions and send related information</li>
+                    <li>Send technical notices, updates, and support messages</li>
+                    <li>Track learning progress and provide personalized content</li>
+                    <li>Respond to your comments and questions</li>
+                </ul>
+                
+                <h3>3. Information Sharing</h3>
+                <p>We do not sell, trade, or otherwise transfer your personal information to third parties without your consent, except as described in this policy. We may share your information in the following circumstances:</p>
+                <ul>
+                    <li>With your consent</li>
+                    <li>To comply with legal obligations</li>
+                    <li>To protect our rights and safety</li>
+                    <li>In connection with a business transfer</li>
+                </ul>
+                
+                <h3>4. Data Security</h3>
+                <p>We implement appropriate security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the internet is 100% secure.</p>
+                
+                <h3>5. Cookies and Tracking</h3>
+                <p>We use cookies and similar tracking technologies to enhance your experience on our website. You can control cookie settings through your browser preferences.</p>
+                
+                <h3>6. Data Retention</h3>
+                <p>We retain your personal information for as long as necessary to provide our services and fulfill the purposes outlined in this privacy policy, unless a longer retention period is required by law.</p>
+                
+                <h3>7. Your Rights</h3>
+                <p>You have the right to:</p>
+                <ul>
+                    <li>Access your personal information</li>
+                    <li>Correct inaccurate information</li>
+                    <li>Delete your account and data</li>
+                    <li>Opt out of certain communications</li>
+                </ul>
+                
+                <h3>8. Children's Privacy</h3>
+                <p>Our services are designed for students and we take special care to protect the privacy of minors. We do not knowingly collect personal information from children under 13 without parental consent.</p>
+                
+                <h3>9. Changes to This Policy</h3>
+                <p>We may update this privacy policy from time to time. We will notify you of any changes by posting the new policy on this page and updating the "Last Updated" date.</p>
+                
+                <h3>10. Contact Us</h3>
+                <p>If you have any questions about this privacy policy, please contact us at privacy@mathease.com</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-modal="privacyModal">I Understand</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>

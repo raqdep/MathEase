@@ -1,0 +1,2665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One-to-One Functions - General Mathematics 11 | MathEase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <link rel="stylesheet" href="one-to-one-functions.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#667eea',
+                        'secondary': '#764ba2',
+                        'accent': '#f093fb',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .lesson-card {
+            transition: all 0.3s ease;
+        }
+        .lesson-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15);
+        }
+        .virtual-aid {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
+            border: 2px solid #e1e8ff;
+        }
+        .function-analyzer {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .graph-canvas {
+            border: 2px solid #e1e8ff;
+            border-radius: 12px;
+        }
+        .lesson-section {
+            display: none;
+        }
+        .lesson-section.active {
+            display: block;
+        }
+        .melc-badge {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        .step-indicator {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .one-to-one-analyzer {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
+            border: 2px solid #e1e8ff;
+            border-radius: 15px;
+            padding: 2rem;
+        }
+        .input-group {
+            margin-bottom: 1rem;
+        }
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .result-display {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        .function-display {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #667eea;
+            background: #f8f9ff;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #e1e8ff;
+        }
+        .step-by-step {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
+            border: 2px solid #e1e8ff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        .step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .step-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+        .feedback {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-weight: 500;
+        }
+        .feedback.correct {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .feedback.incorrect {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        .achievement-badge {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            margin: 2rem 0;
+            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3);
+            animation: badgeUnlock 1s ease;
+        }
+        @keyframes badgeUnlock {
+            0% { transform: scale(0) rotate(-180deg); }
+            50% { transform: scale(1.2) rotate(0deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .achievement-badge i {
+            font-size: 2.5rem;
+            color: #b8860b;
+            margin-bottom: 1rem;
+        }
+        .achievement-badge h4 {
+            color: #b8860b;
+            margin-bottom: 0.5rem;
+        }
+        .achievement-badge p {
+            color: #b8860b;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body class="font-poppins bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="../index.html" class="flex items-center space-x-2">
+                        <img src="../css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-8 w-8">
+                        <span class="text-xl font-bold text-primary">MathEase</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="../dashboard.html" class="text-gray-700 hover:text-primary transition-colors">
+                        <i class="fas fa-home mr-2"></i>Dashboard
+                    </a>
+                    <a href="../topics.html" class="text-primary font-semibold">
+                        <i class="fas fa-book mr-2"></i>Topics
+                    </a>
+                    <span class="text-gray-600">
+                        <i class="fas fa-user mr-2"></i><span id="userName">Student</span>
+                    </span>
+                    <a href="../php/logout.php" class="text-gray-700 hover:text-red-600 transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="gradient-bg text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
+                    <i class="fas fa-exchange-alt mr-2"></i>
+                    <span class="font-semibold">General Mathematics 11</span>
+                </div>
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">One-to-One Functions</h1>
+                <p class="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto">
+                    Master the concept of one-to-one functions through interactive lessons aligned with DepEd MELCs 2025-2026
+                </p>
+                <div class="flex justify-center">
+                    <div class="bg-white/20 backdrop-blur-sm rounded-full px-8 py-3">
+                        <span class="text-lg font-semibold">4 Interactive Lessons</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Lesson Navigation -->
+        <div class="mb-12">
+            <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson Navigation</h2>
+                    <p class="text-lg text-gray-600">Click on any lesson to start learning. Complete lessons to track your progress.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="1">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-search text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 1</h3>
+                        <p class="text-sm text-gray-600">Understanding One-to-One</p>
+                    </div>
+                </button>
+                
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="2">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-check-double text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 2</h3>
+                        <p class="text-sm text-gray-600">Testing Methods</p>
+                    </div>
+                </button>
+                
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="3">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-undo text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 3</h3>
+                        <p class="text-sm text-gray-600">Inverse Functions</p>
+                    </div>
+                </button>
+                
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="4">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-globe text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 4</h3>
+                        <p class="text-sm text-gray-600">Applications</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Lesson Content -->
+        <div class="lesson-content">
+            <!-- Lesson 1: Understanding One-to-One Functions -->
+            <section id="lesson1" class="lesson-section active">
+            <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-search text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 1: Understanding One-to-One Functions</h2>
+                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                        Learn what makes a function one-to-one, understand the horizontal line test, and explore the fundamental properties of injective functions.
+                    </p>
+                </div>
+                
+                <!-- MELCs Alignment -->
+                <div class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                        <i class="fas fa-graduation-cap text-primary mr-2"></i>DepEd MELCs 2025-2026 Alignment
+                    </h3>
+                    <div class="bg-white rounded-lg p-4 shadow-sm">
+                        <p class="text-gray-700 mb-2"><strong>Learning Competency:</strong></p>
+                        <p class="text-gray-600 mb-3">Determines the inverse of a one-to-one function (M11GM-Ic-1)</p>
+                        <p class="text-gray-700 mb-2"><strong>Learning Objectives:</strong></p>
+                        <ul class="text-gray-600 space-y-1">
+                            <li>• Define one-to-one function (injective function)</li>
+                            <li>• Understand the horizontal line test</li>
+                            <li>• Identify one-to-one functions from graphs and equations</li>
+                            <li>• Distinguish between one-to-one and many-to-one functions</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Detailed Explanation -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-book-open text-blue-500 mr-3"></i>What is a One-to-One Function?
+                    </h3>
+                    
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Definition</h4>
+                        <p class="text-gray-700 mb-4 leading-relaxed">
+                            A <strong>one-to-one function</strong> (also called an <strong>injective function</strong>) is a function where each element in the range corresponds to exactly one element in the domain. In other words, no two different inputs produce the same output.
+                        </p>
+                        <div class="bg-white rounded-lg p-6 shadow-md mb-4">
+                            <div class="text-center">
+                                <span class="text-2xl font-bold text-primary">f(x₁) = f(x₂) ⟹ x₁ = x₂</span>
+                            </div>
+                            <p class="text-sm text-gray-600 mt-2 text-center">
+                                If two outputs are equal, then the inputs must be equal
+                            </p>
+                        </div>
+                        
+                        <div class="step-by-step">
+                            <h5 class="font-semibold text-gray-800 mb-4">Understanding the Concept Step by Step:</h5>
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <div>
+                                    <strong>Input-Output Relationship:</strong> In a one-to-one function, each input has a unique output, and no two different inputs can produce the same output.
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div>
+                                    <strong>Mathematical Definition:</strong> A function f is one-to-one if for any x₁ and x₂ in the domain, f(x₁) = f(x₂) implies that x₁ = x₂.
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div>
+                                    <strong>Practical Meaning:</strong> This means that if you know the output of a one-to-one function, you can uniquely determine what the input was.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Key Characteristics</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h5 class="font-semibold text-gray-800 mb-3">
+                                    <i class="fas fa-check text-green-500 mr-2"></i>Unique Outputs
+                                </h5>
+                                <p class="text-gray-700 text-sm">
+                                    Each input produces a unique output. No two different inputs can have the same output value.
+                                </p>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h5 class="font-semibold text-gray-800 mb-3">
+                                    <i class="fas fa-chart-line text-blue-500 mr-2"></i>Horizontal Line Test
+                                </h5>
+                                <p class="text-gray-700 text-sm">
+                                    A function is one-to-one if and only if every horizontal line intersects its graph at most once.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Examples of One-to-One Functions</h4>
+                        <div class="space-y-4">
+                            <div class="bg-white rounded-lg p-4 shadow-md">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <span class="text-lg font-semibold text-gray-800">f(x) = x + 3</span>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-sm text-green-600 font-medium">One-to-One</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow-md">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <span class="text-lg font-semibold text-gray-800">f(x) = 2x - 1</span>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-sm text-green-600 font-medium">One-to-One</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow-md">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <span class="text-lg font-semibold text-gray-800">f(x) = x³</span>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-sm text-green-600 font-medium">One-to-One</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Examples of Non-One-to-One Functions</h4>
+                        <div class="space-y-4">
+                            <div class="bg-white rounded-lg p-4 shadow-md">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <span class="text-lg font-semibold text-gray-800">f(x) = x²</span>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-sm text-red-600 font-medium">Not One-to-One</span>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-gray-600 mt-2">f(2) = f(-2) = 4, but 2 ≠ -2</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow-md">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <span class="text-lg font-semibold text-gray-800">f(x) = |x|</span>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-sm text-red-600 font-medium">Not One-to-One</span>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-gray-600 mt-2">f(3) = f(-3) = 3, but 3 ≠ -3</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Examples -->
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-lightbulb text-green-500 mr-3"></i>Worked Examples
+                    </h3>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-lg p-6 shadow-md">
+                            <h4 class="text-lg font-semibold text-gray-800 mb-4">Example 1: Linear Function</h4>
+                            <p class="text-gray-700 mb-4">
+                                Determine if f(x) = 3x + 2 is one-to-one.
+                            </p>
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <p class="text-gray-700 mb-2"><strong>Solution:</strong></p>
+                                <p class="text-gray-700 mb-2">Assume f(a) = f(b): 3a + 2 = 3b + 2</p>
+                                <p class="text-gray-700 mb-2">Subtract 2 from both sides: 3a = 3b</p>
+                                <p class="text-gray-700 mb-2">Divide by 3: a = b</p>
+                                <p class="text-gray-700"><strong>Conclusion:</strong> f(x) = 3x + 2 is one-to-one</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 shadow-md">
+                            <h4 class="text-lg font-semibold text-gray-800 mb-4">Example 2: Quadratic Function</h4>
+                            <p class="text-gray-700 mb-4">
+                                Determine if f(x) = x² - 4 is one-to-one.
+                            </p>
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <p class="text-gray-700 mb-2"><strong>Solution:</strong></p>
+                                <p class="text-gray-700 mb-2">Consider f(2) = 2² - 4 = 0</p>
+                                <p class="text-gray-700 mb-2">And f(-2) = (-2)² - 4 = 0</p>
+                                <p class="text-gray-700 mb-2">Since f(2) = f(-2) but 2 ≠ -2</p>
+                                <p class="text-gray-700"><strong>Conclusion:</strong> f(x) = x² - 4 is NOT one-to-one</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- References -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-book text-blue-500 mr-2"></i>References & Additional Resources
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-center">
+                            <i class="fas fa-external-link-alt text-blue-500 mr-3"></i>
+                            <a href="#" class="hover:text-blue-600 transition-colors">DepEd MELCs General Mathematics Grade 11</a>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-external-link-alt text-blue-500 mr-3"></i>
+                            <a href="#" class="hover:text-blue-600 transition-colors">One-to-One Functions - Khan Academy</a>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-external-link-alt text-blue-500 mr-3"></i>
+                            <a href="#" class="hover:text-blue-600 transition-colors">Horizontal Line Test Interactive Tool</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Enhanced Virtual Aid: One-to-One Function Analyzer -->
+                <div class="one-to-one-analyzer rounded-2xl p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                        <i class="fas fa-cogs text-primary mr-3"></i>One-to-One Function Analyzer
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Input Section -->
+                        <div class="space-y-6">
+                            <div class="input-group">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Enter Function:</label>
+                                <input type="text" id="functionInput" placeholder="e.g., 2x + 3, x³, x²" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <p class="text-sm text-gray-500 mt-1">Try: 2x + 3, x³, x², |x|, 3x - 1</p>
+                            </div>
+                            <button onclick="analyzeOneToOne()" 
+                                    class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105">
+                                <i class="fas fa-search mr-2"></i>Analyze Function
+                            </button>
+                            
+                            <!-- Quick Examples -->
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h5 class="font-semibold text-gray-800 mb-3">Quick Examples:</h5>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button onclick="document.getElementById('functionInput').value='2x+3'; analyzeOneToOne();" 
+                                            class="text-xs bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded">2x + 3</button>
+                                    <button onclick="document.getElementById('functionInput').value='x³'; analyzeOneToOne();" 
+                                            class="text-xs bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded">x³</button>
+                                    <button onclick="document.getElementById('functionInput').value='x²'; analyzeOneToOne();" 
+                                            class="text-xs bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded">x²</button>
+                                    <button onclick="document.getElementById('functionInput').value='|x|'; analyzeOneToOne();" 
+                                            class="text-xs bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded">|x|</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Results Section -->
+                        <div class="space-y-4">
+                            <div id="functionDisplay" class="result-display">
+                                <h4 class="font-semibold text-gray-800 mb-2">Function:</h4>
+                                <div class="function-display">f(x) = </div>
+                            </div>
+                            <div id="oneToOneResult" class="result-display">
+                                <h4 class="font-semibold text-gray-800 mb-2">One-to-One Status:</h4>
+                                <div class="text-gray-700">Enter a function to analyze</div>
+                            </div>
+                            <div id="horizontalLineTest" class="result-display">
+                                <h4 class="font-semibold text-gray-800 mb-2">Horizontal Line Test:</h4>
+                                <div class="text-gray-700">Enter a function to analyze</div>
+                            </div>
+                            <div id="analysisSteps" class="result-display" style="display: none;">
+                                <h4 class="font-semibold text-gray-800 mb-2">Analysis Steps:</h4>
+                                <div class="text-gray-700">Analysis steps will appear here</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lesson Completion -->
+                <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
+                        <i class="fas fa-check-circle text-emerald-500 mr-2"></i>Complete This Lesson
+                    </h3>
+                    <p class="text-gray-600 text-center mb-6">
+                        Mark this lesson as completed to track your progress and unlock the next lesson.
+                    </p>
+                    <div class="text-center">
+                        <button onclick="completeLesson(1)" 
+                                class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold inline-flex items-center">
+                            <i class="fas fa-check mr-2"></i>
+                            Mark Lesson 1 Complete
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lesson Navigation Controls -->
+                <div class="flex justify-center items-center mb-8">
+                    <div class="flex items-center space-x-4">
+                        <div class="text-center">
+                            <div class="text-sm text-gray-600">Lesson Progress</div>
+                            <div class="text-lg font-semibold text-primary">
+                                <span id="currentLessonNum">1</span> of 4
+                            </div>
+                        </div>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 25%"></div>
+                        </div>
+                    </div>
+                    <button id="nextLessonBtn" onclick="navigateLesson(1)" 
+                            class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed ml-8">
+                        Next Lesson
+                        <i class="fas fa-chevron-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lesson 2: Testing for One-to-One -->
+        <section id="lesson2" class="lesson-section">
+            <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-check-double text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 2: Testing for One-to-One</h2>
+                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                        Learn systematic methods to test whether a function is one-to-one, including algebraic tests, graphical analysis, and practical techniques.
+                    </p>
+                </div>
+                
+                <!-- Learning Objectives -->
+                <div class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                        <i class="fas fa-target mr-2"></i>Learning Objectives (MELC: M11GM-Ic-2)
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Apply the horizontal line test graphically
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Use algebraic methods to test one-to-one property
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Analyze functions using derivative tests
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Apply testing methods to various function types
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Detailed Explanation -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-check-double text-blue-500 mr-3"></i>Testing Methods
+                    </h3>
+                    
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">1. Horizontal Line Test</h4>
+                        <div class="bg-white rounded-lg p-6 shadow-md mb-4">
+                            <p class="text-gray-700 mb-4">
+                                <strong>Method:</strong> Draw horizontal lines across the graph of the function. If any horizontal line intersects the graph more than once, the function is NOT one-to-one.
+                            </p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="text-center">
+                                    <div class="bg-green-100 rounded-lg p-4">
+                                        <i class="fas fa-check-circle text-green-500 text-2xl mb-2"></i>
+                                        <p class="text-sm font-semibold text-green-700">One-to-One</p>
+                                        <p class="text-xs text-green-600">Each horizontal line intersects at most once</p>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="bg-red-100 rounded-lg p-4">
+                                        <i class="fas fa-times-circle text-red-500 text-2xl mb-2"></i>
+                                        <p class="text-sm font-semibold text-red-700">Not One-to-One</p>
+                                        <p class="text-xs text-red-600">Some horizontal lines intersect multiple times</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">2. Algebraic Test</h4>
+                        <div class="bg-white rounded-lg p-6 shadow-md mb-4">
+                            <p class="text-gray-700 mb-4">
+                                <strong>Method:</strong> Assume f(a) = f(b) and show that this implies a = b. If you can prove this for any a and b, then the function is one-to-one.
+                            </p>
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <p class="text-gray-700 mb-2"><strong>Steps:</strong></p>
+                                <ol class="list-decimal list-inside text-gray-700 space-y-1">
+                                    <li>Assume f(a) = f(b)</li>
+                                    <li>Substitute the function expression</li>
+                                    <li>Solve algebraically</li>
+                                    <li>If a = b, then f is one-to-one</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">3. Derivative Test (for differentiable functions)</h4>
+                        <div class="bg-white rounded-lg p-6 shadow-md mb-4">
+                            <p class="text-gray-700 mb-4">
+                                <strong>Method:</strong> If f'(x) > 0 for all x in the domain (strictly increasing) or f'(x) < 0 for all x in the domain (strictly decreasing), then f is one-to-one.
+                            </p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-green-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-green-700 mb-2">Strictly Increasing</h5>
+                                    <p class="text-sm text-green-600">f'(x) > 0 ⟹ One-to-One</p>
+                                </div>
+                                <div class="bg-blue-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-blue-700 mb-2">Strictly Decreasing</h5>
+                                    <p class="text-sm text-blue-600">f'(x) < 0 ⟹ One-to-One</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Virtual Aid: Function Testing Tool -->
+                <div class="virtual-aid rounded-2xl p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                        <i class="fas fa-vial text-primary mr-3"></i>Function Testing Tool
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Input Section -->
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Enter Function:</label>
+                                <input type="text" id="testFunctionInput" placeholder="e.g., x³ + 2x" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Select Test Method:</label>
+                                <select id="testMethod" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <option value="algebraic">Algebraic Test</option>
+                                    <option value="derivative">Derivative Test</option>
+                                    <option value="graphical">Graphical Analysis</option>
+                                </select>
+                            </div>
+                            <button onclick="testOneToOne()" 
+                                    class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105">
+                                <i class="fas fa-vial mr-2"></i>Test Function
+                            </button>
+                        </div>
+                        
+                        <!-- Results Section -->
+                        <div class="space-y-4">
+                            <div id="testFunctionDisplay" class="bg-white rounded-lg p-4 shadow-md">
+                                <h4 class="font-semibold text-gray-800 mb-2">Function:</h4>
+                                <div class="text-lg font-mono text-primary">f(x) = </div>
+                            </div>
+                            <div id="testResult" class="bg-white rounded-lg p-4 shadow-md">
+                                <h4 class="font-semibold text-gray-800 mb-2">Test Result:</h4>
+                                <div class="text-gray-700">Enter a function and select test method</div>
+                            </div>
+                            <div id="testSteps" class="bg-white rounded-lg p-4 shadow-md">
+                                <h4 class="font-semibold text-gray-800 mb-2">Test Steps:</h4>
+                                <div class="text-gray-700">Test steps will appear here</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lesson Completion -->
+                <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
+                        <i class="fas fa-check-circle text-emerald-500 mr-2"></i>Complete This Lesson
+                    </h3>
+                    <p class="text-gray-600 text-center mb-6">
+                        Mark this lesson as completed to track your progress and unlock the next lesson.
+                    </p>
+                    <div class="text-center">
+                        <button onclick="completeLesson(2)" 
+                                class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold inline-flex items-center">
+                            <i class="fas fa-check mr-2"></i>
+                            Mark Lesson 2 Complete
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lesson Navigation Controls -->
+                <div class="flex justify-center items-center mb-8">
+                    <button id="prevLessonBtn" onclick="navigateLesson(-1)" 
+                            class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-chevron-left mr-2"></i>
+                        Previous Lesson
+                    </button>
+                    
+                    <div class="flex items-center space-x-4 mx-8">
+                        <div class="text-center">
+                            <div class="text-sm text-gray-600">Lesson Progress</div>
+                            <div class="text-lg font-semibold text-primary">
+                                <span id="currentLessonNum">2</span> of 4
+                            </div>
+                        </div>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 50%"></div>
+                        </div>
+                    </div>
+                    
+                    <button id="nextLessonBtn" onclick="navigateLesson(1)" 
+                            class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        Next Lesson
+                        <i class="fas fa-chevron-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lesson 3: Inverse Functions -->
+        <section id="lesson3" class="lesson-section">
+            <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-undo text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 3: Inverse Functions</h2>
+                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                        Explore the relationship between one-to-one functions and their inverses. Learn to find inverse functions and understand their properties.
+                    </p>
+                </div>
+                
+                <!-- Learning Objectives -->
+                <div class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                        <i class="fas fa-target mr-2"></i>Learning Objectives (M11GM-Ic-3)
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Define inverse function
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Find inverse functions algebraically
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Understand the relationship between f and f⁻¹
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Graph inverse functions and their relationships
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Detailed Explanation -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-undo text-blue-500 mr-3"></i>Inverse Functions
+                    </h3>
+                    
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Definition</h4>
+                        <p class="text-gray-700 mb-4 leading-relaxed">
+                            The <strong>inverse function</strong> of a one-to-one function f, denoted f⁻¹, is the function that "undoes" the action of f. If f maps x to y, then f⁻¹ maps y back to x.
+                        </p>
+                        <div class="bg-white rounded-lg p-6 shadow-md mb-4">
+                            <div class="text-center">
+                                <span class="text-2xl font-bold text-primary">f⁻¹(f(x)) = x and f(f⁻¹(x)) = x</span>
+                            </div>
+                            <p class="text-sm text-gray-600 mt-2 text-center">
+                                The composition of a function and its inverse gives the identity function
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Key Properties</h4>
+                        <div class="space-y-4">
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h5 class="font-semibold text-gray-800 mb-3">
+                                    <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">1</span>
+                                    Domain and Range Swap
+                                </h5>
+                                <p class="text-gray-700">The domain of f becomes the range of f⁻¹, and the range of f becomes the domain of f⁻¹.</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h5 class="font-semibold text-gray-800 mb-3">
+                                    <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">2</span>
+                                    Graph Reflection
+                                </h5>
+                                <p class="text-gray-700">The graph of f⁻¹ is the reflection of the graph of f across the line y = x.</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h5 class="font-semibold text-gray-800 mb-3">
+                                    <span class="bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">3</span>
+                                    One-to-One Requirement
+                                </h5>
+                                <p class="text-gray-700">Only one-to-one functions have inverse functions. Non-one-to-one functions do not have inverses.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Finding Inverse Functions</h4>
+                        <div class="bg-white rounded-lg p-6 shadow-md">
+                            <h5 class="font-semibold text-gray-800 mb-3">Step-by-Step Process:</h5>
+                            <ol class="list-decimal list-inside text-gray-700 space-y-2">
+                                <li>Replace f(x) with y</li>
+                                <li>Interchange x and y</li>
+                                <li>Solve for y</li>
+                                <li>Replace y with f⁻¹(x)</li>
+                                <li>Verify that f(f⁻¹(x)) = x and f⁻¹(f(x)) = x</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Virtual Aid: Inverse Function Calculator -->
+                <div class="virtual-aid rounded-2xl p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                        <i class="fas fa-calculator text-primary mr-3"></i>Inverse Function Calculator
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Input Section -->
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Enter One-to-One Function:</label>
+                                <input type="text" id="inverseFunctionInput" placeholder="e.g., 2x + 3" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <button onclick="findInverse()" 
+                                    class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105">
+                                <i class="fas fa-calculator mr-2"></i>Find Inverse
+                            </button>
+                        </div>
+                        
+                        <!-- Results Section -->
+                        <div class="space-y-4">
+                            <div id="originalFunctionDisplay" class="bg-white rounded-lg p-4 shadow-md">
+                                <h4 class="font-semibold text-gray-800 mb-2">Original Function:</h4>
+                                <div class="text-lg font-mono text-primary">f(x) = </div>
+                            </div>
+                            <div id="inverseFunctionDisplay" class="bg-white rounded-lg p-4 shadow-md">
+                                <h4 class="font-semibold text-gray-800 mb-2">Inverse Function:</h4>
+                                <div class="text-lg font-mono text-green-600">f⁻¹(x) = </div>
+                            </div>
+                            <div id="inverseSteps" class="bg-white rounded-lg p-4 shadow-md">
+                                <h4 class="font-semibold text-gray-800 mb-2">Solution Steps:</h4>
+                                <div class="text-gray-700">Enter a function to see the steps</div>
+                            </div>
+                            <div id="verification" class="bg-white rounded-lg p-4 shadow-md">
+                                <h4 class="font-semibold text-gray-800 mb-2">Verification:</h4>
+                                <div class="text-gray-700">Verification will appear here</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lesson Completion -->
+                <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
+                        <i class="fas fa-check-circle text-emerald-500 mr-2"></i>Complete This Lesson
+                    </h3>
+                    <p class="text-gray-600 text-center mb-6">
+                        Mark this lesson as completed to track your progress and unlock the next lesson.
+                    </p>
+                    <div class="text-center">
+                        <button onclick="completeLesson(3)" 
+                                class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold inline-flex items-center">
+                            <i class="fas fa-check mr-2"></i>
+                            Mark Lesson 3 Complete
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lesson Navigation Controls -->
+                <div class="flex justify-center items-center mb-8">
+                    <button id="prevLessonBtn" onclick="navigateLesson(-1)" 
+                            class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-chevron-left mr-2"></i>
+                        Previous Lesson
+                    </button>
+                    
+                    <div class="flex items-center space-x-4 mx-8">
+                        <div class="text-center">
+                            <div class="text-sm text-gray-600">Lesson Progress</div>
+                            <div class="text-lg font-semibold text-primary">
+                                <span id="currentLessonNum">3</span> of 4
+                            </div>
+                        </div>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    
+                    <button id="nextLessonBtn" onclick="navigateLesson(1)" 
+                            class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        Next Lesson
+                        <i class="fas fa-chevron-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lesson 4: Applications & Problem Solving -->
+        <section id="lesson4" class="lesson-section">
+            <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-globe text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 4: Applications & Problem Solving</h2>
+                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                        Apply one-to-one function concepts to solve real-world problems in cryptography, data encryption, and various mathematical applications.
+                    </p>
+                </div>
+                
+                <!-- Learning Objectives -->
+                <div class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                        <i class="fas fa-target mr-2"></i>Learning Objectives (MELC: M11GM-Ic-4)
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Apply one-to-one functions to cryptography
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Solve problems involving inverse functions
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Analyze real-world scenarios using one-to-one concepts
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            Model situations with one-to-one functions
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Detailed Explanation -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-globe text-blue-500 mr-3"></i>Real-World Applications
+                    </h3>
+                    
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Cryptography and Data Security</h4>
+                        <div class="space-y-4">
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h5 class="font-semibold text-gray-800 mb-3">
+                                    <i class="fas fa-lock text-green-500 mr-2"></i>Encryption Functions
+                                </h5>
+                                <p class="text-gray-700 mb-3">One-to-one functions are essential in cryptography because they ensure that each encrypted message corresponds to exactly one original message.</p>
+                                <div class="bg-gray-50 rounded p-4">
+                                    <p class="text-sm text-gray-600"><strong>Example:</strong> Caesar cipher f(x) = (x + 3) mod 26</p>
+                                    <p class="text-sm text-gray-600"><strong>Property:</strong> One-to-one ensures unique decryption</p>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h5 class="font-semibold text-gray-800 mb-3">
+                                    <i class="fas fa-key text-blue-500 mr-2"></i>Hash Functions
+                                </h5>
+                                <p class="text-gray-700 mb-3">While hash functions are not one-to-one (they compress data), the concept is used in designing collision-resistant hash functions.</p>
+                                <div class="bg-gray-50 rounded p-4">
+                                    <p class="text-sm text-gray-600"><strong>Application:</strong> Password storage and data integrity</p>
+                                    <p class="text-sm text-gray-600"><strong>Goal:</strong> Minimize collisions (different inputs producing same output)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Mathematical Modeling</h4>
+                        <div class="space-y-4">
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h5 class="font-semibold text-gray-800 mb-3">
+                                    <i class="fas fa-chart-line text-purple-500 mr-2"></i>Temperature Conversion
+                                </h5>
+                                <p class="text-gray-700 mb-3">Converting between Celsius and Fahrenheit: F = (9/5)C + 32</p>
+                                <div class="bg-gray-50 rounded p-4">
+                                    <p class="text-sm text-gray-600"><strong>Property:</strong> One-to-one ensures unique conversion</p>
+                                    <p class="text-sm text-gray-600"><strong>Inverse:</strong> C = (5/9)(F - 32)</p>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h5 class="font-semibold text-gray-800 mb-3">
+                                    <i class="fas fa-calculator text-orange-500 mr-2"></i>Mathematical Operations
+                                </h5>
+                                <p class="text-gray-700 mb-3">Many mathematical operations are one-to-one functions, allowing for unique solutions and inverse operations.</p>
+                                <div class="bg-gray-50 rounded p-4">
+                                    <p class="text-sm text-gray-600"><strong>Examples:</strong> Addition, multiplication (with non-zero), exponential functions</p>
+                                    <p class="text-sm text-gray-600"><strong>Benefit:</strong> Enables solving equations uniquely</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Computer Science Applications</h4>
+                        <div class="space-y-4">
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h5 class="font-semibold text-gray-800 mb-3">
+                                    <i class="fas fa-database text-cyan-500 mr-2"></i>Database Functions
+                                </h5>
+                                <p class="text-gray-700 mb-3">One-to-one functions ensure that each database record has a unique identifier, preventing data duplication and ensuring data integrity.</p>
+                                <div class="bg-gray-50 rounded p-4">
+                                    <p class="text-sm text-gray-600"><strong>Application:</strong> Primary keys, unique constraints</p>
+                                    <p class="text-sm text-gray-600"><strong>Benefit:</strong> Prevents duplicate records</p>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h5 class="font-semibold text-gray-800 mb-3">
+                                    <i class="fas fa-code text-red-500 mr-2"></i>Algorithm Design
+                                </h5>
+                                <p class="text-gray-700 mb-3">Many algorithms rely on one-to-one functions to ensure unique mappings and prevent conflicts in data processing.</p>
+                                <div class="bg-gray-50 rounded p-4">
+                                    <p class="text-sm text-gray-600"><strong>Examples:</strong> Sorting algorithms, search algorithms</p>
+                                    <p class="text-sm text-gray-600"><strong>Benefit:</strong> Ensures deterministic behavior</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Virtual Aid: Application Problem Solver -->
+                <div class="virtual-aid rounded-2xl p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                        <i class="fas fa-calculator text-primary mr-3"></i>Application Problem Solver
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Problem Selection -->
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Select Application Type:</label>
+                                <select id="applicationType" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <option value="">Choose an application...</option>
+                                    <option value="cryptography">Cryptography</option>
+                                    <option value="temperature">Temperature Conversion</option>
+                                    <option value="database">Database Functions</option>
+                                    <option value="algorithm">Algorithm Design</option>
+                                </select>
+                            </div>
+                            <div id="applicationInputs" class="space-y-4">
+                                <!-- Dynamic inputs will be populated here -->
+                            </div>
+                            <button onclick="solveApplicationProblem()" 
+                                    class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105">
+                                <i class="fas fa-calculator mr-2"></i>Solve Problem
+                            </button>
+                        </div>
+                        
+                        <!-- Solution Display -->
+                        <div class="space-y-4">
+                            <div id="applicationDescription" class="bg-white rounded-lg p-4 shadow-md">
+                                <h4 class="font-semibold text-gray-800 mb-2">Problem Description:</h4>
+                                <div class="text-gray-700">Select an application type to see the description</div>
+                            </div>
+                            <div id="oneToOneAnalysis" class="bg-white rounded-lg p-4 shadow-md">
+                                <h4 class="font-semibold text-gray-800 mb-2">One-to-One Analysis:</h4>
+                                <div class="text-gray-700">Enter values and click solve to see analysis</div>
+                            </div>
+                            <div id="solutionSteps" class="bg-white rounded-lg p-4 shadow-md">
+                                <h4 class="font-semibold text-gray-800 mb-2">Solution Steps:</h4>
+                                <div class="text-gray-700">Solution will appear here</div>
+                            </div>
+                            <div id="practicalImplications" class="bg-white rounded-lg p-4 shadow-md">
+                                <h4 class="font-semibold text-gray-800 mb-2">Practical Implications:</h4>
+                                <div class="text-gray-700">Implications will appear here</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lesson Completion -->
+                <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
+                        <i class="fas fa-check-circle text-emerald-500 mr-2"></i>Complete This Lesson
+                    </h3>
+                    <p class="text-gray-600 text-center mb-6">
+                        Mark this lesson as completed to track your progress and unlock the next lesson.
+                    </p>
+                    <div class="text-center">
+                        <button onclick="completeLesson(4)" 
+                                class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold inline-flex items-center">
+                            <i class="fas fa-check mr-2"></i>
+                            Mark Lesson 4 Complete
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lesson Navigation Controls -->
+                <div class="flex justify-center items-center mb-8">
+                    <button id="prevLessonBtn" onclick="navigateLesson(-1)" 
+                            class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-chevron-left mr-2"></i>
+                        Previous Lesson
+                    </button>
+                    
+                    <div class="flex items-center space-x-4 mx-8">
+                        <div class="text-center">
+                            <div class="text-sm text-gray-600">Lesson Progress</div>
+                            <div class="text-lg font-semibold text-primary">
+                                <span id="currentLessonNum">4</span> of 4
+                            </div>
+                        </div>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    
+                    <button id="nextLessonBtn" onclick="navigateLesson(1)" 
+                            class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        Next Lesson
+                        <i class="fas fa-chevron-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2024 MathEase. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Global variables for lesson management
+        let currentLesson = 1;
+        let completedLessons = new Set();
+        let totalLessons = 4;
+
+        // One-to-One Function Analysis Logic
+        function analyzeOneToOne() {
+            try {
+                const functionInput = document.getElementById('functionInput');
+                if (!functionInput) {
+                    console.error('Function input element not found');
+                    return;
+                }
+                
+                const inputValue = functionInput.value.trim();
+                
+                if (!inputValue) {
+                    resetOneToOneResults();
+                    return;
+                }
+                
+                // Display the function
+                const functionDisplay = document.getElementById('functionDisplay');
+                if (functionDisplay) {
+                    functionDisplay.innerHTML = `
+                        <h4 class="font-semibold text-gray-800 mb-2">Function:</h4>
+                        <div class="function-display">f(x) = ${inputValue}</div>
+                    `;
+                }
+                
+                // Analyze one-to-one property
+                const oneToOneAnalysis = analyzeOneToOneProperty(inputValue);
+                
+                const oneToOneResult = document.getElementById('oneToOneResult');
+                if (oneToOneResult) {
+                    oneToOneResult.innerHTML = `
+                        <h4 class="font-semibold text-gray-800 mb-2">One-to-One Status:</h4>
+                        <div class="text-gray-700">${oneToOneAnalysis.status}</div>
+                        <div class="text-sm text-gray-600 mt-2">${oneToOneAnalysis.explanation}</div>
+                    `;
+                }
+                
+                // Horizontal line test analysis
+                const horizontalLineTest = document.getElementById('horizontalLineTest');
+                if (horizontalLineTest) {
+                    horizontalLineTest.innerHTML = `
+                        <h4 class="font-semibold text-gray-800 mb-2">Horizontal Line Test:</h4>
+                        <div class="text-gray-700">${oneToOneAnalysis.horizontalLineTest}</div>
+                    `;
+                }
+                
+                // Show analysis steps
+                const analysisSteps = document.getElementById('analysisSteps');
+                if (analysisSteps) {
+                    analysisSteps.style.display = 'block';
+                    analysisSteps.innerHTML = `
+                        <h4 class="font-semibold text-gray-800 mb-2">Analysis Steps:</h4>
+                        <div class="text-gray-700">${oneToOneAnalysis.steps}</div>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('Error analyzing one-to-one function:', error);
+                showError('Invalid function format. Please check your input.');
+            }
+        }
+
+        // Analyze One-to-One Property
+        function analyzeOneToOneProperty(functionInput) {
+            // Simple analysis for common cases
+            if (functionInput.includes('x +') || functionInput.includes('x-') || functionInput.includes('2x') || functionInput.includes('3x')) {
+                return {
+                    status: '<span class="one-to-one-status true">✓ One-to-One Function</span>',
+                    explanation: 'This is a linear function. Linear functions are always one-to-one because they have a constant rate of change.',
+                    horizontalLineTest: 'Every horizontal line intersects the graph at most once. The function passes the horizontal line test.',
+                    steps: `
+                        <div class="step-by-step">
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <div><strong>Identify Function Type:</strong> This is a linear function of the form f(x) = mx + b</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div><strong>Check Slope:</strong> Linear functions have a constant slope (m ≠ 0)</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div><strong>Apply Horizontal Line Test:</strong> Any horizontal line intersects the graph at most once</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">4</div>
+                                <div><strong>Conclusion:</strong> Since the function is strictly increasing or decreasing, it is one-to-one</div>
+                            </div>
+                        </div>
+                    `
+                };
+            } else if (functionInput.includes('x³') || functionInput.includes('x^3')) {
+                return {
+                    status: '<span class="one-to-one-status true">✓ One-to-One Function</span>',
+                    explanation: 'This is a cubic function. Cubic functions are one-to-one because they are strictly increasing.',
+                    horizontalLineTest: 'Every horizontal line intersects the graph at most once. The function passes the horizontal line test.',
+                    steps: `
+                        <div class="step-by-step">
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <div><strong>Identify Function Type:</strong> This is a cubic function f(x) = x³</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div><strong>Check Derivative:</strong> f'(x) = 3x² ≥ 0 for all x, and f'(x) > 0 for x ≠ 0</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div><strong>Apply Horizontal Line Test:</strong> The function is strictly increasing, so any horizontal line intersects at most once</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">4</div>
+                                <div><strong>Conclusion:</strong> The cubic function is one-to-one</div>
+                            </div>
+                        </div>
+                    `
+                };
+            } else if (functionInput.includes('x²') || functionInput.includes('x^2')) {
+                return {
+                    status: '<span class="one-to-one-status false">✗ Not One-to-One</span>',
+                    explanation: 'This is a quadratic function. Quadratic functions are not one-to-one because they have a turning point.',
+                    horizontalLineTest: 'Some horizontal lines intersect the graph twice. The function fails the horizontal line test.',
+                    steps: `
+                        <div class="step-by-step">
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <div><strong>Identify Function Type:</strong> This is a quadratic function f(x) = x²</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div><strong>Find Counterexample:</strong> f(2) = 4 and f(-2) = 4, but 2 ≠ -2</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div><strong>Apply Horizontal Line Test:</strong> The horizontal line y = 4 intersects the graph at two points: (2, 4) and (-2, 4)</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">4</div>
+                                <div><strong>Conclusion:</strong> The quadratic function is NOT one-to-one</div>
+                            </div>
+                        </div>
+                    `
+                };
+            } else if (functionInput.includes('|x|') || functionInput.includes('abs(x)')) {
+                return {
+                    status: '<span class="one-to-one-status false">✗ Not One-to-One</span>',
+                    explanation: 'This is an absolute value function. Absolute value functions are not one-to-one because f(a) = f(-a) for any a.',
+                    horizontalLineTest: 'Some horizontal lines intersect the graph twice. The function fails the horizontal line test.',
+                    steps: `
+                        <div class="step-by-step">
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <div><strong>Identify Function Type:</strong> This is an absolute value function f(x) = |x|</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div><strong>Find Counterexample:</strong> f(3) = 3 and f(-3) = 3, but 3 ≠ -3</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div><strong>Apply Horizontal Line Test:</strong> The horizontal line y = 3 intersects the graph at two points: (3, 3) and (-3, 3)</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">4</div>
+                                <div><strong>Conclusion:</strong> The absolute value function is NOT one-to-one</div>
+                            </div>
+                        </div>
+                    `
+                };
+            } else {
+                return {
+                    status: '<span class="one-to-one-status warning">⚠ Analysis Needed</span>',
+                    explanation: 'This function requires more detailed analysis to determine if it is one-to-one.',
+                    horizontalLineTest: 'Apply the horizontal line test or algebraic methods to determine one-to-one property.',
+                    steps: `
+                        <div class="step-by-step">
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <div><strong>Identify Function Type:</strong> This function requires manual analysis</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div><strong>Apply Algebraic Test:</strong> Assume f(a) = f(b) and show that a = b</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div><strong>Apply Horizontal Line Test:</strong> Graph the function and check if any horizontal line intersects more than once</div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">4</div>
+                                <div><strong>Conclusion:</strong> Manual analysis required to determine one-to-one property</div>
+                            </div>
+                        </div>
+                    `
+                };
+            }
+        }
+
+        // Reset One-to-One Results
+        function resetOneToOneResults() {
+            const functionDisplay = document.getElementById('functionDisplay');
+            const oneToOneResult = document.getElementById('oneToOneResult');
+            const horizontalLineTest = document.getElementById('horizontalLineTest');
+            const analysisSteps = document.getElementById('analysisSteps');
+            
+            if (functionDisplay) {
+                functionDisplay.innerHTML = `
+                    <h4 class="font-semibold text-gray-800 mb-2">Function:</h4>
+                    <div class="function-display">f(x) = </div>
+                `;
+            }
+            
+            if (oneToOneResult) {
+                oneToOneResult.innerHTML = `
+                    <h4 class="font-semibold text-gray-800 mb-2">One-to-One Status:</h4>
+                    <div class="text-gray-700">Enter a function to analyze</div>
+                `;
+            }
+            
+            if (horizontalLineTest) {
+                horizontalLineTest.innerHTML = `
+                    <h4 class="font-semibold text-gray-800 mb-2">Horizontal Line Test:</h4>
+                    <div class="text-gray-700">Enter a function to analyze</div>
+                `;
+            }
+            
+            if (analysisSteps) {
+                analysisSteps.style.display = 'none';
+                analysisSteps.innerHTML = `
+                    <h4 class="font-semibold text-gray-800 mb-2">Analysis Steps:</h4>
+                    <div class="text-gray-700">Analysis steps will appear here</div>
+                `;
+            }
+        }
+
+        // Test One-to-One Function
+        function testOneToOne() {
+            const functionInput = document.getElementById('testFunctionInput');
+            const testMethod = document.getElementById('testMethod');
+            
+            if (!functionInput || !testMethod) {
+                console.error('Test elements not found');
+                return;
+            }
+            
+            const inputValue = functionInput.value.trim();
+            const method = testMethod.value;
+            
+            if (!inputValue) {
+                resetTestResults();
+                return;
+            }
+            
+            try {
+                // Display the function
+                const testFunctionDisplay = document.getElementById('testFunctionDisplay');
+                if (testFunctionDisplay) {
+                    testFunctionDisplay.innerHTML = `
+                        <h4 class="font-semibold text-gray-800 mb-2">Function:</h4>
+                        <div class="text-lg font-mono text-primary">f(x) = ${inputValue}</div>
+                    `;
+                }
+                
+                // Perform test based on selected method
+                const testResult = performTest(inputValue, method);
+                
+                const testResultDiv = document.getElementById('testResult');
+                if (testResultDiv) {
+                    testResultDiv.innerHTML = `
+                        <h4 class="font-semibold text-gray-800 mb-2">Test Result:</h4>
+                        <div class="text-gray-700">${testResult.result}</div>
+                    `;
+                }
+                
+                // Show test steps
+                const testSteps = document.getElementById('testSteps');
+                if (testSteps) {
+                    testSteps.innerHTML = `
+                        <h4 class="font-semibold text-gray-800 mb-2">Test Steps:</h4>
+                        <div class="text-gray-700">${testResult.steps}</div>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('Error testing function:', error);
+                showError('Invalid function format. Please check your input.');
+            }
+        }
+
+        // Perform Test
+        function performTest(functionInput, testMethod) {
+            switch (testMethod) {
+                case 'algebraic':
+                    return performAlgebraicTest(functionInput);
+                case 'derivative':
+                    return performDerivativeTest(functionInput);
+                case 'graphical':
+                    return performGraphicalTest(functionInput);
+                default:
+                    return {
+                        result: 'Please select a test method.',
+                        steps: 'Choose a test method to see the steps.'
+                    };
+            }
+        }
+
+        // Perform Algebraic Test
+        function performAlgebraicTest(functionInput) {
+            if (functionInput.includes('x +') || functionInput.includes('x-') || functionInput.includes('2x') || functionInput.includes('3x')) {
+                return {
+                    result: '<span class="one-to-one-status true">✓ One-to-One Function</span>',
+                    steps: `
+                        <ol class="list-decimal list-inside space-y-2">
+                            <li>Assume f(a) = f(b)</li>
+                            <li>Substitute: ${functionInput.replace('x', 'a')} = ${functionInput.replace('x', 'b')}</li>
+                            <li>Solve algebraically</li>
+                            <li>Result: a = b</li>
+                            <li>Conclusion: Function is one-to-one</li>
+                        </ol>
+                    `
+                };
+            } else if (functionInput.includes('x²') || functionInput.includes('x^2')) {
+                return {
+                    result: '<span class="one-to-one-status false">✗ Not One-to-One</span>',
+                    steps: `
+                        <ol class="list-decimal list-inside space-y-2">
+                            <li>Consider f(2) = 2² = 4</li>
+                            <li>And f(-2) = (-2)² = 4</li>
+                            <li>Since f(2) = f(-2) but 2 ≠ -2</li>
+                            <li>Conclusion: Function is NOT one-to-one</li>
+                        </ol>
+                    `
+                };
+            } else {
+                return {
+                    result: '<span class="one-to-one-status warning">⚠ Manual Analysis Required</span>',
+                    steps: 'This function requires manual algebraic analysis to determine one-to-one property.'
+                };
+            }
+        }
+
+        // Perform Derivative Test
+        function performDerivativeTest(functionInput) {
+            if (functionInput.includes('x +') || functionInput.includes('x-') || functionInput.includes('2x') || functionInput.includes('3x')) {
+                return {
+                    result: '<span class="one-to-one-status true">✓ One-to-One Function</span>',
+                    steps: `
+                        <ol class="list-decimal list-inside space-y-2">
+                            <li>Find derivative: f'(x) = constant</li>
+                            <li>Since f'(x) > 0 for all x</li>
+                            <li>The function is strictly increasing</li>
+                            <li>Conclusion: Function is one-to-one</li>
+                        </ol>
+                    `
+                };
+            } else if (functionInput.includes('x²') || functionInput.includes('x^2')) {
+                return {
+                    result: '<span class="one-to-one-status false">✗ Not One-to-One</span>',
+                    steps: `
+                        <ol class="list-decimal list-inside space-y-2">
+                            <li>Find derivative: f'(x) = 2x</li>
+                            <li>f'(x) = 0 when x = 0</li>
+                            <li>The function is not strictly increasing</li>
+                            <li>Conclusion: Function is NOT one-to-one</li>
+                        </ol>
+                    `
+                };
+            } else {
+                return {
+                    result: '<span class="one-to-one-status warning">⚠ Manual Analysis Required</span>',
+                    steps: 'This function requires manual derivative analysis to determine one-to-one property.'
+                };
+            }
+        }
+
+        // Perform Graphical Test
+        function performGraphicalTest(functionInput) {
+            if (functionInput.includes('x +') || functionInput.includes('x-') || functionInput.includes('2x') || functionInput.includes('3x')) {
+                return {
+                    result: '<span class="one-to-one-status true">✓ One-to-One Function</span>',
+                    steps: `
+                        <ol class="list-decimal list-inside space-y-2">
+                            <li>Graph the function</li>
+                            <li>Draw horizontal lines across the graph</li>
+                            <li>Each horizontal line intersects at most once</li>
+                            <li>Conclusion: Function passes horizontal line test</li>
+                        </ol>
+                    `
+                };
+            } else if (functionInput.includes('x²') || functionInput.includes('x^2')) {
+                return {
+                    result: '<span class="one-to-one-status false">✗ Not One-to-One</span>',
+                    steps: `
+                        <ol class="list-decimal list-inside space-y-2">
+                            <li>Graph the function (parabola)</li>
+                            <li>Draw horizontal lines across the graph</li>
+                            <li>Some horizontal lines intersect twice</li>
+                            <li>Conclusion: Function fails horizontal line test</li>
+                        </ol>
+                    `
+                };
+            } else {
+                return {
+                    result: '<span class="one-to-one-status warning">⚠ Manual Analysis Required</span>',
+                    steps: 'This function requires manual graphical analysis to determine one-to-one property.'
+                };
+            }
+        }
+
+        // Reset Test Results
+        function resetTestResults() {
+            const testFunctionDisplay = document.getElementById('testFunctionDisplay');
+            const testResult = document.getElementById('testResult');
+            const testSteps = document.getElementById('testSteps');
+            
+            if (testFunctionDisplay) {
+                testFunctionDisplay.innerHTML = `
+                    <h4 class="font-semibold text-gray-800 mb-2">Function:</h4>
+                    <div class="text-lg font-mono text-primary">f(x) = </div>
+                `;
+            }
+            
+            if (testResult) {
+                testResult.innerHTML = `
+                    <h4 class="font-semibold text-gray-800 mb-2">Test Result:</h4>
+                    <div class="text-gray-700">Enter a function and select test method</div>
+                `;
+            }
+            
+            if (testSteps) {
+                testSteps.innerHTML = `
+                    <h4 class="font-semibold text-gray-800 mb-2">Test Steps:</h4>
+                    <div class="text-gray-700">Test steps will appear here</div>
+                `;
+            }
+        }
+
+        // Find Inverse Function
+        function findInverse() {
+            const functionInput = document.getElementById('inverseFunctionInput');
+            
+            if (!functionInput) {
+                console.error('Inverse function input not found');
+                return;
+            }
+            
+            const inputValue = functionInput.value.trim();
+            
+            if (!inputValue) {
+                resetInverseResults();
+                return;
+            }
+            
+            try {
+                // Display the original function
+                const originalFunctionDisplay = document.getElementById('originalFunctionDisplay');
+                if (originalFunctionDisplay) {
+                    originalFunctionDisplay.innerHTML = `
+                        <h4 class="font-semibold text-gray-800 mb-2">Original Function:</h4>
+                        <div class="text-lg font-mono text-primary">f(x) = ${inputValue}</div>
+                    `;
+                }
+                
+                // Find inverse function
+                const inverseResult = findInverseFunction(inputValue);
+                
+                const inverseFunctionDisplay = document.getElementById('inverseFunctionDisplay');
+                if (inverseFunctionDisplay) {
+                    inverseFunctionDisplay.innerHTML = `
+                        <h4 class="font-semibold text-gray-800 mb-2">Inverse Function:</h4>
+                        <div class="text-lg font-mono text-green-600">f⁻¹(x) = ${inverseResult.inverse}</div>
+                    `;
+                }
+                
+                // Show solution steps
+                const inverseSteps = document.getElementById('inverseSteps');
+                if (inverseSteps) {
+                    inverseSteps.innerHTML = `
+                        <h4 class="font-semibold text-gray-800 mb-2">Solution Steps:</h4>
+                        <div class="text-gray-700">${inverseResult.steps}</div>
+                    `;
+                }
+                
+                // Show verification
+                const verification = document.getElementById('verification');
+                if (verification) {
+                    verification.innerHTML = `
+                        <h4 class="font-semibold text-gray-800 mb-2">Verification:</h4>
+                        <div class="text-gray-700">${inverseResult.verification}</div>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('Error finding inverse function:', error);
+                showError('Invalid function format. Please check your input.');
+            }
+        }
+
+        // Find Inverse Function
+        function findInverseFunction(functionInput) {
+            if (functionInput.includes('x +') || functionInput.includes('x-')) {
+                // Linear function: f(x) = x + c or f(x) = x - c
+                const parts = functionInput.split('x');
+                let constant = 0;
+                
+                if (parts[1]) {
+                    if (parts[1].includes('+')) {
+                        constant = parseInt(parts[1].replace('+', '').trim()) || 0;
+                    } else if (parts[1].includes('-')) {
+                        constant = -parseInt(parts[1].replace('-', '').trim()) || 0;
+                    }
+                }
+                
+                return {
+                    inverse: `x - ${constant}`,
+                    steps: `
+                        <ol class="list-decimal list-inside space-y-2">
+                            <li>Replace f(x) with y: y = x + ${constant}</li>
+                            <li>Interchange x and y: x = y + ${constant}</li>
+                            <li>Solve for y: y = x - ${constant}</li>
+                            <li>Replace y with f⁻¹(x): f⁻¹(x) = x - ${constant}</li>
+                        </ol>
+                    `,
+                    verification: `
+                        <div class="verification-display">
+                            <div class="verification-step">
+                                <div class="step-icon">1</div>
+                                <div>f(f⁻¹(x)) = f(x - ${constant}) = (x - ${constant}) + ${constant} = x ✓</div>
+                            </div>
+                            <div class="verification-step">
+                                <div class="step-icon">2</div>
+                                <div>f⁻¹(f(x)) = f⁻¹(x + ${constant}) = (x + ${constant}) - ${constant} = x ✓</div>
+                            </div>
+                        </div>
+                    `
+                };
+            } else if (functionInput.includes('2x') || functionInput.includes('3x')) {
+                // Linear function: f(x) = mx
+                const coefficient = parseInt(functionInput.replace('x', '').trim()) || 1;
+                
+                return {
+                    inverse: `x / ${coefficient}`,
+                    steps: `
+                        <ol class="list-decimal list-inside space-y-2">
+                            <li>Replace f(x) with y: y = ${coefficient}x</li>
+                            <li>Interchange x and y: x = ${coefficient}y</li>
+                            <li>Solve for y: y = x / ${coefficient}</li>
+                            <li>Replace y with f⁻¹(x): f⁻¹(x) = x / ${coefficient}</li>
+                        </ol>
+                    `,
+                    verification: `
+                        <div class="verification-display">
+                            <div class="verification-step">
+                                <div class="step-icon">1</div>
+                                <div>f(f⁻¹(x)) = f(x / ${coefficient}) = ${coefficient} × (x / ${coefficient}) = x ✓</div>
+                            </div>
+                            <div class="verification-step">
+                                <div class="step-icon">2</div>
+                                <div>f⁻¹(f(x)) = f⁻¹(${coefficient}x) = (${coefficient}x) / ${coefficient} = x ✓</div>
+                            </div>
+                        </div>
+                    `
+                };
+            } else if (functionInput.includes('x³') || functionInput.includes('x^3')) {
+                return {
+                    inverse: '∛x',
+                    steps: `
+                        <ol class="list-decimal list-inside space-y-2">
+                            <li>Replace f(x) with y: y = x³</li>
+                            <li>Interchange x and y: x = y³</li>
+                            <li>Solve for y: y = ∛x</li>
+                            <li>Replace y with f⁻¹(x): f⁻¹(x) = ∛x</li>
+                        </ol>
+                    `,
+                    verification: `
+                        <div class="verification-display">
+                            <div class="verification-step">
+                                <div class="step-icon">1</div>
+                                <div>f(f⁻¹(x)) = f(∛x) = (∛x)³ = x ✓</div>
+                            </div>
+                            <div class="verification-step">
+                                <div class="step-icon">2</div>
+                                <div>f⁻¹(f(x)) = f⁻¹(x³) = ∛(x³) = x ✓</div>
+                            </div>
+                        </div>
+                    `
+                };
+            } else {
+                return {
+                    inverse: 'Manual calculation required',
+                    steps: 'This function requires manual calculation to find its inverse.',
+                    verification: 'Verification requires manual calculation.'
+                };
+            }
+        }
+
+        // Reset Inverse Results
+        function resetInverseResults() {
+            const originalFunctionDisplay = document.getElementById('originalFunctionDisplay');
+            const inverseFunctionDisplay = document.getElementById('inverseFunctionDisplay');
+            const inverseSteps = document.getElementById('inverseSteps');
+            const verification = document.getElementById('verification');
+            
+            if (originalFunctionDisplay) {
+                originalFunctionDisplay.innerHTML = `
+                    <h4 class="font-semibold text-gray-800 mb-2">Original Function:</h4>
+                    <div class="text-lg font-mono text-primary">f(x) = </div>
+                `;
+            }
+            
+            if (inverseFunctionDisplay) {
+                inverseFunctionDisplay.innerHTML = `
+                    <h4 class="font-semibold text-gray-800 mb-2">Inverse Function:</h4>
+                    <div class="text-lg font-mono text-green-600">f⁻¹(x) = </div>
+                `;
+            }
+            
+            if (inverseSteps) {
+                inverseSteps.innerHTML = `
+                    <h4 class="font-semibold text-gray-800 mb-2">Solution Steps:</h4>
+                    <div class="text-gray-700">Enter a function to see the steps</div>
+                `;
+            }
+            
+            if (verification) {
+                verification.innerHTML = `
+                    <h4 class="font-semibold text-gray-800 mb-2">Verification:</h4>
+                    <div class="text-gray-700">Verification will appear here</div>
+                `;
+            }
+        }
+
+        // Application Problem Solver
+        function updateApplicationInputs(applicationType) {
+            const applicationInputs = document.getElementById('applicationInputs');
+            const applicationDescription = document.getElementById('applicationDescription');
+            
+            if (!applicationInputs || !applicationDescription) return;
+            
+            switch (applicationType) {
+                case 'cryptography':
+                    applicationInputs.innerHTML = `
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Enter Message:</label>
+                            <input type="text" id="message" placeholder="e.g., HELLO" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Shift Value:</label>
+                            <input type="number" id="shiftValue" placeholder="e.g., 3" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                    `;
+                    applicationDescription.innerHTML = `
+                        <h4 class="font-semibold text-gray-800 mb-2">Problem Description:</h4>
+                        <div class="text-gray-700">Caesar cipher encryption: f(x) = (x + shift) mod 26. Analyze the one-to-one property of this encryption function.</div>
+                    `;
+                    break;
+                    
+                case 'temperature':
+                    applicationInputs.innerHTML = `
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Temperature in Celsius:</label>
+                            <input type="number" id="celsius" placeholder="e.g., 25" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                    `;
+                    applicationDescription.innerHTML = `
+                        <h4 class="font-semibold text-gray-800 mb-2">Problem Description:</h4>
+                        <div class="text-gray-700">Temperature conversion: F = (9/5)C + 32. Analyze the one-to-one property and find the inverse function.</div>
+                    `;
+                    break;
+                    
+                case 'database':
+                    applicationInputs.innerHTML = `
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Student ID:</label>
+                            <input type="number" id="studentId" placeholder="e.g., 12345" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Student Name:</label>
+                            <input type="text" id="studentName" placeholder="e.g., John Doe" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                    `;
+                    applicationDescription.innerHTML = `
+                        <h4 class="font-semibold text-gray-800 mb-2">Problem Description:</h4>
+                        <div class="text-gray-700">Database function: f(student_id) = student_name. Analyze why this function must be one-to-one for data integrity.</div>
+                    `;
+                    break;
+                    
+                case 'algorithm':
+                    applicationInputs.innerHTML = `
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Input Value:</label>
+                            <input type="number" id="inputValue" placeholder="e.g., 5" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Algorithm Type:</label>
+                            <select id="algorithmType" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option value="hash">Hash Function</option>
+                                <option value="encrypt">Encryption Function</option>
+                                <option value="sort">Sorting Function</option>
+                            </select>
+                        </div>
+                    `;
+                    applicationDescription.innerHTML = `
+                        <h4 class="font-semibold text-gray-800 mb-2">Problem Description:</h4>
+                        <div class="text-gray-700">Algorithm design: Analyze how one-to-one functions ensure unique mappings and prevent conflicts in data processing.</div>
+                    `;
+                    break;
+                    
+                default:
+                    applicationInputs.innerHTML = '<div class="text-gray-600">Select an application type to see inputs</div>';
+                    applicationDescription.innerHTML = '<div class="text-gray-600">Select an application type to see the description</div>';
+            }
+        }
+
+        // Solve Application Problem
+        function solveApplicationProblem() {
+            const applicationType = document.getElementById('applicationType');
+            
+            if (!applicationType) {
+                showError('Please select an application type first.');
+                return;
+            }
+            
+            const type = applicationType.value;
+            
+            if (!type) {
+                showError('Please select an application type first.');
+                return;
+            }
+            
+            try {
+                let solution;
+                
+                switch (type) {
+                    case 'cryptography':
+                        solution = solveCryptographyProblem();
+                        break;
+                    case 'temperature':
+                        solution = solveTemperatureProblem();
+                        break;
+                    case 'database':
+                        solution = solveDatabaseProblem();
+                        break;
+                    case 'algorithm':
+                        solution = solveAlgorithmProblem();
+                        break;
+                    default:
+                        showError('Unknown application type.');
+                        return;
+                }
+                
+                displayApplicationSolution(solution);
+                
+            } catch (error) {
+                console.error('Error solving application problem:', error);
+                showError('Error solving problem. Please check your inputs.');
+            }
+        }
+
+        // Solve Cryptography Problem
+        function solveCryptographyProblem() {
+            const message = document.getElementById('message');
+            const shiftValue = document.getElementById('shiftValue');
+            
+            if (!message || !shiftValue) {
+                throw new Error('Please enter both message and shift value.');
+            }
+            
+            const msg = message.value.toUpperCase();
+            const shift = parseInt(shiftValue.value);
+            
+            if (!msg || !shift) {
+                throw new Error('Please enter both message and shift value.');
+            }
+            
+            return {
+                oneToOneAnalysis: `
+                    <strong>One-to-One Analysis:</strong><br>
+                    The Caesar cipher function f(x) = (x + ${shift}) mod 26 is one-to-one because:<br>
+                    • Each letter maps to exactly one encrypted letter<br>
+                    • No two different letters produce the same encrypted result<br>
+                    • This ensures unique decryption for each encrypted message
+                `,
+                solutionSteps: `
+                    <strong>Solution Steps:</strong><br>
+                    1. Original message: ${msg}<br>
+                    2. Apply encryption: f(x) = (x + ${shift}) mod 26<br>
+                    3. Encrypted result: ${encryptMessage(msg, shift)}<br>
+                    4. One-to-one property ensures unique decryption
+                `,
+                practicalImplications: `
+                    <strong>Practical Implications:</strong><br>
+                    • Unique encryption ensures secure communication<br>
+                    • One-to-one property prevents decryption ambiguity<br>
+                    • Essential for maintaining data integrity in cryptography<br>
+                    • Enables reliable message transmission and reception
+                `
+            };
+        }
+
+        // Solve Temperature Problem
+        function solveTemperatureProblem() {
+            const celsius = document.getElementById('celsius');
+            
+            if (!celsius) {
+                throw new Error('Please enter a temperature in Celsius.');
+            }
+            
+            const temp = parseFloat(celsius.value);
+            
+            if (!temp) {
+                throw new Error('Please enter a temperature in Celsius.');
+            }
+            
+            const fahrenheit = (9/5) * temp + 32;
+            
+            return {
+                oneToOneAnalysis: `
+                    <strong>One-to-One Analysis:</strong><br>
+                    The temperature conversion function F = (9/5)C + 32 is one-to-one because:<br>
+                    • Each Celsius temperature corresponds to exactly one Fahrenheit temperature<br>
+                    • The function is linear with a positive slope<br>
+                    • This ensures unique conversion in both directions
+                `,
+                solutionSteps: `
+                    <strong>Solution Steps:</strong><br>
+                    1. Given: C = ${temp}°C<br>
+                    2. Apply conversion: F = (9/5) × ${temp} + 32<br>
+                    3. Calculate: F = ${fahrenheit}°F<br>
+                    4. Inverse function: C = (5/9)(F - 32)
+                `,
+                practicalImplications: `
+                    <strong>Practical Implications:</strong><br>
+                    • Unique temperature conversion prevents confusion<br>
+                    • One-to-one property enables reliable weather reporting<br>
+                    • Essential for scientific measurements and calculations<br>
+                    • Ensures consistency in temperature data across systems
+                `
+            };
+        }
+
+        // Solve Database Problem
+        function solveDatabaseProblem() {
+            const studentId = document.getElementById('studentId');
+            const studentName = document.getElementById('studentName');
+            
+            if (!studentId || !studentName) {
+                throw new Error('Please enter both student ID and name.');
+            }
+            
+            const id = studentId.value;
+            const name = studentName.value;
+            
+            if (!id || !name) {
+                throw new Error('Please enter both student ID and name.');
+            }
+            
+            return {
+                oneToOneAnalysis: `
+                    <strong>One-to-One Analysis:</strong><br>
+                    The database function f(student_id) = student_name must be one-to-one because:<br>
+                    • Each student ID corresponds to exactly one student name<br>
+                    • Prevents duplicate records and data conflicts<br>
+                    • Ensures data integrity and consistency<br>
+                    • Enables reliable student identification
+                `,
+                solutionSteps: `
+                    <strong>Solution Steps:</strong><br>
+                    1. Student ID: ${id}<br>
+                    2. Student Name: ${name}<br>
+                    3. Function: f(${id}) = "${name}"<br>
+                    4. One-to-one property ensures unique mapping
+                `,
+                practicalImplications: `
+                    <strong>Practical Implications:</strong><br>
+                    • Prevents duplicate student records<br>
+                    • Ensures accurate grade reporting<br>
+                    • Maintains data integrity in school systems<br>
+                    • Enables reliable student identification and tracking
+                `
+            };
+        }
+
+        // Solve Algorithm Problem
+        function solveAlgorithmProblem() {
+            const inputValue = document.getElementById('inputValue');
+            const algorithmType = document.getElementById('algorithmType');
+            
+            if (!inputValue || !algorithmType) {
+                throw new Error('Please enter an input value.');
+            }
+            
+            const value = parseInt(inputValue.value);
+            const type = algorithmType.value;
+            
+            if (!value) {
+                throw new Error('Please enter an input value.');
+            }
+            
+            return {
+                oneToOneAnalysis: `
+                    <strong>One-to-One Analysis:</strong><br>
+                    ${type} functions must be one-to-one because:<br>
+                    • Each input produces a unique output<br>
+                    • Prevents conflicts in data processing<br>
+                    • Ensures deterministic algorithm behavior<br>
+                    • Maintains data integrity and consistency
+                `,
+                solutionSteps: `
+                    <strong>Solution Steps:</strong><br>
+                    1. Input value: ${value}<br>
+                    2. Algorithm type: ${type}<br>
+                    3. Process: Apply ${type} function<br>
+                    4. Result: Unique output for input ${value}
+                `,
+                practicalImplications: `
+                    <strong>Practical Implications:</strong><br>
+                    • Ensures reliable data processing<br>
+                    • Prevents algorithm conflicts and errors<br>
+                    • Maintains system stability and performance<br>
+                    • Essential for critical computing applications
+                `
+            };
+        }
+
+        // Display Application Solution
+        function displayApplicationSolution(solution) {
+            const oneToOneAnalysis = document.getElementById('oneToOneAnalysis');
+            const solutionSteps = document.getElementById('solutionSteps');
+            const practicalImplications = document.getElementById('practicalImplications');
+            
+            if (oneToOneAnalysis) {
+                oneToOneAnalysis.innerHTML = `
+                    <h4 class="font-semibold text-gray-800 mb-2">One-to-One Analysis:</h4>
+                    <div class="text-gray-700">${solution.oneToOneAnalysis}</div>
+                `;
+            }
+            
+            if (solutionSteps) {
+                solutionSteps.innerHTML = `
+                    <h4 class="font-semibold text-gray-800 mb-2">Solution Steps:</h4>
+                    <div class="text-gray-700">${solution.solutionSteps}</div>
+                `;
+            }
+            
+            if (practicalImplications) {
+                practicalImplications.innerHTML = `
+                    <h4 class="font-semibold text-gray-800 mb-2">Practical Implications:</h4>
+                    <div class="text-gray-700">${solution.practicalImplications}</div>
+                `;
+            }
+        }
+
+        // Utility Functions
+        function encryptMessage(message, shift) {
+            return message.split('').map(char => {
+                if (char >= 'A' && char <= 'Z') {
+                    return String.fromCharCode(((char.charCodeAt(0) - 65 + shift) % 26) + 65);
+                }
+                return char;
+            }).join('');
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Success!',
+                    text: message,
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#10b981',
+                    background: '#ffffff',
+                    customClass: {
+                        popup: 'rounded-2xl',
+                        title: 'text-slate-800',
+                        content: 'text-slate-600'
+                    }
+                });
+            } else {
+                alert(message);
+            }
+        }
+
+        // Show error message
+        function showError(message) {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Error',
+                    text: message,
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#ef4444',
+                    background: '#ffffff',
+                    customClass: {
+                        popup: 'rounded-2xl',
+                        title: 'text-slate-800',
+                        content: 'text-slate-600'
+                    }
+                });
+            } else {
+                alert(message);
+            }
+        }
+
+        // Lesson Management Functions
+        async function loadCompletedLessons() {
+            try {
+                const response = await fetch('../php/complete-lesson.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        topic: 'one-to-one-functions',
+                        action: 'get_completed'
+                    }),
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const text = await response.text();
+                let data;
+                
+                try {
+                    data = JSON.parse(text);
+                } catch (parseError) {
+                    console.error('Invalid JSON response:', text);
+                    throw new Error('Server returned invalid response. Please check if database tables exist.');
+                }
+                
+                if (data.success && data.completed_lessons) {
+                    completedLessons = new Set(data.completed_lessons);
+                    updateLessonNavigation();
+                    
+                    // Check if all lessons are completed and show topic completion option
+                    if (completedLessons.size === totalLessons) {
+                        showTopicCompletionOption();
+                    }
+                } else if (!data.success) {
+                    console.warn('Failed to load completed lessons:', data.message);
+                    // Don't show error to user, just log it
+                }
+            } catch (error) {
+                console.error('Error loading completed lessons:', error);
+                // Don't show error to user, just log it
+                // The lesson completion will still work, just won't show previous completions
+            }
+        }
+
+        async function completeLesson(lessonNum) {
+            try {
+                const response = await fetch('../php/complete-lesson.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        topic: 'one-to-one-functions',
+                        lesson: lessonNum,
+                        action: 'complete'
+                    }),
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const text = await response.text();
+                let data;
+                
+                try {
+                    data = JSON.parse(text);
+                } catch (parseError) {
+                    console.error('Invalid JSON response:', text);
+                    throw new Error('Server returned invalid response. Please check if database tables exist.');
+                }
+                
+                if (data.success) {
+                    // Add to completed lessons
+                    completedLessons.add(lessonNum);
+                    
+                    // Show completion status
+                    showCompletionStatus();
+                    
+                    // Update lesson navigation
+                    updateLessonNavigation();
+                    
+                    // Check if all lessons are completed
+                    if (completedLessons.size === totalLessons) {
+                        // Show topic completion option
+                        showTopicCompletionOption();
+                    }
+                    
+                    // Show success message
+                    Swal.fire({
+                        title: 'Lesson Completed!',
+                        text: `Great job completing Lesson ${lessonNum}!`,
+                        icon: 'success',
+                        confirmButtonText: 'Continue Learning',
+                        confirmButtonColor: '#10b981',
+                        background: '#ffffff',
+                        customClass: {
+                            popup: 'rounded-2xl',
+                            title: 'text-slate-800',
+                            content: 'text-slate-600'
+                        }
+                    });
+                } else {
+                    throw new Error(data.message || 'Failed to complete lesson');
+                }
+            } catch (error) {
+                console.error('Error completing lesson:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Failed to save lesson completion. Please try again.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#ef4444',
+                    background: '#ffffff',
+                    customClass: {
+                        popup: 'rounded-2xl',
+                        title: 'text-slate-800',
+                        content: 'text-slate-600'
+                    }
+                });
+            }
+        }
+
+        async function completeTopic() {
+            try {
+                const response = await fetch('../php/complete-lesson.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        topic: 'one-to-one-functions',
+                        action: 'complete_topic'
+                    }),
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const text = await response.text();
+                let data;
+                
+                try {
+                    data = JSON.parse(text);
+                } catch (parseError) {
+                    console.error('Invalid JSON response:', text);
+                    throw new Error('Server returned invalid response. Please check if database tables exist.');
+                }
+                
+                if (data.success) {
+                    // Show success message
+                    Swal.fire({
+                        title: 'Topic Completed!',
+                        text: 'Congratulations! You have successfully completed the One-to-One Functions topic. Your progress has been updated.',
+                        icon: 'success',
+                        confirmButtonText: 'View Progress',
+                        confirmButtonColor: '#8b5cf6',
+                        background: '#ffffff',
+                        customClass: {
+                            popup: 'rounded-2xl',
+                            title: 'text-slate-800',
+                            content: 'text-slate-600'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Redirect to dashboard to show updated progress
+                            window.location.href = '../dashboard.html#progress';
+                        }
+                    });
+                } else {
+                    throw new Error(data.message || 'Failed to complete topic');
+                }
+            } catch (error) {
+                console.error('Error completing topic:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Failed to save topic completion. Please try again.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#ef4444',
+                    background: '#ffffff',
+                    customClass: {
+                        popup: 'rounded-2xl',
+                        title: 'text-slate-800',
+                        content: 'text-slate-600'
+                    }
+                });
+            }
+        }
+
+        function showCompletionStatus() {
+            // Update lesson navigation to show completed status
+            updateLessonNavigation();
+        }
+
+        function updateLessonNavigation() {
+            const lessonNavBtns = document.querySelectorAll('.lesson-nav-btn');
+            lessonNavBtns.forEach(btn => {
+                const lessonNum = parseInt(btn.dataset.lesson);
+                const icon = btn.querySelector('.w-16');
+                
+                if (completedLessons.has(lessonNum)) {
+                    icon.classList.remove('bg-primary', 'text-white', 'bg-gray-300', 'text-gray-600');
+                    icon.classList.add('bg-green-500', 'text-white');
+                } else {
+                    icon.classList.remove('bg-primary', 'text-white', 'bg-green-500', 'text-white');
+                    icon.classList.add('bg-gray-300', 'text-gray-600');
+                }
+            });
+        }
+
+        function showTopicCompletionOption() {
+            const topicCompletionSection = document.getElementById('topicCompletionSection');
+            if (topicCompletionSection) {
+                topicCompletionSection.style.display = 'block';
+            }
+        }
+
+        function navigateLesson(direction) {
+            const newLesson = currentLesson + direction;
+            if (newLesson >= 1 && newLesson <= totalLessons) {
+                showLesson(newLesson);
+            }
+        }
+
+        function showLesson(lessonNum) {
+            const lessonNavBtns = document.querySelectorAll('.lesson-nav-btn');
+            const lessonSections = document.querySelectorAll('.lesson-section');
+            
+            currentLesson = lessonNum;
+            
+            // Update navigation buttons
+            lessonNavBtns.forEach(b => {
+                const btnLessonNum = parseInt(b.dataset.lesson);
+                b.classList.remove('border-primary', 'bg-primary');
+                b.classList.add('border-transparent');
+                const icon = b.querySelector('.w-16');
+                
+                if (completedLessons.has(btnLessonNum)) {
+                    icon.classList.remove('bg-primary', 'text-white', 'bg-gray-300', 'text-gray-600');
+                    icon.classList.add('bg-green-500', 'text-white');
+                } else {
+                    icon.classList.remove('bg-primary', 'text-white', 'bg-green-500', 'text-white');
+                    icon.classList.add('bg-gray-300', 'text-gray-600');
+                }
+            });
+            
+            // Highlight current lesson
+            const currentBtn = document.querySelector(`[data-lesson="${lessonNum}"]`);
+            if (currentBtn) {
+                currentBtn.classList.add('border-primary', 'bg-primary');
+                currentBtn.classList.remove('border-transparent');
+                const icon = currentBtn.querySelector('.w-16');
+                icon.classList.add('bg-primary', 'text-white');
+                icon.classList.remove('bg-gray-300', 'text-gray-600', 'bg-green-500');
+            }
+            
+            // Show selected lesson
+            lessonSections.forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(`lesson${lessonNum}`).classList.add('active');
+            
+            // Update progress indicators
+            updateProgressIndicators();
+            updateNavigationButtons();
+            
+            // Scroll to the top of the lesson
+            setTimeout(() => {
+                const lessonSection = document.getElementById(`lesson${lessonNum}`);
+                if (lessonSection) {
+                    lessonSection.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start' 
+                    });
+                }
+            }, 100);
+        }
+
+        function updateProgressIndicators() {
+            const currentLessonNum = document.getElementById('currentLessonNum');
+            const lessonProgressBar = document.getElementById('lessonProgressBar');
+            
+            if (currentLessonNum) {
+                currentLessonNum.textContent = currentLesson;
+            }
+            
+            if (lessonProgressBar) {
+                const progressPercentage = (currentLesson / totalLessons) * 100;
+                lessonProgressBar.style.width = `${progressPercentage}%`;
+            }
+        }
+
+        function updateNavigationButtons() {
+            const prevBtn = document.getElementById('prevLessonBtn');
+            const nextBtn = document.getElementById('nextLessonBtn');
+            
+            if (prevBtn) {
+                prevBtn.style.display = currentLesson === 1 ? 'none' : 'flex';
+            }
+            
+            if (nextBtn) {
+                nextBtn.style.display = currentLesson === totalLessons ? 'none' : 'flex';
+            }
+        }
+
+        // Auth guard and Lesson Navigation
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const res = await fetch('../php/user.php', { credentials: 'include', cache: 'no-store' });
+                if (res.status === 401) { window.location.href = '../login.html'; return; }
+                const data = await res.json();
+                if (!data.success) { window.location.href = '../login.html'; return; }
+                const u = data.user || {};
+                const gradeOk = !u.grade_level || String(u.grade_level) === '11';
+                const strandOk = !u.strand || String(u.strand).toUpperCase() === 'STEM';
+                if (!gradeOk || !strandOk) { window.location.href = '../dashboard.html'; return; }
+                
+                // Update user name
+                const userNameEl = document.getElementById('userName');
+                if (userNameEl && u.first_name) {
+                    userNameEl.textContent = `${u.first_name} ${u.last_name || ''}`.trim();
+                }
+                
+                // Load completed lessons
+                await loadCompletedLessons();
+                
+                // Initialize lesson navigation
+                const lessonNavBtns = document.querySelectorAll('.lesson-nav-btn');
+                const lessonSections = document.querySelectorAll('.lesson-section');
+                
+                lessonNavBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const lessonNum = parseInt(this.dataset.lesson);
+                        showLesson(lessonNum);
+                    });
+                });
+                
+                // Initialize first lesson as active
+                showLesson(1);
+                
+                // Initialize virtual aids
+                initializeVirtualAids();
+                
+            } catch (e) {
+                window.location.href = '../login.html';
+            }
+        });
+
+        // Initialize Virtual Aids
+        function initializeVirtualAids() {
+            // Initialize function input listeners
+            const functionInput = document.getElementById('functionInput');
+            if (functionInput) {
+                functionInput.addEventListener('input', debounce(analyzeOneToOne, 500));
+            }
+            
+            // Initialize test function input listeners
+            const testFunctionInput = document.getElementById('testFunctionInput');
+            if (testFunctionInput) {
+                testFunctionInput.addEventListener('input', debounce(testOneToOne, 500));
+            }
+            
+            // Initialize inverse function input listeners
+            const inverseFunctionInput = document.getElementById('inverseFunctionInput');
+            if (inverseFunctionInput) {
+                inverseFunctionInput.addEventListener('input', debounce(findInverse, 500));
+            }
+            
+            // Initialize application type selector
+            const applicationType = document.getElementById('applicationType');
+            if (applicationType) {
+                applicationType.addEventListener('change', function() {
+                    updateApplicationInputs(this.value);
+                });
+            }
+            
+            // Initialize test method selector
+            const testMethod = document.getElementById('testMethod');
+            if (testMethod) {
+                testMethod.addEventListener('change', function() {
+                    testOneToOne();
+                });
+            }
+        }
+
+        // Debounce function for performance
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+    </script>
+</body>
+</html>
