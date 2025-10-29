@@ -1,0 +1,2746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Functions - General Mathematics 11 | MathEase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#667eea',
+                        'secondary': '#764ba2',
+                        'accent': '#f093fb',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .lesson-card {
+            transition: all 0.3s ease;
+        }
+        .lesson-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15);
+        }
+        .virtual-aid {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
+            border: 2px solid #e1e8ff;
+        }
+        .function-machine {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .graph-canvas {
+            border: 2px solid #e1e8ff;
+            border-radius: 12px;
+        }
+        .lesson-section {
+            display: none;
+        }
+        .lesson-section.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="font-poppins bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="../index.html" class="flex items-center space-x-2">
+                        <img src="../css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-8 w-8">
+                        <span class="text-xl font-bold text-primary">MathEase</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="../dashboard.html" class="text-gray-700 hover:text-primary transition-colors">
+                        <i class="fas fa-home mr-2"></i>Dashboard
+                    </a>
+                    <a href="../topics.html" class="text-primary font-semibold">
+                        <i class="fas fa-book mr-2"></i>Topics
+                    </a>
+                    <span class="text-gray-600">
+                        <i class="fas fa-user mr-2"></i><span id="userName">Student</span>
+                    </span>
+                    <a href="../php/logout.php" class="text-gray-700 hover:text-red-600 transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="gradient-bg text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
+                    <i class="fas fa-book-open mr-2"></i>
+                    <span class="font-semibold">General Mathematics 11</span>
+                </div>
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">Functions</h1>
+                <p class="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto">
+                    Master the foundation of mathematics through four comprehensive lessons designed for Grade 11 students
+                </p>
+                <div class="flex justify-center">
+                    <div class="bg-white/20 backdrop-blur-sm rounded-full px-8 py-3">
+                        <span class="text-lg font-semibold">4 Interactive Lessons</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Lesson Navigation -->
+        <div class="mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="1">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-play text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 1</h3>
+                        <p class="text-sm text-gray-600">Introduction to Functions</p>
+                    </div>
+                </button>
+                
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="2">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-search text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 2</h3>
+                        <p class="text-sm text-gray-600">Domain & Range</p>
+                    </div>
+                </button>
+                
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="3">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-plus-minus text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 3</h3>
+                        <p class="text-sm text-gray-600">Function Operations</p>
+                    </div>
+                </button>
+                
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="4">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-layer-group text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 4</h3>
+                        <p class="text-sm text-gray-600">Composition & Inverses</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+
+
+        <!-- Lesson Completion Status -->
+        <div id="lessonCompletionStatus" class="mb-8 p-4 bg-green-50 border border-green-200 rounded-lg hidden">
+            <div class="flex items-center">
+                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                <span class="text-green-700 font-semibold">Lesson completed successfully!</span>
+            </div>
+        </div>
+
+        <!-- Lesson Content -->
+        <div class="lesson-content">
+            <!-- Lesson 1: Introduction to Functions -->
+            <section id="lesson1" class="lesson-section active">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-play text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 1: Introduction to Functions</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                            Learn the fundamental concepts of functions, including notation, evaluation, and the function machine concept.
+                        </p>
+                    </div>
+
+                    <!-- Learning Objectives -->
+                    <div class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-target mr-2"></i>Learning Objectives
+                        </h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Understand what a function is and how it works
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Learn function notation f(x) and how to read it
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Evaluate functions for given inputs
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Use the function machine concept
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Detailed Explanation -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                            <i class="fas fa-book-open text-blue-500 mr-3"></i>Understanding Functions: A Complete Guide
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>What is a Function?
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    A function is a special relationship where each input has exactly one output. 
+                                    Think of it as a machine that takes a number, processes it, and gives you back exactly one result.
+                                </p>
+                                <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                    <p class="text-sm text-gray-600 mb-2">Function Notation:</p>
+                                    <p class="text-lg font-mono text-primary">f(x) = 2x + 1</p>
+                                    <p class="text-sm text-gray-600 mt-2">Read as: "f of x equals 2x plus 1"</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-cogs text-green-500 mr-2"></i>Function Machine Analogy
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    A function works like a machine:
+                                </p>
+                                <div class="space-y-2 text-gray-700">
+                                    <div class="flex items-center">
+                                        <span class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-3">1</span>
+                                        You put in a number (input)
+                                    </div>
+                                    <div class="flex items-center">
+                                        <span class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-3">2</span>
+                                        The machine follows the rule
+                                    </div>
+                                    <div class="flex items-center">
+                                        <span class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-3">3</span>
+                                        You get out exactly one result (output)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Real-World Examples -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg mb-6">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-globe text-purple-500 mr-2"></i>Real-World Examples
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="bg-green-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Temperature Conversion</h5>
+                                    <p class="text-sm text-gray-700 mb-2">Celsius to Fahrenheit: F(C) = (9/5)C + 32</p>
+                                    <p class="text-xs text-gray-600">Each Celsius temperature gives exactly one Fahrenheit temperature</p>
+                                </div>
+                                <div class="bg-blue-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Distance Formula</h5>
+                                    <p class="text-sm text-gray-700 mb-2">Distance = Speed × Time: d(s,t) = s × t</p>
+                                    <p class="text-xs text-gray-600">Each speed and time combination gives exactly one distance</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step-by-Step Function Evaluation -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-calculator text-orange-500 mr-2"></i>Step-by-Step Function Evaluation
+                            </h4>
+                            <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                <p class="text-lg font-semibold text-gray-800 mb-2">Example: Evaluate f(x) = 3x - 2 for x = 5</p>
+                                <div class="space-y-3">
+                                    <div class="flex items-center">
+                                        <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">1</span>
+                                        <span class="text-gray-700">Substitute x = 5 into the function</span>
+                                    </div>
+                                    <div class="ml-11 text-gray-600 font-mono">f(5) = 3(5) - 2</div>
+                                    
+                                    <div class="flex items-center">
+                                        <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">2</span>
+                                        <span class="text-gray-700">Multiply first (order of operations)</span>
+                                    </div>
+                                    <div class="ml-11 text-gray-600 font-mono">f(5) = 15 - 2</div>
+                                    
+                                    <div class="flex items-center">
+                                        <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">3</span>
+                                        <span class="text-gray-700">Subtract to get the final answer</span>
+                                    </div>
+                                    <div class="ml-11 text-gray-600 font-mono">f(5) = 13</div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-green-50 rounded-lg p-4">
+                                <h5 class="font-semibold text-gray-800 mb-2">Key Points to Remember:</h5>
+                                <ul class="text-sm text-gray-700 space-y-1">
+                                    <li>• Always follow the order of operations (PEMDAS)</li>
+                                    <li>• Replace every x with the given value</li>
+                                    <li>•• Check your work by substituting back</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <!-- Virtual Aid: Function Machine -->
+                    <div class="virtual-aid rounded-2xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                            <i class="fas fa-cogs text-primary mr-3"></i>Interactive Function Machine
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="space-y-6">
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Function Rule</h4>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Choose a rule:</label>
+                                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="functionRulePresets">
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-rule="2x + 1">2x + 1</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-rule="3x - 2">3x - 2</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-rule="x²">x²</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-rule="√(x-2)">√(x-2)</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-rule="1/(x-3)">1/(x-3)</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-rule="x + 5">x + 5</button>
+                                            </div>
+                                            <input type="hidden" id="functionRule" value="2x + 1">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Quick inputs:</label>
+                                            <div class="flex flex-wrap gap-2">
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary" data-input="-2">-2</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary" data-input="0">0</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary" data-input="1">1</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary" data-input="2">2</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary" data-input="3">3</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary" data-input="5">5</button>
+                                            </div>
+                                            <input type="hidden" id="inputValue" value="3">
+                                        </div>
+                                        <button onclick="evaluateFunction()" 
+                                                class="w-full bg-primary text-white py-3 px-6 rounded-lg hover:bg-secondary transition-colors font-semibold">
+                                            <i class="fas fa-play mr-2"></i>Evaluate Function
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl p-6 shadow-lg" id="functionResultContainer" style="display: none;">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">
+                                        <i class="fas fa-check-circle text-green-500 mr-2"></i>Result
+                                    </h4>
+                                    <div class="text-center">
+                                        <div class="text-3xl font-bold text-primary mb-2" id="functionResult"></div>
+                                        <p class="text-gray-600">f(<span id="inputDisplay"></span>) = <span id="outputDisplay"></span></p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Placeholder before evaluation -->
+                                <div class="bg-white rounded-xl p-6 shadow-lg text-center" id="functionPlaceholder">
+                                    <div class="py-8">
+                                        <i class="fas fa-play-circle text-gray-300 text-5xl mb-4"></i>
+                                        <p class="text-gray-500 text-lg">Click "Evaluate Function" to see the result</p>
+                                        <p class="text-gray-400 text-sm mt-2">Choose a rule and input value above</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white">
+                                <h4 class="text-lg font-semibold mb-4 text-center">Function Machine Visual</h4>
+                                <div class="flex items-center justify-between mb-6" id="functionVisualContainer" style="display: none;">
+                                    <div class="text-center">
+                                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-2">
+                                            <span class="text-2xl font-bold" id="inputVisual"></span>
+                                        </div>
+                                        <p class="text-sm">Input (x)</p>
+                                    </div>
+                                    <div class="flex-1 mx-4">
+                                        <div class="bg-white/20 rounded-lg p-4 text-center">
+                                            <div class="text-sm mb-2">Function Rule</div>
+                                            <div class="font-mono text-lg" id="ruleVisual"></div>
+                                        </div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mb-2">
+                                            <span class="text-2xl font-bold" id="outputVisual"></span>
+                                        </div>
+                                        <p class="text-sm">Output f(x)</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Placeholder for visual -->
+                                <div class="text-center mb-6" id="visualPlaceholder">
+                                    <div class="py-12">
+                                        <i class="fas fa-cogs text-white/30 text-6xl mb-4"></i>
+                                        <p class="text-white/70 text-lg">Function Machine Ready</p>
+                                        <p class="text-white/50 text-sm mt-2">Evaluate to see the process</p>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <button onclick="resetMachine()" 
+                                            class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors">
+                                        <i class="fas fa-redo mr-2"></i>Reset
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Practice Examples -->
+                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-pencil-alt text-orange-500 mr-2"></i>Practice Examples
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-lg p-4 border-2 border-orange-200">
+                                <h4 class="font-semibold text-gray-800 mb-2">Example 1: Linear Function</h4>
+                                <p class="text-gray-700 mb-2">Given: f(x) = 3x - 2</p>
+                                <p class="text-gray-700 mb-2">Find: f(4)</p>
+                                <div class="bg-gray-50 rounded p-3 font-mono text-sm">
+                                    f(4) = 3(4) - 2 = 12 - 2 = 10
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 border-2 border-orange-200">
+                                <h4 class="font-semibold text-gray-800 mb-2">Example 2: Quadratic Function</h4>
+                                <p class="text-gray-700 mb-2">Given: g(x) = x² + 1</p>
+                                <p class="text-gray-700 mb-2">Find: g(-2)</p>
+                                <div class="bg-gray-50 rounded p-3 font-mono text-sm">
+                                    g(-2) = (-2)² + 1 = 4 + 1 = 5
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                      <!-- References -->
+                      <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-book text-indigo-500 mr-2"></i>References & Additional Resources
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Academic Sources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Stewart, J. (2015). <em>Precalculus: Mathematics for Calculus</em>. Cengage Learning.</li>
+                                    <li>• Larson, R. (2018). <em>Precalculus with Limits</em>. Cengage Learning.</li>
+                                    <li>• Blitzer, R. (2019). <em>Precalculus</em>. Pearson Education.</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Online Resources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Khan Academy: Functions and Relations</li>
+                                    <li>• Purplemath: Function Notation</li>
+                                    <li>• Math is Fun: What is a Function?</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Lesson Completion -->
+                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i>Complete This Lesson
+                        </h3>
+                        <p class="text-gray-600 text-center mb-6">
+                            Mark this lesson as completed to track your progress and unlock the next lesson.
+                        </p>
+                        <div class="text-center">
+                            <button onclick="completeLesson(1)" 
+                                    class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold inline-flex items-center">
+                                <i class="fas fa-check mr-2"></i>
+                                Mark Lesson 1 Complete
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Lesson Navigation Controls -->
+                    <div class="flex justify-center items-center mb-8">
+                        <div class="flex items-center space-x-4">
+                            <div class="text-center">
+                                <div class="text-sm text-gray-600">Lesson Progress</div>
+                                <div class="text-lg font-semibold text-primary">
+                                    <span id="currentLessonNum">1</span> of 4
+                                </div>
+                            </div>
+                            <div class="w-32 bg-gray-200 rounded-full h-2">
+                                <div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 25%"></div>
+                            </div>
+                        </div>
+                        
+                        <button id="nextLessonBtn" onclick="navigateLesson(1)" 
+                                class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed ml-8">
+                            Next Lesson
+                            <i class="fas fa-chevron-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lesson 2: Domain and Range -->
+            <section id="lesson2" class="lesson-section">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-search text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 2: Domain and Range</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                            Learn how to find the domain (allowed inputs) and range (possible outputs) of functions.
+                        </p>
+                    </div>
+
+                    <!-- Learning Objectives -->
+                    <div class="bg-green-50 border-l-4 border-green-500 p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-target mr-2"></i>Learning Objectives
+                        </h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Understand what domain and range mean
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Find domain restrictions for different function types
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Determine range from domain and function rule
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Comprehensive Domain and Range Guide -->
+                    <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                            <i class="fas fa-search text-green-500 mr-3"></i>Domain and Range: Complete Understanding
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-search text-green-500 mr-2"></i>Domain Explained
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    The domain is the set of all possible input values (x-values) for which the function is defined.
+                                </p>
+                                
+                                <div class="space-y-4">
+                                    <div class="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                                        <h5 class="font-semibold text-gray-800 mb-2">Square Root Functions</h5>
+                                        <p class="text-sm text-gray-700 mb-2">f(x) = √(x-2)</p>
+                                        <p class="text-sm text-gray-600">Domain: x ≥ 2 (because √(negative) is undefined)</p>
+                                        <div class="mt-2 text-xs text-gray-500">
+                                            <strong>Why?</strong> We can't take the square root of a negative number in real numbers.
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-red-50 rounded-lg p-4 border-l-4 border-red-500">
+                                        <h5 class="font-semibold text-gray-800 mb-2">Rational Functions</h5>
+                                        <p class="text-sm text-gray-700 mb-2">f(x) = 1/(x-3)</p>
+                                        <p class="text-sm text-gray-600">Domain: x ≠ 3 (because division by zero is undefined)</p>
+                                        <div class="mt-2 text-xs text-gray-500">
+                                            <strong>Why?</strong> We can't divide by zero.
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                        <h5 class="font-semibold text-gray-800 mb-2">Polynomial Functions</h5>
+                                        <p class="text-sm text-gray-700 mb-2">f(x) = x² + 3x - 1</p>
+                                        <p class="text-sm text-gray-600">Domain: All real numbers</p>
+                                        <div class="mt-2 text-xs text-gray-500">
+                                            <strong>Why?</strong> Polynomials are defined for all real numbers.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-chart-line text-blue-500 mr-2"></i>Range Explained
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    The range is the set of all possible output values (y-values) that the function can produce.
+                                </p>
+                                
+                                <div class="space-y-4">
+                                    <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                        <h5 class="font-semibold text-gray-800 mb-2">Linear Functions</h5>
+                                        <p class="text-sm text-gray-700 mb-2">f(x) = 2x + 1</p>
+                                        <p class="text-sm text-gray-600">Range: All real numbers</p>
+                                        <div class="mt-2 text-xs text-gray-500">
+                                            <strong>Why?</strong> Linear functions can output any real number.
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-purple-50 rounded-lg p-4 border-l-4 border-purple-500">
+                                        <h5 class="font-semibold text-gray-800 mb-2">Quadratic Functions</h5>
+                                        <p class="text-sm text-gray-700 mb-2">f(x) = x²</p>
+                                        <p class="text-sm text-gray-600">Range: y ≥ 0</p>
+                                        <div class="mt-2 text-xs text-gray-500">
+                                            <strong>Why?</strong> x² is always positive or zero, never negative.
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-yellow-50 rounded-lg p-4 border-l-4 border-yellow-500">
+                                        <h5 class="font-semibold text-gray-800 mb-2">Square Root Functions</h5>
+                                        <p class="text-sm text-gray-700 mb-2">f(x) = √x</p>
+                                        <p class="text-sm text-gray-600">Range: y ≥ 0</p>
+                                        <div class="mt-2 text-xs text-gray-500">
+                                            <strong>Why?</strong> √x always gives a non-negative result.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step-by-Step Domain Finding -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg mb-6">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-calculator text-orange-500 mr-2"></i>Step-by-Step Domain Finding
+                            </h4>
+                            
+                            <div class="space-y-6">
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-gray-800 mb-3">Example 1: f(x) = √(x - 3)</h5>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">1</span>
+                                            <span class="text-gray-700">Identify the restriction: Square root</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">The expression under √ must be ≥ 0</div>
+                                        
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">2</span>
+                                            <span class="text-gray-700">Set up the inequality</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">x - 3 ≥ 0</div>
+                                        
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">3</span>
+                                            <span class="text-gray-700">Solve for x</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">x ≥ 3</div>
+                                        
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">4</span>
+                                            <span class="text-gray-700">Write in interval notation</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">Domain: [3, ∞)</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-gray-800 mb-3">Example 2: f(x) = 1/(x + 2)</h5>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">1</span>
+                                            <span class="text-gray-700">Identify the restriction: Division by zero</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">The denominator cannot equal 0</div>
+                                        
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">2</span>
+                                            <span class="text-gray-700">Set up the equation</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">x + 2 ≠ 0</div>
+                                        
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">3</span>
+                                            <span class="text-gray-700">Solve for x</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">x ≠ -2</div>
+                                        
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">4</span>
+                                            <span class="text-gray-700">Write in interval notation</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">Domain: (-∞, -2) ∪ (-2, ∞)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Common Domain Rules -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-list text-purple-500 mr-2"></i>Common Domain Rules
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="space-y-3">
+                                    <div class="bg-red-50 rounded-lg p-3 border-l-4 border-red-500">
+                                        <h5 class="font-semibold text-gray-800">Square Root: √(expression)</h5>
+                                        <p class="text-sm text-gray-700">Set expression ≥ 0</p>
+                                    </div>
+                                    <div class="bg-yellow-50 rounded-lg p-3 border-l-4 border-yellow-500">
+                                        <h5 class="font-semibold text-gray-800">Rational: 1/(expression)</h5>
+                                        <p class="text-sm text-gray-700">Set expression ≠ 0</p>
+                                    </div>
+                                </div>
+                                <div class="space-y-3">
+                                    <div class="bg-green-50 rounded-lg p-3 border-l-4 border-green-500">
+                                        <h5 class="font-semibold text-gray-800">Polynomial: x² + 3x - 1</h5>
+                                        <p class="text-sm text-gray-700">Domain: All real numbers</p>
+                                    </div>
+                                    <div class="bg-blue-50 rounded-lg p-3 border-l-4 border-blue-500">
+                                        <h5 class="font-semibold text-gray-800">Absolute Value: |x|</h5>
+                                        <p class="text-sm text-gray-700">Domain: All real numbers</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Virtual Aid: Domain Range Explorer -->
+                    <div class="virtual-aid rounded-2xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                            <i class="fas fa-search text-primary mr-3"></i>Domain & Range Explorer
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="space-y-6">
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Function Selector</h4>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Choose function type:</label>
+                                            <select id="functionType" onchange="updateFunction()" 
+                                                    class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none">
+                                                <option value="linear">Linear: f(x) = 2x + 1</option>
+                                                <option value="quadratic">Quadratic: f(x) = x²</option>
+                                                <option value="sqrt">Square Root: f(x) = √(x-2)</option>
+                                                <option value="rational">Rational: f(x) = 1/(x-3)</option>
+                                            </select>
+                                        </div>
+                                        <div class="bg-gray-50 rounded-lg p-4">
+                                            <p class="text-sm text-gray-600 mb-2">Current Function:</p>
+                                            <p class="text-lg font-mono text-primary" id="currentFunction">f(x) = 2x + 1</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Domain & Range</h4>
+                                    <div class="space-y-3">
+                                        <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                                            <span class="font-semibold text-gray-800">Domain:</span>
+                                            <span class="text-green-600 font-mono" id="domainResult">All real numbers</span>
+                                        </div>
+                                        <div class="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                                            <span class="font-semibold text-gray-800">Range:</span>
+                                            <span class="text-blue-600 font-mono" id="rangeResult">All real numbers</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white">
+                                <h4 class="text-lg font-semibold mb-4 text-center">Visual Representation</h4>
+                                <div class="bg-white/20 rounded-lg p-4 mb-4">
+                                    <canvas id="domainRangeCanvas" width="400" height="300" class="w-full h-64 bg-white rounded graph-canvas"></canvas>
+                                </div>
+                                <div class="text-center">
+                                    <button onclick="resetDomainRange()" 
+                                            class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors">
+                                        <i class="fas fa-redo mr-2"></i>Reset Graph
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lesson Completion -->
+                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i>Complete This Lesson
+                        </h3>
+                        <p class="text-gray-600 text-center mb-6">
+                            Mark this lesson as completed to track your progress and unlock the next lesson.
+                        </p>
+                        <div class="text-center">
+                            <button onclick="completeLesson(2)" 
+                                    class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold inline-flex items-center">
+                                <i class="fas fa-check mr-2"></i>
+                                Mark Lesson 2 Complete
+                            </button>
+                        </div>
+                    </div>
+
+                    
+                    <!-- References -->
+                    <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-book text-green-500 mr-2"></i>References & Additional Resources
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Academic Sources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Sullivan, M. (2019). <em>Precalculus: Enhanced with Graphing Utilities</em>. Pearson.</li>
+                                    <li>• Zill, D. (2018). <em>Precalculus with Calculus Previews</em>. Jones & Bartlett Learning.</li>
+                                    <li>• Demana, F. (2019). <em>Precalculus: Graphical, Numerical, Algebraic</em>. Pearson.</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Online Resources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Khan Academy: Domain and Range</li>
+                                    <li>• Mathway: Domain and Range Calculator</li>
+                                    <li>• Desmos: Function Grapher</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lesson Navigation Controls -->
+                    <div class="flex justify-between items-center mb-8">
+                        <button id="prevLessonBtn" onclick="navigateLesson(-1)" 
+                                class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fas fa-chevron-left mr-2"></i>
+                            Previous Lesson
+                        </button>
+                        
+                        <div class="flex items-center space-x-4">
+                            <div class="text-center">
+                                <div class="text-sm text-gray-600">Lesson Progress</div>
+                                <div class="text-lg font-semibold text-primary">
+                                    <span id="currentLessonNum">2</span> of 4
+                                </div>
+                            </div>
+                            <div class="w-32 bg-gray-200 rounded-full h-2">
+                                <div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 50%"></div>
+                            </div>
+                        </div>
+                        
+                        <button id="nextLessonBtn" onclick="navigateLesson(1)" 
+                                class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            Next Lesson
+                            <i class="fas fa-chevron-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lesson 3: Function Operations -->
+            <section id="lesson3" class="lesson-section">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-plus-minus text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 3: Function Operations</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                            Learn how to add, subtract, multiply, and divide functions to create new functions.
+                        </p>
+                    </div>
+
+                    <!-- Learning Objectives -->
+                    <div class="bg-purple-50 border-l-4 border-purple-500 p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-target mr-2"></i>Learning Objectives
+                        </h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-purple-500 mr-3"></i>
+                                Add and subtract functions
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-purple-500 mr-3"></i>
+                                Multiply and divide functions
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-purple-500 mr-3"></i>
+                                Find domains of combined functions
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Comprehensive Function Operations Guide -->
+                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                            <i class="fas fa-plus-minus text-purple-500 mr-3"></i>Function Operations: Complete Guide
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                            <div class="bg-gradient-to-br from-red-50 to-pink-50 rounded-xl p-6">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-4 text-center">
+                                    <i class="fas fa-plus text-red-500 mr-2"></i>Addition
+                                </h4>
+                                <div class="bg-white rounded-lg p-4 border-2 border-red-200">
+                                    <p class="text-sm text-gray-600 mb-2">(f + g)(x) = f(x) + g(x)</p>
+                                    <p class="text-xs text-gray-500">Add the outputs</p>
+                                </div>
+                                <div class="mt-3 text-xs text-gray-600">
+                                    <strong>Example:</strong> f(x) = 2x + 1, g(x) = x - 3<br>
+                                    (f + g)(x) = (2x + 1) + (x - 3) = 3x - 2
+                                </div>
+                            </div>
+
+                            <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-6">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-4 text-center">
+                                    <i class="fas fa-minus text-blue-500 mr-2"></i>Subtraction
+                                </h4>
+                                <div class="bg-white rounded-lg p-4 border-2 border-blue-200">
+                                    <p class="text-sm text-gray-600 mb-2">(f - g)(x) = f(x) - g(x)</p>
+                                    <p class="text-xs text-gray-500">Subtract the outputs</p>
+                                </div>
+                                <div class="mt-3 text-xs text-gray-600">
+                                    <strong>Example:</strong> f(x) = x² + 2, g(x) = x + 1<br>
+                                    (f - g)(x) = (x² + 2) - (x + 1) = x² - x + 1
+                                </div>
+                            </div>
+
+                            <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-4 text-center">
+                                    <i class="fas fa-times text-green-500 mr-2"></i>Multiplication
+                                </h4>
+                                <div class="bg-white rounded-lg p-4 border-2 border-green-200">
+                                    <p class="text-sm text-gray-600 mb-2">(f · g)(x) = f(x) · g(x)</p>
+                                    <p class="text-xs text-gray-500">Multiply the outputs</p>
+                                </div>
+                                <div class="mt-3 text-xs text-gray-600">
+                                    <strong>Example:</strong> f(x) = 2x, g(x) = x + 1<br>
+                                    (f · g)(x) = (2x)(x + 1) = 2x² + 2x
+                                </div>
+                            </div>
+
+                            <div class="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-6">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-4 text-center">
+                                    <i class="fas fa-divide text-yellow-500 mr-2"></i>Division
+                                </h4>
+                                <div class="bg-white rounded-lg p-4 border-2 border-yellow-200">
+                                    <p class="text-sm text-gray-600 mb-2">(f/g)(x) = f(x)/g(x)</p>
+                                    <p class="text-xs text-gray-500">Divide the outputs</p>
+                                </div>
+                                <div class="mt-3 text-xs text-gray-600">
+                                    <strong>Example:</strong> f(x) = x², g(x) = x + 1<br>
+                                    (f/g)(x) = x²/(x + 1)
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step-by-Step Operations -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg mb-6">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-6">
+                                <i class="fas fa-calculator text-orange-500 mr-2"></i>Step-by-Step Function Operations
+                            </h4>
+                            
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <!-- Addition Example -->
+                                <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border-l-4 border-green-500">
+                                    <h5 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                        <i class="fas fa-plus text-green-500 mr-2"></i>
+                                        Addition Example
+                                    </h5>
+                                    <div class="bg-white rounded-lg p-4 mb-4">
+                                        <p class="text-sm text-gray-600 mb-2">Given functions:</p>
+                                        <p class="text-lg font-mono text-gray-800">f(x) = 3x - 2</p>
+                                        <p class="text-lg font-mono text-gray-800">g(x) = x² + 1</p>
+                                        <p class="text-sm text-gray-600 mt-2">Find: (f + g)(x)</p>
+                                    </div>
+                                    
+                                    <div class="space-y-4">
+                                        <div class="flex items-start">
+                                            <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">1</span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-700 mb-2">Write the operation formula</p>
+                                                <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                    (f + g)(x) = f(x) + g(x)
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start">
+                                            <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">2</span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-700 mb-2">Substitute the functions</p>
+                                                <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                    (f + g)(x) = (3x - 2) + (x² + 1)
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start">
+                                            <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">3</span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-700 mb-2">Remove parentheses</p>
+                                                <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                    (f + g)(x) = 3x - 2 + x² + 1
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start">
+                                            <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">4</span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-700 mb-2">Combine like terms</p>
+                                                <div class="bg-green-100 rounded-lg p-3 font-mono text-lg text-green-800 font-bold">
+                                                    (f + g)(x) = x² + 3x - 1
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Multiplication Example -->
+                                <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-6 border-l-4 border-blue-500">
+                                    <h5 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                        <i class="fas fa-times text-blue-500 mr-2"></i>
+                                        Multiplication Example
+                                    </h5>
+                                    <div class="bg-white rounded-lg p-4 mb-4">
+                                        <p class="text-sm text-gray-600 mb-2">Given functions:</p>
+                                        <p class="text-lg font-mono text-gray-800">f(x) = 2x</p>
+                                        <p class="text-lg font-mono text-gray-800">g(x) = x + 3</p>
+                                        <p class="text-sm text-gray-600 mt-2">Find: (f · g)(x)</p>
+                                    </div>
+                                    
+                                    <div class="space-y-4">
+                                        <div class="flex items-start">
+                                            <span class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">1</span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-700 mb-2">Write the operation formula</p>
+                                                <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                    (f · g)(x) = f(x) · g(x)
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start">
+                                            <span class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">2</span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-700 mb-2">Substitute the functions</p>
+                                                <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                    (f · g)(x) = (2x)(x + 3)
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start">
+                                            <span class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">3</span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-700 mb-2">Use distributive property</p>
+                                                <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                    (f · g)(x) = 2x · x + 2x · 3
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start">
+                                            <span class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">4</span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-700 mb-2">Simplify</p>
+                                                <div class="bg-blue-100 rounded-lg p-3 font-mono text-lg text-blue-800 font-bold">
+                                                    (f · g)(x) = 2x² + 6x
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Additional Examples -->
+                            <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <!-- Subtraction Example -->
+                                <div class="bg-gradient-to-br from-red-50 to-pink-50 rounded-xl p-6 border-l-4 border-red-500">
+                                    <h5 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                        <i class="fas fa-minus text-red-500 mr-2"></i>
+                                        Subtraction Example
+                                    </h5>
+                                    <div class="bg-white rounded-lg p-4 mb-4">
+                                        <p class="text-sm text-gray-600 mb-2">Given functions:</p>
+                                        <p class="text-lg font-mono text-gray-800">f(x) = x² + 2</p>
+                                        <p class="text-lg font-mono text-gray-800">g(x) = x + 1</p>
+                                        <p class="text-sm text-gray-600 mt-2">Find: (f - g)(x)</p>
+                                    </div>
+                                    
+                                    <div class="space-y-3">
+                                        <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                            (f - g)(x) = f(x) - g(x)
+                                        </div>
+                                        <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                            = (x² + 2) - (x + 1)
+                                        </div>
+                                        <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                            = x² + 2 - x - 1
+                                        </div>
+                                        <div class="bg-red-100 rounded-lg p-3 font-mono text-lg text-red-800 font-bold">
+                                            = x² - x + 1
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Division Example -->
+                                <div class="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-6 border-l-4 border-yellow-500">
+                                    <h5 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                        <i class="fas fa-divide text-yellow-500 mr-2"></i>
+                                        Division Example
+                                    </h5>
+                                    <div class="bg-white rounded-lg p-4 mb-4">
+                                        <p class="text-sm text-gray-600 mb-2">Given functions:</p>
+                                        <p class="text-lg font-mono text-gray-800">f(x) = x²</p>
+                                        <p class="text-lg font-mono text-gray-800">g(x) = x + 1</p>
+                                        <p class="text-sm text-gray-600 mt-2">Find: (f/g)(x)</p>
+                                    </div>
+                                    
+                                    <div class="space-y-3">
+                                        <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                            (f/g)(x) = f(x)/g(x)
+                                        </div>
+                                        <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                            = x²/(x + 1)
+                                        </div>
+                                        <div class="bg-yellow-100 rounded-lg p-3 font-mono text-lg text-yellow-800 font-bold">
+                                            = x²/(x + 1)
+                                        </div>
+                                        <p class="text-xs text-gray-600 mt-2">Note: Domain is x ≠ -1</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Domain of Combined Functions -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>Important: Domain of Combined Functions
+                            </h4>
+                            <div class="bg-yellow-50 rounded-lg p-4 border-l-4 border-yellow-500 mb-4">
+                                <h5 class="font-semibold text-gray-800 mb-2">Key Rule:</h5>
+                                <p class="text-sm text-gray-700">The domain of (f + g), (f - g), and (f · g) is the intersection of the domains of f and g.</p>
+                                <p class="text-sm text-gray-700 mt-2">The domain of (f/g) is the intersection of the domains of f and g, EXCEPT where g(x) = 0.</p>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-green-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Example: Addition</h5>
+                                    <p class="text-sm text-gray-700 mb-1">f(x) = √x (domain: x ≥ 0)</p>
+                                    <p class="text-sm text-gray-700 mb-1">g(x) = 1/x (domain: x ≠ 0)</p>
+                                    <p class="text-sm text-gray-600">Domain of (f + g): x > 0</p>
+                                </div>
+                                <div class="bg-blue-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Example: Division</h5>
+                                    <p class="text-sm text-gray-700 mb-1">f(x) = x² (domain: all real numbers)</p>
+                                    <p class="text-sm text-gray-700 mb-1">g(x) = x - 2 (domain: all real numbers)</p>
+                                    <p class="text-sm text-gray-600">Domain of (f/g): x ≠ 2</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                   
+
+                    <!-- Virtual Aid: Function Operations Calculator -->
+                    <div class="virtual-aid rounded-2xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                            <i class="fas fa-calculator text-primary mr-3"></i>Function Operations Calculator
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="space-y-6">
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Input Functions</h4>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Choose f(x):</label>
+                                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="opsFPresets">
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-f="2x + 1">2x + 1</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-f="x²">x²</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-f="3x - 2">3x - 2</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-f="x">x</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-f="2x">2x</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-f="x² + 1">x² + 1</button>
+                                            </div>
+                                            <input type="hidden" id="functionF" value="2x + 1">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Choose g(x):</label>
+                                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="opsGPresets">
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-g="x - 3">x - 3</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-g="x + 1">x + 1</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-g="x - 2">x - 2</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-g="x + 3">x + 3</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-g="1">1</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-g="x">x</button>
+                                            </div>
+                                            <input type="hidden" id="functionG" value="x - 3">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Operation:</label>
+                                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary" data-op="add">f + g</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary" data-op="subtract">f - g</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary" data-op="multiply">f · g</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary" data-op="divide">f / g</button>
+                                            </div>
+                                            <input type="hidden" id="operation" value="add">
+                                        </div>
+                                        <button onclick="calculateOperation()" 
+                                                class="w-full bg-primary text-white py-3 px-6 rounded-lg hover:bg-secondary transition-colors font-semibold">
+                                            <i class="fas fa-calculator mr-2"></i>Calculate
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl p-6 shadow-lg" id="operationResultContainer" style="display: none;">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">
+                                        <i class="fas fa-check-circle text-green-500 mr-2"></i>Result
+                                    </h4>
+                                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border-l-4 border-green-500">
+                                        <p class="text-sm text-gray-600 mb-2">Combined Function:</p>
+                                        <p class="text-lg font-mono text-primary font-bold" id="operationResult"></p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Placeholder before calculation -->
+                                <div class="bg-white rounded-xl p-6 shadow-lg text-center" id="operationPlaceholder">
+                                    <div class="py-8">
+                                        <i class="fas fa-calculator text-gray-300 text-5xl mb-4"></i>
+                                        <p class="text-gray-500 text-lg">Click "Calculate" to see the result</p>
+                                        <p class="text-gray-400 text-sm mt-2">Choose your functions and operation above</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white" id="operationStepsContainer" style="display: none;">
+                                <h4 class="text-lg font-semibold mb-4 text-center">
+                                    <i class="fas fa-list-ol mr-2"></i>Step-by-Step Process
+                                </h4>
+                                <div class="space-y-4" id="operationSteps">
+                                    <!-- Steps will be dynamically generated here -->
+                                </div>
+                            </div>
+                            
+                            <!-- Placeholder for steps before calculation -->
+                            <div class="bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl p-6 text-center" id="stepsPlaceholder">
+                                <div class="py-8">
+                                    <i class="fas fa-list-ol text-gray-400 text-5xl mb-4"></i>
+                                    <p class="text-gray-600 text-lg font-semibold">Step-by-Step Solution</p>
+                                    <p class="text-gray-500 text-sm mt-2">The detailed steps will appear here after calculation</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                     <!-- References -->
+                     <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-book text-purple-500 mr-2"></i>References & Additional Resources
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Academic Sources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Anton, H. (2018). <em>Calculus: Early Transcendentals</em>. Wiley.</li>
+                                    <li>• Thomas, G. (2019). <em>Thomas' Calculus</em>. Pearson Education.</li>
+                                    <li>• Rogawski, J. (2019). <em>Calculus: Early Transcendentals</em>. W.H. Freeman.</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Online Resources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Wolfram Alpha: Function Operations</li>
+                                    <li>• Symbolab: Function Calculator</li>
+                                    <li>• Math Planet: Function Operations</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lesson Completion -->
+                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i>Complete This Lesson
+                        </h3>
+                        <p class="text-gray-600 text-center mb-6">
+                            Mark this lesson as completed to track your progress and unlock the next lesson.
+                        </p>
+                        <div class="text-center">
+                            <button onclick="completeLesson(3)" 
+                                    class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold inline-flex items-center">
+                                <i class="fas fa-check mr-2"></i>
+                                Mark Lesson 3 Complete
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Lesson Navigation Controls -->
+                    <div class="flex justify-between items-center mb-8">
+                        <button id="prevLessonBtn" onclick="navigateLesson(-1)" 
+                                class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fas fa-chevron-left mr-2"></i>
+                            Previous Lesson
+                        </button>
+                        
+                        <div class="flex items-center space-x-4">
+                            <div class="text-center">
+                                <div class="text-sm text-gray-600">Lesson Progress</div>
+                                <div class="text-lg font-semibold text-primary">
+                                    <span id="currentLessonNum">3</span> of 4
+                                </div>
+                            </div>
+                            <div class="w-32 bg-gray-200 rounded-full h-2">
+                                <div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        
+                        <button id="nextLessonBtn" onclick="navigateLesson(1)" 
+                                class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            Next Lesson
+                            <i class="fas fa-chevron-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lesson 4: Function Composition -->
+            <section id="lesson4" class="lesson-section">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-layer-group text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 4: Function Composition & Inverses</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                            Learn how to compose functions and find inverse functions.
+                        </p>
+                    </div>
+
+                    <!-- Learning Objectives -->
+                    <div class="bg-indigo-50 border-l-4 border-indigo-500 p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-target mr-2"></i>Learning Objectives
+                        </h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-indigo-500 mr-3"></i>
+                                Understand function composition (f ∘ g)(x) = f(g(x))
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-indigo-500 mr-3"></i>
+                                Find inverse functions f⁻¹(x)
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-indigo-500 mr-3"></i>
+                                Verify that f(f⁻¹(x)) = x
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Comprehensive Composition and Inverse Guide -->
+                    <div class="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                            <i class="fas fa-project-diagram text-purple-500 mr-3"></i>Function Composition & Inverses: Complete Guide
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-layer-group text-indigo-500 mr-2"></i>Function Composition Explained
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    Composition means putting one function inside another. The output of the first function becomes the input of the second. Think of it as a chain of operations.
+                                </p>
+                                
+                                <div class="bg-indigo-50 rounded-lg p-4 border-l-4 border-indigo-500 mb-4">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Composition Notation: (f ∘ g)(x) = f(g(x))</h5>
+                                    <p class="text-sm text-gray-600">Read as: "f composed with g of x"</p>
+                                    <p class="text-xs text-gray-500 mt-1">Important: Work from right to left!</p>
+                                </div>
+                                
+                                <div class="space-y-3">
+                                    <div class="bg-gray-50 rounded-lg p-3">
+                                        <h5 class="text-sm font-semibold text-gray-800">Step 1: Apply g(x)</h5>
+                                        <p class="text-xs text-gray-600">Find g(x) first - this becomes the input for f</p>
+                                    </div>
+                                    <div class="bg-gray-50 rounded-lg p-3">
+                                        <h5 class="text-sm font-semibold text-gray-800">Step 2: Apply f to result</h5>
+                                        <p class="text-xs text-gray-600">Use g(x) as input for f(x)</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-4 bg-yellow-50 rounded-lg p-4 border-l-4 border-yellow-500">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Real-World Analogy:</h5>
+                                    <p class="text-sm text-gray-700">Think of a factory assembly line: g(x) is the first machine, f(x) is the second machine. The output of g(x) becomes the input of f(x).</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-undo text-purple-500 mr-2"></i>Inverse Functions Explained
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    An inverse function "undoes" what the original function does. If f(x) = y, then f⁻¹(y) = x.
+                                </p>
+                                
+                                <div class="bg-purple-50 rounded-lg p-4 border-l-4 border-purple-500 mb-4">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Inverse Property: f(f⁻¹(x)) = x</h5>
+                                    <p class="text-sm text-gray-600">The function and its inverse cancel out</p>
+                                    <p class="text-xs text-gray-500 mt-1">Note: f⁻¹(x) ≠ 1/f(x)</p>
+                                </div>
+                                
+                                <div class="space-y-3">
+                                    <div class="bg-gray-50 rounded-lg p-3">
+                                        <h5 class="text-sm font-semibold text-gray-800">Property: f(f⁻¹(x)) = x</h5>
+                                        <p class="text-xs text-gray-600">Function and inverse cancel out</p>
+                                    </div>
+                                    <div class="bg-gray-50 rounded-lg p-3">
+                                        <h5 class="text-sm font-semibold text-gray-800">Property: f⁻¹(f(x)) = x</h5>
+                                        <p class="text-xs text-gray-600">Inverse and function cancel out</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-4 bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Real-World Analogy:</h5>
+                                    <p class="text-sm text-gray-700">If f(x) = "add 3", then f⁻¹(x) = "subtract 3". They undo each other!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step-by-Step Composition -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg mb-6">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-calculator text-orange-500 mr-2"></i>Step-by-Step Function Composition
+                            </h4>
+                            
+                            <div class="space-y-6">
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-gray-800 mb-3">Example: Find (f ∘ g)(x) where f(x) = 2x + 1 and g(x) = x - 3</h5>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">1</span>
+                                            <span class="text-gray-700">Write the composition formula</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">(f ∘ g)(x) = f(g(x))</div>
+                                        
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">2</span>
+                                            <span class="text-gray-700">Find g(x) first</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">g(x) = x - 3</div>
+                                        
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">3</span>
+                                            <span class="text-gray-700">Substitute g(x) into f(x)</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">f(g(x)) = f(x - 3) = 2(x - 3) + 1</div>
+                                        
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">4</span>
+                                            <span class="text-gray-700">Simplify</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">f(g(x)) = 2x - 6 + 1 = 2x - 5</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-gray-800 mb-3">Example: Find (g ∘ f)(x) where f(x) = x² and g(x) = x + 2</h5>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">1</span>
+                                            <span class="text-gray-700">Write the composition formula</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">(g ∘ f)(x) = g(f(x))</div>
+                                        
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">2</span>
+                                            <span class="text-gray-700">Find f(x) first</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">f(x) = x²</div>
+                                        
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">3</span>
+                                            <span class="text-gray-700">Substitute f(x) into g(x)</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">g(f(x)) = g(x²) = x² + 2</div>
+                                        
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">4</span>
+                                            <span class="text-gray-700">Final answer</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">(g ∘ f)(x) = x² + 2</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step-by-Step Inverse Finding -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-undo text-blue-500 mr-2"></i>Step-by-Step Inverse Function Finding
+                            </h4>
+                            
+                            <div class="space-y-6">
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-gray-800 mb-3">Example: Find f⁻¹(x) where f(x) = 3x - 2</h5>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm mr-3">1</span>
+                                            <span class="text-gray-700">Replace f(x) with y</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">y = 3x - 2</div>
+                                        
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm mr-3">2</span>
+                                            <span class="text-gray-700">Swap x and y</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">x = 3y - 2</div>
+                                        
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm mr-3">3</span>
+                                            <span class="text-gray-700">Solve for y</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">x + 2 = 3y</div>
+                                        <div class="ml-11 text-gray-600 font-mono">y = (x + 2)/3</div>
+                                        
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm mr-3">4</span>
+                                            <span class="text-gray-700">Replace y with f⁻¹(x)</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">f⁻¹(x) = (x + 2)/3</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-gray-800 mb-3">Verification: Check that f(f⁻¹(x)) = x</h5>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-3">1</span>
+                                            <span class="text-gray-700">Substitute f⁻¹(x) into f(x)</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">f(f⁻¹(x)) = f((x + 2)/3)</div>
+                                        
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-3">2</span>
+                                            <span class="text-gray-700">Apply f(x) = 3x - 2</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">f(f⁻¹(x)) = 3((x + 2)/3) - 2</div>
+                                        
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-3">3</span>
+                                            <span class="text-gray-700">Simplify</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">f(f⁻¹(x)) = x + 2 - 2 = x ✓</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                 
+
+                    <!-- Virtual Aid: Composition & Inverse Explorer -->
+                    <div class="virtual-aid rounded-2xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                            <i class="fas fa-layer-group text-primary mr-3"></i>Composition & Inverse Explorer
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="space-y-6">
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Function Input</h4>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Choose f(x):</label>
+                                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="compFPresets">
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-f="2x + 1">2x + 1</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-f="3x - 2">3x - 2</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-f="x²">x²</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-f="x + 5">x + 5</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-f="x">x</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-f="2x">2x</button>
+                                            </div>
+                                            <input type="hidden" id="compFunctionF" value="2x + 1">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Choose g(x):</label>
+                                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="compGPresets">
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-g="x - 3">x - 3</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-g="x + 2">x + 2</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-g="x + 1">x + 1</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-g="x">x</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-g="2x">2x</button>
+                                                <button type="button" class="px-3 py-2 border rounded-lg hover:border-primary font-mono" data-g="x²">x²</button>
+                                            </div>
+                                            <input type="hidden" id="compFunctionG" value="x - 3">
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <button onclick="calculateComposition()" 
+                                                    class="bg-primary text-white py-2 px-4 rounded-lg hover:bg-secondary transition-colors font-semibold">
+                                                <i class="fas fa-layer-group mr-1"></i>Compose
+                                            </button>
+                                            <button onclick="calculateInverse()" 
+                                                    class="bg-purple-500 text-white py-2 px-4 rounded-lg hover:bg-purple-600 transition-colors font-semibold">
+                                                <i class="fas fa-undo mr-1"></i>Inverse
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Results</h4>
+                                    <div class="space-y-3">
+                                        <div class="bg-indigo-50 rounded-lg p-3">
+                                            <p class="text-sm text-gray-600 mb-1">Composition (f ∘ g)(x):</p>
+                                            <p class="font-mono text-indigo-600" id="compositionResult">2x - 5</p>
+                                        </div>
+                                        <div class="bg-purple-50 rounded-lg p-3">
+                                            <p class="text-sm text-gray-600 mb-1">Inverse f⁻¹(x):</p>
+                                            <p class="font-mono text-purple-600" id="inverseResult">(x - 1)/2</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white">
+                                <h4 class="text-lg font-semibold mb-4 text-center">Visual Process</h4>
+                                <div class="space-y-4" id="compositionSteps">
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm mb-2">Composition Process:</p>
+                                        <div class="text-center">
+                                            <div class="inline-block bg-white/30 rounded-lg p-2 mb-2">
+                                                <span class="font-mono">x</span>
+                                            </div>
+                                            <div class="text-center text-2xl">↓</div>
+                                            <div class="inline-block bg-white/30 rounded-lg p-2 mb-2">
+                                                <span class="font-mono">g(x)</span>
+                                            </div>
+                                            <div class="text-center text-2xl">↓</div>
+                                            <div class="inline-block bg-white/30 rounded-lg p-2">
+                                                <span class="font-mono">f(g(x))</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                       <!-- References -->
+                       <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-book text-indigo-500 mr-2"></i>References & Additional Resources
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Academic Sources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Spivak, M. (2008). <em>Calculus</em>. Publish or Perish.</li>
+                                    <li>• Apostol, T. (2019). <em>Mathematical Analysis</em>. Wiley.</li>
+                                    <li>• Rudin, W. (2018). <em>Principles of Mathematical Analysis</em>. McGraw-Hill.</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Online Resources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Paul's Online Math Notes: Function Composition</li>
+                                    <li>• Interactive Mathematics: Inverse Functions</li>
+                                    <li>• Math Warehouse: Function Composition</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lesson Completion -->
+                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i>Complete This Lesson
+                        </h3>
+                        <p class="text-gray-600 text-center mb-6">
+                            Mark this lesson as completed to track your progress and unlock the next lesson.
+                        </p>
+                        <div class="text-center">
+                            <button onclick="completeLesson(4)" 
+                                    class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold inline-flex items-center">
+                                <i class="fas fa-check mr-2"></i>
+                                Mark Lesson 4 Complete
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Topic Completion -->
+                    <div id="topicCompletionSection" class="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl p-6 mb-8" style="display: none;">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
+                            <i class="fas fa-trophy text-purple-500 mr-2"></i>Complete This Topic
+                        </h3>
+                        <p class="text-gray-600 text-center mb-6">
+                            Congratulations! You've completed all lessons in the Functions topic. Mark this topic as complete to update your progress.
+                        </p>
+                        <div class="text-center">
+                            <button onclick="completeTopic()" 
+                                    class="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-8 py-3 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition-colors font-semibold inline-flex items-center">
+                                <i class="fas fa-trophy mr-2"></i>
+                                Mark This Topic About Function Complete
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Lesson Navigation Controls -->
+                    <div class="flex justify-center items-center mb-8">
+                        <button id="prevLessonBtn" onclick="navigateLesson(-1)" 
+                                class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fas fa-chevron-left mr-2"></i>
+                            Previous Lesson
+                        </button>
+                        
+                        <div class="flex items-center space-x-4 ml-8">
+                            <div class="text-center">
+                                <div class="text-sm text-gray-600">Lesson Progress</div>
+                                <div class="text-lg font-semibold text-primary">
+                                    <span id="currentLessonNum">4</span> of 4
+                                </div>
+                            </div>
+                            <div class="w-32 bg-gray-200 rounded-full h-2">
+                                <div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2024 MathEase. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Global variables for lesson management
+        let currentLesson = 1;
+        let completedLessons = new Set();
+        let totalLessons = 4;
+
+        // Lesson Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const lessonNavBtns = document.querySelectorAll('.lesson-nav-btn');
+            const lessonSections = document.querySelectorAll('.lesson-section');
+            
+            // Load completed lessons from database
+            loadCompletedLessons();
+            
+            lessonNavBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const lessonNum = parseInt(this.dataset.lesson);
+                    showLesson(lessonNum);
+                });
+            });
+            
+            // Initialize first lesson as active
+            showLesson(1);
+            updateNavigationButtons();
+
+            // Wire presets: Function Machine
+            const ruleButtons = document.querySelectorAll('#functionRulePresets [data-rule]');
+            ruleButtons.forEach(btn => btn.addEventListener('click', () => {
+                document.getElementById('functionRule').value = btn.getAttribute('data-rule');
+                // Visual feedback
+                ruleButtons.forEach(b => b.classList.remove('border-primary','bg-primary','text-white'));
+                btn.classList.add('border-primary');
+                // Don't auto-evaluate - student must click Evaluate button
+            }));
+            const inputButtons = document.querySelectorAll('[data-input]');
+            inputButtons.forEach(btn => btn.addEventListener('click', () => {
+                document.getElementById('inputValue').value = btn.getAttribute('data-input');
+                inputButtons.forEach(b => b.classList.remove('border-primary','bg-primary','text-white'));
+                btn.classList.add('border-primary');
+                // Don't auto-evaluate - student must click Evaluate button
+            }));
+
+            // Wire presets: Operations calculator
+            const fBtns = document.querySelectorAll('#opsFPresets [data-f]');
+            const gBtns = document.querySelectorAll('#opsGPresets [data-g]');
+            const opBtns = document.querySelectorAll('[data-op]');
+            fBtns.forEach(btn => btn.addEventListener('click', () => {
+                document.getElementById('functionF').value = btn.getAttribute('data-f');
+                fBtns.forEach(b => b.classList.remove('border-primary'));
+                btn.classList.add('border-primary');
+                // Don't auto-calculate - student must click Calculate button
+            }));
+            gBtns.forEach(btn => btn.addEventListener('click', () => {
+                document.getElementById('functionG').value = btn.getAttribute('data-g');
+                gBtns.forEach(b => b.classList.remove('border-primary'));
+                btn.classList.add('border-primary');
+                // Don't auto-calculate - student must click Calculate button
+            }));
+            opBtns.forEach(btn => btn.addEventListener('click', () => {
+                document.getElementById('operation').value = btn.getAttribute('data-op');
+                opBtns.forEach(b => b.classList.remove('border-primary'));
+                btn.classList.add('border-primary');
+                // Don't auto-calculate - student must click Calculate button
+            }));
+
+            // Don't auto-calculate on page load - student must click Calculate button
+
+            // Wire presets: Composition & Inverse
+            const compFBtns = document.querySelectorAll('#compFPresets [data-f]');
+            const compGBtns = document.querySelectorAll('#compGPresets [data-g]');
+            compFBtns.forEach(btn => btn.addEventListener('click', () => {
+                document.getElementById('compFunctionF').value = btn.getAttribute('data-f');
+                compFBtns.forEach(b => b.classList.remove('border-primary'));
+                btn.classList.add('border-primary');
+                calculateComposition();
+                calculateInverse();
+                // Render both flows on change
+                renderCompositionSteps(
+                    document.getElementById('compFunctionF').value,
+                    document.getElementById('compFunctionG').value,
+                    document.getElementById('compositionResult').textContent
+                );
+                renderInverseSteps(
+                    document.getElementById('compFunctionF').value,
+                    document.getElementById('inverseResult').textContent
+                );
+            }));
+            compGBtns.forEach(btn => btn.addEventListener('click', () => {
+                document.getElementById('compFunctionG').value = btn.getAttribute('data-g');
+                compGBtns.forEach(b => b.classList.remove('border-primary'));
+                btn.classList.add('border-primary');
+                calculateComposition();
+                renderCompositionSteps(
+                    document.getElementById('compFunctionF').value,
+                    document.getElementById('compFunctionG').value,
+                    document.getElementById('compositionResult').textContent
+                );
+            }));
+        });
+
+        // Show specific lesson
+        function showLesson(lessonNum) {
+            const lessonNavBtns = document.querySelectorAll('.lesson-nav-btn');
+            const lessonSections = document.querySelectorAll('.lesson-section');
+            
+            currentLesson = lessonNum;
+            
+            // Update navigation buttons
+            lessonNavBtns.forEach(b => {
+                const btnLessonNum = parseInt(b.dataset.lesson);
+                b.classList.remove('border-primary', 'bg-primary');
+                b.classList.add('border-transparent');
+                const icon = b.querySelector('.w-16');
+                
+                if (completedLessons.has(btnLessonNum)) {
+                    icon.classList.remove('bg-primary', 'text-white', 'bg-gray-300', 'text-gray-600');
+                    icon.classList.add('bg-green-500', 'text-white');
+                } else {
+                    icon.classList.remove('bg-primary', 'text-white', 'bg-green-500', 'text-white');
+                    icon.classList.add('bg-gray-300', 'text-gray-600');
+                }
+            });
+            
+            // Highlight current lesson
+            const currentBtn = document.querySelector(`[data-lesson="${lessonNum}"]`);
+            if (currentBtn) {
+                currentBtn.classList.add('border-primary', 'bg-primary');
+                currentBtn.classList.remove('border-transparent');
+                const icon = currentBtn.querySelector('.w-16');
+                icon.classList.add('bg-primary', 'text-white');
+                icon.classList.remove('bg-gray-300', 'text-gray-600', 'bg-green-500');
+            }
+            
+            // Show selected lesson
+            lessonSections.forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(`lesson${lessonNum}`).classList.add('active');
+            
+            // Update progress indicators
+            updateProgressIndicators();
+            updateNavigationButtons();
+            
+            // Scroll to the top of the lesson
+            setTimeout(() => {
+                const lessonSection = document.getElementById(`lesson${lessonNum}`);
+                if (lessonSection) {
+                    lessonSection.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start' 
+                    });
+                }
+            }, 100);
+        }
+
+        // Navigate between lessons
+        function navigateLesson(direction) {
+            const newLesson = currentLesson + direction;
+            if (newLesson >= 1 && newLesson <= totalLessons) {
+                showLesson(newLesson);
+            }
+        }
+
+        // Update navigation buttons state
+        function updateNavigationButtons() {
+            const prevBtn = document.getElementById('prevLessonBtn');
+            const nextBtn = document.getElementById('nextLessonBtn');
+            
+            // Previous button
+            if (currentLesson <= 1) {
+                prevBtn.disabled = true;
+            } else {
+                prevBtn.disabled = false;
+            }
+            
+            // Next button
+            if (currentLesson >= totalLessons) {
+                nextBtn.disabled = true;
+            } else {
+                nextBtn.disabled = false;
+            }
+        }
+
+        // Update progress indicators
+        function updateProgressIndicators() {
+            const currentLessonNum = document.getElementById('currentLessonNum');
+            const progressBar = document.getElementById('lessonProgressBar');
+            
+            if (currentLessonNum) {
+                currentLessonNum.textContent = currentLesson;
+            }
+            
+            if (progressBar) {
+                const progress = (currentLesson / totalLessons) * 100;
+                progressBar.style.width = progress + '%';
+            }
+        }
+
+        // Complete a lesson
+        async function completeLesson(lessonNum) {
+            console.log('Attempting to complete lesson:', lessonNum);
+            
+            try {
+                const requestData = {
+                    topic: 'functions',
+                    lesson: lessonNum,
+                    action: 'complete'
+                };
+                
+                console.log('Sending request:', requestData);
+                
+                const response = await fetch('../php/complete-lesson.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData),
+                    credentials: 'include'
+                });
+
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const text = await response.text();
+                console.log('Raw response:', text);
+                
+                let data;
+                
+                try {
+                    data = JSON.parse(text);
+                    console.log('Parsed response:', data);
+                } catch (parseError) {
+                    console.error('Invalid JSON response:', text);
+                    console.error('Parse error:', parseError);
+                    
+                    // Show detailed error message
+                    Swal.fire({
+                        title: 'Server Error',
+                        html: `
+                            <div class="text-left">
+                                <p class="mb-2">The server returned an invalid response.</p>
+                                <p class="mb-2"><strong>Possible causes:</strong></p>
+                                <ul class="list-disc list-inside mb-4 text-sm">
+                                    <li>Database tables are missing</li>
+                                    <li>PHP error occurred</li>
+                                    <li>Server configuration issue</li>
+                                </ul>
+                                <p class="mb-2"><strong>Raw response:</strong></p>
+                                <pre class="bg-gray-100 p-2 rounded text-xs overflow-auto max-h-32">${text.substring(0, 500)}</pre>
+                                <p class="mt-2 text-sm">
+                                    <a href="../fix-complete-button.html" class="text-blue-500 underline">
+                                        Click here to fix this issue
+                                    </a>
+                                </p>
+                            </div>
+                        `,
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#ef4444',
+                        background: '#ffffff',
+                        customClass: {
+                            popup: 'rounded-2xl',
+                            title: 'text-slate-800',
+                            content: 'text-slate-600'
+                        }
+                    });
+                    return;
+                }
+                
+                if (data.success) {
+                    console.log('Lesson completion successful');
+                    
+                    // Add to completed lessons
+                    completedLessons.add(lessonNum);
+                    
+                    // Show completion status
+                    showCompletionStatus();
+                    
+                    // Update lesson navigation
+                    updateLessonNavigation();
+                    
+                    // Check if all lessons are completed
+                    if (completedLessons.size === totalLessons) {
+                        // Show topic completion option
+                        showTopicCompletionOption();
+                    }
+                    
+                    // Show success message
+                    Swal.fire({
+                        title: 'Lesson Completed!',
+                        text: `Great job completing Lesson ${lessonNum}!`,
+                        icon: 'success',
+                        confirmButtonText: 'Continue Learning',
+                        confirmButtonColor: '#10b981',
+                        background: '#ffffff',
+                        customClass: {
+                            popup: 'rounded-2xl',
+                            title: 'text-slate-800',
+                            content: 'text-slate-600'
+                        }
+                    });
+                } else {
+                    console.error('Server returned error:', data);
+                    throw new Error(data.message || 'Failed to complete lesson');
+                }
+            } catch (error) {
+                console.error('Error completing lesson:', error);
+                
+                // Show detailed error message
+                Swal.fire({
+                    title: 'Error Completing Lesson',
+                    html: `
+                        <div class="text-left">
+                            <p class="mb-2"><strong>Error:</strong> ${error.message}</p>
+                            <p class="mb-2"><strong>Lesson:</strong> ${lessonNum}</p>
+                            <p class="mb-4">Please try the following:</p>
+                            <ol class="list-decimal list-inside mb-4 text-sm space-y-1">
+                                <li>Make sure you're logged in</li>
+                                <li>Check your internet connection</li>
+                                <li>Try refreshing the page</li>
+                                <li>Contact support if the problem persists</li>
+                            </ol>
+                            <p class="text-sm">
+                                <a href="../fix-complete-button.html" class="text-blue-500 underline">
+                                    Click here to run diagnostic tools
+                                </a>
+                            </p>
+                        </div>
+                    `,
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#ef4444',
+                    background: '#ffffff',
+                    customClass: {
+                        popup: 'rounded-2xl',
+                        title: 'text-slate-800',
+                        content: 'text-slate-600'
+                    }
+                });
+            }
+        }
+
+        // Complete the entire topic
+        async function completeTopic() {
+            try {
+                const response = await fetch('../php/complete-lesson.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        topic: 'functions',
+                        action: 'complete_topic'
+                    }),
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const text = await response.text();
+                let data;
+                
+                try {
+                    data = JSON.parse(text);
+                } catch (parseError) {
+                    console.error('Invalid JSON response:', text);
+                    throw new Error('Server returned invalid response. Please check if database tables exist.');
+                }
+                
+                if (data.success) {
+                    // Show success message
+                    Swal.fire({
+                        title: 'Topic Completed!',
+                        text: 'Congratulations! You have successfully completed the Functions topic. Your progress has been updated.',
+                        icon: 'success',
+                        confirmButtonText: 'View Progress',
+                        confirmButtonColor: '#8b5cf6',
+                        background: '#ffffff',
+                        customClass: {
+                            popup: 'rounded-2xl',
+                            title: 'text-slate-800',
+                            content: 'text-slate-600'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Redirect to dashboard to show updated progress
+                            window.location.href = '../dashboard.html#progress';
+                        }
+                    });
+                } else {
+                    throw new Error(data.message || 'Failed to complete topic');
+                }
+            } catch (error) {
+                console.error('Error completing topic:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Failed to save topic completion. Please try again.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#ef4444',
+                    background: '#ffffff',
+                    customClass: {
+                        popup: 'rounded-2xl',
+                        title: 'text-slate-800',
+                        content: 'text-slate-600'
+                    }
+                });
+            }
+        }
+
+        // Show topic completion option when all lessons are completed
+        function showTopicCompletionOption() {
+            const topicCompletionDiv = document.getElementById('topicCompletionSection');
+            if (topicCompletionDiv) {
+                topicCompletionDiv.style.display = 'block';
+                topicCompletionDiv.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+            }
+        }
+
+        // Load completed lessons from database
+        async function loadCompletedLessons() {
+            try {
+                const response = await fetch('../php/complete-lesson.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        topic: 'functions',
+                        action: 'get_completed'
+                    }),
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const text = await response.text();
+                let data;
+                
+                try {
+                    data = JSON.parse(text);
+                } catch (parseError) {
+                    console.error('Invalid JSON response:', text);
+                    throw new Error('Server returned invalid response. Please check if database tables exist.');
+                }
+                
+                if (data.success && data.completed_lessons) {
+                    completedLessons = new Set(data.completed_lessons);
+                    updateLessonNavigation();
+                    
+                    // Check if all lessons are completed and show topic completion option
+                    if (completedLessons.size === totalLessons) {
+                        showTopicCompletionOption();
+                    }
+                } else if (!data.success) {
+                    console.warn('Failed to load completed lessons:', data.message);
+                    // Don't show error to user, just log it
+                }
+            } catch (error) {
+                console.error('Error loading completed lessons:', error);
+                // Don't show error to user, just log it
+                // The lesson completion will still work, just won't show previous completions
+            }
+        }
+
+        // Update lesson navigation with completion status
+        function updateLessonNavigation() {
+            const lessonNavBtns = document.querySelectorAll('.lesson-nav-btn');
+            
+            lessonNavBtns.forEach(btn => {
+                const lessonNum = parseInt(btn.dataset.lesson);
+                const icon = btn.querySelector('.w-16');
+                
+                if (completedLessons.has(lessonNum)) {
+                    icon.classList.remove('bg-gray-300', 'text-gray-600', 'bg-primary', 'text-white');
+                    icon.classList.add('bg-green-500', 'text-white');
+                } else {
+                    icon.classList.remove('bg-green-500', 'text-white', 'bg-primary', 'text-white');
+                    icon.classList.add('bg-gray-300', 'text-gray-600');
+                }
+            });
+        }
+
+        // Show completion status
+        function showCompletionStatus() {
+            const statusDiv = document.getElementById('lessonCompletionStatus');
+            if (statusDiv) {
+                statusDiv.classList.remove('hidden');
+                setTimeout(() => {
+                    statusDiv.classList.add('hidden');
+                }, 3000);
+            }
+        }
+
+        // Function Machine Virtual Aid
+        function evaluateFunction() {
+            const rule = document.getElementById('functionRule').value;
+            const input = parseFloat(document.getElementById('inputValue').value);
+            
+            try {
+                // Simple evaluation for basic functions
+                let result;
+                if (rule.includes('2x + 1')) {
+                    result = 2 * input + 1;
+                } else if (rule.includes('3x - 2')) {
+                    result = 3 * input - 2;
+                } else if (rule.includes('x²')) {
+                    result = input * input;
+                } else if (rule.includes('√(')) {
+                    // √(x-a)
+                    const inside = rule.match(/√\(x-\s*(\-?\d+)\)/);
+                    const a = inside ? parseFloat(inside[1]) : 0;
+                    if (input < a) throw new Error('Input out of domain');
+                    result = Math.sqrt(input - a);
+                } else if (rule.includes('1/(x')) {
+                    // 1/(x-a)
+                    const inside = rule.match(/1\/\(x-\s*(\-?\d+)\)/);
+                    const a = inside ? parseFloat(inside[1]) : 0;
+                    if (input === a) throw new Error('Division by zero');
+                    result = 1 / (input - a);
+                } else {
+                    result = eval(rule.replace('x', input));
+                }
+                
+                // Show result containers and hide placeholders
+                document.getElementById('functionResultContainer').style.display = 'block';
+                document.getElementById('functionPlaceholder').style.display = 'none';
+                document.getElementById('functionVisualContainer').style.display = 'flex';
+                document.getElementById('visualPlaceholder').style.display = 'none';
+                
+                document.getElementById('functionResult').textContent = result;
+                document.getElementById('inputDisplay').textContent = input;
+                document.getElementById('outputDisplay').textContent = result;
+                document.getElementById('inputVisual').textContent = input;
+                document.getElementById('outputVisual').textContent = result;
+                document.getElementById('ruleVisual').textContent = rule;
+            } catch (e) {
+                alert('Invalid or out-of-domain input for the selected rule.');
+            }
+        }
+
+        function resetMachine() {
+            document.getElementById('functionRule').value = '2x + 1';
+            document.getElementById('inputValue').value = '3';
+            
+            // Hide results and show placeholders
+            document.getElementById('functionResultContainer').style.display = 'none';
+            document.getElementById('functionPlaceholder').style.display = 'block';
+            document.getElementById('functionVisualContainer').style.display = 'none';
+            document.getElementById('visualPlaceholder').style.display = 'block';
+            
+            // Reset button highlights
+            const ruleButtons = document.querySelectorAll('#functionRulePresets [data-rule]');
+            ruleButtons.forEach(b => b.classList.remove('border-primary','bg-primary','text-white'));
+            const inputButtons = document.querySelectorAll('[data-input]');
+            inputButtons.forEach(b => b.classList.remove('border-primary','bg-primary','text-white'));
+        }
+
+        // Domain Range Explorer
+        function updateFunction() {
+            const type = document.getElementById('functionType').value;
+            const functions = {
+                'linear': { func: 'f(x) = 2x + 1', domain: 'All real numbers', range: 'All real numbers' },
+                'quadratic': { func: 'f(x) = x²', domain: 'All real numbers', range: 'y ≥ 0' },
+                'sqrt': { func: 'f(x) = √(x-2)', domain: 'x ≥ 2', range: 'y ≥ 0' },
+                'rational': { func: 'f(x) = 1/(x-3)', domain: 'x ≠ 3', range: 'y ≠ 0' }
+            };
+            
+            const selected = functions[type];
+            document.getElementById('currentFunction').textContent = selected.func;
+            document.getElementById('domainResult').textContent = selected.domain;
+            document.getElementById('rangeResult').textContent = selected.range;
+            
+            // Draw the graph
+            drawFunctionGraph(type);
+        }
+
+        function resetDomainRange() {
+            updateFunction();
+        }
+
+        function drawFunctionGraph(type) {
+            const canvas = document.getElementById('domainRangeCanvas');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // Set up coordinate system
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const scale = 30; // pixels per unit
+            
+            // Draw axes
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, centerY);
+            ctx.lineTo(width, centerY);
+            ctx.moveTo(centerX, 0);
+            ctx.lineTo(centerX, height);
+            ctx.stroke();
+            
+            // Draw grid
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < width; i += scale) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, height);
+                ctx.stroke();
+            }
+            for (let i = 0; i < height; i += scale) {
+                ctx.beginPath();
+                ctx.moveTo(0, i);
+                ctx.lineTo(width, i);
+                ctx.stroke();
+            }
+            
+            // Draw function based on type
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            
+            let firstPoint = true;
+            
+            for (let x = -10; x <= 10; x += 0.1) {
+                let y;
+                
+                switch(type) {
+                    case 'linear':
+                        y = 2 * x + 1;
+                        break;
+                    case 'quadratic':
+                        y = x * x;
+                        break;
+                    case 'sqrt':
+                        if (x >= 2) {
+                            y = Math.sqrt(x - 2);
+                        } else {
+                            continue; // Skip points outside domain
+                        }
+                        break;
+                    case 'rational':
+                        if (Math.abs(x - 3) > 0.1) { // Avoid division by zero
+                            y = 1 / (x - 3);
+                        } else {
+                            continue; // Skip points near vertical asymptote
+                        }
+                        break;
+                }
+                
+                if (y !== undefined && Math.abs(y) < 20) { // Limit y range for visibility
+                    const screenX = centerX + x * scale;
+                    const screenY = centerY - y * scale;
+                    
+                    if (firstPoint) {
+                        ctx.moveTo(screenX, screenY);
+                        firstPoint = false;
+                    } else {
+                        ctx.lineTo(screenX, screenY);
+                    }
+                }
+            }
+            
+            ctx.stroke();
+            
+            // Add axis labels
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Arial';
+            ctx.fillText('x', width - 10, centerY - 5);
+            ctx.fillText('y', centerX + 5, 15);
+            
+            // Add function type label
+            ctx.fillStyle = '#667eea';
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText(type.charAt(0).toUpperCase() + type.slice(1) + ' Function', 10, 25);
+            
+            // Add some coordinate labels
+            ctx.fillStyle = '#666';
+            ctx.font = '10px Arial';
+            ctx.fillText('-5', centerX - 5 * scale, centerY + 15);
+            ctx.fillText('5', centerX + 5 * scale, centerY + 15);
+            ctx.fillText('5', centerX - 15, centerY - 5 * scale);
+            ctx.fillText('-5', centerX - 15, centerY + 5 * scale);
+            
+            // Add origin label
+            ctx.fillText('0', centerX + 5, centerY + 15);
+        }
+
+        // Function Operations Calculator
+        function calculateOperation() {
+            const f = document.getElementById('functionF').value;
+            const g = document.getElementById('functionG').value;
+            const operation = document.getElementById('operation').value;
+            
+            let result;
+            switch(operation) {
+                case 'add':
+                    result = `(${f}) + (${g})`;
+                    break;
+                case 'subtract':
+                    result = `(${f}) - (${g})`;
+                    break;
+                case 'multiply':
+                    result = `(${f}) · (${g})`;
+                    break;
+                case 'divide':
+                    result = `(${f}) / (${g})`;
+                    break;
+            }
+            
+            // Try to simplify for common linear/quadratic combos
+            const simplifyLinear = (expr) => {
+                // very lightweight simplifier for ax+b
+                const match = expr.match(/^\s*(-?\d*)x\s*([+\-])\s*(\d+)\s*$/);
+                if (!match) return null;
+                const a = match[1] === '' || match[1] === '-' ? (match[1] === '-' ? -1 : 1) : parseInt(match[1],10);
+                const sign = match[2];
+                const b = parseInt(match[3],10) * (sign === '-' ? -1 : 1);
+                return { a, b };
+            };
+
+            const fLin = simplifyLinear(f);
+            const gLin = simplifyLinear(g);
+            if (fLin && gLin) {
+                if (operation === 'add') {
+                    result = `${fLin.a + gLin.a}x ${fLin.b + gLin.b >= 0 ? '+ ' : ''}${fLin.b + gLin.b}`;
+                } else if (operation === 'subtract') {
+                    result = `${fLin.a - gLin.a}x ${fLin.b - gLin.b >= 0 ? '+ ' : ''}${fLin.b - gLin.b}`;
+                } else if (operation === 'multiply') {
+                    // (a1x+b1)(a2x+b2) = (a1a2)x^2 + (a1b2+a2b1)x + b1b2
+                    const a2 = fLin.a * gLin.a;
+                    const b2 = fLin.a * gLin.b + gLin.a * fLin.b;
+                    const c2 = fLin.b * gLin.b;
+                    result = `${a2}x² ${b2 >= 0 ? '+ ' : ''}${b2}x ${c2 >= 0 ? '+ ' : ''}${c2}`;
+                } else if (operation === 'divide') {
+                    result = `(${f}) / (${g})`;
+                }
+            }
+
+            document.getElementById('operationResult').textContent = result;
+
+            // Show result container and hide placeholder
+            document.getElementById('operationResultContainer').style.display = 'block';
+            document.getElementById('operationPlaceholder').style.display = 'none';
+            
+            // Show steps container and hide placeholder
+            document.getElementById('operationStepsContainer').style.display = 'block';
+            document.getElementById('stepsPlaceholder').style.display = 'none';
+
+            // Render dynamic step-by-step
+            renderOperationSteps(f, g, operation, result, fLin, gLin);
+        }
+
+        function renderOperationSteps(f, g, operation, result, fLin, gLin) {
+            const stepsEl = document.getElementById('operationSteps');
+            if (!stepsEl) return;
+            let html = '';
+            if (operation === 'add' || operation === 'subtract') {
+                const sym = operation === 'add' ? '+' : '-';
+                html += `
+                <div class="bg-white/20 rounded-lg p-3">
+                    <p class="text-sm font-semibold">1) Write the rule</p>
+                    <p class="font-mono text-lg">(f ${sym} g)(x) = f(x) ${sym} g(x)</p>
+                </div>
+                <div class="bg-white/20 rounded-lg p-3">
+                    <p class="text-sm font-semibold">2) Substitute</p>
+                    <p class="font-mono text-lg">(${f}) ${sym} (${g})</p>
+                </div>`;
+                if (fLin && gLin) {
+                    const mid = operation === 'add'
+                        ? `${fLin.a + gLin.a}x ${fLin.b + gLin.b >= 0 ? '+ ' : ''}${fLin.b + gLin.b}`
+                        : `${fLin.a - gLin.a}x ${fLin.b - gLin.b >= 0 ? '+ ' : ''}${fLin.b - gLin.b}`;
+                    html += `
+                    <div class="bg-white/20 rounded-lg p-3">
+                        <p class="text-sm font-semibold">3) Combine like terms</p>
+                        <p class="font-mono text-lg">${mid}</p>
+                    </div>
+                    <div class="bg-emerald-500/20 rounded-lg p-3">
+                        <p class="text-sm font-semibold">4) Final answer</p>
+                        <p class="font-mono text-lg text-white">${mid}</p>
+                    </div>`;
+                } else {
+                    html += `
+                    <div class="bg-white/20 rounded-lg p-3">
+                        <p class="text-sm font-semibold">3) Combine like terms</p>
+                        <p class="font-mono text-lg">${result}</p>
+                    </div>
+                    <div class="bg-emerald-500/20 rounded-lg p-3">
+                        <p class="text-sm font-semibold">4) Final answer</p>
+                        <p class="font-mono text-lg text-white">${result}</p>
+                    </div>`;
+                }
+            } else if (operation === 'multiply') {
+                html += `
+                <div class="bg-white/20 rounded-lg p-3">
+                    <p class="text-sm font-semibold">1) Write the rule</p>
+                    <p class="font-mono text-lg">(f · g)(x) = f(x) · g(x)</p>
+                </div>
+                <div class="bg-white/20 rounded-lg p-3">
+                    <p class="text-sm font-semibold">2) Substitute</p>
+                    <p class="font-mono text-lg">(${f}) · (${g})</p>
+                </div>`;
+                if (fLin && gLin) {
+                    const a2 = fLin.a * gLin.a;
+                    const b2 = fLin.a * gLin.b + gLin.a * fLin.b;
+                    const c2 = fLin.b * gLin.b;
+                    html += `
+                    <div class="bg-white/20 rounded-lg p-3">
+                        <p class="text-sm font-semibold">3) Distribute</p>
+                        <p class="font-mono text-lg">(${fLin.a}x + ${fLin.b})(${gLin.a}x + ${gLin.b})</p>
+                        <p class="font-mono text-lg">= ${fLin.a}x·${gLin.a}x + ${fLin.a}x·${gLin.b} + ${fLin.b}·${gLin.a}x + ${fLin.b}·${gLin.b}</p>
+                    </div>
+                    <div class="bg-white/20 rounded-lg p-3">
+                        <p class="text-sm font-semibold">4) Combine like terms</p>
+                        <p class="font-mono text-lg">${a2}x² ${b2 >= 0 ? '+ ' : ''}${b2}x ${c2 >= 0 ? '+ ' : ''}${c2}</p>
+                    </div>
+                    <div class="bg-emerald-500/20 rounded-lg p-3">
+                        <p class="text-sm font-semibold">5) Final answer</p>
+                        <p class="font-mono text-lg text-white">${a2}x² ${b2 >= 0 ? '+ ' : ''}${b2}x ${c2 >= 0 ? '+ ' : ''}${c2}</p>
+                    </div>`;
+                } else {
+                    html += `
+                    <div class="bg-white/20 rounded-lg p-3">
+                        <p class="text-sm font-semibold">3) Multiply and simplify</p>
+                        <p class="font-mono text-lg">${result}</p>
+                    </div>
+                    <div class="bg-emerald-500/20 rounded-lg p-3">
+                        <p class="text-sm font-semibold">4) Final answer</p>
+                        <p class="font-mono text-lg text-white">${result}</p>
+                    </div>`;
+                }
+            } else if (operation === 'divide') {
+                html += `
+                <div class="bg-white/20 rounded-lg p-3">
+                    <p class="text-sm font-semibold">1) Write the rule</p>
+                    <p class="font-mono text-lg">(f/g)(x) = f(x)/g(x)</p>
+                </div>
+                <div class="bg-white/20 rounded-lg p-3">
+                    <p class="text-sm font-semibold">2) Substitute</p>
+                    <p class="font-mono text-lg">(${f}) / (${g})</p>
+                </div>
+                <div class="bg-white/20 rounded-lg p-3">
+                    <p class="text-sm font-semibold">3) Note the domain</p>
+                    <p class="font-mono text-lg">g(x) ≠ 0</p>
+                </div>
+                <div class="bg-emerald-500/20 rounded-lg p-3">
+                    <p class="text-sm font-semibold">4) Final answer</p>
+                    <p class="font-mono text-lg text-white">${result}</p>
+                </div>`;
+            }
+            stepsEl.innerHTML = html;
+        }
+
+        // Composition and Inverse Calculator
+        function calculateComposition() {
+            const f = document.getElementById('compFunctionF').value;
+            const g = document.getElementById('compFunctionG').value;
+            
+            // Simple composition for basic functions
+            let result;
+            if (f.includes('2x + 1') && g.includes('x - 3')) {
+                result = '2x - 5';
+            } else if (f.includes('3x - 2') && g.includes('x + 2')) {
+                // f(g(x)) = 3(x+2) - 2 = 3x + 4
+                result = '3x + 4';
+            } else if (f.includes('x²') && g.includes('x + 1')) {
+                result = '(x + 1)² = x² + 2x + 1';
+            } else {
+                result = `f(${g})`;
+            }
+            
+            document.getElementById('compositionResult').textContent = result;
+            renderCompositionSteps(f, g, result);
+        }
+
+        function calculateInverse() {
+            const f = document.getElementById('compFunctionF').value;
+            
+            // Simple inverse for basic functions
+            let result;
+            if (f.includes('2x + 1')) {
+                result = '(x - 1)/2';
+            } else {
+                result = 'f⁻¹(x)';
+            }
+            
+            document.getElementById('inverseResult').textContent = result;
+            renderInverseSteps(f, result);
+        }
+
+        function renderCompositionSteps(f, g, result) {
+            const stepsEl = document.getElementById('compositionSteps');
+            if (!stepsEl) return;
+            const nice = (s) => s;
+            const html = `
+                <div class="bg-white/20 rounded-lg p-3">
+                    <p class="text-sm font-semibold mb-1">1) Write the rule</p>
+                    <p class="font-mono text-lg">(f ∘ g)(x) = f(g(x))</p>
+                </div>
+                <div class="bg-white/20 rounded-lg p-3">
+                    <p class="text-sm font-semibold mb-1">2) Substitute</p>
+                    <p class="font-mono text-lg">f(x) = ${nice(f)}, g(x) = ${nice(g)}</p>
+                    <p class="font-mono text-lg">f(g(x)) = f(${nice(g)})</p>
+                </div>
+                <div class="bg-emerald-500/20 rounded-lg p-3">
+                    <p class="text-sm font-semibold mb-1">3) Final answer</p>
+                    <p class="font-mono text-lg text-white">${nice(result)}</p>
+                </div>`;
+            stepsEl.innerHTML = html;
+        }
+
+        function renderInverseSteps(f, inv) {
+            const stepsEl = document.getElementById('compositionSteps');
+            if (!stepsEl) return;
+            // If inverse is generic label, show generic steps
+            let body;
+            if (inv === 'f⁻¹(x)') {
+                body = `
+                <div class="bg-white/20 rounded-lg p-3">
+                    <p class="text-sm font-semibold mb-1">1) Replace f(x) with y</p>
+                    <p class="font-mono text-lg">y = ${f}</p>
+                </div>
+                <div class="bg-white/20 rounded-lg p-3">
+                    <p class="text-sm font-semibold mb-1">2) Swap x and y</p>
+                    <p class="font-mono text-lg">x = f(y)</p>
+                </div>
+                <div class="bg-white/20 rounded-lg p-3">
+                    <p class="text-sm font-semibold mb-1">3) Solve for y</p>
+                    <p class="font-mono text-lg">y = ...</p>
+                </div>
+                <div class="bg-emerald-500/20 rounded-lg p-3">
+                    <p class="text-sm font-semibold mb-1">4) Final answer</p>
+                    <p class="font-mono text-lg text-white">f⁻¹(x)</p>
+                </div>`;
+            } else {
+                body = `
+                <div class="bg-white/20 rounded-lg p-3">
+                    <p class="text-sm font-semibold mb-1">1) Replace f(x) with y</p>
+                    <p class="font-mono text-lg">y = ${f}</p>
+                </div>
+                <div class="bg-white/20 rounded-lg p-3">
+                    <p class="text-sm font-semibold mb-1">2) Swap x and y</p>
+                    <p class="font-mono text-lg">x = f(y)</p>
+                </div>
+                <div class="bg-white/20 rounded-lg p-3">
+                    <p class="text-sm font-semibold mb-1">3) Solve for y</p>
+                    <p class="font-mono text-lg">y = ${inv.replace(/x/g,'y')}</p>
+                </div>
+                <div class="bg-emerald-500/20 rounded-lg p-3">
+                    <p class="text-sm font-semibold mb-1">4) Final answer</p>
+                    <p class="font-mono text-lg text-white">f⁻¹(x) = ${inv}</p>
+                </div>`;
+            }
+            stepsEl.innerHTML = body;
+        }
+
+
+        // Auth guard
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const res = await fetch('../php/user.php', { credentials: 'include', cache: 'no-store' });
+                if (res.status === 401) { window.location.href = '../login.html'; return; }
+                const data = await res.json();
+                if (!data.success) { window.location.href = '../login.html'; return; }
+                const u = data.user || {};
+                const gradeOk = !u.grade_level || String(u.grade_level) === '11';
+                const strandOk = !u.strand || String(u.strand).toUpperCase() === 'STEM';
+                if (!gradeOk || !strandOk) { window.location.href = '../dashboard.html'; return; }
+                
+                // Update user name
+                const userNameEl = document.getElementById('userName');
+                if (userNameEl && u.first_name) {
+                    userNameEl.textContent = `${u.first_name} ${u.last_name || ''}`.trim();
+                }
+                
+                // Initialize the graph
+                setTimeout(() => {
+                    updateFunction();
+                // Initialize Lesson 4 visual steps
+                calculateComposition();
+                calculateInverse();
+                renderCompositionSteps(
+                    document.getElementById('compFunctionF')?.value || '2x + 1',
+                    document.getElementById('compFunctionG')?.value || 'x - 3',
+                    document.getElementById('compositionResult')?.textContent || '2x - 5'
+                );
+                renderInverseSteps(
+                    document.getElementById('compFunctionF')?.value || '2x + 1',
+                    document.getElementById('inverseResult')?.textContent || '(x - 1)/2'
+                );
+                }, 100);
+            } catch (e) {
+                window.location.href = '../login.html';
+            }
+        });
+    </script>
+</body>
+</html>

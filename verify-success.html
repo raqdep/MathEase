@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verified - MathEase</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="register-page">
+    <section class="auth-section" style="padding-top:60px;">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <div class="auth-logo">
+                        <img src="css/nav-logo/logo-mid.png" alt="MathEase Logo" class="auth-logo-img">
+                        <h1>MathEase</h1>
+                    </div>
+                    <h2>Email Verified Successfully!</h2>
+                    <p>Your account has been verified and is ready to use.</p>
+                </div>
+
+                <div class="auth-form">
+                    <div style="text-align: center; margin: 30px 0;">
+                        <div style="background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); color: white; width: 80px; height: 80px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 20px;">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <h3 style="color: #27ae60; margin: 0 0 10px 0;">Verification Complete!</h3>
+                        <p id="welcomeMessage" style="color: #666; margin: 0;">Welcome to MathEase!</p>
+                    </div>
+
+                    <div class="form-group">
+                        <a href="login.html" class="btn btn-primary btn-full">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Continue to Login
+                        </a>
+                    </div>
+                </div>
+
+                <div class="auth-footer">
+                    <p>Return to <a href="index.html">Home</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Get name from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const name = urlParams.get('name');
+        
+        if (name) {
+            document.getElementById('welcomeMessage').textContent = `Welcome to MathEase, ${name}!`;
+        }
+    </script>
+</body>
+</html>

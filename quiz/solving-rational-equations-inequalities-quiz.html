@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solving Rational Equations and Inequalities Quiz - MathEase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#667eea',
+                        'secondary': '#764ba2',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .question-card {
+            transition: all 0.3s ease;
+        }
+        .question-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.15);
+        }
+        .option-selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        .option-correct {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-color: #10b981;
+        }
+        .option-incorrect {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border-color: #ef4444;
+        }
+        .option-review {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+        .review-mode .option {
+            pointer-events: none;
+        }
+        .review-mode .option input {
+            pointer-events: none;
+        }
+        .review-mode .option input[type="number"] {
+            pointer-events: none;
+        }
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+        .question-card {
+            animation: slideInUp 0.6s ease-out;
+        }
+        .option {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .option:hover::before {
+            left: 100%;
+        }
+        .option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .virtual-aid {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+</head>
+<body class="font-inter bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="../index.html" class="flex items-center space-x-2">
+                        <img src="../css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-8 w-8">
+                        <span class="text-xl font-bold text-primary">MathEase</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="../dashboard.html" class="text-gray-700 hover:text-primary transition-colors">
+                        <i class="fas fa-home mr-2"></i>Dashboard
+                    </a>
+                    <a href="../topics.html" class="text-primary font-semibold">
+                        <i class="fas fa-book mr-2"></i>Topics
+                    </a>
+                    <span class="text-gray-600">
+                        <i class="fas fa-user mr-2"></i><span id="userName">Student</span>
+                    </span>
+                    <a href="../php/logout.php" class="text-gray-700 hover:text-red-600 transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="gradient-bg text-white py-12">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
+                <i class="fas fa-calculator mr-2"></i>
+                <span class="font-semibold">General Mathematics 11</span>
+            </div>
+            <h1 class="text-3xl md:text-5xl font-bold mb-4">Solving Rational Equations and Inequalities Quiz</h1>
+            <p class="text-lg md:text-xl text-white/90 mb-6">
+                Test your understanding of solving rational equations and inequalities
+            </p>
+            <div class="flex justify-center space-x-4">
+                <div class="bg-white/20 backdrop-blur-sm rounded-full px-6 py-2">
+                    <span class="font-semibold">10 Multiple Choice</span>
+                </div>
+                <div class="bg-white/20 backdrop-blur-sm rounded-full px-6 py-2">
+                    <span class="font-semibold">1 Problem Solving</span>
+                </div>
+                <div class="bg-white/20 backdrop-blur-sm rounded-full px-6 py-2">
+                    <span class="font-semibold">30 Minutes</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Quiz Instructions -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-info-circle text-2xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Quiz Instructions</h2>
+                <p class="text-gray-600">Read the instructions carefully before starting the quiz</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-blue-50 rounded-lg p-4">
+                    <h3 class="font-semibold text-blue-800 mb-2">
+                        <i class="fas fa-clock text-blue-500 mr-2"></i>Time Limit
+                    </h3>
+                    <p class="text-blue-700 text-sm">You have 30 minutes to complete this quiz</p>
+                </div>
+                <div class="bg-green-50 rounded-lg p-4">
+                    <h3 class="font-semibold text-green-800 mb-2">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i>Passing Score
+                    </h3>
+                    <p class="text-green-700 text-sm">You need 70% (8 out of 11 questions) to pass</p>
+                </div>
+                <div class="bg-purple-50 rounded-lg p-4">
+                    <h3 class="font-semibold text-purple-800 mb-2">
+                        <i class="fas fa-question-circle text-purple-500 mr-2"></i>Question Types
+                    </h3>
+                    <p class="text-purple-700 text-sm">10 multiple choice + 1 problem solving</p>
+                </div>
+                <div class="bg-orange-50 rounded-lg p-4">
+                    <h3 class="font-semibold text-orange-800 mb-2">
+                        <i class="fas fa-exclamation-triangle text-orange-500 mr-2"></i>Important
+                    </h3>
+                    <p class="text-orange-700 text-sm">You can only take this quiz once</p>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <button id="startQuizBtn" class="bg-primary text-white px-8 py-3 rounded-lg hover:bg-secondary transition-colors font-semibold text-lg">
+                    <i class="fas fa-play mr-2"></i>Start Quiz
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Content -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div id="quizContainer" class="hidden">
+            <!-- Question 1 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="1">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 1 of 11</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        What is the first step in solving a rational equation?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q1" value="a" class="mr-3">
+                            <span>Find the least common denominator (LCD)</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q1" value="b" class="mr-3">
+                            <span>Factor the numerator</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q1" value="c" class="mr-3">
+                            <span>Graph the function</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q1" value="d" class="mr-3">
+                            <span>Find the domain</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="2">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 2 of 11</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        What are extraneous solutions in rational equations?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q2" value="a" class="mr-3">
+                            <span>Solutions that appear to work but don't satisfy the original equation</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q2" value="b" class="mr-3">
+                            <span>Solutions that are always correct</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q2" value="c" class="mr-3">
+                            <span>Solutions that are negative</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q2" value="d" class="mr-3">
+                            <span>Solutions that are fractions</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="3">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 3 of 11</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        Solve the rational equation: 1/x + 1/(x+2) = 5/12
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q3" value="a" class="mr-3">
+                            <span>x = 1.2 and x = -4</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q3" value="b" class="mr-3">
+                            <span>x = 2 and x = -3</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q3" value="c" class="mr-3">
+                            <span>x = 5 and x = -2</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q3" value="d" class="mr-3">
+                            <span>No solution</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 4 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="4">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 4 of 11</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        What method is used to solve rational inequalities?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q4" value="a" class="mr-3">
+                            <span>Sign analysis and number line</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q4" value="b" class="mr-3">
+                            <span>Direct substitution</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q4" value="c" class="mr-3">
+                            <span>Graphing only</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q4" value="d" class="mr-3">
+                            <span>Factoring only</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 5 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="5">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 5 of 11</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        Solve the rational inequality: (x - 1)/(x + 2) ≥ 0
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q5" value="a" class="mr-3">
+                            <span>(-∞, -2) ∪ [1, ∞)</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q5" value="b" class="mr-3">
+                            <span>(-∞, 1] ∪ (2, ∞)</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q5" value="c" class="mr-3">
+                            <span>[-2, 1]</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q5" value="d" class="mr-3">
+                            <span>(-∞, -2) ∪ (1, ∞)</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 6 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 6 of 11</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        What are critical points in solving rational inequalities?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q6" value="a" class="mr-3">
+                            <span>Zeros of numerator and denominator</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q6" value="b" class="mr-3">
+                            <span>Only zeros of the numerator</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q6" value="c" class="mr-3">
+                            <span>Only zeros of the denominator</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q6" value="d" class="mr-3">
+                            <span>All real numbers</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 7 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="7">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 7 of 11</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        Why do we need to check solutions in rational equations?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q7" value="a" class="mr-3">
+                            <span>To identify and eliminate extraneous solutions</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q7" value="b" class="mr-3">
+                            <span>To make the equation more complex</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q7" value="c" class="mr-3">
+                            <span>To find more solutions</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q7" value="d" class="mr-3">
+                            <span>To simplify the equation</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 8 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="8">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 8 of 11</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        What does the interval notation (-∞, -2) ∪ [1, ∞) represent?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q8" value="a" class="mr-3">
+                            <span>All numbers less than -2 or greater than or equal to 1</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q8" value="b" class="mr-3">
+                            <span>All numbers between -2 and 1</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q8" value="c" class="mr-3">
+                            <span>All numbers greater than -2 and less than 1</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q8" value="d" class="mr-3">
+                            <span>Only the numbers -2 and 1</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 9 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="9">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 9 of 11</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        In the equation 1/x + 1/(x+2) = 5/12, what is the LCD?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q9" value="a" class="mr-3">
+                            <span>x(x+2)</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q9" value="b" class="mr-3">
+                            <span>12x</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q9" value="c" class="mr-3">
+                            <span>12x(x+2)</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q9" value="d" class="mr-3">
+                            <span>x + 2</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 10 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="10">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 10 of 11</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        When solving rational inequalities, what do we test in each interval?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q10" value="a" class="mr-3">
+                            <span>One test point to determine the sign</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q10" value="b" class="mr-3">
+                            <span>All possible values</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q10" value="c" class="mr-3">
+                            <span>Only the endpoints</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q10" value="d" class="mr-3">
+                            <span>Only critical points</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problem Solving Question -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="11">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Problem Solving Question</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        Two pipes can fill a tank. Pipe A can fill it in 6 hours, and Pipe B can fill it in 4 hours. How long will it take to fill the tank if both pipes are used together? (Express your answer as a decimal)
+                    </p>
+                    <div class="bg-white rounded-lg p-6 shadow-sm border-2 border-gray-200">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Enter your answer (in hours):</label>
+                        <input type="number" id="ps-answer" step="0.1" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none" placeholder="Enter time in hours">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center">
+                <button id="submitQuizBtn" class="bg-primary text-white px-8 py-3 rounded-lg hover:bg-secondary transition-colors font-semibold text-lg">
+                    <i class="fas fa-check mr-2"></i>Submit Quiz
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Container -->
+        <div id="resultsContainer" class="hidden">
+            <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                <!-- Score Summary -->
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-trophy text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Total Score</h3>
+                        <p class="text-2xl font-bold text-blue-600" id="totalScore">0/11</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-check-circle text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Correct</h3>
+                        <p class="text-2xl font-bold text-green-600" id="correctAnswers">0</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-times-circle text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Incorrect</h3>
+                        <p class="text-2xl font-bold text-red-600" id="incorrectAnswers">0</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-clock text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Time Taken</h3>
+                        <p class="text-2xl font-bold text-purple-600" id="completionTime">0:00</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-percentage text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Grade</h3>
+                        <p class="text-2xl font-bold text-orange-600" id="overallGrade">0%</p>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="mb-8">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium text-gray-700">Overall Progress</span>
+                        <span class="text-sm font-medium text-gray-700" id="gradeProgressText">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-3">
+                        <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-1000 ease-out" id="gradeProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Detailed Performance Analysis -->
+                <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-chart-line text-indigo-600 mr-2"></i>
+                        Performance Analysis
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold text-gray-700 mb-2">Strengths</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li class="flex items-center">
+                                    <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                    Understanding rational equation concepts
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                    Solving rational inequalities
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-700 mb-2">Areas for Improvement</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li class="flex items-center">
+                                    <i class="fas fa-exclamation-triangle text-orange-500 mr-2"></i>
+                                    Identifying extraneous solutions
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-exclamation-triangle text-orange-500 mr-2"></i>
+                                    Work rate problems
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="showLeaderboard()" class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
+                        <i class="fas fa-trophy mr-2"></i>
+                        View Leaderboard
+                    </button>
+                    <button onclick="goToDashboard()" class="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
+                        <i class="fas fa-home mr-2"></i>
+                        Back to Dashboard
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboard Container -->
+        <div id="leaderboardContainer" class="hidden">
+            <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                <!-- Leaderboard Header -->
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-trophy text-white text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Solving Rational Equations and Inequalities Quiz Leaderboard</h2>
+                    <p class="text-gray-600">See how you compare with other students</p>
+                </div>
+
+                <!-- Leaderboard Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-users text-blue-600"></i>
+                        </div>
+                        <h3 class="text-sm font-medium text-gray-700">Total Participants</h3>
+                        <p class="text-xl font-bold text-blue-600" id="totalParticipants">0</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-chart-bar text-green-600"></i>
+                        </div>
+                        <h3 class="text-sm font-medium text-gray-700">Average Score</h3>
+                        <p class="text-xl font-bold text-green-600" id="averageScore">0%</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-clock text-purple-600"></i>
+                        </div>
+                        <h3 class="text-sm font-medium text-gray-700">Fastest Time</h3>
+                        <p class="text-xl font-bold text-purple-600" id="fastestTime">0:00</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-medal text-orange-600"></i>
+                        </div>
+                        <h3 class="text-sm font-medium text-gray-700">Your Rank</h3>
+                        <p class="text-xl font-bold text-orange-600" id="studentRank">--</p>
+                    </div>
+                </div>
+
+                <!-- Leaderboard Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rank</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboardTable" class="bg-white divide-y divide-gray-200">
+                            <!-- Leaderboard entries will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Back Button -->
+                <div class="text-center mt-8">
+                    <button onclick="hideLeaderboard()" class="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Back to Results
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2024 MathEase. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Timer variables
+        let quizStartTime;
+        let timerInterval;
+        let quizDuration = 0; // in seconds
+        let currentAttemptId = null;
+        let isReviewMode = false;
+        let quizDeadline = null;
+        let quizStarted = false; // Track if quiz has been started
+
+        // Quiz data with correct answers
+        const quizData = {
+            answers: {
+                q1: 'a', // Find the least common denominator (LCD)
+                q2: 'a', // Solutions that appear to work but don't satisfy the original equation
+                q3: 'a', // x = 1.2 and x = -4
+                q4: 'a', // Sign analysis and number line
+                q5: 'a', // (-∞, -2) ∪ [1, ∞)
+                q6: 'a', // Zeros of numerator and denominator
+                q7: 'a', // To identify and eliminate extraneous solutions
+                q8: 'a', // All numbers less than -2 or greater than or equal to 1
+                q9: 'a', // x(x+2)
+                q10: 'a' // One test point to determine the sign
+            },
+            problemSolving: {
+                answer: 2.4 // Work rate problem: 1/6 + 1/4 = 1/t, so t = 2.4 hours
+            }
+        };
+
+        // Initialize quiz
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if student has already completed this quiz
+            checkQuizCompletion();
+            
+            // Start quiz button
+            document.getElementById('startQuizBtn').addEventListener('click', startQuiz);
+            
+            // Add event listeners to options
+            addOptionListeners();
+        });
+
+        // Add event listeners to all options
+        function addOptionListeners() {
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    if (!isReviewMode) {
+                        const radio = this.querySelector('input[type="radio"]');
+                        if (radio) {
+                            radio.checked = true;
+                            updateOptionStyles();
+                        }
+                    }
+                });
+            });
+        }
+
+        // Update option styles when selected
+        function updateOptionStyles() {
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => {
+                const radio = option.querySelector('input[type="radio"]');
+                if (radio && radio.checked) {
+                    option.classList.add('option-selected');
+                } else {
+                    option.classList.remove('option-selected');
+                }
+            });
+        }
+
+        // Start quiz function
+        function startQuiz() {
+            try {
+                // Set quiz started flag
+                quizStarted = true;
+                
+                // Hide instructions container
+                const instructionsContainer = document.querySelector('.max-w-4xl.mx-auto.px-4.sm\\:px-6.lg\\:px-8.py-8');
+                if (instructionsContainer) {
+                    instructionsContainer.style.display = 'none';
+                }
+                
+                // Show quiz container
+                const quizContainer = document.getElementById('quizContainer');
+                if (quizContainer) {
+                    quizContainer.classList.remove('hidden');
+                }
+                
+                // Start the timer
+                startTimer();
+                
+                // Initialize quiz
+                initializeQuiz();
+            } catch (error) {
+                console.error('Error starting quiz:', error);
+                Swal.fire({
+                    title: 'Quiz Start Error',
+                    text: 'There was an error starting the quiz. Please try again.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#667eea'
+                });
+            }
+        }
+
+        // Start timer
+        function startTimer() {
+            quizStartTime = new Date();
+            timerInterval = setInterval(() => {
+                quizDuration++;
+            }, 1000);
+        }
+
+        // Initialize quiz
+        function initializeQuiz() {
+            // Add any initialization logic here
+            console.log('Quiz initialized');
+        }
+
+        // Submit quiz function
+        async function submitQuiz() {
+            try {
+                // Clear timer
+                clearInterval(timerInterval);
+                
+                // Get student answers
+                const answers = getStudentAnswers();
+                
+                // Calculate score
+                const score = calculateScore(answers);
+                const percentage = Math.round((score / 11) * 100);
+                
+                // Save quiz attempt
+                const attemptId = await saveQuizAttempt(answers, score, percentage);
+                
+                if (attemptId) {
+                    currentAttemptId = attemptId;
+                    // Show results
+                    showResults(score, percentage, answers);
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'There was an error saving your quiz. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#667eea'
+                    });
+                }
+            } catch (error) {
+                console.error('Error submitting quiz:', error);
+                Swal.fire({
+                    title: 'Submission Error',
+                    text: 'There was an error submitting your quiz. Please try again.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#667eea'
+                });
+            }
+        }
+
+        // Get student answers
+        function getStudentAnswers() {
+            const answers = {};
+            
+            // Multiple choice questions
+            for (let i = 1; i <= 10; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                answers[`q${i}`] = selected ? selected.value : null;
+            }
+            
+            // Problem solving question
+            const psAnswer = document.getElementById('ps-answer').value;
+            answers['q11'] = psAnswer;
+            
+            return answers;
+        }
+
+        // Calculate score
+        function calculateScore(answers) {
+            let score = 0;
+            
+            // Check multiple choice questions
+            for (let i = 1; i <= 10; i++) {
+                const questionKey = `q${i}`;
+                const studentAnswer = answers[questionKey];
+                const correctAnswer = quizData.answers[questionKey];
+                
+                if (studentAnswer && studentAnswer.toString().toLowerCase() === correctAnswer.toString().toLowerCase()) {
+                    score++;
+                }
+            }
+            
+            // Check problem solving question
+            const psAnswer = answers['q11'];
+            const psCorrect = quizData.problemSolving.answer;
+            
+            if (psAnswer && parseFloat(psAnswer) === psCorrect) {
+                score++;
+            }
+            
+            return score;
+        }
+
+        // Save quiz attempt
+        async function saveQuizAttempt(answers, score, percentage) {
+            try {
+                const response = await fetch('../php/quiz-management.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'save_quiz_attempt',
+                        quiz_type: 'solving-rational-equations-inequalities',
+                        answers: answers,
+                        score: score,
+                        total_questions: 11,
+                        percentage: percentage,
+                        time_taken: quizDuration
+                    }),
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    return result.attempt_id;
+                } else {
+                    console.error('Error saving quiz:', result.message);
+                    return null;
+                }
+            } catch (error) {
+                console.error('Error saving quiz:', error);
+                return null;
+            }
+        }
+
+        // Show results
+        function showResults(score, percentage, answers) {
+            // Hide quiz container
+            document.getElementById('quizContainer').classList.add('hidden');
+            
+            // Show results container
+            document.getElementById('resultsContainer').classList.remove('hidden');
+            
+            // Update result displays
+            document.getElementById('totalScore').textContent = `${score}/11`;
+            document.getElementById('correctAnswers').textContent = score;
+            document.getElementById('incorrectAnswers').textContent = 11 - score;
+            document.getElementById('completionTime').textContent = formatTime(quizDuration);
+            document.getElementById('overallGrade').textContent = `${percentage}%`;
+            
+            // Animate progress bar
+            const progressBar = document.getElementById('gradeProgress');
+            progressBar.style.width = `${percentage}%`;
+            
+            // Load leaderboard data
+            loadLeaderboard();
+        }
+
+        // Format time in MM:SS format
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        // Load leaderboard
+        async function loadLeaderboard() {
+            try {
+                const response = await fetch('../php/quiz-management.php?action=get_leaderboard&quiz_type=solving-rational-equations-inequalities', {
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success && result.leaderboard) {
+                    updateLeaderboardStats(result.leaderboard);
+                    populateLeaderboardTable(result.leaderboard);
+                }
+            } catch (error) {
+                console.error('Error loading leaderboard:', error);
+            }
+        }
+
+        // Update leaderboard statistics
+        function updateLeaderboardStats(leaderboard) {
+            const totalParticipants = leaderboard.length;
+            const averageScore = leaderboard.length > 0 ? 
+                Math.round(leaderboard.reduce((sum, entry) => sum + entry.percentage, 0) / leaderboard.length) : 0;
+            const fastestTime = leaderboard.length > 0 ? 
+                Math.min(...leaderboard.map(entry => entry.time_taken)) : 0;
+            
+            document.getElementById('totalParticipants').textContent = totalParticipants;
+            document.getElementById('averageScore').textContent = `${averageScore}%`;
+            document.getElementById('fastestTime').textContent = formatTime(fastestTime);
+            
+            // Find student's rank
+            const studentRank = leaderboard.findIndex(entry => entry.attempt_id === currentAttemptId) + 1;
+            document.getElementById('studentRank').textContent = studentRank > 0 ? `#${studentRank}` : '--';
+        }
+
+        // Populate leaderboard table
+        function populateLeaderboardTable(leaderboard) {
+            const tableBody = document.getElementById('leaderboardTable');
+            tableBody.innerHTML = '';
+            
+            leaderboard.forEach((entry, index) => {
+                const row = document.createElement('tr');
+                const isCurrentStudent = entry.attempt_id === currentAttemptId;
+                
+                row.className = isCurrentStudent ? 'bg-blue-50' : '';
+                row.innerHTML = `
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900">
+                        <div class="flex items-center">
+                            ${index < 3 ? `<i class="fas fa-trophy text-${index === 0 ? 'yellow' : index === 1 ? 'gray' : 'orange'}-500 mr-2"></i>` : ''}
+                            #${index + 1}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-900">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mr-3">
+                                <span class="text-white text-xs font-bold">${entry.first_name.charAt(0)}${entry.last_name.charAt(0)}</span>
+                            </div>
+                            ${entry.first_name} ${entry.last_name}
+                            ${isCurrentStudent ? '<span class="ml-2 bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">You</span>' : ''}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-900">${entry.score}/${entry.total_questions}</td>
+                    <td class="px-6 py-4 text-sm text-gray-900">${formatTime(entry.time_taken)}</td>
+                    <td class="px-6 py-4 text-sm text-gray-900">${new Date(entry.quiz_date).toLocaleDateString()}</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Show leaderboard
+        function showLeaderboard() {
+            document.getElementById('resultsContainer').classList.add('hidden');
+            document.getElementById('leaderboardContainer').classList.remove('hidden');
+        }
+
+        // Hide leaderboard
+        function hideLeaderboard() {
+            document.getElementById('leaderboardContainer').classList.add('hidden');
+            document.getElementById('resultsContainer').classList.remove('hidden');
+        }
+
+        // Go to dashboard
+        function goToDashboard() {
+            window.location.href = '../dashboard.html';
+        }
+
+        // Check if student has already completed this quiz
+        async function checkQuizCompletion() {
+            try {
+                const response = await fetch('../php/quiz-management.php?action=get_student_history&quiz_type=solving-rational-equations-inequalities', {
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success && result.attempts && result.attempts.length > 0) {
+                    const latestAttempt = result.attempts[0];
+                    
+                    Swal.fire({
+                        title: 'Quiz Already Completed',
+                        html: `
+                            <div class="text-center">
+                                <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-check-circle text-blue-500 text-3xl"></i>
+                                </div>
+                                <p class="text-lg text-gray-700 mb-4">You have already completed this quiz!</p>
+                                <div class="bg-blue-50 rounded-lg p-4 mb-4">
+                                    <div class="text-2xl font-bold text-blue-600">${latestAttempt.score}/${latestAttempt.total_questions}</div>
+                                    <div class="text-sm text-blue-500">Score: ${latestAttempt.percentage}%</div>
+                                    <div class="text-xs text-gray-500 mt-1">Completed on ${latestAttempt.quiz_date}</div>
+                                </div>
+                                <p class="text-sm text-gray-600">You cannot retake this quiz.</p>
+                            </div>
+                        `,
+                        icon: 'info',
+                        confirmButtonText: 'Back to Quizzes',
+                        confirmButtonColor: '#6366f1',
+                        background: '#ffffff',
+                        customClass: {
+                            popup: 'rounded-2xl',
+                            title: 'text-slate-800',
+                            content: 'text-slate-600'
+                        },
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = '../quizzes.html';
+                        }
+                    });
+                    
+                    return true;
+                }
+                
+                return false;
+            } catch (error) {
+                console.error('Error checking quiz completion:', error);
+                return false;
+            }
+        }
+    </script>
+</body>
+</html>

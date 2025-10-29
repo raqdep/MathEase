@@ -1,0 +1,798 @@
+/* One-to-One Functions - Custom Styles */
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Gradient Background */
+.gradient-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Lesson Section Display */
+.lesson-section {
+    display: none !important;
+}
+
+.lesson-section.active {
+    display: block !important;
+}
+
+/* Ensure proper lesson visibility */
+.lesson-section[style*="display: block"] {
+    display: block !important;
+}
+
+/* MELCs Alignment Box */
+.melcs-alignment {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border-left: 4px solid #2196f3;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+}
+
+/* Lesson Card Animations */
+.lesson-card {
+    transition: all 0.3s ease;
+}
+
+.lesson-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15);
+}
+
+/* Virtual Aid Styling */
+.virtual-aid {
+    background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
+    border: 2px solid #e1e8ff;
+}
+
+/* One-to-One Function Display */
+.one-to-one-display {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border: 1px solid #0ea5e9;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+/* Function Analysis */
+.function-analysis {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border-left: 4px solid #22c55e;
+    padding: 16px;
+    margin: 8px 0;
+    border-radius: 0 8px 8px 0;
+}
+
+/* Horizontal Line Test */
+.horizontal-line-test {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border-left: 4px solid #ef4444;
+    padding: 16px;
+    margin: 8px 0;
+    border-radius: 0 8px 8px 0;
+}
+
+/* Function Display */
+.function-display {
+    font-family: 'Courier New', monospace;
+    font-size: 18px;
+    font-weight: bold;
+    color: #16a34a;
+    background: #f0fdf4;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid #22c55e;
+}
+
+/* Inverse Function Display */
+.inverse-function-display {
+    font-family: 'Courier New', monospace;
+    font-size: 18px;
+    font-weight: bold;
+    color: #dc2626;
+    background: #fef2f2;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid #ef4444;
+}
+
+/* Step-by-Step Process */
+.step-process {
+    background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%);
+    border: 1px solid #f59e0b;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 16px 0;
+}
+
+.step-number {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 16px;
+}
+
+/* Function Analyzer */
+.function-analyzer {
+    background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+    border: 2px solid #a855f7;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+/* Testing Tool */
+.testing-tool {
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    border: 2px solid #10b981;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+/* Inverse Calculator */
+.inverse-calculator {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 2px solid #f59e0b;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+/* Application Solver */
+.application-solver {
+    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+    border: 2px solid #0ea5e9;
+    border-radius: 12px;
+    padding: 24px;
+}
+
+/* Interactive Elements */
+.interactive-element {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.interactive-element:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* One-to-One Status Indicators */
+.one-to-one-status {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.one-to-one-status.true {
+    background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+    color: #166534;
+    border: 1px solid #22c55e;
+}
+
+.one-to-one-status.false {
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    color: #991b1b;
+    border: 1px solid #ef4444;
+}
+
+/* Horizontal Line Test Visualization */
+.horizontal-line {
+    stroke: #3b82f6;
+    stroke-width: 2;
+    stroke-dasharray: 5, 5;
+}
+
+.horizontal-line-label {
+    fill: #3b82f6;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Function Graph */
+.function-graph {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+/* Success States */
+.success {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border: 2px solid #22c55e;
+    color: #16a34a;
+}
+
+.success::before {
+    content: "✓";
+    color: #22c55e;
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+/* Error States */
+.error {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border: 2px solid #ef4444;
+    color: #dc2626;
+}
+
+.error::before {
+    content: "✗";
+    color: #ef4444;
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+/* Warning States */
+.warning {
+    background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%);
+    border: 2px solid #f59e0b;
+    color: #d97706;
+}
+
+.warning::before {
+    content: "⚠";
+    color: #f59e0b;
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+/* Custom Button Styles */
+.btn-primary {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+}
+
+/* Loading States */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #6366f1;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Animation Classes */
+.fade-in {
+    animation: fadeIn 0.6s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Hover Effects */
+.hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.hover-glow:hover {
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+}
+
+/* Focus States */
+.focus-ring:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+/* Lesson Completion Styles */
+.lesson-section.completed {
+    border-left: 4px solid #22c55e;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+}
+
+.lesson-section.completed::before {
+    content: "✓";
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: #22c55e;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Progress Bar Animation */
+#lessonProgressBar {
+    transition: width 0.5s ease-in-out;
+}
+
+/* Button States */
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+button:disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Lesson Navigation Enhancements */
+.lesson-nav-btn {
+    transition: all 0.3s ease;
+}
+
+.lesson-nav-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.lesson-nav-btn.completed {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border-color: #22c55e;
+}
+
+.lesson-nav-btn.completed .w-16 {
+    background: #22c55e;
+    color: white;
+}
+
+/* Interactive Element Enhancements */
+.interactive-element {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.interactive-element:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Success and Error States */
+.success-message {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border: 2px solid #22c55e;
+    color: #16a34a;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 8px 0;
+}
+
+.error-message {
+    background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+    border: 2px solid #ef4444;
+    color: #dc2626;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 8px 0;
+}
+
+/* Loading States */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #6366f1;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.slide-up {
+    animation: slideUp 0.8s ease-out;
+}
+
+.scale-in {
+    animation: scaleIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { 
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from { 
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to { 
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .lesson-nav-btn {
+        flex-direction: column;
+        text-align: center;
+        padding: 16px;
+    }
+    
+    .lesson-nav-btn .w-16 {
+        margin-bottom: 8px;
+    }
+    
+    .virtual-aid {
+        padding: 16px;
+    }
+    
+    .function-display,
+    .inverse-function-display {
+        font-size: 16px;
+        padding: 10px 14px;
+    }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Print Styles */
+@media print {
+    .lesson-nav-btn,
+    .virtual-aid,
+    .btn-primary,
+    .btn-secondary {
+        display: none;
+    }
+    
+    .lesson-section {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+    
+    body {
+        background: white;
+        color: black;
+    }
+    
+    .function-display,
+    .inverse-function-display {
+        background: white;
+        border: 1px solid black;
+    }
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    .gradient-bg {
+        background: #000000;
+        color: #ffffff;
+    }
+    
+    .virtual-aid {
+        background: #ffffff;
+        border: 3px solid #000000;
+    }
+    
+    .btn-primary,
+    .btn-secondary {
+        background: #000000;
+        color: #ffffff;
+        border: 2px solid #ffffff;
+    }
+    
+    .function-display,
+    .inverse-function-display {
+        background: #ffffff;
+        border: 2px solid #000000;
+        color: #000000;
+    }
+}
+
+/* Focus States for Accessibility */
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+    outline: 3px solid #6366f1;
+    outline-offset: 2px;
+}
+
+/* Screen Reader Only Content */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Function Comparison Table */
+.comparison-table {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.comparison-table th {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    padding: 12px;
+    font-weight: bold;
+}
+
+.comparison-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.comparison-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Function Examples Grid */
+.examples-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+.example-card {
+    background: white;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.example-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Interactive Function Selector */
+.function-selector {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 2px solid #f59e0b;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.function-selector .selector-item {
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.function-selector .selector-item:hover {
+    background: #f3f4f6;
+    border-color: #6366f1;
+}
+
+.function-selector .selector-item.selected {
+    background: #6366f1;
+    color: white;
+    border-color: #6366f1;
+}
+
+/* Test Method Indicators */
+.test-method {
+    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+    border: 1px solid #0ea5e9;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin: 4px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.test-method.active {
+    background: #0ea5e9;
+    color: white;
+}
+
+/* Verification Display */
+.verification-display {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border: 1px solid #22c55e;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.verification-step {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+    padding: 8px;
+    background: white;
+    border-radius: 6px;
+    border-left: 3px solid #22c55e;
+}
+
+.verification-step .step-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #22c55e;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Application Type Cards */
+.application-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.application-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.application-card.selected {
+    border: 2px solid #6366f1;
+    background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
+}
+
+.application-card .icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 16px;
+}
+
+.application-card .title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #1f2937;
+    margin-bottom: 8px;
+}
+
+.application-card .description {
+    font-size: 14px;
+    color: #6b7280;
+    line-height: 1.5;
+}
+
+/* Virtual Aid Enhancements */
+.virtual-aid input:focus,
+.one-to-one-analyzer input:focus {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+}
+
+.virtual-aid button:hover,
+.one-to-one-analyzer button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Quick Example Buttons */
+.quick-example-btn {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.quick-example-btn:hover {
+    background-color: #667eea !important;
+    color: white !important;
+    transform: scale(1.05);
+}
+
+/* Result Display Enhancements */
+.result-display {
+    transition: all 0.3s ease;
+}
+
+.result-display:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Function Display Enhancements */
+.function-display {
+    transition: all 0.3s ease;
+    word-break: break-all;
+}
+
+.function-display:hover {
+    background-color: #f0f4ff;
+    transform: scale(1.02);
+}

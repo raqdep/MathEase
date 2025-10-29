@@ -1,0 +1,1952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operations on Functions - General Mathematics 11 | MathEase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="operations-on-functions.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#667eea',
+                        'secondary': '#764ba2',
+                        'accent': '#f093fb',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-poppins bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="../index.html" class="flex items-center space-x-2">
+                        <img src="../css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-8 w-8">
+                        <span class="text-xl font-bold text-primary">MathEase</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="../dashboard.html" class="text-gray-700 hover:text-primary transition-colors">
+                        <i class="fas fa-home mr-2"></i>Dashboard
+                    </a>
+                    <a href="../topics.html" class="text-primary font-semibold">
+                        <i class="fas fa-book mr-2"></i>Topics
+                    </a>
+                    <span class="text-gray-600">
+                        <i class="fas fa-user mr-2"></i><span id="userName">Student</span>
+                    </span>
+                    <a href="../php/logout.php" class="text-gray-700 hover:text-red-600 transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="gradient-bg text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
+                    <i class="fas fa-calculator mr-2"></i>
+                    <span class="font-semibold">General Mathematics 11</span>
+                </div>
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">Operations on Functions</h1>
+                <p class="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto">
+                    Master the fundamental operations on functions through interactive lessons aligned with DepEd MELCs 2025-2026
+                </p>
+                <div class="flex justify-center">
+                    <div class="bg-white/20 backdrop-blur-sm rounded-full px-8 py-3">
+                        <span class="text-lg font-semibold">5 Interactive Lessons</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Lesson Navigation -->
+        <div class="mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="1">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-plus text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 1</h3>
+                        <p class="text-sm text-gray-600">Addition & Subtraction</p>
+                    </div>
+                </button>
+                
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="2">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-times text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 2</h3>
+                        <p class="text-sm text-gray-600">Multiplication</p>
+                    </div>
+                </button>
+                
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="3">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-divide text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 3</h3>
+                        <p class="text-sm text-gray-600">Division</p>
+                    </div>
+                </button>
+                
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="4">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-layer-group text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 4</h3>
+                        <p class="text-sm text-gray-600">Composition</p>
+                    </div>
+                </button>
+                
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="5">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-chart-line text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 5</h3>
+                        <p class="text-sm text-gray-600">Applications</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Lesson Content -->
+        <div class="lesson-content">
+            <!-- Lesson 1: Addition and Subtraction of Functions -->
+            <section id="lesson1" class="lesson-section active">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-plus text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 1: Addition and Subtraction of Functions</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                            Learn how to add and subtract functions to create new functions, following DepEd MELCs for General Mathematics 11.
+                        </p>
+                    </div>
+
+
+                    <!-- Learning Objectives -->
+                    <div class="bg-green-50 border-l-4 border-green-500 p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-target mr-2"></i>Learning Objectives
+                        </h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Add functions using algebraic methods
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Subtract functions using algebraic methods
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Determine the domain of combined functions
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Apply function operations in real-world problems
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Detailed Explanation -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                            <i class="fas fa-book-open text-blue-500 mr-3"></i>Addition and Subtraction of Functions: Complete Guide
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-plus text-green-500 mr-2"></i>Addition of Functions
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    To add two functions f(x) and g(x), we add their outputs for the same input value.
+                                </p>
+                                <div class="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                                    <p class="text-sm text-gray-600 mb-2">Addition Formula:</p>
+                                    <p class="text-lg font-mono text-primary">(f + g)(x) = f(x) + g(x)</p>
+                                    <p class="text-sm text-gray-600 mt-2">Read as: "f plus g of x equals f of x plus g of x"</p>
+                                </div>
+                                
+                                <div class="mt-4 space-y-3">
+                                    <div class="bg-gray-50 rounded-lg p-3">
+                                        <h5 class="text-sm font-semibold text-gray-800">Step-by-Step Process:</h5>
+                                        <ol class="text-sm text-gray-600 mt-2 space-y-1">
+                                            <li>1. Write the addition formula</li>
+                                            <li>2. Substitute the function expressions</li>
+                                            <li>3. Combine like terms</li>
+                                            <li>4. Simplify the result</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-minus text-red-500 mr-2"></i>Subtraction of Functions
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    To subtract two functions f(x) and g(x), we subtract their outputs for the same input value.
+                                </p>
+                                <div class="bg-red-50 rounded-lg p-4 border-l-4 border-red-500">
+                                    <p class="text-sm text-gray-600 mb-2">Subtraction Formula:</p>
+                                    <p class="text-lg font-mono text-primary">(f - g)(x) = f(x) - g(x)</p>
+                                    <p class="text-sm text-gray-600 mt-2">Read as: "f minus g of x equals f of x minus g of x"</p>
+                                </div>
+                                
+                                <div class="mt-4 space-y-3">
+                                    <div class="bg-gray-50 rounded-lg p-3">
+                                        <h5 class="text-sm font-semibold text-gray-800">Step-by-Step Process:</h5>
+                                        <ol class="text-sm text-gray-600 mt-2 space-y-1">
+                                            <li>1. Write the subtraction formula</li>
+                                            <li>2. Substitute the function expressions</li>
+                                            <li>3. Distribute the negative sign</li>
+                                            <li>4. Combine like terms</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step-by-Step Examples -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg mb-6">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-calculator text-orange-500 mr-2"></i>Step-by-Step Examples
+                            </h4>
+                            
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <!-- Addition Example -->
+                                <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border-l-4 border-green-500">
+                                    <h5 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                        <i class="fas fa-plus text-green-500 mr-2"></i>
+                                        Addition Example
+                                    </h5>
+                                    <div class="bg-white rounded-lg p-4 mb-4">
+                                        <p class="text-sm text-gray-600 mb-2">Given functions:</p>
+                                        <p class="text-lg font-mono text-gray-800">f(x) = 3x - 2</p>
+                                        <p class="text-lg font-mono text-gray-800">g(x) = x² + 1</p>
+                                        <p class="text-sm text-gray-600 mt-2">Find: (f + g)(x)</p>
+                                    </div>
+                                    
+                                    <div class="space-y-4">
+                                        <div class="flex items-start">
+                                            <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">1</span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-700 mb-2">Write the addition formula</p>
+                                                <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                    (f + g)(x) = f(x) + g(x)
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start">
+                                            <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">2</span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-700 mb-2">Substitute the functions</p>
+                                                <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                    (f + g)(x) = (3x - 2) + (x² + 1)
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start">
+                                            <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">3</span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-700 mb-2">Remove parentheses</p>
+                                                <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                    (f + g)(x) = 3x - 2 + x² + 1
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start">
+                                            <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">4</span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-700 mb-2">Combine like terms</p>
+                                                <div class="bg-green-100 rounded-lg p-3 font-mono text-lg text-green-800 font-bold">
+                                                    (f + g)(x) = x² + 3x - 1
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Subtraction Example -->
+                                <div class="bg-gradient-to-br from-red-50 to-pink-50 rounded-xl p-6 border-l-4 border-red-500">
+                                    <h5 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                        <i class="fas fa-minus text-red-500 mr-2"></i>
+                                        Subtraction Example
+                                    </h5>
+                                    <div class="bg-white rounded-lg p-4 mb-4">
+                                        <p class="text-sm text-gray-600 mb-2">Given functions:</p>
+                                        <p class="text-lg font-mono text-gray-800">f(x) = x² + 2</p>
+                                        <p class="text-lg font-mono text-gray-800">g(x) = x + 1</p>
+                                        <p class="text-sm text-gray-600 mt-2">Find: (f - g)(x)</p>
+                                    </div>
+                                    
+                                    <div class="space-y-4">
+                                        <div class="flex items-start">
+                                            <span class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">1</span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-700 mb-2">Write the subtraction formula</p>
+                                                <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                    (f - g)(x) = f(x) - g(x)
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start">
+                                            <span class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">2</span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-700 mb-2">Substitute the functions</p>
+                                                <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                    (f - g)(x) = (x² + 2) - (x + 1)
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start">
+                                            <span class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">3</span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-700 mb-2">Distribute the negative sign</p>
+                                                <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                    (f - g)(x) = x² + 2 - x - 1
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start">
+                                            <span class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">4</span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-700 mb-2">Combine like terms</p>
+                                                <div class="bg-red-100 rounded-lg p-3 font-mono text-lg text-red-800 font-bold">
+                                                    (f - g)(x) = x² - x + 1
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Domain of Combined Functions -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>Important: Domain of Combined Functions
+                            </h4>
+                            <div class="bg-yellow-50 rounded-lg p-4 border-l-4 border-yellow-500 mb-4">
+                                <h5 class="font-semibold text-gray-800 mb-2">Key Rule:</h5>
+                                <p class="text-sm text-gray-700">The domain of (f + g) and (f - g) is the intersection of the domains of f and g.</p>
+                                <p class="text-sm text-gray-700 mt-2">This means both functions must be defined for the same input values.</p>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-green-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Example: Domain Intersection</h5>
+                                    <p class="text-sm text-gray-700 mb-1">f(x) = √x (domain: x ≥ 0)</p>
+                                    <p class="text-sm text-gray-700 mb-1">g(x) = 1/x (domain: x ≠ 0)</p>
+                                    <p class="text-sm text-gray-600">Domain of (f + g): x > 0</p>
+                                </div>
+                                <div class="bg-blue-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Example: All Real Numbers</h5>
+                                    <p class="text-sm text-gray-700 mb-1">f(x) = x² (domain: all real numbers)</p>
+                                    <p class="text-sm text-gray-700 mb-1">g(x) = 2x + 1 (domain: all real numbers)</p>
+                                    <p class="text-sm text-gray-600">Domain of (f + g): all real numbers</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+
+                    <!-- Virtual Aid: Function Operations Calculator -->
+                    <div class="virtual-aid rounded-2xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                            <i class="fas fa-calculator text-primary mr-3"></i>Interactive Function Operations Calculator
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="space-y-6">
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Input Functions</h4>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">f(x) =</label>
+                                            <input type="text" id="functionF" value="3x - 2" readonly onkeydown="return false;" onpaste="return false;" ondrop="return false;" aria-readonly="true"
+                                                   class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono cursor-not-allowed">
+                                            <div class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                                <button type="button" class="preset-btn" onclick="setAddSub('f','3x - 2')">3x - 2</button>
+                                                <button type="button" class="preset-btn" onclick="setAddSub('f','2x + 1')">2x + 1</button>
+                                                <button type="button" class="preset-btn" onclick="setAddSub('f','x²')">x²</button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">g(x) =</label>
+                                            <input type="text" id="functionG" value="x² + 1" readonly onkeydown="return false;" onpaste="return false;" ondrop="return false;" aria-readonly="true"
+                                                   class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono cursor-not-allowed">
+                                            <div class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                                <button type="button" class="preset-btn" onclick="setAddSub('g','x² + 1')">x² + 1</button>
+                                                <button type="button" class="preset-btn" onclick="setAddSub('g','x - 3')">x - 3</button>
+                                                <button type="button" class="preset-btn" onclick="setAddSub('g','x + 2')">x + 2</button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Operation:</label>
+                                            <select id="operation" onchange="calculateOperation()" 
+                                                    class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none">
+                                                <option value="add">Addition (f + g)</option>
+                                                <option value="subtract">Subtraction (f - g)</option>
+                                            </select>
+                                            <div class="mt-2 grid grid-cols-2 gap-2">
+                                                <button type="button" class="preset-btn" onclick="setAddSubOp('add')">f + g</button>
+                                                <button type="button" class="preset-btn" onclick="setAddSubOp('subtract')">f - g</button>
+                                            </div>
+                                        </div>
+                                        <button onclick="calculateOperation()" 
+                                                class="w-full bg-primary text-white py-3 px-6 rounded-lg hover:bg-secondary transition-colors font-semibold">
+                                            <i class="fas fa-calculator mr-2"></i>Calculate
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Result</h4>
+                                    <div class="bg-gray-50 rounded-lg p-4">
+                                        <p class="text-sm text-gray-600 mb-2">Combined Function:</p>
+                                        <p class="text-lg font-mono text-primary" id="operationResult">x² + 3x - 1</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white">
+                                <h4 class="text-lg font-semibold mb-4 text-center">Step-by-Step Process</h4>
+                                <div class="space-y-4" id="operationSteps">
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm">Step 1: Write the operation</p>
+                                        <p class="font-mono text-lg">(f + g)(x) = f(x) + g(x)</p>
+                                    </div>
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm">Step 2: Substitute functions</p>
+                                        <p class="font-mono text-lg">= (3x - 2) + (x² + 1)</p>
+                                    </div>
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm">Step 3: Combine like terms</p>
+                                        <p class="font-mono text-lg">= x² + 3x - 1</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Practice Examples -->
+                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-pencil-alt text-orange-500 mr-2"></i>Practice Examples
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-lg p-4 border-2 border-orange-200">
+                                <h4 class="font-semibold text-gray-800 mb-2">Practice 1: Addition</h4>
+                                <p class="text-gray-700 mb-2">Given: f(x) = 2x + 3, g(x) = x - 1</p>
+                                <p class="text-gray-700 mb-2">Find: (f + g)(x)</p>
+                                <div class="bg-gray-50 rounded p-3 font-mono text-sm">
+                                    (f + g)(x) = (2x + 3) + (x - 1) = 3x + 2
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 border-2 border-orange-200">
+                                <h4 class="font-semibold text-gray-800 mb-2">Practice 2: Subtraction</h4>
+                                <p class="text-gray-700 mb-2">Given: f(x) = x² + 2x, g(x) = x + 1</p>
+                                <p class="text-gray-700 mb-2">Find: (f - g)(x)</p>
+                                <div class="bg-gray-50 rounded p-3 font-mono text-sm">
+                                    (f - g)(x) = (x² + 2x) - (x + 1) = x² + x - 1
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- References -->
+                    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-book text-indigo-500 mr-2"></i>References & Additional Resources
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Academic Sources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Stewart, J. (2015). <em>Precalculus: Mathematics for Calculus</em>. Cengage Learning.</li>
+                                    <li>• Larson, R. (2018). <em>Precalculus with Limits</em>. Cengage Learning.</li>
+                                    <li>• Blitzer, R. (2019). <em>Precalculus</em>. Pearson Education.</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Online Resources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Khan Academy: Operations on Functions</li>
+                                    <li>• Purplemath: Function Operations</li>
+                                    <li>• Math is Fun: Function Operations</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lesson Completion -->
+                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i>Complete This Lesson
+                        </h3>
+                        <p class="text-gray-600 text-center mb-6">
+                            Mark this lesson as completed to track your progress and unlock the next lesson.
+                        </p>
+                        <div class="text-center">
+                            <button onclick="completeLesson(1)" 
+                                    class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold">
+                                <i class="fas fa-check mr-2"></i>Mark as Complete
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Lesson Navigation Controls -->
+                    <div class="flex justify-between items-center mb-8">
+                        <button id="prevLessonBtn" onclick="navigateLesson(-1)" 
+                                class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fas fa-chevron-left mr-2"></i>
+                            Previous Lesson
+                        </button>
+                        
+                        <div class="flex items-center space-x-4">
+                            <div class="text-center">
+                                <div class="text-lg font-semibold text-primary">
+                                    <span id="currentLessonNum">1</span> of 5
+                                </div>
+                            </div>
+                            <div class="w-32 bg-gray-200 rounded-full h-2">
+                                <div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 20%"></div>
+                            </div>
+                        </div>
+                        
+                        <button id="nextLessonBtn" onclick="navigateLesson(1)" 
+                                class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            Next Lesson
+                            <i class="fas fa-chevron-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Additional lessons would continue here... -->
+            <!-- Lesson 2: Multiplication of Functions -->
+            <section id="lesson2" class="lesson-section">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-times text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 2: Multiplication of Functions</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                            Learn how to multiply functions to create new functions with expanded domains and properties.
+                        </p>
+                    </div>
+
+                   
+
+                    <!-- Learning Objectives -->
+                    <div class="bg-green-50 border-l-4 border-green-500 p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-target mr-2"></i>Learning Objectives
+                        </h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Multiply functions using algebraic methods
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Apply distributive property in function multiplication
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Determine the domain of product functions
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Solve real-world problems using function multiplication
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Detailed Explanation -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                            <i class="fas fa-book-open text-blue-500 mr-3"></i>Multiplication of Functions: Complete Guide
+                        </h3>
+                        
+                        <div class="bg-white rounded-lg p-6 shadow-lg mb-6">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-times text-green-500 mr-2"></i>Multiplication of Functions
+                            </h4>
+                            <p class="text-gray-700 mb-4">
+                                To multiply two functions f(x) and g(x), we multiply their outputs for the same input value.
+                            </p>
+                            <div class="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                                <p class="text-sm text-gray-600 mb-2">Multiplication Formula:</p>
+                                <p class="text-lg font-mono text-primary">(f • g)(x) = f(x) • g(x)</p>
+                                <p class="text-sm text-gray-600 mt-2">Read as: "f times g of x equals f of x times g of x"</p>
+                            </div>
+                            
+                            <div class="mt-4 space-y-3">
+                                <div class="bg-gray-50 rounded-lg p-3">
+                                    <h5 class="text-sm font-semibold text-gray-800">Step-by-Step Process:</h5>
+                                    <ol class="text-sm text-gray-600 mt-2 space-y-1">
+                                        <li>1. Write the multiplication formula</li>
+                                        <li>2. Substitute the function expressions</li>
+                                        <li>3. Apply distributive property</li>
+                                        <li>4. Combine like terms</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step-by-Step Examples -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg mb-6">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-calculator text-orange-500 mr-2"></i>Step-by-Step Examples
+                            </h4>
+                            
+                            <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border-l-4 border-green-500">
+                                <h5 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                    <i class="fas fa-times text-green-500 mr-2"></i>
+                                    Multiplication Example
+                                </h5>
+                                <div class="bg-white rounded-lg p-4 mb-4">
+                                    <p class="text-sm text-gray-600 mb-2">Given functions:</p>
+                                    <p class="text-lg font-mono text-gray-800">f(x) = 2x + 1</p>
+                                    <p class="text-lg font-mono text-gray-800">g(x) = x - 3</p>
+                                    <p class="text-sm text-gray-600 mt-2">Find: (f • g)(x)</p>
+                                </div>
+                                
+                                <div class="space-y-4">
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">1</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Write the multiplication formula</p>
+                                            <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                (f • g)(x) = f(x) • g(x)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">2</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Substitute the functions</p>
+                                            <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                (f • g)(x) = (2x + 1)(x - 3)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">3</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Apply distributive property (FOIL method)</p>
+                                            <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                (f • g)(x) = 2x(x) + 2x(-3) + 1(x) + 1(-3)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">4</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Simplify each term</p>
+                                            <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                (f • g)(x) = 2x² - 6x + x - 3
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">5</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Combine like terms</p>
+                                            <div class="bg-green-100 rounded-lg p-3 font-mono text-lg text-green-800 font-bold">
+                                                (f • g)(x) = 2x² - 5x - 3
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FOIL Method Explanation -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>FOIL Method for Multiplying Binomials
+                            </h4>
+                            <div class="bg-yellow-50 rounded-lg p-4 border-l-4 border-yellow-500 mb-4">
+                                <h5 class="font-semibold text-gray-800 mb-2">FOIL stands for:</h5>
+                                <ul class="text-sm text-gray-700 space-y-1">
+                                    <li><strong>F</strong>irst: Multiply the first terms</li>
+                                    <li><strong>O</strong>uter: Multiply the outer terms</li>
+                                    <li><strong>I</strong>nner: Multiply the inner terms</li>
+                                    <li><strong>L</strong>ast: Multiply the last terms</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-blue-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Example: (2x + 1)(x - 3)</h5>
+                                    <div class="text-sm text-gray-700 space-y-1">
+                                        <p><strong>F:</strong> 2x • x = 2x²</p>
+                                        <p><strong>O:</strong> 2x • (-3) = -6x</p>
+                                        <p><strong>I:</strong> 1 • x = x</p>
+                                        <p><strong>L:</strong> 1 • (-3) = -3</p>
+                                        <p class="font-bold mt-2">Result: 2x² - 6x + x - 3 = 2x² - 5x - 3</p>
+                                    </div>
+                                </div>
+                                <div class="bg-green-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Visual Representation</h5>
+                                    <div class="text-sm text-gray-700">
+                                        <div class="border border-gray-300 rounded p-2 text-center">
+                                            <div class="grid grid-cols-2 gap-2">
+                                                <div class="bg-blue-100 p-2">2x</div>
+                                                <div class="bg-blue-100 p-2">1</div>
+                                                <div class="bg-green-100 p-2">x</div>
+                                                <div class="bg-green-100 p-2">-3</div>
+                                            </div>
+                                        </div>
+                                        <p class="mt-2 text-xs">Each cell represents a multiplication</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Virtual Aid: Multiplication Calculator -->
+                    <div class="virtual-aid rounded-2xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                            <i class="fas fa-calculator text-primary mr-3"></i>Interactive Function Multiplication Calculator
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="space-y-6">
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Input Functions</h4>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">f(x) =</label>
+                                            <input type="text" id="multFunctionF" value="2x + 1" readonly onkeydown="return false;" onpaste="return false;" ondrop="return false;" aria-readonly="true"
+                                                   class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono cursor-not-allowed">
+                                            <div class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                                <button type="button" class="preset-btn" onclick="setMult('f','2x + 1')">2x + 1</button>
+                                                <button type="button" class="preset-btn" onclick="setMult('f','x + 3')">x + 3</button>
+                                                <button type="button" class="preset-btn" onclick="setMult('f','3x - 2')">3x - 2</button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">g(x) =</label>
+                                            <input type="text" id="multFunctionG" value="x - 3" readonly onkeydown="return false;" onpaste="return false;" ondrop="return false;" aria-readonly="true"
+                                                   class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono cursor-not-allowed">
+                                            <div class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                                <button type="button" class="preset-btn" onclick="setMult('g','x - 3')">x - 3</button>
+                                                <button type="button" class="preset-btn" onclick="setMult('g','x + 1')">x + 1</button>
+                                                <button type="button" class="preset-btn" onclick="setMult('g','2x - 1')">2x - 1</button>
+                                            </div>
+                                        </div>
+                                        <button onclick="calculateMultiplication()" 
+                                                class="w-full bg-primary text-white py-3 px-6 rounded-lg hover:bg-secondary transition-colors font-semibold">
+                                            <i class="fas fa-times mr-2"></i>Calculate (f • g)(x)
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Result</h4>
+                                    <div class="bg-gray-50 rounded-lg p-4">
+                                        <p class="text-sm text-gray-600 mb-2">Product Function:</p>
+                                        <p class="text-lg font-mono text-primary" id="multiplicationResult">2x² - 5x - 3</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white">
+                                <h4 class="text-lg font-semibold mb-4 text-center">Step-by-Step Process</h4>
+                                <div class="space-y-4" id="multiplicationSteps">
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm">Step 1: Write the multiplication</p>
+                                        <p class="font-mono text-lg">(f • g)(x) = f(x) • g(x)</p>
+                                    </div>
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm">Step 2: Substitute functions</p>
+                                        <p class="font-mono text-lg">= (2x + 1)(x - 3)</p>
+                                    </div>
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm">Step 3: Apply FOIL method</p>
+                                        <p class="font-mono text-lg">= 2x² - 5x - 3</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Practice Examples -->
+                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-pencil-alt text-orange-500 mr-2"></i>Practice Examples
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-lg p-4 border-2 border-orange-200">
+                                <h4 class="font-semibold text-gray-800 mb-2">Practice 1: Linear × Linear</h4>
+                                <p class="text-gray-700 mb-2">Given: f(x) = 3x + 2, g(x) = x - 1</p>
+                                <p class="text-gray-700 mb-2">Find: (f • g)(x)</p>
+                                <div class="bg-gray-50 rounded p-3 font-mono text-sm">
+                                    (f • g)(x) = (3x + 2)(x - 1) = 3x² - 3x + 2x - 2 = 3x² - x - 2
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 border-2 border-orange-200">
+                                <h4 class="font-semibold text-gray-800 mb-2">Practice 2: Quadratic × Linear</h4>
+                                <p class="text-gray-700 mb-2">Given: f(x) = x² + 1, g(x) = 2x - 1</p>
+                                <p class="text-gray-700 mb-2">Find: (f • g)(x)</p>
+                                <div class="bg-gray-50 rounded p-3 font-mono text-sm">
+                                    (f • g)(x) = (x² + 1)(2x - 1) = 2x³ - x² + 2x - 1
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lesson Completion -->
+                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i>Complete This Lesson
+                        </h3>
+                        <p class="text-gray-600 text-center mb-6">
+                            Mark this lesson as completed to track your progress and unlock the next lesson.
+                        </p>
+                        <div class="text-center">
+                            <button onclick="completeLesson(2)" 
+                                    class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold">
+                                <i class="fas fa-check mr-2"></i>Mark as Complete
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Lesson Navigation Controls -->
+                    <div class="flex justify-between items-center mb-8">
+                        <button id="prevLessonBtn" onclick="navigateLesson(-1)" 
+                                class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fas fa-chevron-left mr-2"></i>
+                            Previous Lesson
+                        </button>
+                        
+                        <div class="flex items-center space-x-4">
+                            <div class="text-center">
+                                <div class="text-lg font-semibold text-primary">
+                                    <span id="currentLessonNum">2</span> of 5
+                                </div>
+                            </div>
+                            <div class="w-32 bg-gray-200 rounded-full h-2">
+                                <div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 40%"></div>
+                            </div>
+                        </div>
+                        
+                        <button id="nextLessonBtn" onclick="navigateLesson(1)" 
+                                class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            Next Lesson
+                            <i class="fas fa-chevron-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lesson 3: Division of Functions -->
+            <section id="lesson3" class="lesson-section">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-divide text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 3: Division of Functions</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                            Master the division of functions and understand domain restrictions for rational functions.
+                        </p>
+                    </div>
+
+
+                    <!-- Learning Objectives -->
+                    <div class="bg-green-50 border-l-4 border-green-500 p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-target mr-2"></i>Learning Objectives
+                        </h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Divide functions using algebraic methods
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Identify and handle domain restrictions
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Simplify rational function expressions
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Factor polynomials for division
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Detailed Explanation -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                            <i class="fas fa-book-open text-blue-500 mr-3"></i>Division of Functions: Complete Guide
+                        </h3>
+                        
+                        <div class="bg-white rounded-lg p-6 shadow-lg mb-6">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-divide text-red-500 mr-2"></i>Division of Functions
+                            </h4>
+                            <p class="text-gray-700 mb-4">
+                                To divide two functions f(x) and g(x), we divide their outputs for the same input value, but g(x) cannot be zero.
+                            </p>
+                            <div class="bg-red-50 rounded-lg p-4 border-l-4 border-red-500">
+                                <p class="text-sm text-gray-600 mb-2">Division Formula:</p>
+                                <p class="text-lg font-mono text-primary">(f / g)(x) = f(x) / g(x), where g(x) ≠ 0</p>
+                                <p class="text-sm text-gray-600 mt-2">Read as: "f divided by g of x equals f of x divided by g of x"</p>
+                            </div>
+                            
+                            <div class="mt-4 space-y-3">
+                                <div class="bg-gray-50 rounded-lg p-3">
+                                    <h5 class="text-sm font-semibold text-gray-800">Step-by-Step Process:</h5>
+                                    <ol class="text-sm text-gray-600 mt-2 space-y-1">
+                                        <li>1. Write the division formula</li>
+                                        <li>2. Substitute the function expressions</li>
+                                        <li>3. Factor if possible</li>
+                                        <li>4. Simplify and identify restrictions</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Domain Restrictions -->
+                        <div class="bg-yellow-50 border-l-4 border-yellow-500 rounded-lg p-6 mb-6">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>Important: Domain Restrictions
+                            </h4>
+                            <div class="bg-white rounded-lg p-4">
+                                <h5 class="font-semibold text-gray-800 mb-2">Key Rules:</h5>
+                                <ul class="text-sm text-gray-700 space-y-1">
+                                    <li>• The domain of (f / g) is the intersection of the domains of f and g</li>
+                                    <li>• <strong>EXCEPT</strong> where g(x) = 0</li>
+                                    <li>• These excluded values are called <strong>vertical asymptotes</strong></li>
+                                    <li>• Always check for common factors that can be canceled</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Step-by-Step Examples -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg mb-6">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-calculator text-orange-500 mr-2"></i>Step-by-Step Examples
+                            </h4>
+                            
+                            <div class="bg-gradient-to-br from-red-50 to-pink-50 rounded-xl p-6 border-l-4 border-red-500">
+                                <h5 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                    <i class="fas fa-divide text-red-500 mr-2"></i>
+                                    Division Example
+                                </h5>
+                                <div class="bg-white rounded-lg p-4 mb-4">
+                                    <p class="text-sm text-gray-600 mb-2">Given functions:</p>
+                                    <p class="text-lg font-mono text-gray-800">f(x) = x² - 4</p>
+                                    <p class="text-lg font-mono text-gray-800">g(x) = x - 2</p>
+                                    <p class="text-sm text-gray-600 mt-2">Find: (f / g)(x)</p>
+                                </div>
+                                
+                                <div class="space-y-4">
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">1</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Write the division formula</p>
+                                            <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                (f / g)(x) = f(x) / g(x)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">2</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Substitute the functions</p>
+                                            <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                (f / g)(x) = (x² - 4) / (x - 2)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">3</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Factor the numerator (difference of squares)</p>
+                                            <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                (f / g)(x) = (x - 2)(x + 2) / (x - 2)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-start">
+                                        <span class="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">4</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700 mb-2">Cancel common factors</p>
+                                            <div class="bg-red-100 rounded-lg p-3 font-mono text-lg text-red-800 font-bold">
+                                                (f / g)(x) = x + 2, where x ≠ 2
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rational Functions Properties -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-chart-line text-purple-500 mr-2"></i>Properties of Rational Functions
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-purple-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Domain Restrictions</h5>
+                                    <ul class="text-sm text-gray-700 space-y-1">
+                                        <li>• Find where denominator = 0</li>
+                                        <li>• These are excluded from domain</li>
+                                        <li>• Create vertical asymptotes</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-blue-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Simplification</h5>
+                                    <ul class="text-sm text-gray-700 space-y-1">
+                                        <li>• Factor numerator and denominator</li>
+                                        <li>• Cancel common factors</li>
+                                        <li>• Note any restrictions</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Virtual Aid: Division Calculator -->
+                    <div class="virtual-aid rounded-2xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                            <i class="fas fa-calculator text-primary mr-3"></i>Interactive Function Division Calculator
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="space-y-6">
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Input Functions</h4>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">f(x) =</label>
+                                            <input type="text" id="divFunctionF" value="x² - 4" readonly onkeydown="return false;" onpaste="return false;" ondrop="return false;" aria-readonly="true"
+                                                   class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono cursor-not-allowed">
+                                            <div class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                                <button type="button" class="preset-btn" onclick="setDiv('f','x² - 4')">x² - 4</button>
+                                                <button type="button" class="preset-btn" onclick="setDiv('f','x² - 9')">x² - 9</button>
+                                                <button type="button" class="preset-btn" onclick="setDiv('f','x² + 5x + 6')">x² + 5x + 6</button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">g(x) =</label>
+                                            <input type="text" id="divFunctionG" value="x - 2" readonly onkeydown="return false;" onpaste="return false;" ondrop="return false;" aria-readonly="true"
+                                                   class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono cursor-not-allowed">
+                                            <div class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                                <button type="button" class="preset-btn" onclick="setDiv('g','x - 2')">x - 2</button>
+                                                <button type="button" class="preset-btn" onclick="setDiv('g','x + 3')">x + 3</button>
+                                                <button type="button" class="preset-btn" onclick="setDiv('g','x + 2')">x + 2</button>
+                                            </div>
+                                        </div>
+                                        <button onclick="calculateDivision()" 
+                                                class="w-full bg-primary text-white py-3 px-6 rounded-lg hover:bg-secondary transition-colors font-semibold">
+                                            <i class="fas fa-divide mr-2"></i>Calculate (f / g)(x)
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Result</h4>
+                                    <div class="bg-gray-50 rounded-lg p-4">
+                                        <p class="text-sm text-gray-600 mb-2">Quotient Function:</p>
+                                        <p class="text-lg font-mono text-primary" id="divisionResult">x + 2</p>
+                                        <p class="text-sm text-red-600 mt-2" id="divisionRestrictions">where x ≠ 2</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white">
+                                <h4 class="text-lg font-semibold mb-4 text-center">Step-by-Step Process</h4>
+                                <div class="space-y-4" id="divisionSteps">
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm">Step 1: Write the division</p>
+                                        <p class="font-mono text-lg">(f / g)(x) = f(x) / g(x)</p>
+                                    </div>
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm">Step 2: Substitute functions</p>
+                                        <p class="font-mono text-lg">= (x² - 4) / (x - 2)</p>
+                                    </div>
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm">Step 3: Factor and simplify</p>
+                                        <p class="font-mono text-lg">= x + 2, x ≠ 2</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Practice Examples -->
+                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-pencil-alt text-orange-500 mr-2"></i>Practice Examples
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-lg p-4 border-2 border-orange-200">
+                                <h4 class="font-semibold text-gray-800 mb-2">Practice 1: Simple Division</h4>
+                                <p class="text-gray-700 mb-2">Given: f(x) = x² - 9, g(x) = x + 3</p>
+                                <p class="text-gray-700 mb-2">Find: (f / g)(x)</p>
+                                <div class="bg-gray-50 rounded p-3 font-mono text-sm">
+                                    (f / g)(x) = (x² - 9) / (x + 3) = (x - 3)(x + 3) / (x + 3) = x - 3, where x ≠ -3
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 border-2 border-orange-200">
+                                <h4 class="font-semibold text-gray-800 mb-2">Practice 2: Complex Division</h4>
+                                <p class="text-gray-700 mb-2">Given: f(x) = x² + 5x + 6, g(x) = x + 2</p>
+                                <p class="text-gray-700 mb-2">Find: (f / g)(x)</p>
+                                <div class="bg-gray-50 rounded p-3 font-mono text-sm">
+                                    (f / g)(x) = (x² + 5x + 6) / (x + 2) = (x + 2)(x + 3) / (x + 2) = x + 3, where x ≠ -2
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lesson Completion -->
+                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i>Complete This Lesson
+                        </h3>
+                        <p class="text-gray-600 text-center mb-6">
+                            Mark this lesson as completed to track your progress and unlock the next lesson.
+                        </p>
+                        <div class="text-center">
+                            <button onclick="completeLesson(3)" 
+                                    class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold">
+                                <i class="fas fa-check mr-2"></i>Mark as Complete
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Lesson Navigation Controls -->
+                    <div class="flex justify-between items-center mb-8">
+                        <button id="prevLessonBtn" onclick="navigateLesson(-1)" 
+                                class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fas fa-chevron-left mr-2"></i>
+                            Previous Lesson
+                        </button>
+                        
+                        <div class="flex items-center space-x-4">
+                            <div class="text-center">
+                                <div class="text-lg font-semibold text-primary">
+                                    <span id="currentLessonNum">3</span> of 5
+                                </div>
+                            </div>
+                            <div class="w-32 bg-gray-200 rounded-full h-2">
+                                <div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 60%"></div>
+                            </div>
+                        </div>
+                        
+                        <button id="nextLessonBtn" onclick="navigateLesson(1)" 
+                                class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            Next Lesson
+                            <i class="fas fa-chevron-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lesson 4: Composition of Functions -->
+            <section id="lesson4" class="lesson-section">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-layer-group text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 4: Composition of Functions</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                            Understand function composition and how to find (f ∘ g)(x) and (g ∘ f)(x).
+                        </p>
+                    </div>
+
+                
+
+                    <!-- Learning Objectives -->
+                    <div class="bg-green-50 border-l-4 border-green-500 p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-target mr-2"></i>Learning Objectives
+                        </h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Understand the concept of function composition
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Find composite functions (f ∘ g)(x) and (g ∘ f)(x)
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Determine the domain of composite functions
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Apply composition in real-world problems
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Detailed Explanation -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                            <i class="fas fa-book-open text-blue-500 mr-3"></i>Composition of Functions: Complete Guide
+                        </h3>
+                        
+                        <div class="bg-white rounded-lg p-6 shadow-lg mb-6">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-layer-group text-purple-500 mr-2"></i>What is Function Composition?
+                            </h4>
+                            <p class="text-gray-700 mb-4">
+                                Function composition is like a "function of a function." The output of one function becomes the input of another function.
+                            </p>
+                            <div class="bg-purple-50 rounded-lg p-4 border-l-4 border-purple-500">
+                                <p class="text-sm text-gray-600 mb-2">Composition Formula:</p>
+                                <p class="text-lg font-mono text-primary">(f ∘ g)(x) = f(g(x))</p>
+                                <p class="text-sm text-gray-600 mt-2">Read as: "f composed with g of x equals f of g of x"</p>
+                            </div>
+                            
+                            <div class="mt-4 space-y-3">
+                                <div class="bg-gray-50 rounded-lg p-3">
+                                    <h5 class="text-sm font-semibold text-gray-800">Step-by-Step Process:</h5>
+                                    <ol class="text-sm text-gray-600 mt-2 space-y-1">
+                                        <li>1. Start with the inner function g(x)</li>
+                                        <li>2. Substitute g(x) into f(x)</li>
+                                        <li>3. Simplify the result</li>
+                                        <li>4. Determine the domain</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Visual Representation -->
+                        <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 mb-6">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-eye text-purple-500 mr-2"></i>Visual Understanding
+                            </h4>
+                            <div class="bg-white rounded-lg p-6">
+                                <div class="flex items-center justify-center space-x-4 mb-4">
+                                    <div class="text-center">
+                                        <div class="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mb-2">
+                                            <span class="text-sm font-bold">x</span>
+                                        </div>
+                                        <p class="text-xs text-gray-600">Input</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <i class="fas fa-arrow-right text-2xl text-gray-400"></i>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center mb-2">
+                                            <span class="text-sm font-bold">g(x)</span>
+                                        </div>
+                                        <p class="text-xs text-gray-600">Inner Function</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <i class="fas fa-arrow-right text-2xl text-gray-400"></i>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="w-16 h-16 bg-purple-100 rounded-lg flex items-center justify-center mb-2">
+                                            <span class="text-sm font-bold">f(g(x))</span>
+                                        </div>
+                                        <p class="text-xs text-gray-600">Final Output</p>
+                                    </div>
+                                </div>
+                                <p class="text-center text-sm text-gray-600">
+                                    The composition (f ∘ g)(x) means: x → g(x) → f(g(x))
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Step-by-Step Examples -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg mb-6">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-calculator text-orange-500 mr-2"></i>Step-by-Step Examples
+                            </h4>
+                            
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <!-- Example 1: (f ∘ g)(x) -->
+                                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border-l-4 border-blue-500">
+                                    <h5 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                        <i class="fas fa-layer-group text-blue-500 mr-2"></i>
+                                        Example 1: (f ∘ g)(x)
+                                    </h5>
+                                    <div class="bg-white rounded-lg p-4 mb-4">
+                                        <p class="text-sm text-gray-600 mb-2">Given functions:</p>
+                                        <p class="text-lg font-mono text-gray-800">f(x) = 2x + 1</p>
+                                        <p class="text-lg font-mono text-gray-800">g(x) = x - 3</p>
+                                        <p class="text-sm text-gray-600 mt-2">Find: (f ∘ g)(x)</p>
+                                    </div>
+                                    
+                                    <div class="space-y-4">
+                                        <div class="flex items-start">
+                                            <span class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">1</span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-700 mb-2">Write the composition formula</p>
+                                                <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                    (f ∘ g)(x) = f(g(x))
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start">
+                                            <span class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">2</span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-700 mb-2">Substitute g(x) into f(x)</p>
+                                                <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                    (f ∘ g)(x) = f(x - 3)
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start">
+                                            <span class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">3</span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-700 mb-2">Apply f to the result</p>
+                                                <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                    (f ∘ g)(x) = 2(x - 3) + 1
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start">
+                                            <span class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">4</span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-700 mb-2">Simplify</p>
+                                                <div class="bg-blue-100 rounded-lg p-3 font-mono text-lg text-blue-800 font-bold">
+                                                    (f ∘ g)(x) = 2x - 5
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Example 2: (g ∘ f)(x) -->
+                                <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border-l-4 border-green-500">
+                                    <h5 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                                        <i class="fas fa-layer-group text-green-500 mr-2"></i>
+                                        Example 2: (g ∘ f)(x)
+                                    </h5>
+                                    <div class="bg-white rounded-lg p-4 mb-4">
+                                        <p class="text-sm text-gray-600 mb-2">Same functions:</p>
+                                        <p class="text-lg font-mono text-gray-800">f(x) = 2x + 1</p>
+                                        <p class="text-lg font-mono text-gray-800">g(x) = x - 3</p>
+                                        <p class="text-sm text-gray-600 mt-2">Find: (g ∘ f)(x)</p>
+                                    </div>
+                                    
+                                    <div class="space-y-4">
+                                        <div class="flex items-start">
+                                            <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">1</span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-700 mb-2">Write the composition formula</p>
+                                                <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                    (g ∘ f)(x) = g(f(x))
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start">
+                                            <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">2</span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-700 mb-2">Substitute f(x) into g(x)</p>
+                                                <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                    (g ∘ f)(x) = g(2x + 1)
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start">
+                                            <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">3</span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-700 mb-2">Apply g to the result</p>
+                                                <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                                    (g ∘ f)(x) = (2x + 1) - 3
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start">
+                                            <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">4</span>
+                                            <div class="flex-1">
+                                                <p class="text-gray-700 mb-2">Simplify</p>
+                                                <div class="bg-green-100 rounded-lg p-3 font-mono text-lg text-green-800 font-bold">
+                                                    (g ∘ f)(x) = 2x - 2
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Important Note -->
+                        <div class="bg-yellow-50 border-l-4 border-yellow-500 rounded-lg p-6">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>Important: Order Matters!
+                            </h4>
+                            <div class="bg-white rounded-lg p-4">
+                                <p class="text-gray-700 mb-2"><strong>Key Point:</strong> (f ∘ g)(x) ≠ (g ∘ f)(x) in general!</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                    <div class="bg-blue-50 rounded-lg p-3">
+                                        <p class="text-sm font-semibold text-gray-800">(f ∘ g)(x) = 2x - 5</p>
+                                        <p class="text-xs text-gray-600">f composed with g</p>
+                                    </div>
+                                    <div class="bg-green-50 rounded-lg p-3">
+                                        <p class="text-sm font-semibold text-gray-800">(g ∘ f)(x) = 2x - 2</p>
+                                        <p class="text-xs text-gray-600">g composed with f</p>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-gray-600 mt-3">Notice how the results are different! The order of composition matters.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Virtual Aid: Composition Calculator -->
+                    <div class="virtual-aid rounded-2xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                            <i class="fas fa-calculator text-primary mr-3"></i>Interactive Function Composition Calculator
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="space-y-6">
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Input Functions</h4>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">f(x) =</label>
+                                            <input type="text" id="compFunctionF" value="2x + 1" readonly onkeydown="return false;" onpaste="return false;" ondrop="return false;" aria-readonly="true"
+                                                   class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono cursor-not-allowed">
+                                            <div class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                                <button type="button" class="preset-btn" onclick="setComp('f','2x + 1')">2x + 1</button>
+                                                <button type="button" class="preset-btn" onclick="setComp('f','3x - 2')">3x - 2</button>
+                                                <button type="button" class="preset-btn" onclick="setComp('f','x²')">x²</button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">g(x) =</label>
+                                            <input type="text" id="compFunctionG" value="x - 3" readonly onkeydown="return false;" onpaste="return false;" ondrop="return false;" aria-readonly="true"
+                                                   class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono cursor-not-allowed">
+                                            <div class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                                <button type="button" class="preset-btn" onclick="setComp('g','x - 3')">x - 3</button>
+                                                <button type="button" class="preset-btn" onclick="setComp('g','x + 2')">x + 2</button>
+                                                <button type="button" class="preset-btn" onclick="setComp('g','x + 1')">x + 1</button>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Composition:</label>
+                                            <select id="compositionType" onchange="calculateComposition()" 
+                                                    class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none">
+                                                <option value="fog">(f ∘ g)(x)</option>
+                                                <option value="gof">(g ∘ f)(x)</option>
+                                            </select>
+                                            <div class="mt-2 grid grid-cols-2 gap-2">
+                                                <button type="button" class="preset-btn" onclick="setCompType('fog')">f ∘ g</button>
+                                                <button type="button" class="preset-btn" onclick="setCompType('gof')">g ∘ f</button>
+                                            </div>
+                                        </div>
+                                        <button onclick="calculateComposition()" 
+                                                class="w-full bg-primary text-white py-3 px-6 rounded-lg hover:bg-secondary transition-colors font-semibold">
+                                            <i class="fas fa-layer-group mr-2"></i>Calculate Composition
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Result</h4>
+                                    <div class="bg-gray-50 rounded-lg p-4">
+                                        <p class="text-sm text-gray-600 mb-2">Composition:</p>
+                                        <p class="text-lg font-mono text-primary" id="compositionResult">2x - 5</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white">
+                                <h4 class="text-lg font-semibold mb-4 text-center">Step-by-Step Process</h4>
+                                <div class="space-y-4" id="compositionSteps">
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm">Step 1: Write the composition</p>
+                                        <p class="font-mono text-lg">(f ∘ g)(x) = f(g(x))</p>
+                                    </div>
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm">Step 2: Substitute g(x)</p>
+                                        <p class="font-mono text-lg">= f(x - 3)</p>
+                                    </div>
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm">Step 3: Apply f function</p>
+                                        <p class="font-mono text-lg">= 2x - 5</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Practice Examples -->
+                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-pencil-alt text-orange-500 mr-2"></i>Practice Examples
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-lg p-4 border-2 border-orange-200">
+                                <h4 class="font-semibold text-gray-800 mb-2">Practice 1: (f ∘ g)(x)</h4>
+                                <p class="text-gray-700 mb-2">Given: f(x) = x², g(x) = x + 2</p>
+                                <p class="text-gray-700 mb-2">Find: (f ∘ g)(x)</p>
+                                <div class="bg-gray-50 rounded p-3 font-mono text-sm">
+                                    (f ∘ g)(x) = f(x + 2) = (x + 2)² = x² + 4x + 4
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 border-2 border-orange-200">
+                                <h4 class="font-semibold text-gray-800 mb-2">Practice 2: (g ∘ f)(x)</h4>
+                                <p class="text-gray-700 mb-2">Given: f(x) = x², g(x) = x + 2</p>
+                                <p class="text-gray-700 mb-2">Find: (g ∘ f)(x)</p>
+                                <div class="bg-gray-50 rounded p-3 font-mono text-sm">
+                                    (g ∘ f)(x) = g(x²) = x² + 2
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lesson Completion -->
+                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i>Complete This Lesson
+                        </h3>
+                        <p class="text-gray-600 text-center mb-6">
+                            Mark this lesson as completed to track your progress and unlock the next lesson.
+                        </p>
+                        <div class="text-center">
+                            <button onclick="completeLesson(4)" 
+                                    class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold">
+                                <i class="fas fa-check mr-2"></i>Mark as Complete
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Lesson Navigation Controls -->
+                    <div class="flex justify-between items-center mb-8">
+                        <button id="prevLessonBtn" onclick="navigateLesson(-1)" 
+                                class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fas fa-chevron-left mr-2"></i>
+                            Previous Lesson
+                        </button>
+                        
+                        <div class="flex items-center space-x-4">
+                            <div class="text-center">
+                                <div class="text-lg font-semibold text-primary">
+                                    <span id="currentLessonNum">4</span> of 5
+                                </div>
+                            </div>
+                            <div class="w-32 bg-gray-200 rounded-full h-2">
+                                <div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 80%"></div>
+                            </div>
+                        </div>
+                        
+                        <button id="nextLessonBtn" onclick="navigateLesson(1)" 
+                                class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            Next Lesson
+                            <i class="fas fa-chevron-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lesson 5: Applications -->
+            <section id="lesson5" class="lesson-section">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-chart-line text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 5: Real-World Applications</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                            Apply function operations to solve real-world problems in economics, physics, and engineering.
+                        </p>
+                    </div>
+
+                  
+
+                    <!-- Learning Objectives -->
+                    <div class="bg-green-50 border-l-4 border-green-500 p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-target mr-2"></i>Learning Objectives
+                        </h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Apply function operations to real-world problems
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Model economic and scientific situations
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Use function composition in practical contexts
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Solve optimization problems using functions
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Real-World Applications -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                            <i class="fas fa-globe text-blue-500 mr-3"></i>Real-World Applications of Function Operations
+                        </h3>
+                        
+                        <!-- Economics Application -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg mb-6">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-chart-line text-green-500 mr-2"></i>Economics: Profit and Revenue Functions
+                            </h4>
+                            <div class="bg-green-50 rounded-lg p-4 mb-4">
+                                <h5 class="font-semibold text-gray-800 mb-2">Problem:</h5>
+                                <p class="text-gray-700 mb-2">A company produces widgets. The revenue function is R(x) = 50x - 0.5x² and the cost function is C(x) = 20x + 100, where x is the number of widgets produced.</p>
+                                <p class="text-gray-700 mb-2">Find the profit function P(x) and determine the maximum profit.</p>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div class="flex items-start">
+                                    <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">1</span>
+                                    <div class="flex-1">
+                                        <p class="text-gray-700 mb-2">Define the profit function</p>
+                                        <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                            P(x) = R(x) - C(x)
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">2</span>
+                                    <div class="flex-1">
+                                        <p class="text-gray-700 mb-2">Substitute the functions</p>
+                                        <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                            P(x) = (50x - 0.5x²) - (20x + 100)
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">3</span>
+                                    <div class="flex-1">
+                                        <p class="text-gray-700 mb-2">Simplify</p>
+                                        <div class="bg-green-100 rounded-lg p-3 font-mono text-lg text-green-800 font-bold">
+                                            P(x) = -0.5x² + 30x - 100
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">4</span>
+                                    <div class="flex-1">
+                                        <p class="text-gray-700 mb-2">Find maximum profit (vertex of parabola)</p>
+                                        <div class="bg-blue-100 rounded-lg p-3 font-mono text-lg text-blue-800">
+                                            Maximum at x = 30, P(30) = 350
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Physics Application -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg mb-6">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-rocket text-purple-500 mr-2"></i>Physics: Motion and Composition
+                            </h4>
+                            <div class="bg-purple-50 rounded-lg p-4 mb-4">
+                                <h5 class="font-semibold text-gray-800 mb-2">Problem:</h5>
+                                <p class="text-gray-700 mb-2">A ball is thrown upward with velocity v(t) = 20 - 9.8t (m/s). The height function is h(v) = v²/19.6.</p>
+                                <p class="text-gray-700 mb-2">Find the height as a function of time h(t).</p>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div class="flex items-start">
+                                    <span class="w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">1</span>
+                                    <div class="flex-1">
+                                        <p class="text-gray-700 mb-2">We need h(t) = h(v(t))</p>
+                                        <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                            h(t) = h(v(t)) = h(20 - 9.8t)
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <span class="w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">2</span>
+                                    <div class="flex-1">
+                                        <p class="text-gray-700 mb-2">Substitute v(t) into h(v)</p>
+                                        <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                            h(t) = (20 - 9.8t)² / 19.6
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <span class="w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">3</span>
+                                    <div class="flex-1">
+                                        <p class="text-gray-700 mb-2">Expand and simplify</p>
+                                        <div class="bg-purple-100 rounded-lg p-3 font-mono text-lg text-purple-800 font-bold">
+                                            h(t) = 20t - 4.9t²
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Engineering Application -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-cogs text-orange-500 mr-2"></i>Engineering: Circuit Analysis
+                            </h4>
+                            <div class="bg-orange-50 rounded-lg p-4 mb-4">
+                                <h5 class="font-semibold text-gray-800 mb-2">Problem:</h5>
+                                <p class="text-gray-700 mb-2">In an electrical circuit, the current I(t) = 2sin(t) and resistance R(t) = 5 + 0.1t.</p>
+                                <p class="text-gray-700 mb-2">Find the power function P(t) = I²(t) × R(t).</p>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div class="flex items-start">
+                                    <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">1</span>
+                                    <div class="flex-1">
+                                        <p class="text-gray-700 mb-2">Write the power formula</p>
+                                        <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                            P(t) = I²(t) × R(t)
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">2</span>
+                                    <div class="flex-1">
+                                        <p class="text-gray-700 mb-2">Substitute the functions</p>
+                                        <div class="bg-gray-100 rounded-lg p-3 font-mono text-lg text-gray-800">
+                                            P(t) = (2sin(t))² × (5 + 0.1t)
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-4 mt-1 flex-shrink-0">3</span>
+                                    <div class="flex-1">
+                                        <p class="text-gray-700 mb-2">Simplify</p>
+                                        <div class="bg-orange-100 rounded-lg p-3 font-mono text-lg text-orange-800 font-bold">
+                                            P(t) = 4sin²(t) × (5 + 0.1t)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Problem Solver -->
+                    <div class="virtual-aid rounded-2xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                            <i class="fas fa-calculator text-primary mr-3"></i>Interactive Problem Solver
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="space-y-6">
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Problem Type</h4>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Select Application:</label>
+                                            <select id="problemType" onchange="loadProblem()" 
+                                                    class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none">
+                                                <option value="economics">Economics (Profit/Revenue)</option>
+                                                <option value="physics">Physics (Motion)</option>
+                                                <option value="engineering">Engineering (Circuits)</option>
+                                            </select>
+                                        </div>
+                                        <button onclick="solveProblem()" 
+                                                class="w-full bg-primary text-white py-3 px-6 rounded-lg hover:bg-secondary transition-colors font-semibold">
+                                            <i class="fas fa-calculator mr-2"></i>Solve Problem
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Solution</h4>
+                                    <div class="bg-gray-50 rounded-lg p-4">
+                                        <p class="text-sm text-gray-600 mb-2">Result:</p>
+                                        <p class="text-lg font-mono text-primary" id="problemSolution">Select a problem type to see the solution</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white">
+                                <h4 class="text-lg font-semibold mb-4 text-center">Step-by-Step Solution</h4>
+                                <div class="space-y-4" id="problemSteps">
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm">Step 1: Identify the problem type</p>
+                                        <p class="font-mono text-lg">Choose appropriate functions</p>
+                                    </div>
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm">Step 2: Apply function operations</p>
+                                        <p class="font-mono text-lg">Use addition, multiplication, or composition</p>
+                                    </div>
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm">Step 3: Simplify and solve</p>
+                                        <p class="font-mono text-lg">Find the final result</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Practice Problems -->
+                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-pencil-alt text-orange-500 mr-2"></i>Practice Problems
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-lg p-4 border-2 border-orange-200">
+                                <h4 class="font-semibold text-gray-800 mb-2">Problem 1: Business</h4>
+                                <p class="text-gray-700 mb-2">A store's daily revenue is R(x) = 100x - x² and costs are C(x) = 50x + 200, where x is items sold.</p>
+                                <p class="text-gray-700 mb-2">Find the profit function and break-even points.</p>
+                                <div class="bg-gray-50 rounded p-3 font-mono text-sm">
+                                    P(x) = R(x) - C(x) = -x² + 50x - 200<br>
+                                    Break-even: x = 5 and x = 40
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 border-2 border-orange-200">
+                                <h4 class="font-semibold text-gray-800 mb-2">Problem 2: Science</h4>
+                                <p class="text-gray-700 mb-2">Temperature T(h) = 20 - 0.0065h and pressure P(T) = 101.3e^(-0.034T).</p>
+                                <p class="text-gray-700 mb-2">Find pressure as a function of height P(h).</p>
+                                <div class="bg-gray-50 rounded p-3 font-mono text-sm">
+                                    P(h) = P(T(h)) = 101.3e^(-0.034(20 - 0.0065h))<br>
+                                    = 101.3e^(-0.68 + 0.000221h)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary -->
+                    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-lightbulb text-indigo-500 mr-2"></i>Key Takeaways
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-white rounded-lg p-4">
+                                <h4 class="font-semibold text-gray-800 mb-2">Function Operations</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Addition: (f + g)(x)</li>
+                                    <li>• Multiplication: (f • g)(x)</li>
+                                    <li>• Division: (f / g)(x)</li>
+                                    <li>• Composition: (f ∘ g)(x)</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-lg p-4">
+                                <h4 class="font-semibold text-gray-800 mb-2">Real-World Uses</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Economics: Profit analysis</li>
+                                    <li>• Physics: Motion equations</li>
+                                    <li>• Engineering: Circuit design</li>
+                                    <li>• Biology: Population models</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-lg p-4">
+                                <h4 class="font-semibold text-gray-800 mb-2">Problem Solving</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Identify the functions</li>
+                                    <li>• Choose the right operation</li>
+                                    <li>• Apply step-by-step</li>
+                                    <li>• Interpret the result</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lesson Completion -->
+                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
+                            <i class="fas fa-check-circle text-emerald-500 mr-2"></i>Complete This Lesson
+                        </h3>
+                        <p class="text-gray-600 text-center mb-6">
+                            Mark this lesson as completed to track your progress and unlock the next lesson.
+                        </p>
+                        <div class="text-center">
+                            <button onclick="completeLesson(5)" 
+                                    class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold">
+                                <i class="fas fa-check mr-2"></i>Mark as Complete
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Lesson Navigation Controls -->
+                    <div class="flex justify-center items-center mb-8">
+                        <button id="prevLessonBtn" onclick="navigateLesson(-1)" 
+                                class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fas fa-chevron-left mr-2"></i>
+                            Previous Lesson
+                        </button>
+                        
+                        <div class="flex items-center space-x-4 ml-8">
+                            <div class="text-center">
+                                <div class="text-lg font-semibold text-primary">
+                                    <span id="currentLessonNum">5</span> of 5
+                                </div>
+                            </div>
+                            <div class="w-32 bg-gray-200 rounded-full h-2">
+                                <div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2024 MathEase. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="operations-on-functions.js"></script>
+</body>
+</html>

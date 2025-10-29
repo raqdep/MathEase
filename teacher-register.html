@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Registration - MathEase (General Mathematics)</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="register-page">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="css/nav-logo/nav-logo.png" alt="MathEase Logo" class="logo-img">
+                <span>MathEase</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="index.html#topics" class="nav-link">Topics</a>
+                </li>
+                <li class="nav-item">
+                    <a href="index.html#teachers" class="nav-link">For Teachers</a>
+                </li>
+                <li class="nav-item">
+                    <a href="index.html#students" class="nav-link">For Students</a>
+                </li>
+                <li class="nav-item">
+                    <a href="index.html#team" class="nav-link">Our Team</a>
+                </li>
+                <li class="nav-item">
+                    <a href="index.html#about" class="nav-link">About Us</a>
+                </li>
+                
+                <li class="nav-item">
+                    <a href="login.html" class="nav-link">Login</a>
+                </li>
+               
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Registration Section -->
+    <section class="auth-section">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <div class="auth-logo">
+                        <img src="css/nav-logo/logo-mid.png" alt="MathEase Logo" class="auth-logo-img">
+                        <h1>MathEase</h1>
+                    </div>
+                    <h2>Teacher Registration</h2>
+                    <p>Create your teacher account to access the MathEase teaching portal</p>
+                </div>
+
+                <form class="auth-form" id="teacher-register-form" method="POST" novalidate>
+                    <div class="form-columns">
+                        <div class="form-column form-column-left">
+                            <div class="form-group">
+                                <label for="firstName">First Name</label>
+                                <div class="input-group">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" id="firstName" name="firstName" required placeholder="Enter first name" autocomplete="off" autofill="off">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="lastName">Last Name</label>
+                                <div class="input-group">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" id="lastName" name="lastName" required placeholder="Enter last name" autocomplete="off" autofill="off">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <div class="input-group">
+                                    <i class="fas fa-envelope"></i>
+                                    <input type="email" id="email" name="email" required placeholder="Enter your email" autocomplete="off" autofill="off">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="teacherId">Teacher ID</label>
+                                <div class="input-group">
+                                    <i class="fas fa-id-card"></i>
+                                    <input type="text" id="teacherId" name="teacherId" required placeholder="Enter teacher ID" autocomplete="off" autofill="off" inputmode="numeric" pattern="[0-9]*">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="department">Department</label>
+                                <div class="input-group">
+                                    <i class="fas fa-building"></i>
+                                    <input type="text" id="department" name="department" value="STEM" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-column form-column-right">
+                            <div class="form-group">
+                                <label for="subject">Subject Specialization</label>
+                                <div class="input-group">
+                                    <i class="fas fa-book"></i>
+                                    <input type="text" id="subject" name="subject" value="General Mathematics" readonly>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <div class="input-group">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="password" name="password" required placeholder="Create a password" autocomplete="new-password" autofill="off">
+                                    <button type="button" class="toggle-password">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="password-strength">
+                                    <div class="strength-bar">
+                                        <div class="strength-fill" id="strengthFill"></div>
+                                    </div>
+                                    <div class="strength-info">
+                                        <span class="strength-text" id="strengthText">Password strength</span>
+                                    </div>
+                                    <div class="password-requirements" id="passwordRequirements">
+                                        <div class="requirement" data-requirement="length">
+                                            <i class="fas fa-circle"></i>
+                                            <span>At least 8 characters</span>
+                                        </div>
+                                        <div class="requirement" data-requirement="lowercase">
+                                            <i class="fas fa-circle"></i>
+                                            <span>One lowercase letter</span>
+                                        </div>
+                                        <div class="requirement" data-requirement="uppercase">
+                                            <i class="fas fa-circle"></i>
+                                            <span>One uppercase letter</span>
+                                        </div>
+                                        <div class="requirement" data-requirement="number">
+                                            <i class="fas fa-circle"></i>
+                                            <span>One number</span>
+                                        </div>
+                                        <div class="requirement" data-requirement="special">
+                                            <i class="fas fa-circle"></i>
+                                            <span>One special character</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm Password</label>
+                                <div class="input-group">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Confirm your password" autocomplete="new-password" autofill="off">
+                                    <button type="button" class="toggle-password">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="form-options">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" name="terms" id="terms">
+                                    <span class="checkmark"></span>
+                                    <span class="checkbox-text">
+                                        I agree to the <a href="#" class="modal-link" data-modal="termsModal">Terms of Service</a> and <a href="#" class="modal-link" data-modal="privacyModal">Privacy Policy</a>
+                                    </span>
+                                </label>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-full">
+                                <i class="fas fa-user-plus"></i>
+                                Create Teacher Account
+                            </button>
+
+                        </div>
+                    </div>
+                </form>
+
+                <div class="auth-footer">
+                    <p>Already have a teacher account? <a href="teacher-login.html">Sign in here</a></p>
+                    <p class="mt-2"><a href="register.html" class="text-sm text-gray-600">Student Registration</a></p>
+                </div>
+            </div>
+
+            <div class="auth-image">
+                <div class="math-visual">
+                    <div class="floating-formula">y = mx + b</div>
+                    <div class="floating-formula">a² + b² = c²</div>
+                    <div class="floating-formula">e^(iπ) + 1 = 0</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Terms of Service Modal -->
+    <div id="termsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Terms of Service</h2>
+                <span class="close" data-modal="termsModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>1. Acceptance of Terms</h3>
+                <p>By accessing and using MathEase Teacher Portal, you accept and agree to be bound by the terms and provision of this agreement.</p>
+                
+                <h3>2. Teacher Responsibilities</h3>
+                <p>As a teacher using MathEase, you agree to:</p>
+                <ul>
+                    <li>Maintain professional conduct in all interactions</li>
+                    <li>Protect student privacy and data</li>
+                    <li>Use the platform for educational purposes only</li>
+                    <li>Provide accurate information about your qualifications</li>
+                </ul>
+                
+                <h3>3. Use License</h3>
+                <p>Permission is granted to access MathEase Teacher Portal for educational purposes. This license includes:</p>
+                <ul>
+                    <li>Access to student progress data for your classes</li>
+                    <li>Ability to create and manage assignments</li>
+                    <li>Use of teaching resources and materials</li>
+                    <li>Communication tools for student interaction</li>
+                </ul>
+                
+                <h3>4. Data Protection</h3>
+                <p>You agree to protect student data and maintain confidentiality in accordance with educational privacy laws.</p>
+                
+                <h3>5. Modifications</h3>
+                <p>MathEase may revise these terms of service at any time without notice. Continued use constitutes acceptance of updated terms.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-modal="termsModal">I Understand</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div id="privacyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Privacy Policy</h2>
+                <span class="close" data-modal="privacyModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h3>1. Information We Collect</h3>
+                <p>For teachers, we collect:</p>
+                <ul>
+                    <li>Name and contact information</li>
+                    <li>Teacher ID and department information</li>
+                    <li>Subject specialization and experience</li>
+                    <li>Account credentials</li>
+                    <li>Usage data and teaching activities</li>
+                </ul>
+                
+                <h3>2. How We Use Your Information</h3>
+                <p>We use teacher information to:</p>
+                <ul>
+                    <li>Provide access to teaching tools and resources</li>
+                    <li>Track and report on student progress</li>
+                    <li>Enable communication with students</li>
+                    <li>Improve our educational platform</li>
+                </ul>
+                
+                <h3>3. Student Data Access</h3>
+                <p>As a teacher, you will have access to student progress data for your classes. You agree to:</p>
+                <ul>
+                    <li>Use this data only for educational purposes</li>
+                    <li>Maintain student privacy and confidentiality</li>
+                    <li>Not share student data with unauthorized parties</li>
+                </ul>
+                
+                <h3>4. Data Security</h3>
+                <p>We implement appropriate security measures to protect all user data, including student information.</p>
+                
+                <h3>5. Contact Us</h3>
+                <p>If you have questions about this privacy policy, please contact us at privacy@mathease.com</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-modal="privacyModal">I Understand</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/teacher-auth.js"></script>
+</body>
+</html>
+

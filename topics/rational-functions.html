@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rational Functions, Equations and Inequalities - General Mathematics 11 | MathEase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="rational-functions.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#667eea',
+                        'secondary': '#764ba2',
+                        'accent': '#f093fb',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-poppins bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="../index.html" class="flex items-center space-x-2">
+                        <img src="../css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-8 w-8">
+                        <span class="text-xl font-bold text-primary">MathEase</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="../dashboard.html" class="text-gray-700 hover:text-primary transition-colors">
+                        <i class="fas fa-home mr-2"></i>Dashboard
+                    </a>
+                    <a href="../topics.html" class="text-primary font-semibold">
+                        <i class="fas fa-book mr-2"></i>Topics
+                    </a>
+                    <span class="text-gray-600">
+                        <i class="fas fa-user mr-2"></i><span id="userName">Student</span>
+                    </span>
+                    <a href="../php/logout.php" class="text-gray-700 hover:text-red-600 transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="gradient-bg text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
+                    <i class="fas fa-book-open mr-2"></i>
+                    <span class="font-semibold">General Mathematics 11</span>
+                </div>
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">Rational Functions, Equations and Inequalities</h1>
+                <p class="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto">
+                    Master rational functions through four comprehensive lessons designed for Grade 11 students
+                </p>
+                <div class="flex justify-center">
+                    <div class="bg-white/20 backdrop-blur-sm rounded-full px-8 py-3">
+                        <span class="text-lg font-semibold">4 Interactive Lessons</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Lesson Navigation -->
+        <div class="mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="1">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-fraction text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 1</h3>
+                        <p class="text-sm text-gray-600">Rational Functions</p>
+                    </div>
+                </button>
+                
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="2">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-chart-line text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 2</h3>
+                        <p class="text-sm text-gray-600">Graphs & Asymptotes</p>
+                    </div>
+                </button>
+                
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="3">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-equals text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 3</h3>
+                        <p class="text-sm text-gray-600">Rational Equations</p>
+                    </div>
+                </button>
+                
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="4">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-balance-scale text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 4</h3>
+                        <p class="text-sm text-gray-600">Rational Inequalities</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Lesson Content -->
+        <div class="lesson-content">
+            <!-- Lesson 1: Rational Functions -->
+            <section id="lesson1" class="lesson-section active">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-fraction text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 1: Rational Functions</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                            Learn the fundamentals of rational functions, their properties, and how to work with them.
+                        </p>
+                    </div>
+
+                    <!-- Learning Objectives -->
+                    <div class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-target mr-2"></i>Learning Objectives (MELC: M11GM-Ib-1)
+                        </h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Understand what rational functions are
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Identify the domain and range of rational functions
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Find vertical and horizontal asymptotes
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Detailed Explanation -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                            <i class="fas fa-book-open text-blue-500 mr-3"></i>Understanding Rational Functions
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>What is a Rational Function?
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    A rational function is a function that can be expressed as the ratio of two polynomials.
+                                </p>
+                                <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                    <p class="text-sm text-gray-600 mb-2">General Form:</p>
+                                    <p class="text-lg font-mono text-primary">f(x) = P(x)/Q(x)</p>
+                                    <p class="text-sm text-gray-600 mt-2">Where P(x) and Q(x) are polynomials, Q(x) ≠ 0</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>Important Restrictions
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    Rational functions have restrictions on their domain:
+                                </p>
+                                <div class="space-y-2 text-gray-700">
+                                    <div class="flex items-center">
+                                        <span class="w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-sm mr-3">!</span>
+                                        The denominator cannot be zero
+                                    </div>
+                                    <div class="flex items-center">
+                                        <span class="w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-sm mr-3">!</span>
+                                        Domain excludes values that make Q(x) = 0
+                                    </div>
+                                    <div class="flex items-center">
+                                        <span class="w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-sm mr-3">!</span>
+                                        These create vertical asymptotes
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Examples -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg mb-6">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-calculator text-orange-500 mr-2"></i>Examples of Rational Functions
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="bg-green-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Simple Rational Function</h5>
+                                    <p class="text-sm text-gray-700 mb-2">f(x) = 1/x</p>
+                                    <p class="text-xs text-gray-600">Domain: x ≠ 0</p>
+                                    <p class="text-xs text-gray-600">Range: y ≠ 0</p>
+                                </div>
+                                <div class="bg-blue-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Complex Rational Function</h5>
+                                    <p class="text-sm text-gray-700 mb-2">f(x) = (x² - 1)/(x - 2)</p>
+                                    <p class="text-xs text-gray-600">Domain: x ≠ 2</p>
+                                    <p class="text-xs text-gray-600">Range: All real numbers except y = 1</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Enhanced Step-by-Step Domain Finding -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-search text-purple-500 mr-2"></i>Enhanced Step-by-Step Domain Finding
+                            </h4>
+                            
+                            <div class="space-y-6">
+                                <div class="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-6 border-l-4 border-purple-500">
+                                    <h5 class="font-semibold text-gray-800 mb-4 flex items-center">
+                                        <i class="fas fa-calculator text-purple-500 mr-2"></i>
+                                        Example: Find the domain of f(x) = (x + 3)/(x² - 4)
+                                    </h5>
+                                    
+                                    <div class="space-y-4">
+                                        <div class="step-solution">
+                                            <div class="flex items-start">
+                                                <span class="step-number">1</span>
+                                                <div class="flex-1">
+                                                    <h6 class="font-semibold text-gray-800 mb-2">Identify the restriction</h6>
+                                                    <p class="text-gray-700 mb-2">Rational functions are undefined where the denominator equals zero.</p>
+                                                    <div class="bg-white rounded-lg p-3 border-l-4 border-purple-300">
+                                                        <p class="text-gray-600 font-mono">Set denominator = 0</p>
+                                                        <p class="text-gray-800 font-mono text-lg">x² - 4 = 0</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="step-solution">
+                                            <div class="flex items-start">
+                                                <span class="step-number">2</span>
+                                                <div class="flex-1">
+                                                    <h6 class="font-semibold text-gray-800 mb-2">Factor the denominator</h6>
+                                                    <p class="text-gray-700 mb-2">Use the difference of squares formula: a² - b² = (a - b)(a + b)</p>
+                                                    <div class="bg-white rounded-lg p-3 border-l-4 border-purple-300">
+                                                        <p class="text-gray-600 font-mono">x² - 4 = x² - 2²</p>
+                                                        <p class="text-gray-800 font-mono text-lg">(x - 2)(x + 2) = 0</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="step-solution">
+                                            <div class="flex items-start">
+                                                <span class="step-number">3</span>
+                                                <div class="flex-1">
+                                                    <h6 class="font-semibold text-gray-800 mb-2">Solve for x</h6>
+                                                    <p class="text-gray-700 mb-2">Use the zero product property: if ab = 0, then a = 0 or b = 0</p>
+                                                    <div class="bg-white rounded-lg p-3 border-l-4 border-purple-300">
+                                                        <p class="text-gray-600 font-mono">x - 2 = 0 or x + 2 = 0</p>
+                                                        <p class="text-gray-800 font-mono text-lg">x = 2 or x = -2</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="step-solution">
+                                            <div class="flex items-start">
+                                                <span class="step-number">4</span>
+                                                <div class="flex-1">
+                                                    <h6 class="font-semibold text-gray-800 mb-2">Write the domain</h6>
+                                                    <p class="text-gray-700 mb-2">The domain includes all real numbers except the values that make the denominator zero.</p>
+                                                    <div class="bg-green-100 rounded-lg p-3 border-l-4 border-green-500">
+                                                        <p class="text-gray-800 font-mono text-lg font-bold">Domain: {x | x ≠ 2, x ≠ -2}</p>
+                                                        <p class="text-gray-600 text-sm mt-1">or in interval notation: (-∞, -2) ∪ (-2, 2) ∪ (2, ∞)</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Enhanced Interactive Domain Visualizer -->
+                                <div class="domain-visualizer">
+                                    <div class="flex items-center justify-between mb-6">
+                                        <h5 class="font-semibold text-gray-800 flex items-center">
+                                            <i class="fas fa-chart-line text-blue-500 mr-2"></i>
+                                            Interactive Domain Visualizer
+                                        </h5>
+                                        <div class="flex space-x-2">
+                                            <button onclick="clearDomainInput()" 
+                                                    class="bg-gray-500 text-white px-3 py-1 rounded-lg hover:bg-gray-600 transition-colors text-sm">
+                                                <i class="fas fa-eraser mr-1"></i>Clear
+                                            </button>
+                                            <button onclick="loadExample()" 
+                                                    class="bg-purple-500 text-white px-3 py-1 rounded-lg hover:bg-purple-600 transition-colors text-sm">
+                                                <i class="fas fa-lightbulb mr-1"></i>Example
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                        <!-- Input Section -->
+                                        <div class="lg:col-span-2">
+                                            <div class="bg-white rounded-lg p-4 shadow-sm border border-gray-200">
+                                                <label class="block text-sm font-medium text-gray-700 mb-3">
+                                                    <i class="fas fa-function text-blue-500 mr-2"></i>
+                                                    Enter Rational Function:
+                                                </label>
+                                                <div class="space-y-3">
+                                                    <input type="text" id="domainFunction" value="(x + 3)/(x² - 4)" 
+                                                           class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none font-mono text-lg transition-all duration-300"
+                                                           placeholder="e.g., (x + 3)/(x² - 4)">
+                                                    <div class="flex space-x-2">
+                                                        <button onclick="analyzeDomain()" 
+                                                                class="flex-1 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors font-semibold">
+                                                            <i class="fas fa-search mr-2"></i>Analyze Domain
+                                                        </button>
+                                                        <button onclick="showDomainSteps()" 
+                                                                class="flex-1 bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors font-semibold">
+                                                            <i class="fas fa-list-ol mr-2"></i>Show Steps
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Quick Examples -->
+                                        <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 border border-purple-200">
+                                            <h6 class="font-semibold text-gray-800 mb-3 flex items-center">
+                                                <i class="fas fa-star text-purple-500 mr-2"></i>
+                                                Quick Examples
+                                            </h6>
+                                            <div class="space-y-2">
+                                                <button onclick="loadExampleFunction('(x + 1)/(x - 2)')" 
+                                                        class="w-full text-left p-2 bg-white rounded border hover:bg-purple-50 transition-colors text-sm">
+                                                    <span class="font-mono">(x + 1)/(x - 2)</span>
+                                                </button>
+                                                <button onclick="loadExampleFunction('(x² - 1)/(x + 3)')" 
+                                                        class="w-full text-left p-2 bg-white rounded border hover:bg-purple-50 transition-colors text-sm">
+                                                    <span class="font-mono">(x² - 1)/(x + 3)</span>
+                                                </button>
+                                                <button onclick="loadExampleFunction('1/(x² - 9)')" 
+                                                        class="w-full text-left p-2 bg-white rounded border hover:bg-purple-50 transition-colors text-sm">
+                                                    <span class="font-mono">1/(x² - 9)</span>
+                                                </button>
+                                                <button onclick="loadExampleFunction('(x - 1)/(x² - 4)')" 
+                                                        class="w-full text-left p-2 bg-white rounded border hover:bg-purple-50 transition-colors text-sm">
+                                                    <span class="font-mono">(x - 1)/(x² - 4)</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Domain Analysis Results -->
+                                    <div id="domainAnalysis" class="mt-6 p-6 bg-white rounded-lg border-l-4 border-blue-500 shadow-sm">
+                                        <h6 class="font-semibold text-gray-800 mb-4 flex items-center">
+                                            <i class="fas fa-chart-bar text-blue-500 mr-2"></i>
+                                            Domain Analysis Results
+                                        </h6>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div class="bg-red-50 rounded-lg p-4 border border-red-200">
+                                                <div class="flex items-center mb-2">
+                                                    <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>
+                                                    <span class="font-semibold text-gray-800">Restrictions</span>
+                                                </div>
+                                                <p class="text-red-600 font-mono text-lg" id="domainRestrictions">x ≠ 2, x ≠ -2</p>
+                                            </div>
+                                            <div class="bg-green-50 rounded-lg p-4 border border-green-200">
+                                                <div class="flex items-center mb-2">
+                                                    <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                                    <span class="font-semibold text-gray-800">Domain</span>
+                                                </div>
+                                                <p class="text-green-600 font-mono text-lg" id="domainResult">(-∞, -2) ∪ (-2, 2) ∪ (2, ∞)</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Step-by-Step Domain Analysis -->
+                                        <div id="domainSteps" class="mt-4 hidden">
+                                            <h6 class="font-semibold text-gray-800 mb-3 flex items-center">
+                                                <i class="fas fa-list-ol text-indigo-500 mr-2"></i>
+                                                Step-by-Step Analysis
+                                            </h6>
+                                            <div id="domainStepsContent" class="space-y-3">
+                                                <!-- Steps will be populated by JavaScript -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- References -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-book text-blue-500 mr-2"></i>References & Additional Resources
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Academic Sources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Stewart, J. (2015). <em>Precalculus: Mathematics for Calculus</em>. Cengage Learning.</li>
+                                    <li>• Larson, R. (2018). <em>Precalculus with Limits</em>. Cengage Learning.</li>
+                                    <li>• Blitzer, R. (2019). <em>Precalculus</em>. Pearson Education.</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Online Resources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Khan Academy: Rational Functions</li>
+                                    <li>• Purplemath: Rational Functions</li>
+                                    <li>• Math is Fun: Rational Functions</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Virtual Aid: Rational Function Explorer -->
+                    <div class="virtual-aid rounded-2xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                            <i class="fas fa-cogs text-primary mr-3"></i>Enhanced Rational Function Explorer
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="space-y-6">
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Function Input</h4>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Numerator P(x):</label>
+                                            <select id="numerator" onchange="analyzeRationalFunction()" 
+                                                    class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono">
+                                                <option value="x + 1" selected>x + 1</option>
+                                                <option value="x - 1">x - 1</option>
+                                                <option value="x^2 - 1">x² - 1</option>
+                                                <option value="2x + 3">2x + 3</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Denominator Q(x):</label>
+                                            <select id="denominator" onchange="analyzeRationalFunction()" 
+                                                    class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono">
+                                                <option value="x - 2" selected>x - 2</option>
+                                                <option value="x + 3">x + 3</option>
+                                                <option value="x^2 - 4">x² - 4</option>
+                                                <option value="x + 1">x + 1</option>
+                                            </select>
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <button onclick="analyzeRationalFunction()" 
+                                                    class="bg-primary text-white py-3 px-4 rounded-lg hover:bg-secondary transition-colors font-semibold">
+                                                <i class="fas fa-play mr-2"></i>Analyze
+                                            </button>
+                                            <button onclick="showStepByStep()" 
+                                                    class="bg-green-500 text-white py-3 px-4 rounded-lg hover:bg-green-600 transition-colors font-semibold">
+                                                <i class="fas fa-list-ol mr-2"></i>Step-by-Step
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Analysis Results</h4>
+                                    <div class="space-y-3">
+                                        <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                                            <span class="font-semibold text-gray-800">Domain:</span>
+                                            <span class="text-green-600 font-mono" id="domainResult">x ≠ 2</span>
+                                        </div>
+                                        <div class="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                                            <span class="font-semibold text-gray-800">Vertical Asymptote:</span>
+                                            <span class="text-blue-600 font-mono" id="verticalAsymptote">x = 2</span>
+                                        </div>
+                                        <div class="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                                            <span class="font-semibold text-gray-800">Horizontal Asymptote:</span>
+                                            <span class="text-purple-600 font-mono" id="horizontalAsymptote">y = 1</span>
+                                        </div>
+                                        <div class="flex justify-between items-center p-3 bg-yellow-50 rounded-lg">
+                                            <span class="font-semibold text-gray-800">x-intercept:</span>
+                                            <span class="text-yellow-600 font-mono" id="xIntercept">x = -1</span>
+                                        </div>
+                                        <div class="flex justify-between items-center p-3 bg-pink-50 rounded-lg">
+                                            <span class="font-semibold text-gray-800">y-intercept:</span>
+                                            <span class="text-pink-600 font-mono" id="yIntercept">y = -0.5</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Step-by-Step Analysis -->
+                                <div id="stepByStepAnalysis" class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 border-l-4 border-indigo-500" style="display: none;">
+                                    <h5 class="font-semibold text-gray-800 mb-4 flex items-center">
+                                        <i class="fas fa-list-ol text-indigo-500 mr-2"></i>
+                                        Step-by-Step Analysis
+                                    </h5>
+                                    <div id="analysisSteps" class="space-y-3">
+                                        <!-- Steps will be populated by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white">
+                                <h4 class="text-lg font-semibold mb-4 text-center">Interactive Function Graph</h4>
+                                <div class="bg-white/20 rounded-lg p-4 mb-4">
+                                    <canvas id="rationalGraphCanvas" width="400" height="300" class="w-full h-64 bg-white rounded graph-canvas"></canvas>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 mb-4">
+                                    <button onclick="resetRationalFunction()" 
+                                            class="bg-white/20 hover:bg-white/30 px-3 py-2 rounded-lg transition-colors text-sm">
+                                        <i class="fas fa-redo mr-1"></i>Reset
+                                    </button>
+                                    <button onclick="animateGraph()" 
+                                            class="bg-white/20 hover:bg-white/30 px-3 py-2 rounded-lg transition-colors text-sm">
+                                        <i class="fas fa-play mr-1"></i>Animate
+                                    </button>
+                                </div>
+                                <div class="bg-white/10 rounded-lg p-3 text-sm">
+                                    <p class="mb-2"><strong>Graph Features:</strong></p>
+                                    <ul class="text-xs space-y-1">
+                                        <li>• Red dashed line: Vertical asymptote</li>
+                                        <li>• Blue dashed line: Horizontal asymptote</li>
+                                        <li>• Green dots: Intercepts</li>
+                                        <li>• Purple curve: Function graph</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lesson 2: Graphs & Asymptotes -->
+            <section id="lesson2" class="lesson-section">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-chart-line text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 2: Graphs & Asymptotes</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                            Learn how to graph rational functions and identify their asymptotes and intercepts.
+                        </p>
+                    </div>
+
+                    <!-- Learning Objectives -->
+                    <div class="bg-green-50 border-l-4 border-green-500 p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-target mr-2"></i>Learning Objectives (MELC: M11GM-Ib-2)
+                        </h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Graph rational functions
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Find vertical and horizontal asymptotes
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Identify x and y intercepts
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Comprehensive Graphing Guide -->
+                    <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                            <i class="fas fa-chart-line text-green-500 mr-3"></i>Graphing Rational Functions: Complete Guide
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-arrow-up text-red-500 mr-2"></i>Vertical Asymptotes
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    Vertical asymptotes occur where the denominator equals zero (but the numerator doesn't).
+                                </p>
+                                
+                                <div class="space-y-4">
+                                    <div class="bg-red-50 rounded-lg p-4 border-l-4 border-red-500">
+                                        <h5 class="font-semibold text-gray-800 mb-2">Finding Vertical Asymptotes</h5>
+                                        <p class="text-sm text-gray-700 mb-2">1. Set denominator = 0</p>
+                                        <p class="text-sm text-gray-700 mb-2">2. Solve for x</p>
+                                        <p class="text-sm text-gray-700">3. Check if numerator ≠ 0 at these points</p>
+                                    </div>
+                                    
+                                    <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                        <h5 class="font-semibold text-gray-800 mb-2">Example: f(x) = 1/(x - 3)</h5>
+                                        <p class="text-sm text-gray-700">Vertical asymptote: x = 3</p>
+                                        <p class="text-xs text-gray-600">The function approaches ±∞ as x approaches 3</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-arrow-right text-blue-500 mr-2"></i>Horizontal Asymptotes
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    Horizontal asymptotes describe the behavior as x approaches ±∞.
+                                </p>
+                                
+                                <div class="space-y-4">
+                                    <div class="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                                        <h5 class="font-semibold text-gray-800 mb-2">Rules for Horizontal Asymptotes</h5>
+                                        <p class="text-sm text-gray-700 mb-1">• If degree of P(x) < degree of Q(x): y = 0</p>
+                                        <p class="text-sm text-gray-700 mb-1">• If degree of P(x) = degree of Q(x): y = leading coefficients ratio</p>
+                                        <p class="text-sm text-gray-700">• If degree of P(x) > degree of Q(x): No horizontal asymptote</p>
+                                    </div>
+                                    
+                                    <div class="bg-purple-50 rounded-lg p-4 border-l-4 border-purple-500">
+                                        <h5 class="font-semibold text-gray-800 mb-2">Example: f(x) = (2x + 1)/(x - 3)</h5>
+                                        <p class="text-sm text-gray-700">Horizontal asymptote: y = 2</p>
+                                        <p class="text-xs text-gray-600">Both numerator and denominator have degree 1</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step-by-Step Graphing Process -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-list-ol text-orange-500 mr-2"></i>Step-by-Step Graphing Process
+                            </h4>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                <div class="bg-orange-50 rounded-lg p-4 border-l-4 border-orange-500">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Step 1: Find Domain</h5>
+                                    <p class="text-sm text-gray-600">Identify values that make the denominator zero</p>
+                                </div>
+                                <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Step 2: Find Asymptotes</h5>
+                                    <p class="text-sm text-gray-600">Vertical: denominator = 0, Horizontal: compare degrees</p>
+                                </div>
+                                <div class="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Step 3: Find Intercepts</h5>
+                                    <p class="text-sm text-gray-600">x-intercepts: numerator = 0, y-intercept: f(0)</p>
+                                </div>
+                                <div class="bg-purple-50 rounded-lg p-4 border-l-4 border-purple-500">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Step 4: Plot Points</h5>
+                                    <p class="text-sm text-gray-600">Choose test points and sketch the graph</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- References -->
+                    <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-book text-green-500 mr-2"></i>References & Additional Resources
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Academic Sources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Sullivan, M. (2019). <em>Precalculus: Enhanced with Graphing Utilities</em>. Pearson.</li>
+                                    <li>• Zill, D. (2018). <em>Precalculus with Calculus Previews</em>. Jones & Bartlett Learning.</li>
+                                    <li>• Demana, F. (2019). <em>Precalculus: Graphical, Numerical, Algebraic</em>. Pearson.</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Online Resources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Khan Academy: Graphing Rational Functions</li>
+                                    <li>• Desmos: Function Grapher</li>
+                                    <li>• GeoGebra: Rational Functions</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Virtual Aid: Graphing Calculator -->
+                    <div class="virtual-aid rounded-2xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                            <i class="fas fa-chart-line text-primary mr-3"></i>Enhanced Rational Function Grapher
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="space-y-6">
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Function Input</h4>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Choose rational function:</label>
+                                            <select id="graphFunction" onchange="graphRationalFunction()" 
+                                                    class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono">
+                                                <option value="(x + 1)/(x - 2)" selected>(x + 1)/(x - 2)</option>
+                                                <option value="(x^2 - 1)/(x + 3)">(x² - 1)/(x + 3)</option>
+                                                <option value="1/(x^2 - 9)">1/(x² - 9)</option>
+                                                <option value="(2x + 3)/(x - 1)">(2x + 3)/(x - 1)</option>
+                                            </select>
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <button onclick="graphRationalFunction()" 
+                                                    class="bg-primary text-white py-2 px-4 rounded-lg hover:bg-secondary transition-colors font-semibold">
+                                                <i class="fas fa-chart-line mr-2"></i>Graph
+                                            </button>
+                                            <button onclick="showGraphSteps()" 
+                                                    class="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors font-semibold">
+                                                <i class="fas fa-list-ol mr-2"></i>Steps
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Graph Analysis</h4>
+                                    <div class="space-y-3">
+                                        <div class="flex justify-between items-center p-3 bg-red-50 rounded-lg">
+                                            <span class="font-semibold text-gray-800">Vertical Asymptotes:</span>
+                                            <span class="text-red-600 font-mono" id="graphVerticalAsymptotes">x = 2</span>
+                                        </div>
+                                        <div class="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                                            <span class="font-semibold text-gray-800">Horizontal Asymptotes:</span>
+                                            <span class="text-blue-600 font-mono" id="graphHorizontalAsymptotes">y = 1</span>
+                                        </div>
+                                        <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                                            <span class="font-semibold text-gray-800">x-intercepts:</span>
+                                            <span class="text-green-600 font-mono" id="graphXIntercepts">x = -1</span>
+                                        </div>
+                                        <div class="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                                            <span class="font-semibold text-gray-800">y-intercepts:</span>
+                                            <span class="text-purple-600 font-mono" id="graphYIntercepts">y = -0.5</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Graph Steps -->
+                                <div id="graphSteps" class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 border-l-4 border-indigo-500 hidden">
+                                    <h5 class="font-semibold text-gray-800 mb-4 flex items-center">
+                                        <i class="fas fa-list-ol text-indigo-500 mr-2"></i>
+                                        Step-by-Step Graphing
+                                    </h5>
+                                    <div id="graphStepsContent" class="space-y-3">
+                                        <!-- Steps will be populated by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white">
+                                <h4 class="text-lg font-semibold mb-4 text-center">Interactive Function Graph</h4>
+                                <div class="bg-white/20 rounded-lg p-4 mb-4">
+                                    <canvas id="graphCanvas" width="400" height="300" class="w-full h-64 bg-white rounded graph-canvas"></canvas>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 mb-4">
+                                    <button onclick="resetGraph()" 
+                                            class="bg-white/20 hover:bg-white/30 px-3 py-2 rounded-lg transition-colors text-sm">
+                                        <i class="fas fa-redo mr-1"></i>Reset
+                                    </button>
+                                    <button onclick="animateGraph()" 
+                                            class="bg-white/20 hover:bg-white/30 px-3 py-2 rounded-lg transition-colors text-sm">
+                                        <i class="fas fa-play mr-1"></i>Animate
+                                    </button>
+                                </div>
+                                <div class="bg-white/10 rounded-lg p-3 text-sm">
+                                    <p class="mb-2"><strong>Graph Features:</strong></p>
+                                    <ul class="text-xs space-y-1">
+                                        <li>• Red dashed line: Vertical asymptote</li>
+                                        <li>• Blue dashed line: Horizontal asymptote</li>
+                                        <li>• Green dots: Intercepts</li>
+                                        <li>• Purple curve: Function graph</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lesson 3: Rational Equations -->
+            <section id="lesson3" class="lesson-section">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-equals text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 3: Rational Equations</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                            Learn how to solve rational equations using algebraic methods and check for extraneous solutions.
+                        </p>
+                    </div>
+
+                    <!-- Learning Objectives -->
+                    <div class="bg-purple-50 border-l-4 border-purple-500 p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-target mr-2"></i>Learning Objectives (MELC: M11GM-Ib-3)
+                        </h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-purple-500 mr-3"></i>
+                                Solve rational equations algebraically
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-purple-500 mr-3"></i>
+                                Identify and eliminate extraneous solutions
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-purple-500 mr-3"></i>
+                                Check solutions in the original equation
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Comprehensive Equation Solving Guide -->
+                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                            <i class="fas fa-equals text-purple-500 mr-3"></i>Solving Rational Equations: Complete Guide
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>What are Extraneous Solutions?
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    Extraneous solutions are solutions that appear to work but don't satisfy the original equation.
+                                </p>
+                                
+                                <div class="bg-red-50 rounded-lg p-4 border-l-4 border-red-500">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Why do they occur?</h5>
+                                    <p class="text-sm text-gray-700 mb-2">• Multiplying by denominators can introduce false solutions</p>
+                                    <p class="text-sm text-gray-700 mb-2">• Solutions that make any denominator zero are extraneous</p>
+                                    <p class="text-sm text-gray-700">• Always check solutions in the original equation!</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-check-circle text-green-500 mr-2"></i>Solution Process
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    Follow these steps to solve rational equations correctly:
+                                </p>
+                                
+                                <div class="space-y-3">
+                                    <div class="bg-gray-50 rounded-lg p-3">
+                                        <h5 class="text-sm font-semibold text-gray-800">Step 1: Find LCD</h5>
+                                        <p class="text-xs text-gray-600">Find the least common denominator of all fractions</p>
+                                    </div>
+                                    <div class="bg-gray-50 rounded-lg p-3">
+                                        <h5 class="text-sm font-semibold text-gray-800">Step 2: Clear Fractions</h5>
+                                        <p class="text-xs text-gray-600">Multiply both sides by the LCD</p>
+                                    </div>
+                                    <div class="bg-gray-50 rounded-lg p-3">
+                                        <h5 class="text-sm font-semibold text-gray-800">Step 3: Solve</h5>
+                                        <p class="text-xs text-gray-600">Solve the resulting polynomial equation</p>
+                                    </div>
+                                    <div class="bg-gray-50 rounded-lg p-3">
+                                        <h5 class="text-sm font-semibold text-gray-800">Step 4: Check</h5>
+                                        <p class="text-xs text-gray-600">Verify solutions in the original equation</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step-by-Step Examples -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-calculator text-orange-500 mr-2"></i>Step-by-Step Examples
+                            </h4>
+                            
+                            <div class="space-y-6">
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-gray-800 mb-3">Example 1: Solve 1/x + 1/(x+2) = 5/12</h5>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">1</span>
+                                            <span class="text-gray-700">Find LCD: x(x+2)</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">LCD = x(x+2)</div>
+                                        
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">2</span>
+                                            <span class="text-gray-700">Multiply by LCD</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">x(x+2)[1/x + 1/(x+2)] = x(x+2)[5/12]</div>
+                                        
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">3</span>
+                                            <span class="text-gray-700">Simplify</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">(x+2) + x = 5x(x+2)/12</div>
+                                        <div class="ml-11 text-gray-600 font-mono">2x + 2 = 5x² + 10x</div>
+                                        
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">4</span>
+                                            <span class="text-gray-700">Solve quadratic</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">5x² + 8x - 24 = 0</div>
+                                        <div class="ml-11 text-gray-600 font-mono">x = 1.2 or x = -4</div>
+                                        
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">5</span>
+                                            <span class="text-gray-700">Check solutions</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">Both solutions work!</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- References -->
+                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-book text-purple-500 mr-2"></i>References & Additional Resources
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Academic Sources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Anton, H. (2018). <em>Calculus: Early Transcendentals</em>. Wiley.</li>
+                                    <li>• Thomas, G. (2019). <em>Thomas' Calculus</em>. Pearson Education.</li>
+                                    <li>• Rogawski, J. (2019). <em>Calculus: Early Transcendentals</em>. W.H. Freeman.</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Online Resources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Wolfram Alpha: Rational Equations</li>
+                                    <li>• Symbolab: Equation Solver</li>
+                                    <li>• Math Planet: Rational Equations</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Virtual Aid: Equation Solver -->
+                    <div class="virtual-aid rounded-2xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                            <i class="fas fa-equals text-primary mr-3"></i>Enhanced Rational Equation Solver
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="space-y-6">
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Equation Input</h4>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Choose rational equation:</label>
+                                            <select id="equationInput" onchange="solveRationalEquation()" 
+                                                    class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono">
+                                                <option value="1/x + 1/(x+2) = 5/12" selected>1/x + 1/(x+2) = 5/12</option>
+                                                <option value="(x+1)/x = 3">(x+1)/x = 3</option>
+                                                <option value="(2x-1)/(x+3) = 1">(2x-1)/(x+3) = 1</option>
+                                                <option value="(x-4)/(x-1) = 2">(x-4)/(x-1) = 2</option>
+                                            </select>
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <button onclick="solveRationalEquation()" 
+                                                    class="bg-primary text-white py-2 px-4 rounded-lg hover:bg-secondary transition-colors font-semibold">
+                                                <i class="fas fa-calculator mr-2"></i>Solve
+                                            </button>
+                                            <button onclick="showEquationSteps()" 
+                                                    class="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors font-semibold">
+                                                <i class="fas fa-list-ol mr-2"></i>Steps
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Solution Steps</h4>
+                                    <div class="space-y-2" id="solutionSteps">
+                                        <div class="bg-gray-50 rounded p-2 text-sm">
+                                            <strong>Step 1:</strong> Find LCD
+                                        </div>
+                                        <div class="bg-gray-50 rounded p-2 text-sm">
+                                            <strong>Step 2:</strong> Clear fractions
+                                        </div>
+                                        <div class="bg-gray-50 rounded p-2 text-sm">
+                                            <strong>Step 3:</strong> Solve polynomial
+                                        </div>
+                                        <div class="bg-gray-50 rounded p-2 text-sm">
+                                            <strong>Step 4:</strong> Check solutions
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Equation Steps -->
+                                <div id="equationSteps" class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border-l-4 border-purple-500 hidden">
+                                    <h5 class="font-semibold text-gray-800 mb-4 flex items-center">
+                                        <i class="fas fa-list-ol text-purple-500 mr-2"></i>
+                                        Step-by-Step Solution
+                                    </h5>
+                                    <div id="equationStepsContent" class="space-y-3">
+                                        <!-- Steps will be populated by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white">
+                                <h4 class="text-lg font-semibold mb-4 text-center">Solution Results</h4>
+                                <div class="space-y-4" id="equationSolutions">
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm mb-2">Valid Solutions:</p>
+                                        <p class="font-mono text-lg">x = 1.2, x = -4</p>
+                                    </div>
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm mb-2">Extraneous Solutions:</p>
+                                        <p class="font-mono text-lg">None</p>
+                                    </div>
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm mb-2">Domain Restrictions:</p>
+                                        <p class="font-mono text-lg">x ≠ 0, x ≠ -2</p>
+                                    </div>
+                                </div>
+                                <div class="mt-4 grid grid-cols-2 gap-2">
+                                    <button onclick="resetEquation()" 
+                                            class="bg-white/20 hover:bg-white/30 px-3 py-2 rounded-lg transition-colors text-sm">
+                                        <i class="fas fa-redo mr-1"></i>Reset
+                                    </button>
+                                    <button onclick="validateSolutions()" 
+                                            class="bg-white/20 hover:bg-white/30 px-3 py-2 rounded-lg transition-colors text-sm">
+                                        <i class="fas fa-check mr-1"></i>Validate
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lesson 4: Rational Inequalities -->
+            <section id="lesson4" class="lesson-section">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-balance-scale text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 4: Rational Inequalities</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                            Learn how to solve rational inequalities using sign analysis and number line methods.
+                        </p>
+                    </div>
+
+                    <!-- Learning Objectives -->
+                    <div class="bg-indigo-50 border-l-4 border-indigo-500 p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-target mr-2"></i>Learning Objectives (MELC: M11GM-Ib-4)
+                        </h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-indigo-500 mr-3"></i>
+                                Solve rational inequalities
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-indigo-500 mr-3"></i>
+                                Use sign analysis and number lines
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-indigo-500 mr-3"></i>
+                                Express solutions in interval notation
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Comprehensive Inequality Solving Guide -->
+                    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                            <i class="fas fa-balance-scale text-indigo-500 mr-3"></i>Solving Rational Inequalities: Complete Guide
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-chart-line text-blue-500 mr-2"></i>Sign Analysis Method
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    Use sign analysis to determine where the rational function is positive or negative.
+                                </p>
+                                
+                                <div class="space-y-4">
+                                    <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                        <h5 class="font-semibold text-gray-800 mb-2">Step 1: Find Critical Points</h5>
+                                        <p class="text-sm text-gray-700">• Zeros of numerator (where function = 0)</p>
+                                        <p class="text-sm text-gray-700">• Zeros of denominator (vertical asymptotes)</p>
+                                    </div>
+                                    
+                                    <div class="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                                        <h5 class="font-semibold text-gray-800 mb-2">Step 2: Create Number Line</h5>
+                                        <p class="text-sm text-gray-700">• Plot critical points on number line</p>
+                                        <p class="text-sm text-gray-700">• Test intervals between critical points</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-list text-purple-500 mr-2"></i>Interval Notation
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    Express solutions using interval notation for clear communication.
+                                </p>
+                                
+                                <div class="space-y-3">
+                                    <div class="bg-gray-50 rounded-lg p-3">
+                                        <h5 class="text-sm font-semibold text-gray-800">(a, b) - Open interval</h5>
+                                        <p class="text-xs text-gray-600">All numbers between a and b, not including endpoints</p>
+                                    </div>
+                                    <div class="bg-gray-50 rounded-lg p-3">
+                                        <h5 class="text-sm font-semibold text-gray-800">[a, b] - Closed interval</h5>
+                                        <p class="text-xs text-gray-600">All numbers between a and b, including endpoints</p>
+                                    </div>
+                                    <div class="bg-gray-50 rounded-lg p-3">
+                                        <h5 class="text-sm font-semibold text-gray-800">(-∞, a) ∪ (b, ∞) - Union</h5>
+                                        <p class="text-xs text-gray-600">All numbers less than a or greater than b</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step-by-Step Examples -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-calculator text-orange-500 mr-2"></i>Step-by-Step Examples
+                            </h4>
+                            
+                            <div class="space-y-6">
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-gray-800 mb-3">Example: Solve (x - 1)/(x + 2) ≥ 0</h5>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">1</span>
+                                            <span class="text-gray-700">Find critical points</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">x = 1 (numerator zero), x = -2 (denominator zero)</div>
+                                        
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">2</span>
+                                            <span class="text-gray-700">Create number line</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">(-∞, -2) | (-2, 1) | (1, ∞)</div>
+                                        
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">3</span>
+                                            <span class="text-gray-700">Test intervals</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">x = -3: (-)/(-) = +</div>
+                                        <div class="ml-11 text-gray-600 font-mono">x = 0: (-)/(+) = -</div>
+                                        <div class="ml-11 text-gray-600 font-mono">x = 2: (+)/(+) = +</div>
+                                        
+                                        <div class="flex items-center">
+                                            <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm mr-3">4</span>
+                                            <span class="text-gray-700">Write solution</span>
+                                        </div>
+                                        <div class="ml-11 text-gray-600 font-mono">(-∞, -2) ∪ [1, ∞)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- References -->
+                    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-book text-indigo-500 mr-2"></i>References & Additional Resources
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Academic Sources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Spivak, M. (2008). <em>Calculus</em>. Publish or Perish.</li>
+                                    <li>• Apostol, T. (2019). <em>Mathematical Analysis</em>. Wiley.</li>
+                                    <li>• Rudin, W. (2018). <em>Principles of Mathematical Analysis</em>. McGraw-Hill.</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Online Resources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Paul's Online Math Notes: Rational Inequalities</li>
+                                    <li>• Interactive Mathematics: Inequalities</li>
+                                    <li>• Math Warehouse: Rational Inequalities</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Virtual Aid: Inequality Solver -->
+                    <div class="virtual-aid rounded-2xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                            <i class="fas fa-balance-scale text-primary mr-3"></i>Enhanced Rational Inequality Solver
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="space-y-6">
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Inequality Input</h4>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Choose rational inequality:</label>
+                                            <select id="inequalityInput" onchange="solveRationalInequality()" 
+                                                    class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono">
+                                                <option value="(x - 1)/(x + 2) ≥ 0" selected>(x - 1)/(x + 2) ≥ 0</option>
+                                                <option value="(x + 3)/(x - 2) < 0">(x + 3)/(x - 2) < 0</option>
+                                                <option value="(2x - 5)/(x + 1) ≤ 0">(2x - 5)/(x + 1) ≤ 0</option>
+                                                <option value="(x^2 - 4)/(x - 1) > 0">(x² - 4)/(x - 1) > 0</option>
+                                            </select>
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <button onclick="solveRationalInequality()" 
+                                                    class="bg-primary text-white py-2 px-4 rounded-lg hover:bg-secondary transition-colors font-semibold">
+                                                <i class="fas fa-calculator mr-2"></i>Solve
+                                            </button>
+                                            <button onclick="showInequalitySteps()" 
+                                                    class="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors font-semibold">
+                                                <i class="fas fa-list-ol mr-2"></i>Steps
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Solution</h4>
+                                    <div class="space-y-3">
+                                        <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                                            <span class="font-semibold text-gray-800">Solution:</span>
+                                            <span class="text-green-600 font-mono" id="inequalitySolution">(-∞, -2) ∪ [1, ∞)</span>
+                                        </div>
+                                        <div class="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                                            <span class="font-semibold text-gray-800">Critical Points:</span>
+                                            <span class="text-blue-600 font-mono" id="criticalPoints">x = -2, x = 1</span>
+                                        </div>
+                                        <div class="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                                            <span class="font-semibold text-gray-800">Test Points:</span>
+                                            <span class="text-purple-600 font-mono" id="testPoints">x = -3, x = 0, x = 2</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Inequality Steps -->
+                                <div id="inequalitySteps" class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 border-l-4 border-indigo-500 hidden">
+                                    <h5 class="font-semibold text-gray-800 mb-4 flex items-center">
+                                        <i class="fas fa-list-ol text-indigo-500 mr-2"></i>
+                                        Step-by-Step Solution
+                                    </h5>
+                                    <div id="inequalityStepsContent" class="space-y-3">
+                                        <!-- Steps will be populated by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white">
+                                <h4 class="text-lg font-semibold mb-4 text-center">Interactive Number Line</h4>
+                                <div class="bg-white/20 rounded-lg p-4 mb-4">
+                                    <div class="flex items-center justify-center space-x-4 text-sm">
+                                        <div class="text-center">
+                                            <div class="w-8 h-8 bg-white/30 rounded-full flex items-center justify-center">-2</div>
+                                            <p class="text-xs mt-1">Critical</p>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="w-8 h-8 bg-white/30 rounded-full flex items-center justify-center">1</div>
+                                            <p class="text-xs mt-1">Critical</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 text-center">
+                                        <div class="flex justify-center space-x-2">
+                                            <span class="bg-green-500 px-2 py-1 rounded text-xs">+</span>
+                                            <span class="bg-red-500 px-2 py-1 rounded text-xs">-</span>
+                                            <span class="bg-green-500 px-2 py-1 rounded text-xs">+</span>
+                                        </div>
+                                        <p class="text-xs mt-2">Sign Analysis</p>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 mb-4">
+                                    <button onclick="resetInequality()" 
+                                            class="bg-white/20 hover:bg-white/30 px-3 py-2 rounded-lg transition-colors text-sm">
+                                        <i class="fas fa-redo mr-1"></i>Reset
+                                    </button>
+                                    <button onclick="animateNumberLine()" 
+                                            class="bg-white/20 hover:bg-white/30 px-3 py-2 rounded-lg transition-colors text-sm">
+                                        <i class="fas fa-play mr-1"></i>Animate
+                                    </button>
+                                </div>
+                                <div class="bg-white/10 rounded-lg p-3 text-sm">
+                                    <p class="mb-2"><strong>Number Line Features:</strong></p>
+                                    <ul class="text-xs space-y-1">
+                                        <li>• Critical points: Where function = 0 or undefined</li>
+                                        <li>• Sign analysis: Test intervals between critical points</li>
+                                        <li>• Solution: Intervals where inequality is true</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2024 MathEase. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="rational-functions.js"></script>
+</body>
+</html>

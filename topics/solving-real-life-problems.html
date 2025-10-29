@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solving Real-Life Problems Involving Functions - General Mathematics 11 | MathEase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="solving-real-life-problems.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#667eea',
+                        'secondary': '#764ba2',
+                        'accent': '#f093fb',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-poppins bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="../index.html" class="flex items-center space-x-2">
+                        <img src="../css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-8 w-8">
+                        <span class="text-xl font-bold text-primary">MathEase</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="../dashboard.html" class="text-gray-700 hover:text-primary transition-colors">
+                        <i class="fas fa-home mr-2"></i>Dashboard
+                    </a>
+                    <a href="../topics.html" class="text-primary font-semibold">
+                        <i class="fas fa-book mr-2"></i>Topics
+                    </a>
+                    <span class="text-gray-600">
+                        <i class="fas fa-user mr-2"></i><span id="userName">Student</span>
+                    </span>
+                    <a href="../php/logout.php" class="text-gray-700 hover:text-red-600 transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="gradient-bg text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
+                    <i class="fas fa-globe mr-2"></i>
+                    <span class="font-semibold">General Mathematics 11</span>
+                </div>
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">Solving Real-Life Problems Involving Functions</h1>
+                <p class="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto">
+                    Master the application of functions in real-world scenarios through four comprehensive lessons designed for Grade 11 students
+                </p>
+                <div class="flex justify-center">
+                    <div class="bg-white/20 backdrop-blur-sm rounded-full px-8 py-3">
+                        <span class="text-lg font-semibold">4 Interactive Lessons</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Lesson Navigation -->
+        <div class="mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="1">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-lightbulb text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 1</h3>
+                        <p class="text-sm text-gray-600">Real-World Function Models</p>
+                    </div>
+                </button>
+                
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="2">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-calculator text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 2</h3>
+                        <p class="text-sm text-gray-600">Business & Economics</p>
+                    </div>
+                </button>
+                
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="3">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-chart-line text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 3</h3>
+                        <p class="text-sm text-gray-600">Science & Technology</p>
+                    </div>
+                </button>
+                
+                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="4">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-puzzle-piece text-2xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 4</h3>
+                        <p class="text-sm text-gray-600">Complex Problem Solving</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Lesson Content -->
+        <div class="lesson-content">
+            <!-- Lesson 1: Real-World Function Models -->
+            <section id="lesson1" class="lesson-section active">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-lightbulb text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 1: Real-World Function Models</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                            Learn how to identify and model real-life situations using functions, including piecewise functions.
+                        </p>
+                    </div>
+
+                    <!-- Learning Objectives -->
+                    <div class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-target mr-2"></i>Learning Objectives (MELC: M11GM-Ia-1)
+                        </h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Represent real-life situations using functions
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Identify variables and relationships in real-world problems
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Create piecewise functions for complex scenarios
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Real-World Examples -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                            <i class="fas fa-globe text-blue-500 mr-3"></i>Real-World Function Applications
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-taxi text-yellow-500 mr-2"></i>Taxi Fare Problem
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    A taxi company charges ₱40 for the first kilometer and ₱15 for each additional kilometer. This is a common pricing structure in the Philippines.
+                                </p>
+                                <div class="bg-yellow-50 rounded-lg p-4 border-l-4 border-yellow-500 mb-4">
+                                    <p class="text-sm text-gray-600 mb-2">Function Model:</p>
+                                    <p class="text-lg font-mono text-primary">f(x) = 40 + 15(x - 1) for x > 1</p>
+                                    <p class="text-sm text-gray-600 mt-2">Where x = distance in kilometers</p>
+                                </div>
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Step-by-Step Solution:</h5>
+                                    <div class="space-y-2 text-sm">
+                                        <p><strong>Example:</strong> For a 5km ride</p>
+                                        <p>• First km: ₱40</p>
+                                        <p>• Additional 4 km: 4 × ₱15 = ₱60</p>
+                                        <p>• Total: ₱40 + ₱60 = ₱100</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-thermometer-half text-red-500 mr-2"></i>Temperature Conversion
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    Convert Celsius to Fahrenheit using the formula F = (9/5)C + 32. This is essential for international travel and scientific work.
+                                </p>
+                                <div class="bg-red-50 rounded-lg p-4 border-l-4 border-red-500 mb-4">
+                                    <p class="text-sm text-gray-600 mb-2">Function Model:</p>
+                                    <p class="text-lg font-mono text-primary">F(C) = (9/5)C + 32</p>
+                                    <p class="text-sm text-gray-600 mt-2">Where C = temperature in Celsius</p>
+                                </div>
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Step-by-Step Solution:</h5>
+                                    <div class="space-y-2 text-sm">
+                                        <p><strong>Example:</strong> Convert 25°C to Fahrenheit</p>
+                                        <p>• F(25) = (9/5)(25) + 32</p>
+                                        <p>• F(25) = 45 + 32 = 77°F</p>
+                                        <p>• So 25°C = 77°F</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Piecewise Function Example -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-layer-group text-purple-500 mr-2"></i>Piecewise Function: Electricity Bill
+                            </h4>
+                            <p class="text-gray-700 mb-4">
+                                An electricity company charges different rates based on consumption. This tiered pricing system encourages energy conservation.
+                            </p>
+                            <div class="bg-purple-50 rounded-lg p-4 border-l-4 border-purple-500 mb-4">
+                                <p class="text-sm text-gray-600 mb-2">Piecewise Function:</p>
+                                <div class="font-mono text-lg text-primary">
+                                    <p>f(x) = {</p>
+                                    <p class="ml-4">8x, if 0 ≤ x ≤ 100</p>
+                                    <p class="ml-4">800 + 12(x - 100), if x > 100</p>
+                                    <p>}</p>
+                                </div>
+                                <p class="text-sm text-gray-600 mt-2">Where x = kilowatt-hours consumed</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <h5 class="font-semibold text-gray-800 mb-2">Understanding the Function:</h5>
+                                <div class="space-y-2 text-sm">
+                                    <p><strong>For 0-100 kWh:</strong> ₱8 per kWh (basic rate)</p>
+                                    <p><strong>For over 100 kWh:</strong> ₱800 + ₱12 per additional kWh</p>
+                                    <p><strong>Example:</strong> 150 kWh consumption</p>
+                                    <p>• First 100 kWh: 100 × ₱8 = ₱800</p>
+                                    <p>• Additional 50 kWh: 50 × ₱12 = ₱600</p>
+                                    <p>• Total: ₱800 + ₱600 = ₱1,400</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Real-World Examples -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-phone text-green-500 mr-2"></i>Mobile Phone Plan
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    A mobile plan charges ₱500 monthly with ₱2 per minute for calls beyond the included 100 minutes.
+                                </p>
+                                <div class="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                                    <p class="text-sm text-gray-600 mb-2">Function Model:</p>
+                                    <p class="text-lg font-mono text-primary">f(x) = 500 + 2(x - 100) for x > 100</p>
+                                    <p class="text-sm text-gray-600 mt-2">Where x = total minutes used</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-shipping-fast text-blue-500 mr-2"></i>Shipping Cost
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    A courier service charges ₱50 base fee plus ₱0.50 per kilogram for domestic shipping.
+                                </p>
+                                <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                    <p class="text-sm text-gray-600 mb-2">Function Model:</p>
+                                    <p class="text-lg font-mono text-primary">f(x) = 50 + 0.5x</p>
+                                    <p class="text-sm text-gray-600 mt-2">Where x = weight in kilograms</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Problem Solver -->
+                    <div class="virtual-aid rounded-2xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                            <i class="fas fa-calculator text-primary mr-3"></i>Real-Life Problem Solver
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="space-y-6">
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Problem Input</h4>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Select Problem Type:</label>
+                                            <select id="problemType" onchange="updateProblem()" 
+                                                    class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none">
+                                                <option value="taxi">Taxi Fare</option>
+                                                <option value="phone">Phone Bill</option>
+                                                <option value="salary">Salary with Overtime</option>
+                                                <option value="shipping">Shipping Cost</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Choose Value:</label>
+                                            <select id="inputValueSelect" onchange="solveProblem()" 
+                                                    class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none">
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="5" selected>5</option>
+                                                <option value="10">10</option>
+                                                <option value="20">20</option>
+                                            </select>
+                                        </div>
+                                        <button onclick="solveProblem()" 
+                                                class="w-full bg-primary text-white py-3 px-6 rounded-lg hover:bg-secondary transition-colors font-semibold">
+                                            <i class="fas fa-calculator mr-2"></i>Solve Problem
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Solution</h4>
+                                    <div class="text-center">
+                                        <div class="text-3xl font-bold text-primary mb-2" id="problemResult">₱115</div>
+                                        <p class="text-gray-600" id="problemExplanation">Total taxi fare for 5 km</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white">
+                                <h4 class="text-lg font-semibold mb-4 text-center">Problem Details</h4>
+                                <div class="space-y-4" id="problemDetails">
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm mb-2">Problem:</p>
+                                        <p class="font-mono text-lg">Taxi Fare Calculation</p>
+                                    </div>
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm mb-2">Function:</p>
+                                        <p class="font-mono text-lg">f(x) = 40 + 15(x-1)</p>
+                                    </div>
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm mb-2">Domain:</p>
+                                        <p class="font-mono text-lg">x > 0 (distance in km)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- References -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-book text-blue-500 mr-2"></i>References & Additional Resources
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Academic Sources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Stewart, J. (2015). <em>Precalculus: Mathematics for Calculus</em>. Cengage Learning.</li>
+                                    <li>• Larson, R. (2018). <em>Precalculus with Limits</em>. Cengage Learning.</li>
+                                    <li>• Blitzer, R. (2019). <em>Precalculus</em>. Pearson Education.</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Online Resources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Khan Academy: Functions and Relations</li>
+                                    <li>• Purplemath: Function Notation</li>
+                                    <li>• Math is Fun: What is a Function?</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lesson 2: Business & Economics -->
+            <section id="lesson2" class="lesson-section">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-calculator text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 2: Business & Economics Applications</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                            Apply functions to solve business problems including profit, cost, revenue, and economic models.
+                        </p>
+                    </div>
+
+                    <!-- Learning Objectives -->
+                    <div class="bg-green-50 border-l-4 border-green-500 p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-target mr-2"></i>Learning Objectives (MELC: M11GM-Ia-2)
+                        </h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Model business scenarios using functions
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Calculate profit, cost, and revenue functions
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                Solve optimization problems
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Business Applications -->
+                    <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                            <i class="fas fa-chart-line text-green-500 mr-3"></i>Business Function Models
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-4 text-center">
+                                    <i class="fas fa-dollar-sign text-green-500 mr-2"></i>Revenue Function
+                                </h4>
+                                <div class="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                                    <p class="text-sm text-gray-600 mb-2">R(x) = p × x</p>
+                                    <p class="text-xs text-gray-500">Where p = price per unit, x = quantity sold</p>
+                                </div>
+                                <div class="mt-3 text-xs text-gray-600">
+                                    <strong>Example:</strong> Selling phones at ₱15,000 each<br>
+                                    R(x) = 15,000x
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-4 text-center">
+                                    <i class="fas fa-coins text-blue-500 mr-2"></i>Cost Function
+                                </h4>
+                                <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                    <p class="text-sm text-gray-600 mb-2">C(x) = Fixed Cost + Variable Cost</p>
+                                    <p class="text-xs text-gray-500">C(x) = FC + VC(x)</p>
+                                </div>
+                                <div class="mt-3 text-xs text-gray-600">
+                                    <strong>Example:</strong> FC = ₱50,000, VC = ₱8,000 per unit<br>
+                                    C(x) = 50,000 + 8,000x
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-4 text-center">
+                                    <i class="fas fa-chart-pie text-purple-500 mr-2"></i>Profit Function
+                                </h4>
+                                <div class="bg-purple-50 rounded-lg p-4 border-l-4 border-purple-500">
+                                    <p class="text-sm text-gray-600 mb-2">P(x) = R(x) - C(x)</p>
+                                    <p class="text-xs text-gray-500">Profit = Revenue - Cost</p>
+                                </div>
+                                <div class="mt-3 text-xs text-gray-600">
+                                    <strong>Example:</strong> P(x) = 15,000x - (50,000 + 8,000x)<br>
+                                    P(x) = 7,000x - 50,000
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Break-Even Analysis -->
+                        <div class="bg-white rounded-lg p-6 shadow-lg">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <i class="fas fa-balance-scale text-orange-500 mr-2"></i>Break-Even Analysis
+                            </h4>
+                            <p class="text-gray-700 mb-4">
+                                The break-even point is where total revenue equals total cost, meaning no profit or loss. This is crucial for business planning and decision-making.
+                            </p>
+                            
+                            <div class="bg-orange-50 rounded-lg p-4 border-l-4 border-orange-500 mb-4">
+                                <h5 class="font-semibold text-gray-800 mb-2">Step-by-Step Solution:</h5>
+                                <div class="space-y-2 text-sm">
+                                    <p><strong>1.</strong> Set R(x) = C(x) (Revenue = Cost)</p>
+                                    <p><strong>2.</strong> 15,000x = 50,000 + 8,000x</p>
+                                    <p><strong>3.</strong> 15,000x - 8,000x = 50,000</p>
+                                    <p><strong>4.</strong> 7,000x = 50,000</p>
+                                    <p><strong>5.</strong> x = 50,000 ÷ 7,000 ≈ 7.14 units</p>
+                                </div>
+                                <p class="text-xs text-gray-600 mt-2">Break-even point: 8 units (round up)</p>
+                            </div>
+                            
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <h5 class="font-semibold text-gray-800 mb-2">Business Interpretation:</h5>
+                                <div class="space-y-2 text-sm">
+                                    <p><strong>Below 8 units:</strong> Company loses money (costs exceed revenue)</p>
+                                    <p><strong>At 8 units:</strong> Company breaks even (no profit, no loss)</p>
+                                    <p><strong>Above 8 units:</strong> Company makes profit (revenue exceeds costs)</p>
+                                    <p><strong>Example:</strong> At 10 units: Revenue = ₱150,000, Cost = ₱130,000, Profit = ₱20,000</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Business Examples -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-store text-indigo-500 mr-2"></i>Retail Pricing Strategy
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    A store offers bulk discounts: ₱100 per item for 1-10 items, ₱90 per item for 11-50 items, ₱80 per item for 50+ items.
+                                </p>
+                                <div class="bg-indigo-50 rounded-lg p-4 border-l-4 border-indigo-500">
+                                    <p class="text-sm text-gray-600 mb-2">Piecewise Function:</p>
+                                    <div class="font-mono text-lg text-primary">
+                                        <p>P(x) = {</p>
+                                        <p class="ml-4">100x, if 1 ≤ x ≤ 10</p>
+                                        <p class="ml-4">900 + 90(x-10), if 11 ≤ x ≤ 50</p>
+                                        <p class="ml-4">4500 + 80(x-50), if x > 50</p>
+                                        <p>}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-credit-card text-green-500 mr-2"></i>Credit Card Interest
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    A credit card charges 2% monthly interest on outstanding balances, with a minimum payment of ₱500 or 5% of balance.
+                                </p>
+                                <div class="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                                    <p class="text-sm text-gray-600 mb-2">Interest Function:</p>
+                                    <p class="text-lg font-mono text-primary">I(b) = 0.02b</p>
+                                    <p class="text-sm text-gray-600 mt-2">Where b = outstanding balance</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Business Calculator -->
+                    <div class="virtual-aid rounded-2xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                            <i class="fas fa-chart-bar text-primary mr-3"></i>Business Function Calculator
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="space-y-6">
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Business Parameters</h4>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Price per unit (₱):</label>
+                                            <select id="pricePerUnit" onchange="calculateBusiness()" 
+                                                    class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none">
+                                                <option value="5000">5,000</option>
+                                                <option value="10000">10,000</option>
+                                                <option value="15000" selected>15,000</option>
+                                                <option value="20000">20,000</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Fixed Cost (₱):</label>
+                                            <select id="fixedCost" onchange="calculateBusiness()" 
+                                                    class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none">
+                                                <option value="20000">20,000</option>
+                                                <option value="50000" selected>50,000</option>
+                                                <option value="100000">100,000</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Variable Cost per unit (₱):</label>
+                                            <select id="variableCost" onchange="calculateBusiness()" 
+                                                    class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none">
+                                                <option value="3000">3,000</option>
+                                                <option value="5000">5,000</option>
+                                                <option value="8000" selected>8,000</option>
+                                                <option value="10000">10,000</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Quantity sold:</label>
+                                            <select id="quantity" onchange="calculateBusiness()" 
+                                                    class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none">
+                                                <option value="5">5</option>
+                                                <option value="10" selected>10</option>
+                                                <option value="20">20</option>
+                                                <option value="50">50</option>
+                                            </select>
+                                        </div>
+                                        <button onclick="calculateBusiness()" 
+                                                class="w-full bg-primary text-white py-3 px-6 rounded-lg hover:bg-secondary transition-colors font-semibold">
+                                            <i class="fas fa-calculator mr-2"></i>Calculate
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Results</h4>
+                                    <div class="space-y-3">
+                                        <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                                            <span class="font-semibold text-gray-800">Revenue:</span>
+                                            <span class="text-green-600 font-mono" id="revenueResult">₱150,000</span>
+                                        </div>
+                                        <div class="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                                            <span class="font-semibold text-gray-800">Total Cost:</span>
+                                            <span class="text-blue-600 font-mono" id="costResult">₱130,000</span>
+                                        </div>
+                                        <div class="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                                            <span class="font-semibold text-gray-800">Profit:</span>
+                                            <span class="text-purple-600 font-mono" id="profitResult">₱20,000</span>
+                                        </div>
+                                        <div class="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
+                                            <span class="font-semibold text-gray-800">Break-even:</span>
+                                            <span class="text-orange-600 font-mono" id="breakEvenResult">8 units</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white">
+                                <h4 class="text-lg font-semibold mb-4 text-center">Business Functions</h4>
+                                <div class="space-y-4" id="businessFunctions">
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm mb-2">Revenue Function:</p>
+                                        <p class="font-mono text-lg">R(x) = 15,000x</p>
+                                    </div>
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm mb-2">Cost Function:</p>
+                                        <p class="font-mono text-lg">C(x) = 50,000 + 8,000x</p>
+                                    </div>
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm mb-2">Profit Function:</p>
+                                        <p class="font-mono text-lg">P(x) = 7,000x - 50,000</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- References -->
+                    <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-book text-green-500 mr-2"></i>References & Additional Resources
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Academic Sources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Sullivan, M. (2019). <em>Precalculus: Enhanced with Graphing Utilities</em>. Pearson.</li>
+                                    <li>• Zill, D. (2018). <em>Precalculus with Calculus Previews</em>. Jones & Bartlett Learning.</li>
+                                    <li>• Demana, F. (2019). <em>Precalculus: Graphical, Numerical, Algebraic</em>. Pearson.</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Online Resources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Khan Academy: Domain and Range</li>
+                                    <li>• Mathway: Domain and Range Calculator</li>
+                                    <li>• Desmos: Function Grapher</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lesson 3: Science & Technology -->
+            <section id="lesson3" class="lesson-section">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-chart-line text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 3: Science & Technology Applications</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                            Explore how functions model scientific phenomena, population growth, and technological applications.
+                        </p>
+                    </div>
+
+                    <!-- Learning Objectives -->
+                    <div class="bg-purple-50 border-l-4 border-purple-500 p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-target mr-2"></i>Learning Objectives (MELC: M11GM-Ia-3)
+                        </h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-purple-500 mr-3"></i>
+                                Model scientific phenomena using functions
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-purple-500 mr-3"></i>
+                                Apply exponential and logarithmic functions
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-purple-500 mr-3"></i>
+                                Solve problems involving growth and decay
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Scientific Applications -->
+                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                            <i class="fas fa-flask text-purple-500 mr-3"></i>Scientific Function Models
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-users text-green-500 mr-2"></i>Population Growth
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    Model population growth using exponential functions.
+                                </p>
+                                <div class="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                                    <p class="text-sm text-gray-600 mb-2">Exponential Growth Model:</p>
+                                    <p class="text-lg font-mono text-primary">P(t) = P₀ × e^(rt)</p>
+                                    <p class="text-sm text-gray-600 mt-2">Where P₀ = initial population, r = growth rate, t = time</p>
+                                </div>
+                                <div class="mt-4 text-xs text-gray-600">
+                                    <strong>Example:</strong> A city with 100,000 people growing at 2% annually<br>
+                                    P(t) = 100,000 × e^(0.02t)
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-atom text-blue-500 mr-2"></i>Radioactive Decay
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    Model radioactive decay using exponential decay functions.
+                                </p>
+                                <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                    <p class="text-sm text-gray-600 mb-2">Exponential Decay Model:</p>
+                                    <p class="text-lg font-mono text-primary">N(t) = N₀ × e^(-λt)</p>
+                                    <p class="text-sm text-gray-600 mt-2">Where N₀ = initial amount, λ = decay constant, t = time</p>
+                                </div>
+                                <div class="mt-4 text-xs text-gray-600">
+                                    <strong>Example:</strong> Carbon-14 with half-life of 5,730 years<br>
+                                    N(t) = N₀ × e^(-0.000121t)
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Temperature and Physics -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-thermometer-half text-red-500 mr-2"></i>Newton's Law of Cooling
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    This law describes how the temperature of an object changes when it's placed in a different temperature environment. It's used in food safety, engineering, and meteorology.
+                                </p>
+                                <div class="bg-red-50 rounded-lg p-4 border-l-4 border-red-500 mb-4">
+                                    <p class="text-sm text-gray-600 mb-2">Cooling Function:</p>
+                                    <p class="text-lg font-mono text-primary">T(t) = Tₐ + (T₀ - Tₐ)e^(-kt)</p>
+                                    <p class="text-sm text-gray-600 mt-2">Where Tₐ = ambient temperature, T₀ = initial temperature, k = cooling constant</p>
+                                </div>
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Real-World Application:</h5>
+                                    <div class="space-y-2 text-sm">
+                                        <p><strong>Example:</strong> Hot coffee (100°C) in room (20°C)</p>
+                                        <p>• T(t) = 20 + (100-20)e^(-0.1t)</p>
+                                        <p>• T(t) = 20 + 80e^(-0.1t)</p>
+                                        <p>• After 1 hour: T(1) = 20 + 80e^(-0.1) ≈ 52°C</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-satellite text-indigo-500 mr-2"></i>Projectile Motion
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    This models the height of a projectile (like a ball, arrow, or rocket) over time, considering gravity's effect. Essential in physics, engineering, and sports.
+                                </p>
+                                <div class="bg-indigo-50 rounded-lg p-4 border-l-4 border-indigo-500 mb-4">
+                                    <p class="text-sm text-gray-600 mb-2">Height Function:</p>
+                                    <p class="text-lg font-mono text-primary">h(t) = h₀ + v₀t - ½gt²</p>
+                                    <p class="text-sm text-gray-600 mt-2">Where h₀ = initial height, v₀ = initial velocity, g = gravity (9.8 m/s²)</p>
+                                </div>
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Real-World Application:</h5>
+                                    <div class="space-y-2 text-sm">
+                                        <p><strong>Example:</strong> Ball thrown upward from 2m at 15 m/s</p>
+                                        <p>• h(t) = 2 + 15t - 4.9t²</p>
+                                        <p>• Maximum height: t = 15/9.8 ≈ 1.53 seconds</p>
+                                        <p>• h(1.53) = 2 + 15(1.53) - 4.9(1.53)² ≈ 13.5m</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Scientific Examples -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-heartbeat text-pink-500 mr-2"></i>Heart Rate During Exercise
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    A person's heart rate increases during exercise and decreases after stopping, following an exponential model.
+                                </p>
+                                <div class="bg-pink-50 rounded-lg p-4 border-l-4 border-pink-500">
+                                    <p class="text-sm text-gray-600 mb-2">Heart Rate Function:</p>
+                                    <p class="text-lg font-mono text-primary">H(t) = 60 + 40(1 - e^(-0.5t))</p>
+                                    <p class="text-sm text-gray-600 mt-2">Where t = time in minutes, H = beats per minute</p>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-seedling text-green-500 mr-2"></i>Plant Growth Model
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    Plant height growth follows a logistic function, growing rapidly at first then slowing as it approaches maximum height.
+                                </p>
+                                <div class="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                                    <p class="text-sm text-gray-600 mb-2">Growth Function:</p>
+                                    <p class="text-lg font-mono text-primary">G(t) = 200/(1 + 19e^(-0.1t))</p>
+                                    <p class="text-sm text-gray-600 mt-2">Where t = time in days, G = height in cm</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scientific Calculator -->
+                    <div class="virtual-aid rounded-2xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                            <i class="fas fa-microscope text-primary mr-3"></i>Scientific Function Calculator
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="space-y-6">
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Scientific Parameters</h4>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Select Model:</label>
+                                            <select id="scientificModel" onchange="updateScientificModel()" 
+                                                    class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none">
+                                                <option value="population">Population Growth</option>
+                                                <option value="decay">Radioactive Decay</option>
+                                                <option value="cooling">Newton's Cooling</option>
+                                                <option value="projectile">Projectile Motion</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Time (years/hours):</label>
+                                            <select id="scientificTime" onchange="calculateScientific()" 
+                                                    class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none">
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="5" selected>5</option>
+                                                <option value="10">10</option>
+                                                <option value="20">20</option>
+                                            </select>
+                                        </div>
+                                        <button onclick="calculateScientific()" 
+                                                class="w-full bg-primary text-white py-3 px-6 rounded-lg hover:bg-secondary transition-colors font-semibold">
+                                            <i class="fas fa-calculator mr-2"></i>Calculate
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Results</h4>
+                                    <div class="text-center">
+                                        <div class="text-3xl font-bold text-primary mb-2" id="scientificResult">110,517</div>
+                                        <p class="text-gray-600" id="scientificExplanation">Population after 5 years</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white">
+                                <h4 class="text-lg font-semibold mb-4 text-center">Scientific Model</h4>
+                                <div class="space-y-4" id="scientificModelDetails">
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm mb-2">Model:</p>
+                                        <p class="font-mono text-lg">Population Growth</p>
+                                    </div>
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm mb-2">Function:</p>
+                                        <p class="font-mono text-lg">P(t) = 100,000 × e^(0.02t)</p>
+                                    </div>
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm mb-2">Parameters:</p>
+                                        <p class="font-mono text-lg">P₀ = 100,000, r = 0.02</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- References -->
+                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-book text-purple-500 mr-2"></i>References & Additional Resources
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Academic Sources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Anton, H. (2018). <em>Calculus: Early Transcendentals</em>. Wiley.</li>
+                                    <li>• Thomas, G. (2019). <em>Thomas' Calculus</em>. Pearson Education.</li>
+                                    <li>• Rogawski, J. (2019). <em>Calculus: Early Transcendentals</em>. W.H. Freeman.</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Online Resources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Wolfram Alpha: Function Operations</li>
+                                    <li>• Symbolab: Function Calculator</li>
+                                    <li>• Math Planet: Function Operations</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lesson 4: Complex Problem Solving -->
+            <section id="lesson4" class="lesson-section">
+                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                    <div class="text-center mb-8">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-puzzle-piece text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 4: Complex Problem Solving</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                            Master advanced problem-solving techniques using multiple functions and real-world scenarios.
+                        </p>
+                    </div>
+
+                    <!-- Learning Objectives -->
+                    <div class="bg-indigo-50 border-l-4 border-indigo-500 p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-target mr-2"></i>Learning Objectives (MELC: M11GM-Ia-4)
+                        </h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-indigo-500 mr-3"></i>
+                                Solve multi-step real-life problems
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-indigo-500 mr-3"></i>
+                                Combine different function types
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-check-circle text-indigo-500 mr-3"></i>
+                                Analyze and interpret solutions
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Complex Problem Examples -->
+                    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                            <i class="fas fa-brain text-indigo-500 mr-3"></i>Complex Real-Life Problems
+                        </h3>
+                        
+                        <div class="space-y-8">
+                            <!-- Problem 1: Multi-step Business -->
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-building text-blue-500 mr-2"></i>Problem 1: Manufacturing Optimization
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    A company manufactures two products. Product A costs ₱50 to make and sells for ₱80. 
+                                    Product B costs ₱30 to make and sells for ₱60. The company can produce at most 100 units 
+                                    of A and 150 units of B per month. How many of each should they produce to maximize profit?
+                                </p>
+                                
+                                <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Solution Steps:</h5>
+                                    <div class="space-y-2 text-sm">
+                                        <p><strong>1.</strong> Define variables: x = units of A, y = units of B</p>
+                                        <p><strong>2.</strong> Profit function: P(x,y) = 30x + 30y</p>
+                                        <p><strong>3.</strong> Constraints: x ≤ 100, y ≤ 150, x ≥ 0, y ≥ 0</p>
+                                        <p><strong>4.</strong> Maximum profit at corner points</p>
+                                        <p><strong>5.</strong> Solution: x = 100, y = 150, P = ₱7,500</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Problem 2: Environmental -->
+                            <div class="bg-white rounded-lg p-6 shadow-lg">
+                                <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                    <i class="fas fa-leaf text-green-500 mr-2"></i>Problem 2: Environmental Impact
+                                </h4>
+                                <p class="text-gray-700 mb-4">
+                                    A city's air quality is modeled by A(t) = 50 + 30sin(πt/12) + 10t, where A is the 
+                                    air quality index and t is time in months. When will the air quality first exceed 100?
+                                </p>
+                                
+                                <div class="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Solution Steps:</h5>
+                                    <div class="space-y-2 text-sm">
+                                        <p><strong>1.</strong> Set A(t) = 100</p>
+                                        <p><strong>2.</strong> 50 + 30sin(πt/12) + 10t = 100</p>
+                                        <p><strong>3.</strong> 30sin(πt/12) + 10t = 50</p>
+                                        <p><strong>4.</strong> Use numerical methods or graphing</p>
+                                        <p><strong>5.</strong> Solution: t ≈ 3.2 months</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Problem Solving Framework -->
+                    <div class="bg-white rounded-lg p-6 shadow-lg mb-8">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                            <i class="fas fa-list-ol text-orange-500 mr-2"></i>Problem-Solving Framework
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="bg-orange-50 rounded-lg p-4 border-l-4 border-orange-500">
+                                <h5 class="font-semibold text-gray-800 mb-2">1. Understand</h5>
+                                <p class="text-sm text-gray-600">Read the problem carefully and identify what's given and what's asked.</p>
+                            </div>
+                            <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                <h5 class="font-semibold text-gray-800 mb-2">2. Plan</h5>
+                                <p class="text-sm text-gray-600">Choose appropriate functions and set up equations or inequalities.</p>
+                            </div>
+                            <div class="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                                <h5 class="font-semibold text-gray-800 mb-2">3. Solve</h5>
+                                <p class="text-sm text-gray-600">Execute your plan using algebraic or graphical methods.</p>
+                            </div>
+                            <div class="bg-purple-50 rounded-lg p-4 border-l-4 border-purple-500">
+                                <h5 class="font-semibold text-gray-800 mb-2">4. Check</h5>
+                                <p class="text-sm text-gray-600">Verify your answer makes sense in the real-world context.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Problem Solver -->
+                    <div class="virtual-aid rounded-2xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                            <i class="fas fa-cogs text-primary mr-3"></i>Advanced Problem Solver
+                        </h3>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <div class="space-y-6">
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Problem Selector</h4>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Choose Problem Type:</label>
+                                            <select id="complexProblem" onchange="updateComplexProblem()" 
+                                                    class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none">
+                                                <option value="optimization">Business Optimization</option>
+                                                <option value="environmental">Environmental Modeling</option>
+                                                <option value="engineering">Engineering Design</option>
+                                                <option value="social">Social Science</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Choose Preset:</label>
+                                            <select id="complexInputSelect" onchange="solveComplexProblem()" 
+                                                    class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none">
+                                                <option value="default" selected>Default</option>
+                                                <option value="option1">Option 1</option>
+                                                <option value="option2">Option 2</option>
+                                            </select>
+                                        </div>
+                                        <button onclick="solveComplexProblem()" 
+                                                class="w-full bg-primary text-white py-3 px-6 rounded-lg hover:bg-secondary transition-colors font-semibold">
+                                            <i class="fas fa-cogs mr-2"></i>Solve Problem
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Solution</h4>
+                                    <div class="space-y-3">
+                                        <div class="bg-indigo-50 rounded-lg p-3">
+                                            <p class="text-sm text-gray-600 mb-1">Optimal Solution:</p>
+                                            <p class="font-mono text-indigo-600" id="complexSolution">x = 100, y = 150</p>
+                                        </div>
+                                        <div class="bg-purple-50 rounded-lg p-3">
+                                            <p class="text-sm text-gray-600 mb-1">Maximum Value:</p>
+                                            <p class="font-mono text-purple-600" id="complexValue">₱7,500</p>
+                                        </div>
+                                        <div class="bg-green-50 rounded-lg p-3">
+                                            <p class="text-sm text-gray-600 mb-1">Interpretation:</p>
+                                            <p class="text-green-600 text-sm" id="complexInterpretation">Produce 100 units of A and 150 units of B for maximum profit</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 step-solution" id="complexSteps" style="display: none;"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white">
+                                <h4 class="text-lg font-semibold mb-4 text-center">Problem Analysis</h4>
+                                <div class="space-y-4" id="complexAnalysis">
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm mb-2">Problem Type:</p>
+                                        <p class="font-mono text-lg">Business Optimization</p>
+                                    </div>
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm mb-2">Objective Function:</p>
+                                        <p class="font-mono text-lg">P(x,y) = 30x + 30y</p>
+                                    </div>
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm mb-2">Constraints:</p>
+                                        <p class="font-mono text-lg">x ≤ 100, y ≤ 150</p>
+                                    </div>
+                                    <div class="bg-white/20 rounded-lg p-3">
+                                        <p class="text-sm mb-2">Method:</p>
+                                        <p class="font-mono text-lg">Linear Programming</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- References -->
+                    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-book text-indigo-500 mr-2"></i>References & Additional Resources
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Academic Sources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Spivak, M. (2008). <em>Calculus</em>. Publish or Perish.</li>
+                                    <li>• Apostol, T. (2019). <em>Mathematical Analysis</em>. Wiley.</li>
+                                    <li>• Rudin, W. (2018). <em>Principles of Mathematical Analysis</em>. McGraw-Hill.</li>
+                                </ul>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 class="font-semibold text-gray-800 mb-2">Online Resources</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• Paul's Online Math Notes: Function Composition</li>
+                                    <li>• Interactive Mathematics: Inverse Functions</li>
+                                    <li>• Math Warehouse: Function Composition</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2024 MathEase. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="solving-real-life-problems.js"></script>
+</body>
+</html>
+

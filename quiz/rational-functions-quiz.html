@@ -1,0 +1,2081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rational Functions Quiz - MathEase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#667eea',
+                        'secondary': '#764ba2',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .question-card {
+            transition: all 0.3s ease;
+        }
+        .question-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.15);
+        }
+        .option-selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        .option-correct {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-color: #10b981;
+        }
+        .option-incorrect {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border-color: #ef4444;
+        }
+        .option-review {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+        .review-mode .option {
+            pointer-events: none;
+        }
+        .review-mode .option input {
+            pointer-events: none;
+        }
+        .review-mode .option input[type="number"] {
+            pointer-events: none;
+        }
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+        .question-card {
+            animation: slideInUp 0.6s ease-out;
+        }
+        .option {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .option:hover::before {
+            left: 100%;
+        }
+        .option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .virtual-aid {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+</head>
+<body class="font-inter bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="../index.html" class="flex items-center space-x-2">
+                        <img src="../css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-8 w-8">
+                        <span class="text-xl font-bold text-primary">MathEase</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="../dashboard.html" class="text-gray-700 hover:text-primary transition-colors">
+                        <i class="fas fa-home mr-2"></i>Dashboard
+                    </a>
+                    <a href="../topics.html" class="text-primary font-semibold">
+                        <i class="fas fa-book mr-2"></i>Topics
+                    </a>
+                    <span class="text-gray-600">
+                        <i class="fas fa-user mr-2"></i><span id="userName">Student</span>
+                    </span>
+                    <a href="../php/logout.php" class="text-gray-700 hover:text-red-600 transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="gradient-bg text-white py-12">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
+                <i class="fas fa-fraction mr-2"></i>
+                <span class="font-semibold">General Mathematics 11</span>
+            </div>
+            <h1 class="text-3xl md:text-5xl font-bold mb-4">Rational Functions Quiz</h1>
+            <p class="text-lg md:text-xl text-white/90 mb-6">
+                Test your understanding of rational functions, equations, and inequalities
+            </p>
+            <div class="flex justify-center space-x-4">
+                <div class="bg-white/20 backdrop-blur-sm rounded-full px-6 py-2">
+                    <span class="font-semibold">10 Multiple Choice</span>
+                </div>
+                <div class="bg-white/20 backdrop-blur-sm rounded-full px-6 py-2">
+                    <span class="font-semibold">1 Problem Solving</span>
+                </div>
+                <div class="bg-white/20 backdrop-blur-sm rounded-full px-6 py-2">
+                    <span class="font-semibold">30 Minutes</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Quiz Instructions -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-info-circle text-2xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Quiz Instructions</h2>
+                <p class="text-gray-600">Read the instructions carefully before starting the quiz</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-blue-50 rounded-lg p-4">
+                    <h3 class="font-semibold text-blue-800 mb-2">
+                        <i class="fas fa-clock text-blue-500 mr-2"></i>Time Limit
+                    </h3>
+                    <p class="text-blue-700 text-sm">You have 30 minutes to complete this quiz</p>
+                </div>
+                <div class="bg-green-50 rounded-lg p-4">
+                    <h3 class="font-semibold text-green-800 mb-2">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i>Passing Score
+                    </h3>
+                    <p class="text-green-700 text-sm">You need 70% (8 out of 11 questions) to pass</p>
+                </div>
+                <div class="bg-purple-50 rounded-lg p-4">
+                    <h3 class="font-semibold text-purple-800 mb-2">
+                        <i class="fas fa-question-circle text-purple-500 mr-2"></i>Question Types
+                    </h3>
+                    <p class="text-purple-700 text-sm">10 multiple choice + 1 problem solving</p>
+                </div>
+                <div class="bg-orange-50 rounded-lg p-4">
+                    <h3 class="font-semibold text-orange-800 mb-2">
+                        <i class="fas fa-exclamation-triangle text-orange-500 mr-2"></i>Important
+                    </h3>
+                    <p class="text-orange-700 text-sm">You can only take this quiz once</p>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <button id="startQuizBtn" class="bg-primary text-white px-8 py-3 rounded-lg hover:bg-secondary transition-colors font-semibold text-lg">
+                    <i class="fas fa-play mr-2"></i>Start Quiz
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Content -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div id="quizContainer" class="hidden">
+            <!-- Question 1 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="1">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 1 of 11</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        What is a rational function?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q1" value="a" class="mr-3">
+                            <span>A function that can be expressed as the ratio of two polynomials</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q1" value="b" class="mr-3">
+                            <span>A function that is always positive</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q1" value="c" class="mr-3">
+                            <span>A function that has no restrictions</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q1" value="d" class="mr-3">
+                            <span>A function that is always linear</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="2">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 2 of 11</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        What is the domain of f(x) = 1/(x - 3)?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q2" value="a" class="mr-3">
+                            <span>All real numbers</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q2" value="b" class="mr-3">
+                            <span>All real numbers except x = 3</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q2" value="c" class="mr-3">
+                            <span>All real numbers except x = -3</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q2" value="d" class="mr-3">
+                            <span>Only positive real numbers</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="3">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 3 of 11</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        What is the vertical asymptote of f(x) = (x + 2)/(x - 1)?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q3" value="a" class="mr-3">
+                            <span>x = -2</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q3" value="b" class="mr-3">
+                            <span>x = 1</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q3" value="c" class="mr-3">
+                            <span>x = 2</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q3" value="d" class="mr-3">
+                            <span>There is no vertical asymptote</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 4 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="4">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 4 of 11</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        What is the horizontal asymptote of f(x) = (2x + 1)/(x - 3)?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q4" value="a" class="mr-3">
+                            <span>y = 0</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q4" value="b" class="mr-3">
+                            <span>y = 2</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q4" value="c" class="mr-3">
+                            <span>y = 3</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q4" value="d" class="mr-3">
+                            <span>There is no horizontal asymptote</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 5 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="5">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 5 of 11</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        What are extraneous solutions in rational equations?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q5" value="a" class="mr-3">
+                            <span>Solutions that appear to work but don't satisfy the original equation</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q5" value="b" class="mr-3">
+                            <span>Solutions that are always correct</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q5" value="c" class="mr-3">
+                            <span>Solutions that are negative</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q5" value="d" class="mr-3">
+                            <span>Solutions that are fractions</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 6 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 6 of 11</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        Solve the rational equation: 1/x + 1/(x+2) = 5/12
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q6" value="a" class="mr-3">
+                            <span>x = 1.2 and x = -4</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q6" value="b" class="mr-3">
+                            <span>x = 2 and x = -3</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q6" value="c" class="mr-3">
+                            <span>x = 5 and x = -2</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q6" value="d" class="mr-3">
+                            <span>No solution</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 7 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="7">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 7 of 11</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        What is the first step in solving a rational equation?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q7" value="a" class="mr-3">
+                            <span>Find the least common denominator (LCD)</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q7" value="b" class="mr-3">
+                            <span>Factor the numerator</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q7" value="c" class="mr-3">
+                            <span>Graph the function</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q7" value="d" class="mr-3">
+                            <span>Find the domain</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 8 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="8">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 8 of 11</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        Solve the rational inequality: (x - 1)/(x + 2) ≥ 0
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q8" value="a" class="mr-3">
+                            <span>(-∞, -2) ∪ [1, ∞)</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q8" value="b" class="mr-3">
+                            <span>(-∞, 1] ∪ (2, ∞)</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q8" value="c" class="mr-3">
+                            <span>[-2, 1]</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q8" value="d" class="mr-3">
+                            <span>(-∞, -2) ∪ (1, ∞)</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 9 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="9">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 9 of 11</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        What method is used to solve rational inequalities?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q9" value="a" class="mr-3">
+                            <span>Sign analysis and number line</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q9" value="b" class="mr-3">
+                            <span>Direct substitution</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q9" value="c" class="mr-3">
+                            <span>Graphing only</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q9" value="d" class="mr-3">
+                            <span>Factoring only</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 10 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="10">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Question 10 of 11</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        What is the x-intercept of f(x) = (x + 3)/(x - 2)?
+                    </p>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q10" value="a" class="mr-3">
+                            <span>x = -3</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q10" value="b" class="mr-3">
+                            <span>x = 2</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q10" value="c" class="mr-3">
+                            <span>x = 3</span>
+                        </label>
+                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
+                            <input type="radio" name="q10" value="d" class="mr-3">
+                            <span>There is no x-intercept</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problem Solving Question -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="11">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Problem Solving Question</h3>
+                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+                </div>
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">
+                        Find the domain of f(x) = (x² - 4)/(x - 2). Express your answer in interval notation.
+                    </p>
+                    <div class="bg-white rounded-lg p-6 shadow-sm border-2 border-gray-200">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Enter your answer in interval notation (e.g., (-∞,2) ∪ (2,∞)):</label>
+                        <input type="text" id="ps-answer" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none" placeholder="Enter domain in interval notation">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center">
+                <button id="submitQuizBtn" class="bg-primary text-white px-8 py-3 rounded-lg hover:bg-secondary transition-colors font-semibold text-lg">
+                    <i class="fas fa-check mr-2"></i>Submit Quiz
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Container -->
+        <div id="resultsContainer" class="hidden">
+            <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                <!-- Score Summary -->
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-trophy text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Total Score</h3>
+                        <p class="text-2xl font-bold text-blue-600" id="totalScore">0/11</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-check-circle text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Correct</h3>
+                        <p class="text-2xl font-bold text-green-600" id="correctAnswers">0</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-times-circle text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Incorrect</h3>
+                        <p class="text-2xl font-bold text-red-600" id="incorrectAnswers">0</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-clock text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Time Taken</h3>
+                        <p class="text-2xl font-bold text-purple-600" id="completionTime">0:00</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-percentage text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Grade</h3>
+                        <p class="text-2xl font-bold text-orange-600" id="overallGrade">0%</p>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="mb-8">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium text-gray-700">Overall Progress</span>
+                        <span class="text-sm font-medium text-gray-700" id="gradeProgressText">0%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-3">
+                        <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-1000 ease-out" id="gradeProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Detailed Performance Analysis -->
+                <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-chart-line text-indigo-600 mr-2"></i>
+                        Performance Analysis
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold text-gray-700 mb-2">Strengths</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li class="flex items-center">
+                                    <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                    Understanding rational function concepts
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                                    Domain and range identification
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-700 mb-2">Areas for Improvement</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li class="flex items-center">
+                                    <i class="fas fa-exclamation-triangle text-orange-500 mr-2"></i>
+                                    Solving rational equations
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-exclamation-triangle text-orange-500 mr-2"></i>
+                                    Rational inequalities
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="showLeaderboard()" class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
+                        <i class="fas fa-trophy mr-2"></i>
+                        View Leaderboard
+                    </button>
+                    <button onclick="goToDashboard()" class="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
+                        <i class="fas fa-home mr-2"></i>
+                        Back to Dashboard
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboard Container -->
+        <div id="leaderboardContainer" class="hidden">
+            <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                <!-- Leaderboard Header -->
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-trophy text-white text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Rational Functions Quiz Leaderboard</h2>
+                    <p class="text-gray-600">See how you compare with other students</p>
+                </div>
+
+                <!-- Leaderboard Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-users text-blue-600"></i>
+                        </div>
+                        <h3 class="text-sm font-medium text-gray-700">Total Participants</h3>
+                        <p class="text-xl font-bold text-blue-600" id="totalParticipants">0</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-chart-bar text-green-600"></i>
+                        </div>
+                        <h3 class="text-sm font-medium text-gray-700">Average Score</h3>
+                        <p class="text-xl font-bold text-green-600" id="averageScore">0%</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-clock text-purple-600"></i>
+                        </div>
+                        <h3 class="text-sm font-medium text-gray-700">Fastest Time</h3>
+                        <p class="text-xl font-bold text-purple-600" id="fastestTime">0:00</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-medal text-orange-600"></i>
+                        </div>
+                        <h3 class="text-sm font-medium text-gray-700">Your Rank</h3>
+                        <p class="text-xl font-bold text-orange-600" id="studentRank">--</p>
+                    </div>
+                </div>
+
+                <!-- Leaderboard Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rank</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboardTable" class="bg-white divide-y divide-gray-200">
+                            <!-- Leaderboard entries will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+                    <button onclick="hideLeaderboard()" class="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Back to Results
+                    </button>
+                    <button onclick="loadLeaderboard()" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
+                        <i class="fas fa-sync-alt mr-2"></i>
+                        Refresh Leaderboard
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2024 MathEase. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Timer variables
+        let quizStartTime;
+        let timerInterval;
+        let quizDuration = 0; // in seconds
+        let currentAttemptId = null;
+        let isReviewMode = false;
+        let quizDeadline = null;
+        let quizStarted = false; // Track if quiz has been started
+        let saveProgressTimeout = null; // Debounce progress saving
+        let startQuizRetryCount = 0; // Prevent infinite recursion
+
+        // Quiz data with correct answers
+        const quizData = {
+            answers: {
+                q1: 'a', // A function that can be expressed as the ratio of two polynomials
+                q2: 'b', // All real numbers except x = 3
+                q3: 'b', // x = 1
+                q4: 'b', // y = 2
+                q5: 'a', // Solutions that appear to work but don't satisfy the original equation
+                q6: 'a', // x = 1.2 and x = -4
+                q7: 'a', // Find the least common denominator (LCD)
+                q8: 'a', // (-∞, -2) ∪ [1, ∞)
+                q9: 'a', // Sign analysis and number line
+                q10: 'a' // x = -3
+            },
+            problemSolving: {
+                answer: '(-∞,2) ∪ (2,∞)' // Domain of f(x) = (x² - 4)/(x - 2)
+            }
+        };
+        
+        // Validate quiz data on load
+        function validateQuizData() {
+            console.log('=== VALIDATING QUIZ DATA ===');
+            
+            // Check if all required answers are defined
+            for (let i = 1; i <= 10; i++) {
+                const questionKey = `q${i}`;
+                if (!quizData.answers[questionKey]) {
+                    console.error(`Missing correct answer for question ${i}`);
+                    return false;
+                }
+                console.log(`Question ${i}: Correct answer is "${quizData.answers[questionKey]}"`);
+            }
+            
+            // Check problem solving answer
+            if (!quizData.problemSolving.answer) {
+                console.error('Missing problem solving correct answer');
+                return false;
+            }
+            console.log(`Problem solving: Correct answer is "${quizData.problemSolving.answer}"`);
+            
+            console.log('✓ Quiz data validation passed');
+            return true;
+        }
+        
+        // Test scoring with sample answers
+        function testScoring() {
+            console.log('=== TESTING SCORING LOGIC ===');
+            
+            // Test with all correct answers
+            const allCorrectAnswers = {
+                q1: 'a', q2: 'b', q3: 'b', q4: 'b', q5: 'a',
+                q6: 'a', q7: 'a', q8: 'a', q9: 'a', q10: 'a',
+                q11: '(-∞,2) ∪ (2,∞)'
+            };
+            
+            const allCorrectScore = calculateScore(allCorrectAnswers);
+            console.log(`All correct answers should score 11, got: ${allCorrectScore}`);
+            
+            // Test with all wrong answers
+            const allWrongAnswers = {
+                q1: 'b', q2: 'a', q3: 'a', q4: 'a', q5: 'b',
+                q6: 'b', q7: 'b', q8: 'b', q9: 'b', q10: 'b',
+                q11: 'wrong answer'
+            };
+            
+            const allWrongScore = calculateScore(allWrongAnswers);
+            console.log(`All wrong answers should score 0, got: ${allWrongScore}`);
+            
+            // Test problem solving variations
+            const psVariations = [
+                '(-∞,2) ∪ (2,∞)',
+                '(-∞,2) u (2,∞)',
+                '(-∞,2) ∪ (2,∞)',
+                '(-∞,2) ∪ (2,∞)',
+                '(-∞,2) ∪ (2,∞)'
+            ];
+            
+            psVariations.forEach((variation, index) => {
+                const testAnswers = { ...allCorrectAnswers, q11: variation };
+                const score = calculateScore(testAnswers);
+                console.log(`Problem solving variation ${index + 1}: "${variation}" scored ${score}`);
+            });
+        }
+
+        // Initialize quiz
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // Validate quiz data first
+                validateQuizData();
+                
+                // Test scoring logic
+                testScoring();
+                
+                console.log('Checking authentication...');
+                // Check authentication first
+                const res = await fetch('../php/user.php', { credentials: 'include', cache: 'no-store' });
+                console.log('Authentication response status:', res.status);
+                
+                if (res.status === 401) { 
+                    console.log('Authentication failed - redirecting to login');
+                    window.location.href = '../login.html'; 
+                    return; 
+                }
+                
+                const data = await res.json();
+                console.log('Authentication response data:', data);
+                
+                if (!data.success) { 
+                    console.log('Authentication unsuccessful - redirecting to login');
+                    window.location.href = '../login.html'; 
+                    return; 
+                }
+                
+                console.log('Authentication successful, user data:', data.user);
+                
+                // Update user name in navigation
+                const userNameEl = document.getElementById('userName');
+                if (userNameEl && data.user && data.user.first_name) {
+                    const fullName = `${data.user.first_name} ${data.user.last_name || ''}`.trim();
+                    userNameEl.textContent = fullName;
+                    console.log('Updated user name in navigation:', fullName);
+                } else {
+                    console.log('Could not update user name - userNameEl:', userNameEl, 'data.user:', data.user);
+                }
+                
+                // Note: checkExistingSession will be called when user clicks Start Quiz
+                
+                // Start quiz button
+                document.getElementById('startQuizBtn').addEventListener('click', startQuiz);
+                
+                // Submit quiz button
+                document.getElementById('submitQuizBtn').addEventListener('click', submitQuiz);
+                
+                // Add event listeners to options
+                addOptionListeners();
+                
+            } catch (error) {
+                console.error('Error initializing quiz:', error);
+                window.location.href = '../login.html';
+            }
+        });
+
+        // Add event listeners to all options
+        function addOptionListeners() {
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    if (!isReviewMode && quizStarted && currentAttemptId && currentAttemptId !== 0 && currentAttemptId !== '0') {
+                        const radio = this.querySelector('input[type="radio"]');
+                        if (radio) {
+                            radio.checked = true;
+                            updateOptionStyles();
+                        }
+                    } else if (!quizStarted || !currentAttemptId || currentAttemptId === 0 || currentAttemptId === '0') {
+                        console.log('Quiz not properly started yet, ignoring option selection - currentAttemptId:', currentAttemptId);
+                    }
+                });
+            });
+        }
+
+        // Update option styles when selected
+        function updateOptionStyles() {
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => {
+                const radio = option.querySelector('input[type="radio"]');
+                if (radio && radio.checked) {
+                    option.classList.add('option-selected');
+                } else {
+                    option.classList.remove('option-selected');
+                }
+            });
+            
+            // Save progress automatically only if quiz is properly started with valid attempt ID
+            if (currentAttemptId && currentAttemptId !== 0 && currentAttemptId !== '0' && quizStarted && quizDuration > 0) {
+                // Debounce progress saving to avoid too many requests
+                if (saveProgressTimeout) {
+                    clearTimeout(saveProgressTimeout);
+                }
+                saveProgressTimeout = setTimeout(() => {
+                    saveProgress();
+                }, 1000); // Save after 1 second of inactivity
+            } else {
+                console.log('Skipping progress save - currentAttemptId:', currentAttemptId, 'quizStarted:', quizStarted, 'quizDuration:', quizDuration);
+            }
+        }
+
+        // Start quiz function
+        async function startQuiz() {
+            try {
+                console.log('Starting quiz... (attempt:', startQuizRetryCount + 1, ')');
+                
+                // Prevent infinite recursion
+                if (startQuizRetryCount >= 3) {
+                    console.error('Too many retry attempts, stopping');
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Unable to start quiz after multiple attempts. Please refresh the page and try again.',
+                        icon: 'error'
+                    });
+                    return;
+                }
+                
+                startQuizRetryCount++;
+                
+                // First check for existing sessions
+                const hasExistingSession = await checkExistingSession();
+                
+                // If checkExistingSession found an attempt and handled it, return
+                if (hasExistingSession) {
+                    return;
+                }
+                
+                // Show loading state
+                const quizContainerLoading = document.getElementById('quizContainer');
+                if (quizContainerLoading) {
+                    quizContainerLoading.classList.add('opacity-50', 'pointer-events-none');
+                }
+                
+                // Start quiz session first
+                let attemptId;
+                try {
+                    attemptId = await startQuizSession();
+                } catch (error) {
+                    console.error('Error starting quiz session:', error);
+                    // Remove loading state
+                    const quizContainerError = document.getElementById('quizContainer');
+                    if (quizContainerError) {
+                        quizContainerError.classList.remove('opacity-50', 'pointer-events-none');
+                    }
+                    
+                    Swal.fire({
+                        title: 'Quiz Start Error',
+                        text: 'There was an error starting the quiz session. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#667eea'
+                    });
+                    return;
+                }
+                
+                if (!attemptId) {
+                    // Check if there's an existing attempt
+                    const existingResponse = await fetch('../php/quiz-management.php?action=check_existing_attempt&quiz_type=rational-functions', {
+                        credentials: 'include'
+                    });
+                    const existingResult = await existingResponse.json();
+                    
+                    if (existingResult.success && existingResult.attempt) {
+                        // Show dialog to handle existing attempt
+                        Swal.fire({
+                            title: 'Existing Quiz Found',
+                            text: 'You already have a quiz in progress. Would you like to resume it or start a new one?',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Resume',
+                            cancelButtonText: 'Start New',
+                            confirmButtonColor: '#667eea',
+                            cancelButtonColor: '#6b7280'
+                        }).then(async (result) => {
+                            if (result.isConfirmed) {
+                                // Resume existing session
+                                currentAttemptId = existingResult.attempt.attempt_id;
+                                quizStarted = true;
+                                resumeQuiz();
+                            } else {
+                                // Clear existing and start new
+                                const cleared = await clearExistingSession();
+                                if (cleared) {
+                                    // Reset retry counter and try again
+                                    startQuizRetryCount = 0;
+                                    await startQuizNew();
+                                } else {
+                                    Swal.fire({
+                                        title: 'Session Clear Failed',
+                                        text: 'Unable to clear existing quiz session. Please refresh the page and try again.',
+                                        icon: 'error',
+                                        confirmButtonText: 'Refresh Page',
+                                        confirmButtonColor: '#667eea'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            window.location.reload();
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                        return;
+                    } else {
+                        throw new Error('Failed to start quiz session');
+                    }
+                }
+                currentAttemptId = attemptId;
+                quizStarted = true; // Set quiz started flag only after successful session start
+                startQuizRetryCount = 0; // Reset retry counter on success
+                console.log('Quiz started with attempt ID:', currentAttemptId, 'type:', typeof currentAttemptId);
+                
+                // Verify the attempt ID is valid
+                if (!currentAttemptId || currentAttemptId === 0 || currentAttemptId === '0') {
+                    console.error('Invalid attempt ID set:', currentAttemptId);
+                    throw new Error('Invalid attempt ID received from server');
+                }
+                
+                // Hide instructions container
+                const instructionsContainer = document.querySelector('.max-w-4xl.mx-auto.px-4.sm\\:px-6.lg\\:px-8.py-8');
+                if (instructionsContainer) {
+                    instructionsContainer.style.display = 'none';
+                }
+                
+                // Show quiz container
+                const quizContainer = document.getElementById('quizContainer');
+                if (quizContainer) {
+                    quizContainer.classList.remove('hidden');
+                    // Remove any loading state
+                    quizContainer.classList.remove('opacity-50', 'pointer-events-none');
+                }
+                
+                // Start the timer
+                startTimer();
+                
+                // Initialize quiz
+                initializeQuiz();
+            } catch (error) {
+                console.error('Error starting quiz:', error);
+                
+                // Remove loading state
+                const quizContainerError = document.getElementById('quizContainer');
+                if (quizContainerError) {
+                    quizContainerError.classList.remove('opacity-50', 'pointer-events-none');
+                }
+                
+                Swal.fire({
+                    title: 'Quiz Start Error',
+                    text: 'There was an error starting the quiz. Please try again.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#667eea'
+                });
+            }
+        }
+
+        // Start new quiz after clearing existing session
+        async function startQuizNew() {
+            try {
+                console.log('Starting new quiz after clearing existing session...');
+                
+                // Reset quiz state
+                currentAttemptId = null;
+                quizStarted = false;
+                quizDuration = 0;
+                
+                // Check if there are still existing attempts
+                const checkResponse = await fetch('../php/quiz-management.php?action=check_existing_attempt&quiz_type=rational-functions', {
+                    credentials: 'include'
+                });
+                
+                if (checkResponse.ok) {
+                    const checkResult = await checkResponse.json();
+                    if (checkResult.success && checkResult.attempt) {
+                        console.warn('Still found existing attempt after clearing, attempting to clear again...');
+                        const cleared = await clearExistingSession();
+                        if (!cleared) {
+                            throw new Error('Failed to clear existing session');
+                        }
+                        // Add another delay after clearing
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                    }
+                }
+                
+                // Start quiz session
+                const attemptId = await startQuizSession();
+                if (!attemptId) {
+                    // Check if there's still an existing attempt
+                    const existingResponse = await fetch('../php/quiz-management.php?action=check_existing_attempt&quiz_type=rational-functions', {
+                        credentials: 'include'
+                    });
+                    const existingResult = await existingResponse.json();
+                    
+                    if (existingResult.success && existingResult.attempt) {
+                        console.error('Existing attempt still exists:', existingResult.attempt);
+                        throw new Error('Cannot start new quiz: existing attempt still exists');
+                    } else {
+                        throw new Error('Failed to start new quiz session');
+                    }
+                }
+                
+                currentAttemptId = attemptId;
+                quizStarted = true;
+                console.log('New quiz started with attempt ID:', currentAttemptId, 'type:', typeof currentAttemptId);
+                
+                // Verify the attempt ID is valid
+                if (!currentAttemptId || currentAttemptId === 0 || currentAttemptId === '0') {
+                    console.error('Invalid attempt ID set in new quiz:', currentAttemptId);
+                    throw new Error('Invalid attempt ID received from server for new quiz');
+                }
+                
+                // Hide instructions container
+                const instructionsContainer = document.querySelector('.max-w-4xl.mx-auto.px-4.sm\\:px-6.lg\\:px-8.py-8');
+                if (instructionsContainer) {
+                    instructionsContainer.style.display = 'none';
+                }
+                
+                // Show quiz container
+                const quizContainer = document.getElementById('quizContainer');
+                if (quizContainer) {
+                    quizContainer.classList.remove('hidden');
+                    // Remove any loading state
+                    quizContainer.classList.remove('opacity-50', 'pointer-events-none');
+                }
+                
+                // Start the timer
+                startTimer();
+                
+                // Initialize quiz
+                initializeQuiz();
+            } catch (error) {
+                console.error('Error starting new quiz:', error);
+                
+                // Remove loading state
+                const quizContainerError = document.getElementById('quizContainer');
+                if (quizContainerError) {
+                    quizContainerError.classList.remove('opacity-50', 'pointer-events-none');
+                }
+                
+                Swal.fire({
+                    title: 'Quiz Start Error',
+                    text: 'There was an error starting the new quiz. Please try again.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#667eea'
+                });
+            }
+        }
+
+        // Start timer
+        function startTimer() {
+            quizStartTime = new Date();
+            timerInterval = setInterval(() => {
+                quizDuration++;
+            }, 1000);
+        }
+
+        // Initialize quiz
+        function initializeQuiz() {
+            // Add any initialization logic here
+            console.log('Quiz initialized');
+        }
+
+        // Check for existing quiz session
+        async function checkExistingSession() {
+            try {
+                console.log('Checking existing session...');
+                const response = await fetch('../php/quiz-management.php?action=check_existing_attempt&quiz_type=rational-functions', {
+                    credentials: 'include'
+                });
+                
+                console.log('Existing session response status:', response.status);
+                
+                if (!response.ok) {
+                    console.error('HTTP error checking existing session:', response.status);
+                    return false;
+                }
+                
+                const result = await response.json();
+                console.log('Existing session check result:', result);
+                
+                if (result.success && result.attempt) {
+                    console.log('Found existing quiz attempt:', result.attempt);
+                    
+                    if (result.attempt.status === 'in_progress') {
+                        // In-progress attempt - offer to resume
+                        currentAttemptId = result.attempt.attempt_id;
+                        quizStarted = true;
+                        
+                        const resumeResult = await Swal.fire({
+                            title: 'Resume Quiz',
+                            text: 'You have an existing quiz session. Would you like to resume it?',
+                            icon: 'question',
+                            showCancelButton: true,
+                            confirmButtonText: 'Resume',
+                            cancelButtonText: 'Start New',
+                            confirmButtonColor: '#667eea',
+                            cancelButtonColor: '#6b7280'
+                        });
+                        
+                        if (resumeResult.isConfirmed) {
+                            // Resume existing session
+                            resumeQuiz();
+                            return true;
+                        } else {
+                            // Clear existing session and start new one
+                            const cleared = await clearExistingSession();
+                            if (cleared) {
+                                // Reset retry counter and start new quiz
+                                startQuizRetryCount = 0;
+                                await startQuizNew();
+                                return true;
+                            } else {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: 'Failed to clear existing session. Please try again.',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK',
+                                    confirmButtonColor: '#667eea'
+                                });
+                                return true;
+                            }
+                        }
+                    } else if (result.attempt.status === 'completed') {
+                        // Completed attempt - show completion message
+                        await Swal.fire({
+                            title: 'Quiz Already Completed',
+                            html: `
+                                <div class="text-center">
+                                    <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <i class="fas fa-check-circle text-blue-500 text-3xl"></i>
+                                    </div>
+                                    <p class="text-lg text-gray-700 mb-4">You have already completed this quiz!</p>
+                                    <div class="bg-blue-50 rounded-lg p-4 mb-4">
+                                        <div class="text-2xl font-bold text-blue-600">Quiz Completed</div>
+                                        <div class="text-sm text-blue-500">You cannot retake this quiz unless reset by your teacher.</div>
+                                    </div>
+                                    <p class="text-sm text-gray-600">Contact your teacher if you need to retake this quiz.</p>
+                                </div>
+                            `,
+                            icon: 'info',
+                            confirmButtonText: 'Back to Quizzes',
+                            confirmButtonColor: '#6366f1',
+                            background: '#ffffff',
+                            customClass: {
+                                popup: 'rounded-2xl',
+                                title: 'text-slate-800',
+                                content: 'text-slate-600'
+                            },
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        });
+                        
+                        window.location.href = '../quizzes.html';
+                        return true;
+                    }
+                }
+                
+                return false; // No existing session found
+            } catch (error) {
+                console.error('Error checking existing session:', error);
+                return false;
+            }
+        }
+
+        // Clear existing session
+        async function clearExistingSession(retryCount = 0) {
+            try {
+                console.log('Clearing existing session... (attempt:', retryCount + 1, ')');
+                
+                // Prevent infinite recursion
+                if (retryCount >= 3) {
+                    console.error('Too many retry attempts for clearing session, stopping');
+                    return false;
+                }
+                
+                // First try to get the current attempt ID to clear it specifically
+                const checkResponse = await fetch('../php/quiz-management.php?action=check_existing_attempt&quiz_type=rational-functions', {
+                    credentials: 'include'
+                });
+                
+                let attemptIdToClear = null;
+                if (checkResponse.ok) {
+                    const checkResult = await checkResponse.json();
+                    if (checkResult.success && checkResult.attempt) {
+                        attemptIdToClear = checkResult.attempt.attempt_id;
+                        console.log('Found attempt to clear:', attemptIdToClear);
+                    }
+                }
+                
+                const formData = new FormData();
+                formData.append('action', 'mark_abandoned_attempts');
+                if (attemptIdToClear) {
+                    formData.append('attempt_id', attemptIdToClear);
+                }
+                
+                const response = await fetch('../php/quiz-management.php', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    console.error('HTTP error clearing existing session:', response.status);
+                    return false;
+                }
+                
+                const result = await response.json();
+                console.log('Clear session response:', result);
+                
+                if (result.success) {
+                    console.log('Existing session cleared successfully, abandoned count:', result.abandoned_count);
+                    // Reset quiz state
+                    currentAttemptId = null;
+                    quizStarted = false;
+                    quizDuration = 0;
+                    
+                    // Add a longer delay to ensure the database is updated and prevent race conditions
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    
+                    // Verify that the session is actually cleared
+                    const verifyResponse = await fetch('../php/quiz-management.php?action=check_existing_attempt&quiz_type=rational-functions', {
+                        credentials: 'include'
+                    });
+                    
+                    if (verifyResponse.ok) {
+                        const verifyResult = await verifyResponse.json();
+                        console.log('Verification after clearing:', verifyResult);
+                        
+                        if (verifyResult.success && verifyResult.attempt) {
+                            console.warn('Warning: Attempt still exists after clearing, will retry...');
+                            // Try to clear again with a longer delay
+                            await new Promise(resolve => setTimeout(resolve, 1000));
+                            return await clearExistingSession(retryCount + 1);
+                        } else {
+                            console.log('Session successfully cleared and verified');
+                            return true;
+                        }
+                    }
+                    
+                    return true;
+                } else {
+                    console.error('Error clearing existing session:', result.message);
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error clearing existing session:', error);
+                return false;
+            }
+        }
+
+        // Resume quiz
+        function resumeQuiz() {
+            // Hide instructions container
+            const instructionsContainer = document.querySelector('.max-w-4xl.mx-auto.px-4.sm\\:px-6.lg\\:px-8.py-8');
+            if (instructionsContainer) {
+                instructionsContainer.style.display = 'none';
+            }
+            
+            // Show quiz container
+            const quizContainer = document.getElementById('quizContainer');
+            if (quizContainer) {
+                quizContainer.classList.remove('hidden');
+            }
+            
+            // Start the timer
+            startTimer();
+            
+            // Initialize quiz
+            initializeQuiz();
+        }
+
+        // Start quiz session
+        async function startQuizSession() {
+            try {
+                console.log('Starting quiz session...');
+                const formData = new FormData();
+                formData.append('action', 'start_quiz');
+                formData.append('quiz_type', 'rational-functions');
+
+                const response = await fetch('../php/quiz-management.php', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    console.error('HTTP error starting quiz session:', response.status);
+                    return null;
+                }
+                
+                // Check if response is HTML (error) instead of JSON
+                const responseText = await response.text();
+                console.log('Raw quiz session response:', responseText);
+                
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (error) {
+                    console.error('Failed to parse quiz session JSON response:', error);
+                    console.error('Response was:', responseText);
+                    throw new Error('Server returned invalid response for quiz session');
+                }
+                
+                console.log('Quiz session response:', result);
+                
+                if (result.success) {
+                    console.log('Quiz session started successfully, attempt ID:', result.attempt_id, 'type:', typeof result.attempt_id);
+                    // Ensure we return a valid attempt ID
+                    if (result.attempt_id && result.attempt_id !== 0 && result.attempt_id !== '0') {
+                        return result.attempt_id;
+                    } else {
+                        console.error('Invalid attempt ID received:', result.attempt_id);
+                        throw new Error('Server returned invalid attempt ID: ' + result.attempt_id);
+                    }
+                } else {
+                    console.error('Error starting quiz session:', result.message);
+                    throw new Error('Failed to start quiz session: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error starting quiz session:', error);
+                return null;
+            }
+        }
+
+        // Save progress during quiz
+        async function saveProgress() {
+            try {
+                if (!currentAttemptId || currentAttemptId === 0 || currentAttemptId === '0') {
+                    console.log('Cannot save progress: No valid attempt ID available (currentAttemptId:', currentAttemptId, ')');
+                    return;
+                }
+
+                if (!quizStarted) {
+                    console.log('Cannot save progress: Quiz not started yet');
+                    return;
+                }
+
+                const answers = getStudentAnswers();
+                console.log('Saving progress for attempt:', currentAttemptId, 'Answers:', answers);
+                
+                const formData = new FormData();
+                formData.append('action', 'save_quiz_progress');
+                formData.append('attempt_id', currentAttemptId);
+                formData.append('answers', JSON.stringify(answers));
+                formData.append('completion_time', quizDuration);
+                
+                const response = await fetch('../php/quiz-management.php', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    console.error('HTTP error saving progress:', response.status);
+                    return;
+                }
+                
+                // Check if response is HTML (error) instead of JSON
+                const responseText = await response.text();
+                console.log('Raw response:', responseText);
+                
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (error) {
+                    console.error('Failed to parse JSON response:', error);
+                    console.error('Response was:', responseText);
+                    throw new Error('Server returned invalid response');
+                }
+                
+                if (!result.success) {
+                    console.error('Error saving progress:', result.message);
+                } else {
+                    console.log('Progress saved successfully');
+                }
+            } catch (error) {
+                console.error('Error saving progress:', error);
+            }
+        }
+
+        // Submit quiz function
+        async function submitQuiz() {
+            try {
+                // Check if quiz is properly started
+                if (!currentAttemptId || currentAttemptId === 0 || currentAttemptId === '0') {
+                    Swal.fire({
+                        title: 'Quiz Not Started',
+                        text: 'Please start the quiz first before submitting.',
+                        icon: 'warning',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#667eea'
+                    });
+                    return;
+                }
+
+                // Show confirmation dialog
+                const result = await Swal.fire({
+                    title: 'Submit Quiz',
+                    text: 'Are you sure you want to submit your quiz? You cannot change your answers after submission.',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, Submit',
+                    cancelButtonText: 'Cancel',
+                    confirmButtonColor: '#667eea',
+                    cancelButtonColor: '#6b7280'
+                });
+
+                if (!result.isConfirmed) {
+                    return;
+                }
+
+                // Show loading state
+                Swal.fire({
+                    title: 'Submitting Quiz...',
+                    text: 'Please wait while we process your answers.',
+                    icon: 'info',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                // Clear timer
+                clearInterval(timerInterval);
+                
+                // Get student answers
+                const answers = getStudentAnswers();
+                console.log('=== SUBMITTING QUIZ ===');
+                console.log('Student answers:', answers);
+                
+                // Calculate score
+                const score = calculateScore(answers);
+                const percentage = Math.round((score / 11) * 100);
+                
+                console.log('Frontend calculated score:', score, 'Percentage:', percentage);
+                
+                // Save quiz attempt
+                const attemptId = await saveQuizAttempt(answers, score, percentage);
+                
+                if (attemptId) {
+                    currentAttemptId = attemptId;
+                    console.log('Quiz saved successfully with attempt ID:', attemptId);
+                    
+                    // Close loading dialog
+                    Swal.close();
+                    
+                    // Show results
+                    showResults(score, percentage, answers);
+                } else {
+                    Swal.close();
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'There was an error saving your quiz. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#667eea'
+                    });
+                }
+            } catch (error) {
+                console.error('Error submitting quiz:', error);
+                Swal.close();
+                Swal.fire({
+                    title: 'Submission Error',
+                    text: 'There was an error submitting your quiz. Please try again.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#667eea'
+                });
+            }
+        }
+
+        // Get student answers
+        function getStudentAnswers() {
+            const answers = {};
+            
+            // Multiple choice questions
+            for (let i = 1; i <= 10; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                answers[`q${i}`] = selected ? selected.value : null;
+            }
+            
+            // Problem solving question
+            const psAnswer = document.getElementById('ps-answer').value;
+            answers['q11'] = psAnswer;
+            
+            return answers;
+        }
+
+        // Calculate score - EXACTLY matching backend logic
+        function calculateScore(answers) {
+            let score = 0;
+            console.log('=== FRONTEND SCORE CALCULATION ===');
+            console.log('Calculating score for answers:', answers);
+            console.log('Quiz data answers:', quizData.answers);
+            console.log('Problem solving correct answer:', quizData.problemSolving.answer);
+            
+            // Check multiple choice questions (1-10) - EXACTLY like backend
+            for (let i = 1; i <= 10; i++) {
+                const questionKey = `q${i}`;
+                const studentAnswer = answers[questionKey];
+                const correctAnswer = quizData.answers[questionKey];
+                
+                console.log(`Question ${i}: Student: "${studentAnswer}", Correct: "${correctAnswer}", Match: ${studentAnswer === correctAnswer}`);
+                
+                // Use exact string comparison like backend
+                if (studentAnswer && studentAnswer === correctAnswer) {
+                    score++;
+                    console.log(`Question ${i}: CORRECT (+1) - Score now: ${score}`);
+                } else {
+                    console.log(`Question ${i}: INCORRECT - Score remains: ${score}`);
+                }
+            }
+            
+            // Check problem solving question (q11) - EXACTLY like backend
+            const psAnswer = answers['q11'];
+            const psCorrect = quizData.problemSolving.answer;
+            
+            console.log(`Problem solving: Student: "${psAnswer}", Correct: "${psCorrect}"`);
+            
+            if (psAnswer) {
+                const studentAnswer = psAnswer.toString().toLowerCase().trim();
+                const correctAnswer = psCorrect.toString().toLowerCase();
+                
+                console.log(`Problem solving normalized: Student: "${studentAnswer}", Correct: "${correctAnswer}"`);
+                
+                // EXACT same logic as backend calculateRationalFunctionsProblemSolvingScore
+                const isExactMatch = studentAnswer === correctAnswer;
+                const isUMatch = studentAnswer === '(-∞,2) u (2,∞)';
+                const isUnionMatch = studentAnswer === '(-∞,2) ∪ (2,∞)';
+                const isContainsMatch = studentAnswer.includes('(-∞,2)') && studentAnswer.includes('(2,∞)');
+                
+                console.log(`Problem solving checks: exact=${isExactMatch}, u=${isUMatch}, union=${isUnionMatch}, contains=${isContainsMatch}`);
+                
+                if (isExactMatch || isUMatch || isUnionMatch || isContainsMatch) {
+                    score++;
+                    console.log(`Problem solving: CORRECT (+1) - Final score: ${score}`);
+                } else {
+                    console.log(`Problem solving: INCORRECT - Final score: ${score}`);
+                }
+            } else {
+                console.log(`Problem solving: INCORRECT (no answer) - Final score: ${score}`);
+            }
+            
+            console.log('=== FINAL FRONTEND SCORE:', score, '===');
+            return score;
+        }
+
+        // Save quiz attempt
+        async function saveQuizAttempt(answers, score, percentage) {
+            try {
+                if (!currentAttemptId || currentAttemptId === 0 || currentAttemptId === '0') {
+                    console.error('No valid attempt ID available (currentAttemptId:', currentAttemptId, ')');
+                    return null;
+                }
+
+                console.log('=== SENDING TO BACKEND ===');
+                console.log('Attempt ID:', currentAttemptId);
+                console.log('Answers being sent:', answers);
+                console.log('Frontend calculated score:', score);
+                console.log('Frontend calculated percentage:', percentage);
+                console.log('Completion time:', quizDuration);
+
+                const formData = new FormData();
+                formData.append('action', 'submit_quiz');
+                formData.append('attempt_id', currentAttemptId);
+                formData.append('answers', JSON.stringify(answers));
+                formData.append('completion_time', quizDuration);
+
+                const response = await fetch('../php/quiz-management.php', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    console.error('HTTP error submitting quiz:', response.status);
+                    return null;
+                }
+                
+                const result = await response.json();
+                console.log('Backend response:', result);
+                
+                if (result.success) {
+                    console.log('Quiz saved successfully with score:', result.score);
+                    return currentAttemptId;
+                } else {
+                    console.error('Error saving quiz:', result.message);
+                    return null;
+                }
+            } catch (error) {
+                console.error('Error saving quiz:', error);
+                return null;
+            }
+        }
+
+        // Show results
+        function showResults(score, percentage, answers) {
+            // Hide quiz container
+            document.getElementById('quizContainer').classList.add('hidden');
+            
+            // Show results container
+            document.getElementById('resultsContainer').classList.remove('hidden');
+            
+            // Debug logging for score comparison
+            console.log('=== FRONTEND SCORE CALCULATION ===');
+            console.log('Frontend calculated score:', score);
+            console.log('Frontend calculated percentage:', percentage);
+            console.log('Frontend answers:', answers);
+            
+            // Update result displays
+            document.getElementById('totalScore').textContent = `${score}/11`;
+            document.getElementById('correctAnswers').textContent = score;
+            document.getElementById('incorrectAnswers').textContent = 11 - score;
+            document.getElementById('completionTime').textContent = formatTime(quizDuration);
+            document.getElementById('overallGrade').textContent = `${percentage}%`;
+            
+            // Update progress bar text and animation
+            const progressBar = document.getElementById('gradeProgress');
+            const progressText = document.getElementById('gradeProgressText');
+            
+            if (progressText) {
+                progressText.textContent = `${percentage}%`;
+            }
+            
+            if (progressBar) {
+                // Reset width first, then animate
+                progressBar.style.width = '0%';
+                setTimeout(() => {
+                    progressBar.style.width = `${percentage}%`;
+                }, 100);
+            }
+            
+            // Store current score for leaderboard comparison
+            window.currentQuizScore = score;
+            window.currentQuizPercentage = percentage;
+            
+            // Verify score with backend after a short delay
+            setTimeout(() => {
+                verifyScoreWithBackend();
+            }, 2000);
+        }
+        
+        // Verify score with backend
+        async function verifyScoreWithBackend() {
+            try {
+                console.log('=== VERIFYING SCORE WITH BACKEND ===');
+                const response = await fetch(`../php/quiz-management.php?action=get_student_history&quiz_type=rational-functions`, {
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Backend verification result:', result);
+                    
+                    if (result.success && result.attempts && result.attempts.length > 0) {
+                        const latestAttempt = result.attempts[0];
+                        console.log('Latest attempt from backend:', latestAttempt);
+                        console.log('Backend score:', latestAttempt.score);
+                        console.log('Frontend score:', window.currentQuizScore);
+                        
+                        if (latestAttempt.score !== window.currentQuizScore) {
+                            console.warn('SCORE MISMATCH DETECTED!');
+                            console.warn('Frontend score:', window.currentQuizScore);
+                            console.warn('Backend score:', latestAttempt.score);
+                            
+                            // Update the display with backend score
+                            const backendPercentage = Math.round((latestAttempt.score / 11) * 100);
+                            document.getElementById('totalScore').textContent = `${latestAttempt.score}/11`;
+                            document.getElementById('correctAnswers').textContent = latestAttempt.score;
+                            document.getElementById('incorrectAnswers').textContent = 11 - latestAttempt.score;
+                            document.getElementById('overallGrade').textContent = `${backendPercentage}%`;
+                            
+                            // Update progress bar with backend score
+                            const progressBar = document.getElementById('gradeProgress');
+                            const progressText = document.getElementById('gradeProgressText');
+                            
+                            if (progressText) {
+                                progressText.textContent = `${backendPercentage}%`;
+                            }
+                            
+                            if (progressBar) {
+                                progressBar.style.width = `${backendPercentage}%`;
+                            }
+                            
+                            // Update stored score
+                            window.currentQuizScore = latestAttempt.score;
+                            window.currentQuizPercentage = backendPercentage;
+                            
+                            // Show notification about score correction
+                            Swal.fire({
+                                title: 'Score Updated',
+                                text: `Your score has been corrected to ${latestAttempt.score}/11 (${backendPercentage}%)`,
+                                icon: 'info',
+                                timer: 3000,
+                                showConfirmButton: false,
+                                toast: true,
+                                position: 'top-end'
+                            });
+                        } else {
+                            console.log('✓ Scores match! Frontend and backend are synchronized.');
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error verifying score with backend:', error);
+            }
+        }
+
+        // Format time in MM:SS format
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        // Load leaderboard
+        async function loadLeaderboard() {
+            try {
+                console.log('=== LOADING LEADERBOARD ===');
+                console.log('Current attempt ID:', currentAttemptId);
+                console.log('Current quiz score:', window.currentQuizScore);
+                
+                const response = await fetch('../php/quiz-management.php?action=get_leaderboard&quiz_type=rational-functions', {
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    console.error('HTTP error loading leaderboard:', response.status);
+                    showEmptyLeaderboard(`HTTP Error: ${response.status}`);
+                    return;
+                }
+                
+                // Check if response is HTML (error) instead of JSON
+                const responseText = await response.text();
+                console.log('Raw leaderboard response:', responseText);
+                
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (error) {
+                    console.error('Failed to parse leaderboard JSON response:', error);
+                    console.error('Response was:', responseText);
+                    showEmptyLeaderboard('Server returned invalid response');
+                    return;
+                }
+                
+                if (result.success && result.leaderboard) {
+                    console.log('Leaderboard data received:', result.leaderboard);
+                    
+                    // Validate leaderboard data
+                    if (Array.isArray(result.leaderboard)) {
+                        // Check if current student's score is in the leaderboard
+                        const currentStudentEntry = result.leaderboard.find(entry => 
+                            entry.attempt_id == currentAttemptId || 
+                            entry.attempt_id === currentAttemptId
+                        );
+                        
+                        if (currentStudentEntry) {
+                            console.log('Current student found in leaderboard:', currentStudentEntry);
+                            console.log('Leaderboard score:', currentStudentEntry.score);
+                            console.log('Frontend score:', window.currentQuizScore);
+                            
+                            if (currentStudentEntry.score !== window.currentQuizScore) {
+                                console.warn('LEADERBOARD SCORE MISMATCH!');
+                                console.warn('Frontend score:', window.currentQuizScore);
+                                console.warn('Leaderboard score:', currentStudentEntry.score);
+                            }
+                        } else {
+                            console.log('Current student not found in leaderboard yet');
+                        }
+                        
+                        updateLeaderboardStats(result.leaderboard);
+                        populateLeaderboardTable(result.leaderboard);
+                    } else {
+                        console.error('Invalid leaderboard data format:', result.leaderboard);
+                        showEmptyLeaderboard('Invalid leaderboard data format');
+                    }
+                } else {
+                    console.error('Leaderboard API error:', result.message || 'Unknown error');
+                    showEmptyLeaderboard(result.message || 'Failed to load leaderboard data');
+                }
+            } catch (error) {
+                console.error('Error loading leaderboard:', error);
+                showEmptyLeaderboard('Network error loading leaderboard');
+            }
+        }
+
+        // Update leaderboard statistics
+        function updateLeaderboardStats(leaderboard) {
+            const totalParticipants = leaderboard.length;
+            const averageScore = leaderboard.length > 0 ? 
+                Math.round(leaderboard.reduce((sum, entry) => sum + (entry.percentage || 0), 0) / leaderboard.length) : 0;
+            const fastestTime = leaderboard.length > 0 ? 
+                Math.min(...leaderboard.map(entry => entry.completion_time || 0)) : 0;
+            
+            document.getElementById('totalParticipants').textContent = totalParticipants;
+            document.getElementById('averageScore').textContent = `${averageScore}%`;
+            document.getElementById('fastestTime').textContent = formatTime(fastestTime);
+            
+            // Find student's rank - check both attempt_id and student_id for better matching
+            let studentRank = -1;
+            if (currentAttemptId) {
+                studentRank = leaderboard.findIndex(entry => 
+                    entry.attempt_id === currentAttemptId || 
+                    entry.attempt_id == currentAttemptId
+                );
+            }
+            
+            document.getElementById('studentRank').textContent = studentRank >= 0 ? `#${studentRank + 1}` : '--';
+        }
+
+        // Populate leaderboard table
+        function populateLeaderboardTable(leaderboard) {
+            const tableBody = document.getElementById('leaderboardTable');
+            tableBody.innerHTML = '';
+            
+            console.log('=== LEADERBOARD DATA DEBUG ===');
+            console.log('Raw leaderboard data:', leaderboard);
+            
+            // Debug each entry
+            leaderboard.forEach((entry, index) => {
+                console.log(`Entry ${index}:`, {
+                    attempt_id: entry.attempt_id,
+                    student_name: entry.student_name,
+                    score: entry.score,
+                    total_questions: entry.total_questions,
+                    percentage: entry.percentage,
+                    completion_time: entry.completion_time
+                });
+            });
+            
+            // Sort leaderboard by score (descending) and then by completion time (ascending)
+            const sortedLeaderboard = leaderboard.sort((a, b) => {
+                // First sort by score (higher is better)
+                if (b.score !== a.score) {
+                    return (b.score || 0) - (a.score || 0);
+                }
+                // If scores are equal, sort by completion time (lower is better)
+                return (a.completion_time || 0) - (b.completion_time || 0);
+            });
+            
+            console.log('Sorted leaderboard:', sortedLeaderboard);
+            
+            sortedLeaderboard.forEach((entry, index) => {
+                const row = document.createElement('tr');
+                const isCurrentStudent = entry.attempt_id === currentAttemptId;
+                
+                
+                // Parse student name from the combined field
+                const studentName = entry.student_name || 'Unknown User';
+                const nameParts = studentName.split(' ').filter(part => part.trim() !== '');
+                const firstName = nameParts[0] || 'U';
+                const lastName = nameParts[1] || 'U';
+                
+                row.className = isCurrentStudent ? 'bg-blue-50' : '';
+                row.innerHTML = `
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900">
+                        <div class="flex items-center">
+                            ${index < 3 ? `<i class="fas fa-trophy text-${index === 0 ? 'yellow' : index === 1 ? 'gray' : 'orange'}-500 mr-2"></i>` : ''}
+                            #${index + 1}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-900">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mr-3">
+                                <span class="text-white text-xs font-bold">${firstName.charAt(0)}${lastName.charAt(0)}</span>
+                            </div>
+                            ${studentName}
+                            ${isCurrentStudent ? '<span class="ml-2 bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">You</span>' : ''}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-900">
+                        ${entry.score || 0}/${entry.total_questions || 11}
+                        ${isCurrentStudent && window.currentQuizScore !== undefined ? 
+                            (entry.score == window.currentQuizScore ? 
+                                '<span class="ml-2 text-green-600 text-xs">✓</span>' : 
+                                `<span class="ml-2 text-red-600 text-xs">⚠️ (${window.currentQuizScore})</span>`
+                            ) : ''}
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-900">${formatTime(entry.completion_time || 0)}</td>
+                    <td class="px-6 py-4 text-sm text-gray-900">${entry.quiz_date ? new Date(entry.quiz_date).toLocaleDateString() : 'N/A'}</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Show leaderboard
+        function showLeaderboard() {
+            document.getElementById('resultsContainer').classList.add('hidden');
+            document.getElementById('leaderboardContainer').classList.remove('hidden');
+            
+            // Show loading state
+            const tableBody = document.getElementById('leaderboardTable');
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                        <div class="flex flex-col items-center">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
+                            <p class="text-lg font-medium text-gray-600">Loading leaderboard...</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            
+            // Add a small delay to ensure the score is properly saved in the database
+            setTimeout(() => {
+                loadLeaderboard();
+            }, 1000);
+        }
+
+        // Hide leaderboard
+        function hideLeaderboard() {
+            document.getElementById('leaderboardContainer').classList.add('hidden');
+            document.getElementById('resultsContainer').classList.remove('hidden');
+        }
+
+        // Show empty leaderboard with error message
+        function showEmptyLeaderboard(errorMessage) {
+            const tableBody = document.getElementById('leaderboardTable');
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                        <div class="flex flex-col items-center">
+                            <i class="fas fa-exclamation-triangle text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-lg font-medium text-gray-600 mb-2">Unable to load leaderboard</p>
+                            <p class="text-sm text-gray-500">${errorMessage}</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            
+            // Reset stats to show empty state
+            document.getElementById('totalParticipants').textContent = '0';
+            document.getElementById('averageScore').textContent = '0%';
+            document.getElementById('fastestTime').textContent = '0:00';
+            document.getElementById('studentRank').textContent = '--';
+        }
+
+        // Go to dashboard
+        function goToDashboard() {
+            window.location.href = '../dashboard.html';
+        }
+
+    </script>
+</body>
+</html>
