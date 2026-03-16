@@ -424,55 +424,83 @@ Respond with ONLY 'YES' if the content contains mathematics or General Mathemati
 /**
  * Call Groq API with given messages. Returns assistant content. Throws on error.
  */
-function callGroq($api_url, $api_key, $messages, $max_tokens = 4000, $temperature = 0.3) {
+function callGroq($api_url, $api_key, $messages, $max_tokens = 2000, $temperature = 0.3) {
     $data = [
         'model' => 'llama-3.1-8b-instant',
         'messages' => $messages,
         'temperature' => $temperature,
         'max_tokens' => $max_tokens
     ];
-    $ch = curl_init($api_url);
-    if ($ch === false) {
-        throw new Exception('Failed to initialize cURL');
-    }
-    curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_POST => true,
-        CURLOPT_POSTFIELDS => json_encode($data),
-        CURLOPT_HTTPHEADER => [
-            'Content-Type: application/json',
-            'Authorization: Bearer ' . $api_key
-        ],
-        CURLOPT_TIMEOUT => 90,
-        CURLOPT_CONNECTTIMEOUT => 15
-    ]);
-    $response = curl_exec($ch);
-    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $curl_error = curl_error($ch);
-    curl_close($ch);
-    if ($curl_error) {
-        throw new Exception('API request failed: ' . $curl_error);
-    }
-    if (empty($response)) {
-        throw new Exception('Empty response from AI service.');
-    }
-    if ($http_code !== 200) {
-        $errorData = json_decode($response, true);
-        $errorMessage = isset($errorData['error']['message']) ? $errorData['error']['message'] : 'HTTP ' . $http_code;
-        // Distinguish between size errors and rate-limit (tokens-per-minute) errors
-        if (strpos($errorMessage, 'Request too large') !== false) {
-            throw new Exception('This request is too large for the current Groq model. Please try a shorter PDF (for example, one topic or chapter).');
+    // Simple retry loop to be nicer to Groq's free-tier rate limits
+    $maxAttempts = 3;
+    $backoffSeconds = [2, 5, 10];
+    for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
+        $ch = curl_init($api_url);
+        if ($ch === false) {
+            throw new Exception('Failed to initialize cURL');
         }
-        if (strpos($errorMessage, 'tokens per minute') !== false || strpos($errorMessage, 'TPM') !== false) {
-            throw new Exception('The AI service is rate limited (too many tokens per minute). Please wait 30–60 seconds and try again, or avoid sending many PDFs in a short time.');
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => json_encode($data),
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/json',
+                'Authorization: Bearer ' . $api_key
+            ],
+            CURLOPT_TIMEOUT => 90,
+            CURLOPT_CONNECTTIMEOUT => 15
+        ]);
+        $response = curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curl_error = curl_error($ch);
+        curl_close($ch);
+
+        if ($curl_error) {
+            if ($attempt === $maxAttempts) {
+                throw new Exception('API request failed: ' . $curl_error);
+            }
+            sleep($backoffSeconds[$attempt - 1]);
+            continue;
         }
-        throw new Exception('Groq API error: ' . $errorMessage);
+        if (empty($response)) {
+            if ($attempt === $maxAttempts) {
+                throw new Exception('Empty response from AI service.');
+            }
+            sleep($backoffSeconds[$attempt - 1]);
+            continue;
+        }
+        if ($http_code !== 200) {
+            $errorData = json_decode($response, true);
+            $errorMessage = isset($errorData['error']['message']) ? $errorData['error']['message'] : 'HTTP ' . $http_code;
+            // Distinguish between size errors and rate-limit (tokens-per-minute) errors
+            if (strpos($errorMessage, 'Request too large') !== false) {
+                throw new Exception('This request is too large for the current Groq model. Please try a shorter PDF (for example, one topic or chapter).');
+            }
+            if (strpos($errorMessage, 'tokens per minute') !== false || strpos($errorMessage, 'TPM') !== false) {
+                if ($attempt === $maxAttempts) {
+                    throw new Exception('The AI service is rate limited (too many tokens per minute). Please wait 60–90 seconds and try again, or avoid sending many PDFs in a short time.');
+                }
+                sleep($backoffSeconds[$attempt - 1]);
+                continue;
+            }
+            if ($attempt === $maxAttempts) {
+                throw new Exception('Groq API error: ' . $errorMessage);
+            }
+            sleep($backoffSeconds[$attempt - 1]);
+            continue;
+        }
+
+        $result = json_decode($response, true);
+        if (json_last_error() !== JSON_ERROR_NONE || !isset($result['choices'][0]['message']['content'])) {
+            if ($attempt === $maxAttempts) {
+                throw new Exception('Invalid API response.');
+            }
+            sleep($backoffSeconds[$attempt - 1]);
+            continue;
+        }
+        return $result['choices'][0]['message']['content'];
     }
-    $result = json_decode($response, true);
-    if (json_last_error() !== JSON_ERROR_NONE || !isset($result['choices'][0]['message']['content'])) {
-        throw new Exception('Invalid API response.');
-    }
-    return $result['choices'][0]['message']['content'];
+    throw new Exception('Unexpected error while calling AI service.');
 }
 
 /**
@@ -505,8 +533,8 @@ Content to summarize:
  */
 function summarizePdfInChunks($full_text, $api_key, $api_url) {
     $len = strlen($full_text);
-    // Chunk size kept under Groq token limit per request (~9000 chars)
-    $chunk_size = 9000;
+    // Chunk size kept conservative to reduce tokens per request (~6000 chars)
+    $chunk_size = 6000;
     $chunks = [];
     for ($i = 0; $i < $len; $i += $chunk_size) {
         $chunks[] = substr($full_text, $i, $chunk_size);
