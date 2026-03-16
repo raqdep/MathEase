@@ -5,6 +5,18 @@ html {
     scroll-behavior: smooth;
 }
 
+/* Circular Timer Styles */
+.timer-progress {
+    transition: stroke-dashoffset 0.5s ease;
+}
+.timer-bg {
+    opacity: 0.2;
+}
+.lesson-timer-display {
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: 0.05em;
+}
+
 /* Gradient Background */
 .gradient-bg {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -585,6 +597,311 @@ html {
     background-color: #f9fafb;
 }
 
+/* ==========================================
+   QUIZ DESIGN STYLES
+   ========================================== */
+
+/* Quiz Option Buttons */
+.quiz-option {
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: auto;
+}
+
+.quiz-option:hover:not(:disabled) {
+    border-color: #667eea !important;
+    background: linear-gradient(to right, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)) !important;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15) !important;
+    transform: translateX(4px) scale(1.01);
+}
+
+.quiz-option:active:not(:disabled) {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2) !important;
+}
+
+.quiz-option:disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.6;
+    background-color: #f3f4f6 !important;
+    border-color: #d1d5db !important;
+}
+
+/* Letter Badge Styling */
+.quiz-option .w-8.h-8 {
+    transition: all 0.2s ease;
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    border: 1px solid #d1d5db;
+}
+
+.quiz-option:hover:not(:disabled) .w-8.h-8 {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    border-color: #667eea !important;
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* Progress Bar Styling */
+.swal2-popup .bg-gray-200 {
+    background-color: #e5e7eb;
+    border-radius: 9999px;
+    overflow: hidden;
+    height: 8px;
+}
+
+.swal2-popup .bg-gradient-to-r.from-primary.to-secondary {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%) !important;
+    border-radius: 9999px;
+    transition: width 0.3s ease;
+    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+}
+
+/* Quiz Modal Enhancements */
+.swal2-popup {
+    border-radius: 1rem !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
+}
+
+.swal2-title {
+    font-weight: 700 !important;
+    color: #1f2937 !important;
+    margin-bottom: 1rem !important;
+}
+
+/* Quiz Question Text */
+.swal2-html-container p.text-xl {
+    color: #111827;
+    line-height: 1.6;
+    font-weight: 600;
+}
+
+/* Result Display Enhancements */
+.swal2-popup .inline-flex {
+    animation: scaleIn 0.3s ease-out;
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Success/Error Badge Colors */
+.swal2-popup .bg-green-100 {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%) !important;
+    border: 2px solid #10b981;
+}
+
+.swal2-popup .bg-red-100 {
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%) !important;
+    border: 2px solid #ef4444;
+}
+
+/* Quiz Instructions Styling */
+.swal2-popup .bg-gradient-to-r {
+    border-radius: 0.75rem;
+}
+
+.swal2-popup .border-l-4 {
+    border-left-width: 4px;
+}
+
+/* Focus States for Accessibility */
+.quiz-option:focus-visible {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+    border-color: #667eea;
+}
+
+/* Loading State */
+.quiz-option.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.quiz-option.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #667eea;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Mobile Responsive Quiz Styles */
+@media (max-width: 768px) {
+    .quiz-option {
+        padding: 0.875rem 1rem !important;
+        font-size: 0.875rem;
+    }
+    
+    .quiz-option .w-8.h-8 {
+        width: 1.75rem !important;
+        height: 1.75rem !important;
+        font-size: 0.75rem;
+    }
+    
+    .swal2-popup {
+        width: 90% !important;
+        max-width: 100% !important;
+        padding: 1.5rem !important;
+    }
+    
+    .swal2-title {
+        font-size: 1.25rem !important;
+    }
+    
+    .swal2-html-container {
+        padding: 0.5rem !important;
+    }
+    
+    .swal2-html-container p.text-xl {
+        font-size: 1rem !important;
+    }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    .quiz-option {
+        border-width: 3px;
+    }
+    
+    .quiz-option:hover:not(:disabled) {
+        border-color: #000080;
+        background-color: #e6e6fa;
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    .quiz-option,
+    .quiz-option .w-8.h-8,
+    .swal2-popup .bg-gradient-to-r {
+        transition: none;
+        animation: none;
+    }
+    
+    .quiz-option:hover:not(:disabled) {
+        transform: none;
+    }
+}
+
+/* Performance Analysis Styles */
+#performanceAnalysisSection {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+#performanceAnalysisSection .bg-gradient-to-r {
+    border-radius: 0.75rem;
+}
+
+#analyzeBtn {
+    min-height: 48px;
+    transition: all 0.3s ease;
+}
+
+#analyzeBtn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+#analyzeBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+#analysisResult {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile Responsive Performance Analysis */
+@media (max-width: 768px) {
+    #performanceAnalysisSection {
+        padding: 1.5rem !important;
+        margin: 1rem 0 !important;
+    }
+    
+    #performanceAnalysisSection h3 {
+        font-size: 1.5rem !important;
+    }
+    
+    #performanceAnalysisSection p {
+        font-size: 0.875rem !important;
+    }
+    
+    #analyzeBtn {
+        width: 100%;
+        padding: 1rem !important;
+        font-size: 1rem !important;
+    }
+    
+    #analysisResult .grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+    
+    #analysisResult .space-y-6 > div {
+        padding: 1rem !important;
+    }
+    
+    /* Timer mobile layout */
+    .flex.justify-between.items-start.mb-8 {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .flex-shrink-0.ml-4 {
+        margin-left: 0 !important;
+        margin-top: 1rem;
+        align-self: flex-end;
+    }
+    
+    .relative.w-20.h-20 {
+        width: 4rem !important;
+        height: 4rem !important;
+    }
+    
+    .relative.w-20.h-20 svg {
+        width: 4rem !important;
+        height: 4rem !important;
+    }
+    
+    .lesson-timer-display {
+        font-size: 0.875rem !important;
+    }
+}
+
 .calculator-input {
     background: white;
     border: 2px solid #e9ecef;
@@ -775,9 +1092,114 @@ html {
     .problem-solver {
         padding: 1rem;
     }
+    
+    /* Mobile app-like improvements */
+    .lesson-card {
+        padding: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .virtual-aid {
+        padding: 0.75rem !important;
+    }
+    
+    .function-calculator {
+        padding: 1rem !important;
+    }
+    
+    .interactive-calculator {
+        padding: 0.75rem !important;
+    }
+    
+    .preset-btn {
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.8125rem !important;
+        min-height: 44px;
+    }
+    
+    .calculator-button {
+        padding: 0.75rem !important;
+        font-size: 1rem !important;
+        min-height: 44px;
+    }
+    
+    .practice-problem {
+        padding: 1rem !important;
+    }
+    
+    .takeaway-card {
+        padding: 1rem !important;
+    }
+    
+    /* Better spacing for mobile */
+    .step-process {
+        padding: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .formula-display {
+        padding: 0.75rem !important;
+        font-size: 0.875rem !important;
+    }
+    
+    /* Ensure buttons are touch-friendly */
+    button, .btn, .operation-btn {
+        min-height: 44px;
+        padding: 0.625rem 1rem !important;
+    }
+    
+    /* Better text wrapping */
+    .lesson-main * {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    /* Improve input fields for mobile */
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select {
+        font-size: 16px !important; /* Prevents zoom on iOS */
+        padding: 0.75rem !important;
+        min-height: 44px;
+    }
 }
 
 /* Print Styles */
+/* User Dropdown Animation */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#userDropdownMenu:not(.hidden) {
+    animation: fadeInDown 0.2s ease-out;
+}
+
+#mobileMenu:not(.hidden) {
+    animation: fadeInDown 0.2s ease-out;
+}
+
+/* Bounce animation for character */
+@keyframes bounce-slow {
+    0%, 100% { 
+        transform: translateY(0); 
+    }
+    50% { 
+        transform: translateY(-15px); 
+    }
+}
+
+.animate-bounce-slow {
+    animation: bounce-slow 3s ease-in-out infinite;
+}
+
 @media print {
     .lesson-nav-btn,
     .virtual-aid,

@@ -84,35 +84,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // LRN digit-only enforcement
-    const lrnInput = document.getElementById('lrn');
-    if (lrnInput) {
-        lrnInput.addEventListener('input', function(e) {
-            // Remove any non-digit characters
-            this.value = this.value.replace(/[^0-9]/g, '');
+    // First Name / Last Name: auto-capitalize first letter on blur
+    const firstNameInput = document.getElementById('firstName');
+    const lastNameInput = document.getElementById('lastName');
+    [firstNameInput, lastNameInput].forEach(input => {
+        if (!input) return;
+        input.addEventListener('blur', function() {
+            const raw = this.value.trim();
+            if (!raw) return;
+            this.value = raw.charAt(0).toUpperCase() + raw.slice(1).toLowerCase();
         });
-        
-        lrnInput.addEventListener('keypress', function(e) {
-            // Prevent non-digit characters from being entered
-            if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {
-                e.preventDefault();
-            }
-        });
-        
-        lrnInput.addEventListener('paste', function(e) {
-            // Handle paste events - only allow digits
-            e.preventDefault();
-            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
-            const digitsOnly = pastedText.replace(/[^0-9]/g, '');
-            const currentValue = this.value;
-            const start = this.selectionStart;
-            const end = this.selectionEnd;
-            
-            // Insert digits at cursor position, respecting maxlength
-            const newValue = currentValue.substring(0, start) + digitsOnly + currentValue.substring(end);
-            this.value = newValue.substring(0, 12); // Respect maxlength of 12
-        });
-    }
+    });
+
+    // LRN field removed - no longer needed
 
     // Email existence check
     const emailInput = document.getElementById('email');
@@ -179,11 +163,11 @@ function togglePassword(inputId) {
 }
 window.togglePassword = togglePassword;
 
-// Password strength calculation
+// Password strength calculation (8–30 chars, lowercase, uppercase, number, special)
 function calculatePasswordStrength(password) {
     let score = 0;
     const requirements = {
-        length: password.length >= 8,
+        length: password.length >= 8 && password.length <= 30,
         lowercase: /[a-z]/.test(password),
         uppercase: /[A-Z]/.test(password),
         number: /[0-9]/.test(password),
@@ -202,6 +186,17 @@ function calculatePasswordStrength(password) {
     else strength = 'very-strong';
     
     return { strength, requirements };
+}
+
+// Get password requirements (same rules as strength: 8–30 chars + lowercase, uppercase, number, special)
+function getPasswordRequirements(password) {
+    return {
+        length: password.length >= 8 && password.length <= 30,
+        lowercase: /[a-z]/.test(password),
+        uppercase: /[A-Z]/.test(password),
+        number: /[0-9]/.test(password),
+        special: /[^a-zA-Z0-9]/.test(password)
+    };
 }
 
 // Update password strength indicator
@@ -253,7 +248,16 @@ function validateForm(form) {
         const password = form.querySelector('#password');
         const confirmPassword = form.querySelector('#confirmPassword');
         const email = form.querySelector('#email');
-        const studentId = form.querySelector('#lrn');
+        
+        // Password: must meet ALL requirements (8–30 chars, lowercase, uppercase, number, special)
+        if (password && password.value) {
+            const req = getPasswordRequirements(password.value);
+            const allMet = Object.values(req).every(Boolean);
+            if (!allMet) {
+                showFieldError(password, 'Password must meet all requirements above (8–30 characters, lowercase, uppercase, number, special character).');
+                isValid = false;
+            }
+        }
         
         // Password confirmation validation
         if (password && confirmPassword && password.value !== confirmPassword.value) {
@@ -267,11 +271,7 @@ function validateForm(form) {
             isValid = false;
         }
         
-        // LRN format validation (12-digit format)
-        if (studentId && !isValidLRN(studentId.value)) {
-            showFieldError(studentId, 'LRN should be 12 digits');
-            isValid = false;
-        }
+        // LRN field removed - no longer required
     }
     
     return isValid;
@@ -300,10 +300,14 @@ function validateField(field) {
         return false;
     }
     
-    // Password validation
-    if (field.type === 'password' && value) {
+    // Password validation (8–30 characters)
+    if (field.type === 'password' && field.id === 'password' && value) {
         if (value.length < 8) {
-            showFieldError(field, 'Password must be at least 8 characters long');
+            showFieldError(field, 'Password must be at least 8 characters');
+            return false;
+        }
+        if (value.length > 30) {
+            showFieldError(field, 'Password must be at most 30 characters');
             return false;
         }
     }
@@ -386,10 +390,7 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
-// LRN validation (12-digit format)
-function isValidLRN(lrn) {
-    return /^\d{12}$/.test(lrn);
-}
+// LRN validation removed - field no longer exists
 
 // Handle login form submission
 async function handleLogin(e) {
@@ -430,7 +431,29 @@ async function handleLogin(e) {
                 window.location.href = redirectUrl;
             }, 500);
         } else {
-            Swal.fire({ icon: 'error', title: 'Login failed', text: data.message || 'Please try again.' });
+            // Show specific error on the correct field
+            const errorField = data.field || 'email';
+            const fieldElement = form.querySelector(`#${errorField}`);
+            
+            if (fieldElement && data.error_type) {
+                // Show error on specific field
+                showFieldError(fieldElement, data.message || 'Please check this field.');
+                
+                // Focus on the error field
+                fieldElement.focus();
+                
+                // Also show a general notification
+                Swal.fire({ 
+                    icon: 'error', 
+                    title: 'Login failed', 
+                    text: data.message || 'Please try again.',
+                    timer: 3000,
+                    showConfirmButton: true
+                });
+            } else {
+                // Fallback to general error message
+                Swal.fire({ icon: 'error', title: 'Login failed', text: data.message || 'Please try again.' });
+            }
         }
     } catch (error) {
         Swal.fire({ icon: 'error', title: 'Error', text: 'An error occurred. Please try again.' });
@@ -561,71 +584,21 @@ async function handleRegister(e) {
 
 
 
-// Show notification
+// Show notification using SweetAlert2
 function showNotification(message, type = 'info') {
-    // Remove existing notifications
-    const existingNotifications = document.querySelectorAll('.notification');
-    existingNotifications.forEach(notification => notification.remove());
-    
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = `
-        <div class="notification-content">
-            <span class="notification-message">${message}</span>
-            <button class="notification-close">&times;</button>
-        </div>
-    `;
-    
-    // Add styles
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${type === 'success' ? '#27ae60' : type === 'error' ? '#e74c3c' : '#3498db'};
-        color: white;
-        padding: 1rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 1000;
-        max-width: 400px;
-        animation: slideInRight 0.3s ease-out;
-    `;
-    
-    // Add animation keyframes
-    if (!document.querySelector('#notification-styles')) {
-        const style = document.createElement('style');
-        style.id = 'notification-styles';
-        style.textContent = `
-            @keyframes slideInRight {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-            @keyframes slideOutRight {
-                from { transform: translateX(0); opacity: 1; }
-                to { transform: translateX(100%); opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
+    const icon = type === 'error' ? 'error' : type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info';
+    const title = type === 'error' ? 'Error' : type === 'success' ? 'Success' : type === 'warning' ? 'Notice' : 'Info';
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            icon: icon,
+            title: title,
+            text: message,
+            confirmButtonText: 'OK',
+            customClass: { confirmButton: 'swal-confirm-btn' }
+        });
+    } else {
+        alert(message);
     }
-    
-    // Add close functionality
-    const closeBtn = notification.querySelector('.notification-close');
-    closeBtn.addEventListener('click', () => {
-        notification.style.animation = 'slideOutRight 0.3s ease-out';
-        setTimeout(() => notification.remove(), 300);
-    });
-    
-    // Auto-remove after 5 seconds
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.style.animation = 'slideOutRight 0.3s ease-out';
-            setTimeout(() => notification.remove(), 300);
-        }
-    }, 5000);
-    
-    // Add to page
-    document.body.appendChild(notification);
 }
 
 // Escape HTML for safe display

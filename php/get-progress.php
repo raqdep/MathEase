@@ -35,17 +35,22 @@ try {
     
     // Define all topics and their lesson counts (course-wide)
     $topics = [
+        // 1st Quarter Topics
         'functions' => 4,
         'evaluating-functions' => 4,
         'operations-on-functions' => 5,
         'solving-real-life-problems' => 4,
         'rational-functions' => 4,
-        // Additional topics
         'solving-rational-equations-inequalities' => 4,
         'representations-of-rational-functions' => 4,
         'domain-range-rational-functions' => 4,
         'one-to-one-functions' => 4,
-        'domain-range-inverse-functions' => 4
+        'domain-range-inverse-functions' => 4,
+        // 2nd Quarter Topics
+        'simple-interest' => 4,
+        'compound-interest' => 5,
+        'simple-and-compound-values' => 5,
+        'solving-interest-problems' => 5
     ];
     
     // Create mapping from URL-friendly names to display names
@@ -62,7 +67,9 @@ try {
         'solving-rational-equations-inequalities' => 'Solving Rational Equations and Inequalities',
         'simple-interest' => 'Simple Interest',
         'compound-interest' => 'Compound Interest',
+        'simple-and-compound-values' => 'Interest, Maturity, Future, and Present Values',
         'interest-maturity-future-present-values' => 'Interest, Maturity, Future, and Present Values',
+        'solving-interest-problems' => 'Solving Problems: Simple and Compound Interest',
         'solving-problems-simple-compound-interest' => 'Solving Problems: Simple and Compound Interest'
     ];
     
@@ -109,7 +116,7 @@ try {
                 'total_lessons' => $lessonCount
             ];
         } else {
-            // Get individual lesson completions for this topic
+            // Get lesson completions from user_lesson_progress (dashboard/lessons table)
             $stmt = $pdo->prepare("
                 SELECT COUNT(*) as completed_count
                 FROM user_lesson_progress ulp
@@ -117,7 +124,28 @@ try {
                 WHERE ulp.user_id = ? AND l.topic_id = ? AND ulp.completed = TRUE
             ");
             $stmt->execute([$user_id, $topic_id]);
-            $lessonCountCompleted = $stmt->fetch()['completed_count'];
+            $fromUlp = (int) ($stmt->fetch()['completed_count'] ?? 0);
+
+            // Also get from lesson_completion (used by topics/functions.html and other topic pages)
+            $fromLessonCompletion = 0;
+            try {
+                // Try both the topic key and the proper topic name
+                $lcStmt = $pdo->prepare("
+                    SELECT COUNT(DISTINCT lesson_number) as completed_count
+                    FROM lesson_completion
+                    WHERE user_id = ? AND (topic_name = ? OR topic_name = ?)
+                ");
+                $properTopicName = $topicNameMap[$topic] ?? $topic;
+                $lcStmt->execute([$user_id, $topic, $properTopicName]);
+                $fromLessonCompletion = (int) ($lcStmt->fetch()['completed_count'] ?? 0);
+            } catch (PDOException $e) {
+                // lesson_completion table may not exist for all setups
+                error_log("Error checking lesson_completion: " . $e->getMessage());
+            }
+
+            // Use the higher count so progress from topic pages (e.g. functions.html) is reflected
+            $lessonCountCompleted = max($fromUlp, $fromLessonCompletion);
+            $lessonCountCompleted = min($lessonCountCompleted, $topics[$topic]); // cap at total
 
             $completedLessons += $lessonCountCompleted;
             $progress = $lessonCountCompleted > 0 ? ($lessonCountCompleted / $topics[$topic]) * 100 : 0;

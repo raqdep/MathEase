@@ -18,12 +18,30 @@ try {
     
     $statusColumn = $hasApprovalStatus ? 'approval_status' : 'status';
     
-    // Get pending teachers
+    // Check if email_verified column exists
+    $stmt = $pdo->prepare("SHOW COLUMNS FROM teachers LIKE 'email_verified'");
+    $stmt->execute();
+    $hasEmailVerified = $stmt->rowCount() > 0;
+    
+    // Get ALL pending teachers (regardless of email verification status)
+    // Admin should see all pending teachers to verify accounts
+    $whereClause = "{$statusColumn} = 'pending'";
+    
+    // Build SELECT to include email_verified if column exists
+    $selectFields = "id, first_name, last_name, email, teacher_id, department, subject, created_at";
+    if ($hasEmailVerified) {
+        $selectFields .= ", email_verified, COALESCE(email_verified, 0) as is_email_verified";
+    } else {
+        $selectFields .= ", NULL as email_verified, 0 as is_email_verified";
+    }
+    
     $stmt = $pdo->prepare("
-        SELECT id, first_name, last_name, email, teacher_id, department, subject, created_at 
+        SELECT {$selectFields}
         FROM teachers 
-        WHERE {$statusColumn} = 'pending' 
-        ORDER BY created_at ASC
+        WHERE {$whereClause}
+        ORDER BY 
+            CASE WHEN email_verified = 1 THEN 0 ELSE 1 END,
+            created_at ASC
     ");
     $stmt->execute();
     $teachers = $stmt->fetchAll(PDO::FETCH_ASSOC);

@@ -2,9 +2,10 @@
 let currentTeacherId = null;
 let pendingTeachers = [];
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Check admin authentication
-    if (!checkAdminAuth()) {
+document.addEventListener('DOMContentLoaded', async function() {
+    // Check admin authentication (async)
+    const isAuthenticated = await checkAdminAuth();
+    if (!isAuthenticated) {
         return;
     }
     
@@ -164,11 +165,27 @@ async function loadDashboardStats() {
         const data = await response.json();
         
         if (data.success) {
-            document.getElementById('pending-teachers-count').textContent = data.stats.pending_teachers || 0;
+            const pendingCount = data.stats.pending_teachers || 0;
+            const verifiedCount = data.stats.pending_verified_teachers || 0;
+            const unverifiedCount = pendingCount - verifiedCount;
+            
+            document.getElementById('pending-teachers-count').textContent = pendingCount;
             document.getElementById('approved-teachers-count').textContent = data.stats.approved_teachers || 0;
             document.getElementById('rejected-teachers-count').textContent = data.stats.rejected_teachers || 0;
             document.getElementById('total-students-count').textContent = data.stats.total_students || 0;
-            document.getElementById('pending-count').textContent = data.stats.pending_teachers || 0;
+            document.getElementById('pending-count').textContent = pendingCount;
+            
+            // Update verification info
+            const verifiedInfo = document.getElementById('pending-verified-info');
+            if (verifiedInfo) {
+                if (pendingCount === 0) {
+                    verifiedInfo.textContent = 'No pending teachers';
+                } else if (unverifiedCount > 0) {
+                    verifiedInfo.innerHTML = `<span class="text-yellow-600"><i class="fas fa-exclamation-circle"></i> ${unverifiedCount} need email verification</span>`;
+                } else {
+                    verifiedInfo.innerHTML = `<span class="text-green-600"><i class="fas fa-check-circle"></i> All verified</span>`;
+                }
+            }
         }
     } catch (error) {
         console.error('Error loading dashboard stats:', error);
@@ -206,36 +223,46 @@ function displayPendingTeachers(teachers) {
     
     noTeachersDiv.classList.add('hidden');
     
-    tableBody.innerHTML = teachers.map(teacher => `
-        <tr class="hover:bg-gray-50">
+    tableBody.innerHTML = teachers.map(teacher => {
+        const isEmailVerified = teacher.email_verified === 1 || teacher.is_email_verified === 1;
+        const emailStatusBadge = isEmailVerified 
+            ? '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Verified</span>'
+            : '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"><i class="fas fa-exclamation-circle mr-1"></i>Not Verified</span>';
+        
+        return `
+        <tr class="hover:bg-gray-50 ${!isEmailVerified ? 'bg-yellow-50' : ''}">
             <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
-                    <div class="h-10 w-10 bg-indigo-500 rounded-full flex items-center justify-center">
+                    <div class="h-10 w-10 ${isEmailVerified ? 'bg-indigo-500' : 'bg-yellow-500'} rounded-full flex items-center justify-center">
                         <span class="text-white font-medium text-sm">${teacher.first_name.charAt(0)}${teacher.last_name.charAt(0)}</span>
                     </div>
                     <div class="ml-4">
                         <div class="text-sm font-medium text-gray-900">${teacher.first_name} ${teacher.last_name}</div>
-                        <div class="text-sm text-gray-500">ID: ${teacher.teacher_id}</div>
+                        ${teacher.teacher_id ? `<div class="text-sm text-gray-500">ID: ${teacher.teacher_id}</div>` : ''}
                     </div>
                 </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${teacher.email}</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">${teacher.email}</div>
+                <div class="mt-1">${emailStatusBadge}</div>
+            </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${teacher.department}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${teacher.subject}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatDate(teacher.created_at)}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <button onclick="viewTeacherDetails(${teacher.id})" class="text-indigo-600 hover:text-indigo-900 mr-3">
+                <button onclick="viewTeacherDetails(${teacher.id})" class="text-indigo-600 hover:text-indigo-900 mr-3" title="View Details">
                     <i class="fas fa-eye"></i> View
                 </button>
-                <button onclick="approveTeacher(${teacher.id})" class="text-green-600 hover:text-green-900 mr-3">
+                <button onclick="approveTeacher(${teacher.id})" class="text-green-600 hover:text-green-900 mr-3" title="Approve Teacher" ${!isEmailVerified ? 'disabled class="opacity-50 cursor-not-allowed"' : ''}>
                     <i class="fas fa-check"></i> Approve
                 </button>
-                <button onclick="showRejectionModal(${teacher.id})" class="text-red-600 hover:text-red-900">
+                <button onclick="showRejectionModal(${teacher.id})" class="text-red-600 hover:text-red-900" title="Reject Application">
                     <i class="fas fa-times"></i> Reject
                 </button>
             </td>
         </tr>
-    `).join('');
+    `;
+    }).join('');
 }
 
 async function viewTeacherDetails(teacherId) {
@@ -262,7 +289,16 @@ async function viewTeacherDetails(teacherId) {
 function displayTeacherDetails(teacher) {
     const content = document.getElementById('teacher-details-content');
     content.innerHTML = `
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h4 class="text-lg font-semibold text-gray-900">Teacher Information</h4>
+                <button onclick="viewTeacherActivity(${teacher.id})" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200">
+                    <i class="fas fa-chart-line mr-2"></i>
+                    View Activity
+                </button>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
                 <h4 class="text-lg font-semibold text-gray-900 mb-4">Personal Information</h4>
                 <div class="space-y-3">
@@ -274,10 +310,12 @@ function displayTeacherDetails(teacher) {
                         <label class="text-sm font-medium text-gray-500">Email</label>
                         <p class="text-gray-900">${teacher.email}</p>
                     </div>
+                    ${teacher.teacher_id ? `
                     <div>
                         <label class="text-sm font-medium text-gray-500">Teacher ID</label>
                         <p class="text-gray-900">${teacher.teacher_id}</p>
                     </div>
+                    ` : ''}
                 </div>
             </div>
             
@@ -293,13 +331,154 @@ function displayTeacherDetails(teacher) {
                         <p class="text-gray-900">${teacher.subject}</p>
                     </div>
                     <div>
+                        <label class="text-sm font-medium text-gray-500">Status</label>
+                        <p class="text-gray-900">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                teacher.status === 'approved' ? 'bg-green-100 text-green-800' : 
+                                teacher.status === 'rejected' ? 'bg-red-100 text-red-800' : 
+                                'bg-yellow-100 text-yellow-800'
+                            }">
+                                ${teacher.status || 'pending'}
+                            </span>
+                        </p>
+                    </div>
+                    <div>
                         <label class="text-sm font-medium text-gray-500">Registration Date</label>
                         <p class="text-gray-900">${formatDate(teacher.created_at)}</p>
                     </div>
                 </div>
             </div>
         </div>
+        <div id="teacher-activity-section" class="hidden mt-6">
+            <h4 class="text-lg font-semibold text-gray-900 mb-4">Activity Log</h4>
+            <div id="teacher-activity-content" class="space-y-2">
+                <div class="text-center py-4 text-gray-500">
+                    <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                    <p>Loading activity...</p>
+                </div>
+            </div>
+        </div>
     `;
+}
+
+async function viewTeacherActivity(teacherId) {
+    const activitySection = document.getElementById('teacher-activity-section');
+    const activityContent = document.getElementById('teacher-activity-content');
+    
+    if (!activitySection || !activityContent) {
+        Swal.fire('Error', 'Activity section not found', 'error');
+        return;
+    }
+    
+    activitySection.classList.remove('hidden');
+    activityContent.innerHTML = `
+        <div class="text-center py-4 text-gray-500">
+            <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+            <p>Loading activity...</p>
+        </div>
+    `;
+    
+    try {
+        const response = await fetch(`php/admin-teacher-activity.php?teacher_id=${teacherId}`, {
+            method: 'GET',
+            credentials: 'same-origin',
+            cache: 'no-store'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            displayTeacherActivity(data);
+        } else {
+            throw new Error(data.message || 'Failed to load activity');
+        }
+    } catch (error) {
+        console.error('Error loading teacher activity:', error);
+        activityContent.innerHTML = `
+            <div class="text-center py-4 text-red-500">
+                <i class="fas fa-exclamation-circle text-2xl mb-2"></i>
+                <p>Failed to load activity: ${error.message}</p>
+            </div>
+        `;
+    }
+}
+
+function displayTeacherActivity(data) {
+    const activityContent = document.getElementById('teacher-activity-content');
+    
+    if (!data.activities || data.activities.length === 0) {
+        activityContent.innerHTML = `
+            <div class="text-center py-8 text-gray-500">
+                <i class="fas fa-history text-4xl mb-4"></i>
+                <p>No activity recorded yet</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = `
+        <div class="mb-4 p-4 bg-indigo-50 rounded-lg">
+            <h5 class="font-semibold text-gray-900 mb-2">Activity Statistics</h5>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                    <p class="text-sm text-gray-600">Total Activities</p>
+                    <p class="text-2xl font-bold text-indigo-600">${data.total_activities || 0}</p>
+                </div>
+    `;
+    
+    if (data.statistics && data.statistics.length > 0) {
+        data.statistics.forEach(stat => {
+            html += `
+                <div>
+                    <p class="text-sm text-gray-600">${stat.action.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</p>
+                    <p class="text-2xl font-bold text-indigo-600">${stat.count}</p>
+                </div>
+            `;
+        });
+    }
+    
+    html += `
+            </div>
+        </div>
+        <div class="space-y-2">
+    `;
+    
+    data.activities.forEach(activity => {
+        const actionIcon = {
+            'email_verified': 'fa-envelope-check',
+            'account_approved': 'fa-user-check',
+            'login': 'fa-sign-in-alt',
+            'logout': 'fa-sign-out-alt',
+            'lesson_created': 'fa-book',
+            'class_created': 'fa-chalkboard',
+            'default': 'fa-circle'
+        }[activity.action] || 'fa-circle';
+        
+        html += `
+            <div class="flex items-start p-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">
+                <div class="flex-shrink-0 mr-3">
+                    <div class="h-10 w-10 bg-indigo-100 rounded-full flex items-center justify-center">
+                        <i class="fas ${actionIcon} text-indigo-600"></i>
+                    </div>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900">
+                        ${activity.action.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                    </p>
+                    ${activity.details ? `<p class="text-sm text-gray-600 mt-1">${activity.details}</p>` : ''}
+                    <div class="flex items-center mt-2 text-xs text-gray-500">
+                        <i class="fas fa-clock mr-1"></i>
+                        <span>${formatDate(activity.created_at)}</span>
+                        ${activity.ip_address ? `<span class="ml-4"><i class="fas fa-network-wired mr-1"></i>${activity.ip_address}</span>` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    html += `</div>`;
+    
+    activityContent.innerHTML = html;
 }
 
 function closeTeacherDetailsModal() {
@@ -310,6 +489,34 @@ function closeTeacherDetailsModal() {
 async function approveTeacher(teacherId = null) {
     const id = teacherId || currentTeacherId;
     if (!id) return;
+    
+    // Check if teacher email is verified
+    const teacher = pendingTeachers.find(t => t.id == id);
+    if (teacher && (teacher.email_verified !== 1 && teacher.is_email_verified !== 1)) {
+        Swal.fire({
+            title: 'Email Not Verified',
+            text: 'This teacher has not verified their email address yet. Please ask them to verify their email before approval.',
+            icon: 'warning',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+    
+    // Confirm approval
+    const result = await Swal.fire({
+        title: 'Approve Teacher Account?',
+        text: 'Are you sure you want to approve this teacher account?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#10b981',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Yes, Approve',
+        cancelButtonText: 'Cancel'
+    });
+    
+    if (!result.isConfirmed) {
+        return;
+    }
     
     try {
         const response = await fetch('php/admin-approve-teacher.php', {
@@ -322,10 +529,27 @@ async function approveTeacher(teacherId = null) {
             cache: 'no-store'
         });
         
-        const data = await response.json();
+        // Read response as text first to handle non-JSON responses
+        const textResponse = await response.text();
+        let data;
+        
+        try {
+            data = JSON.parse(textResponse);
+        } catch (jsonError) {
+            console.error('Failed to parse JSON response:', jsonError);
+            console.error('Response text:', textResponse);
+            Swal.fire('Error', 'Invalid response from server. Please check the console for details.', 'error');
+            return;
+        }
         
         if (data.success) {
-            Swal.fire('Success', 'Teacher account approved successfully!', 'success');
+            Swal.fire({
+                title: 'Success!',
+                text: data.message || 'Teacher account approved successfully!',
+                icon: 'success',
+                timer: 3000,
+                showConfirmButton: false
+            });
             closeTeacherDetailsModal();
             loadDashboardStats();
             loadPendingTeachers();
@@ -335,7 +559,7 @@ async function approveTeacher(teacherId = null) {
         }
     } catch (error) {
         console.error('Error approving teacher:', error);
-        Swal.fire('Error', 'An error occurred while approving the teacher', 'error');
+        Swal.fire('Error', 'An error occurred while approving the teacher: ' + error.message, 'error');
     }
 }
 

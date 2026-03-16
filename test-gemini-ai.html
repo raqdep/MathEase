@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini AI - Test Integration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-gray-50 p-8">
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-white rounded-lg shadow-lg p-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">
+                <i class="fas fa-flask text-purple-500 mr-3"></i>
+                Gemini AI Integration Test
+            </h1>
+            
+            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6">
+                <p class="text-sm text-gray-700">
+                    <strong>Note:</strong> This is a test page. Make sure you've:
+                </p>
+                <ul class="list-disc list-inside text-sm text-gray-700 mt-2">
+                    <li>Added your Gemini API key to <code class="bg-gray-200 px-1">php/gemini-ai-assistant.php</code></li>
+                    <li>Run <code class="bg-gray-200 px-1">php/setup-ai-tables.php</code> to create tables</li>
+                    <li>Logged in as a student</li>
+                </ul>
+            </div>
+
+            <!-- Test Controls -->
+            <div class="space-y-4 mb-6">
+                <h2 class="text-xl font-bold text-gray-800">Test Controls</h2>
+                
+                <!-- Add Sample Data -->
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-800 mb-3">1. Add Sample Test Data</h3>
+                    <p class="text-sm text-gray-600 mb-4">This will create fake lesson and quiz data for testing</p>
+                    <button onclick="addSampleData()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg">
+                        <i class="fas fa-database mr-2"></i>Add Sample Data
+                    </button>
+                </div>
+
+                <!-- Test API Connection -->
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-800 mb-3">2. Test Gemini API Connection</h3>
+                    <p class="text-sm text-gray-600 mb-4">Verify your API key works</p>
+                    <button onclick="testAPIConnection()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg">
+                        <i class="fas fa-plug mr-2"></i>Test API Connection
+                    </button>
+                </div>
+
+                <!-- Run Analysis -->
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <h3 class="font-semibold text-gray-800 mb-3">3. Run AI Analysis</h3>
+                    <p class="text-sm text-gray-600 mb-4">Request full performance analysis from Gemini</p>
+                    <button onclick="runAnalysis()" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-lg">
+                        <i class="fas fa-brain mr-2"></i>Run Analysis
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Display -->
+            <div id="resultsDisplay" class="hidden">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Results</h2>
+                <div id="resultsContent" class="bg-gray-50 rounded-lg p-6 overflow-auto max-h-96">
+                    <!-- Results will appear here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Add sample test data
+         */
+        async function addSampleData() {
+            Swal.fire({
+                title: 'Adding Sample Data...',
+                text: 'Creating test lessons and quiz attempts',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            try {
+                // This would need a corresponding PHP endpoint
+                // For now, we'll show instructions
+                Swal.fire({
+                    title: 'Manual Step Required',
+                    html: `
+                        <div class="text-left">
+                            <p class="mb-3">Run this SQL in phpMyAdmin to add sample data:</p>
+                            <textarea class="w-full p-2 bg-gray-100 rounded text-xs font-mono" rows="10" readonly>
+-- Sample lesson completions
+INSERT INTO lesson_completions (student_id, topic_name, lesson_number, time_spent_seconds) VALUES
+(1, 'Functions', 1, 600),
+(1, 'Functions', 2, 900),
+(1, 'Functions', 3, 1200),
+(1, 'Functions', 4, 800);
+
+-- Sample quiz attempts
+INSERT INTO quiz_attempts (student_id, quiz_type, score, total_questions, time_taken_seconds, attempt_number) VALUES
+(1, 'functions', 12, 15, 1200, 1),
+(1, 'evaluating-functions', 8, 10, 900, 1),
+(1, 'operations-on-functions', 7, 10, 1100, 1),
+(1, 'domain-range', 6, 10, 1300, 1);
+                            </textarea>
+                            <p class="text-xs text-gray-500 mt-2">Replace student_id with your actual student ID</p>
+                        </div>
+                    `,
+                    icon: 'info',
+                    confirmButtonText: 'OK',
+                    width: '600px'
+                });
+            } catch (error) {
+                Swal.fire({
+                    title: 'Error',
+                    text: error.message,
+                    icon: 'error'
+                });
+            }
+        }
+
+        /**
+         * Test API connection
+         */
+        async function testAPIConnection() {
+            Swal.fire({
+                title: 'Testing API Connection...',
+                text: 'Sending test request to Gemini',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            try {
+                const response = await fetch('../php/gemini-ai-assistant.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'action=analyze_performance',
+                    credentials: 'include'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    Swal.fire({
+                        title: 'Connection Successful!',
+                        html: `
+                            <p class="text-green-600 font-semibold mb-3">✓ Gemini API is working correctly</p>
+                            <div class="text-left text-sm">
+                                <p><strong>Response time:</strong> ${new Date().toLocaleTimeString()}</p>
+                                <p><strong>Student:</strong> ${result.student?.first_name || 'N/A'}</p>
+                            </div>
+                        `,
+                        icon: 'success'
+                    });
+                } else {
+                    throw new Error(result.message || 'Unknown error');
+                }
+            } catch (error) {
+                Swal.fire({
+                    title: 'Connection Failed',
+                    html: `
+                        <p class="text-red-600 mb-3">${error.message}</p>
+                        <div class="bg-yellow-50 rounded p-3 text-sm text-left mt-3">
+                            <p class="font-semibold mb-2">Troubleshooting:</p>
+                            <ul class="list-disc list-inside text-xs">
+                                <li>Check API key in php/gemini-ai-assistant.php</li>
+                                <li>Verify you're logged in as a student</li>
+                                <li>Check browser console for errors</li>
+                                <li>Ensure database tables exist</li>
+                            </ul>
+                        </div>
+                    `,
+                    icon: 'error',
+                    width: '600px'
+                });
+            }
+        }
+
+        /**
+         * Run full AI analysis
+         */
+        async function runAnalysis() {
+            Swal.fire({
+                title: 'Running AI Analysis...',
+                html: `
+                    <div class="flex flex-col items-center">
+                        <i class="fas fa-brain text-purple-500 text-6xl mb-4 animate-pulse"></i>
+                        <p>Gemini AI is analyzing your performance...</p>
+                        <p class="text-sm text-gray-500 mt-2">This may take 5-10 seconds</p>
+                    </div>
+                `,
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            try {
+                const formData = new FormData();
+                formData.append('action', 'analyze_performance');
+
+                const response = await fetch('../php/gemini-ai-assistant.php', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Display results
+                    displayResults(result);
+                    
+                    Swal.fire({
+                        title: 'Analysis Complete!',
+                        text: 'AI has generated personalized recommendations for you.',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                } else {
+                    throw new Error(result.message || 'Analysis failed');
+                }
+            } catch (error) {
+                Swal.fire({
+                    title: 'Analysis Failed',
+                    html: `
+                        <p class="text-red-600 mb-3">${error.message}</p>
+                        <div class="bg-yellow-50 rounded p-3 text-sm text-left mt-3">
+                            <p class="font-semibold mb-2">Common Issues:</p>
+                            <ul class="list-disc list-inside text-xs">
+                                <li>No lesson/quiz data exists for current student</li>
+                                <li>Invalid or missing API key</li>
+                                <li>Rate limit exceeded (wait 1 minute)</li>
+                                <li>Network connection issue</li>
+                            </ul>
+                        </div>
+                    `,
+                    icon: 'error',
+                    width: '600px'
+                });
+            }
+        }
+
+        /**
+         * Display analysis results
+         */
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('resultsDisplay');
+            const contentDiv = document.getElementById('resultsContent');
+
+            resultsDiv.classList.remove('hidden');
+
+            contentDiv.innerHTML = `
+                <div class="space-y-4">
+                    <div class="bg-blue-50 rounded-lg p-4">
+                        <h3 class="font-bold text-blue-800 mb-2">Student Info</h3>
+                        <p><strong>Name:</strong> ${data.student.first_name} ${data.student.last_name}</p>
+                        <p><strong>Email:</strong> ${data.student.email}</p>
+                    </div>
+
+                    <div class="bg-red-50 rounded-lg p-4">
+                        <h3 class="font-bold text-red-800 mb-2">Weak Areas</h3>
+                        <ul class="list-disc list-inside text-sm">
+                            ${(data.weakAreas || []).map(area => `<li>${area}</li>`).join('') || '<li class="text-gray-500">None identified</li>'}
+                        </ul>
+                    </div>
+
+                    <div class="bg-green-50 rounded-lg p-4">
+                        <h3 class="font-bold text-green-800 mb-2">Recommendations</h3>
+                        <ul class="list-disc list-inside text-sm">
+                            ${(data.recommendations || []).map(rec => `<li>${rec}</li>`).join('') || '<li class="text-gray-500">None provided</li>'}
+                        </ul>
+                    </div>
+
+                    <div class="bg-gray-100 rounded-lg p-4">
+                        <h3 class="font-bold text-gray-800 mb-2">Full AI Analysis</h3>
+                        <div class="text-xs whitespace-pre-wrap">${data.analysis || 'No analysis text available'}</div>
+                    </div>
+
+                    <div class="text-center">
+                        <p class="text-xs text-gray-500">Analysis generated: ${data.timestamp}</p>
+                    </div>
+                </div>
+            `;
+
+            // Scroll to results
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

@@ -27,10 +27,10 @@ try {
             c.grade_level,
             c.strand,
             c.description,
-            COUNT(DISTINCT ce.student_id) as student_count
+            COUNT(DISTINCT CASE WHEN ce.enrollment_status = 'approved' THEN ce.student_id END) as student_count
         FROM classes c
-        LEFT JOIN class_enrollments ce ON c.id = ce.class_id AND ce.status = 'approved'
-        WHERE c.teacher_id = ?
+        LEFT JOIN class_enrollments ce ON c.id = ce.class_id
+        WHERE c.teacher_id = ? AND c.is_active = TRUE
         GROUP BY c.id, c.class_name, c.class_code, c.grade_level, c.strand, c.description
         ORDER BY c.class_name ASC
     ");

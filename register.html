@@ -95,14 +95,6 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="lrn">LRN (Learner Reference Number)</label>
-                                <div class="input-group">
-                                    <i class="fas fa-id-card"></i>
-                                    <input type="text" id="lrn" name="lrn" required placeholder="Enter 12-digit LRN" autocomplete="off" autofill="off" maxlength="12" pattern="[0-9]{12}" inputmode="numeric">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
                                 <label for="gradeLevelDisplay">Grade Level</label>
                                 <div class="input-group">
                                     <i class="fas fa-graduation-cap"></i>
@@ -126,7 +118,7 @@
                                 <label for="password">Password</label>
                                 <div class="input-group">
                                     <i class="fas fa-lock"></i>
-                                    <input type="password" id="password" name="password" required placeholder="Create a password" autocomplete="new-password" autofill="off">
+                                    <input type="password" id="password" name="password" required placeholder="Create a password" autocomplete="new-password" autofill="off" maxlength="30">
                                     <button type="button" class="toggle-password">
                                         <i class="fas fa-eye"></i>
                                     </button>
@@ -141,7 +133,7 @@
                                     <div class="password-requirements" id="passwordRequirements">
                                         <div class="requirement" data-requirement="length">
                                             <i class="fas fa-circle"></i>
-                                            <span>At least 8 characters</span>
+                                            <span>8 to 30 characters</span>
                                         </div>
                                         <div class="requirement" data-requirement="lowercase">
                                             <i class="fas fa-circle"></i>
@@ -167,7 +159,7 @@
                                 <label for="confirmPassword">Confirm Password</label>
                                 <div class="input-group">
                                     <i class="fas fa-lock"></i>
-                                    <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Confirm your password" autocomplete="new-password" autofill="off">
+                                    <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Confirm your password" autocomplete="new-password" autofill="off" maxlength="30">
                                     <button type="button" class="toggle-password">
                                         <i class="fas fa-eye"></i>
                                     </button>

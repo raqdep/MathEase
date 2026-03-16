@@ -10,21 +10,37 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 try {
-    $userId = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
+    // Get JSON input if Content-Type is application/json
+    $input = json_decode(file_get_contents('php://input'), true);
     
-    if ($userId <= 0) {
-        throw new Exception('User ID is required');
+    // Support both POST form data and JSON
+    $userId = isset($_POST['user_id']) ? intval($_POST['user_id']) : (isset($input['user_id']) ? intval($input['user_id']) : 0);
+    $email = isset($_POST['email']) ? sanitize_input($_POST['email']) : (isset($input['email']) ? sanitize_input($input['email']) : '');
+    
+    // If email is provided but no user_id, look up user by email
+    if ($userId <= 0 && !empty($email)) {
+        $stmt = $pdo->prepare("SELECT id, first_name, last_name, email, email_verified FROM users WHERE email = ?");
+        $stmt->execute([$email]);
+        
+        if ($stmt->rowCount() === 0) {
+            throw new Exception('User not found with the provided email address');
+        }
+        
+        $user = $stmt->fetch();
+        $userId = $user['id'];
+    } elseif ($userId > 0) {
+        // Get user information by ID
+        $stmt = $pdo->prepare("SELECT id, first_name, last_name, email, email_verified FROM users WHERE id = ?");
+        $stmt->execute([$userId]);
+        
+        if ($stmt->rowCount() === 0) {
+            throw new Exception('User not found');
+        }
+        
+        $user = $stmt->fetch();
+    } else {
+        throw new Exception('Either User ID or Email is required');
     }
-    
-    // Get user information
-    $stmt = $pdo->prepare("SELECT id, first_name, last_name, email, email_verified FROM users WHERE id = ?");
-    $stmt->execute([$userId]);
-    
-    if ($stmt->rowCount() === 0) {
-        throw new Exception('User not found');
-    }
-    
-    $user = $stmt->fetch();
     
     if ($user['email_verified']) {
         throw new Exception('Email is already verified');

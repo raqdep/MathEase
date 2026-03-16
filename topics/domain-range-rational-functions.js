@@ -7,135 +7,1477 @@ let drrfCurrentLesson = 1;
 let drrfCompletedLessons = new Set();
 const drrfTotalLessons = 4;
 
-document.addEventListener('DOMContentLoaded', function() {
-    const lessonNavBtns = document.querySelectorAll('.lesson-nav-btn');
-    const lessonSections = document.querySelectorAll('.lesson-section');
+// ------------------------------
+// Quiz System - 5 questions per topic
+// ------------------------------
+const drrfLesson1Quiz = [
+    {
+        question: "What is the domain of a rational function?",
+        options: [
+            "All real numbers except where the denominator equals zero",
+            "All positive numbers",
+            "All integers",
+            "All real numbers"
+        ],
+        correct: 0
+    },
+    {
+        question: "For f(x) = 1/(x - 3), what is the domain?",
+        options: [
+            "All real numbers except x = 3",
+            "All real numbers except x = -3",
+            "All real numbers",
+            "x > 3"
+        ],
+        correct: 0
+    },
+    {
+        question: "What values must be excluded from the domain of f(x) = (x + 2)/(x² - 9)?",
+        options: [
+            "x = 3 and x = -3",
+            "x = 2 and x = -2",
+            "x = 0",
+            "No values need to be excluded"
+        ],
+        correct: 0
+    },
+    {
+        question: "In interval notation, how do we express 'all real numbers except x = 2'?",
+        options: [
+            "(-∞, 2) ∪ (2, ∞)",
+            "[2, ∞)",
+            "(-∞, 2]",
+            "(2, ∞)"
+        ],
+        correct: 0
+    },
+    {
+        question: "What happens when you try to evaluate a rational function at a value that makes the denominator zero?",
+        options: [
+            "The function is undefined",
+            "The function equals zero",
+            "The function equals one",
+            "The function equals infinity"
+        ],
+        correct: 0
+    }
+];
 
-    // Inject completion + navigation controls
-    drrfInjectLessonControls();
+const drrfLesson2Quiz = [
+    {
+        question: "What is the range of a rational function?",
+        options: [
+            "The set of all possible output values (y-values)",
+            "The set of all input values (x-values)",
+            "The set of all positive numbers",
+            "The set of all integers"
+        ],
+        correct: 0
+    },
+    {
+        question: "How do horizontal asymptotes affect the range?",
+        options: [
+            "They provide boundaries that the function approaches but may not cross",
+            "They have no effect on the range",
+            "They always exclude values from the range",
+            "They make the range all real numbers"
+        ],
+        correct: 0
+    },
+    {
+        question: "For f(x) = 1/x, what is the range?",
+        options: [
+            "All real numbers except y = 0",
+            "All real numbers",
+            "Only positive numbers",
+            "Only negative numbers"
+        ],
+        correct: 0
+    },
+    {
+        question: "When the degrees of numerator and denominator are equal, what happens to the range?",
+        options: [
+            "The range excludes the horizontal asymptote value",
+            "The range is all real numbers",
+            "The range is only positive numbers",
+            "The range is only negative numbers"
+        ],
+        correct: 0
+    },
+    {
+        question: "For f(x) = (2x + 1)/(3x - 2), what is the horizontal asymptote?",
+        options: [
+            "y = 2/3",
+            "y = 0",
+            "y = 1",
+            "No horizontal asymptote"
+        ],
+        correct: 0
+    }
+];
 
-    lessonNavBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const lessonNum = this.dataset.lesson;
+const drrfLesson3Quiz = [
+    {
+        question: "What is the first step in finding the domain of a rational function?",
+        options: [
+            "Identify the denominator and set it equal to zero",
+            "Find the numerator",
+            "Graph the function",
+            "Find the range first"
+        ],
+        correct: 0
+    },
+    {
+        question: "To find the range, what should you determine first?",
+        options: [
+            "The horizontal asymptote",
+            "The vertical asymptote",
+            "The x-intercepts",
+            "The y-intercepts"
+        ],
+        correct: 0
+    },
+    {
+        question: "For f(x) = (x² - 1)/(x + 2), what is the domain?",
+        options: [
+            "All real numbers except x = -2",
+            "All real numbers except x = 1 and x = -1",
+            "All real numbers",
+            "x > -2"
+        ],
+        correct: 0
+    },
+    {
+        question: "What is the range of f(x) = (x² - 1)/(x + 2)?",
+        options: [
+            "All real numbers",
+            "All real numbers except y = 0",
+            "Only positive numbers",
+            "Only negative numbers"
+        ],
+        correct: 0
+    },
+    {
+        question: "In interval notation, how do we express 'all real numbers'?",
+        options: [
+            "(-∞, ∞)",
+            "[0, ∞)",
+            "(-∞, 0]",
+            "(0, ∞)"
+        ],
+        correct: 0
+    }
+];
 
-            // Update navigation buttons visuals
-            lessonNavBtns.forEach(b => {
-                b.classList.remove('border-primary', 'bg-primary');
-                b.classList.add('border-transparent');
-                const icon = b.querySelector('.w-16');
-                if (icon) {
-                    icon.classList.remove('bg-primary', 'text-white');
-                    icon.classList.add('bg-gray-300', 'text-gray-600');
-                }
-            });
+const drrfLesson4Quiz = [
+    {
+        question: "In a real-world application, why is domain analysis important?",
+        options: [
+            "To ensure the function makes sense in the context",
+            "To make calculations easier",
+            "To find the maximum value",
+            "To graph the function"
+        ],
+        correct: 0
+    },
+    {
+        question: "For an average cost function AC(x) = C(x)/x, what is the domain restriction?",
+        options: [
+            "x > 0 (production must be positive)",
+            "x ≥ 0",
+            "x can be any real number",
+            "x must be an integer"
+        ],
+        correct: 0
+    },
+    {
+        question: "In the lens equation 1/f = 1/d₀ + 1/dᵢ, what values are excluded from the domain?",
+        options: [
+            "Values where d₀ = f (object distance equals focal length)",
+            "Values where d₀ = 0",
+            "Values where f = 0",
+            "No values are excluded"
+        ],
+        correct: 0
+    },
+    {
+        question: "For a market share function S(a) = ka/(a + b), what is the range?",
+        options: [
+            "0 ≤ S(a) < k (between 0 and maximum market share)",
+            "S(a) ≥ k",
+            "S(a) can be any real number",
+            "S(a) < 0"
+        ],
+        correct: 0
+    },
+    {
+        question: "Why is range analysis important in real-world applications?",
+        options: [
+            "To understand the possible outcomes and limitations",
+            "To make the function simpler",
+            "To find the domain",
+            "To solve equations"
+        ],
+        correct: 0
+    }
+];
 
-            this.classList.add('border-primary', 'bg-primary');
-            this.classList.remove('border-transparent');
-            const icon = this.querySelector('.w-16');
-            if (icon) {
-                icon.classList.add('bg-primary', 'text-white');
-                icon.classList.remove('bg-gray-300', 'text-gray-600');
+// ------------------------------
+// Sidebar Navigation
+// ------------------------------
+function initializeSidebar() {
+    const sidebar = document.getElementById('lessonSidebar');
+    if (!sidebar) return;
+    
+    // Topic headers - expand/collapse
+    sidebar.querySelectorAll('.lesson-topic-header').forEach(header => {
+        header.addEventListener('click', function(e) {
+            if (e.target.closest('.lesson-subitem')) return;
+            const topic = this.closest('.lesson-topic');
+            const lessonNum = parseInt(topic.dataset.lesson);
+            
+            // Check if topic is accessible
+            if (!drrfCanAccessTopic(lessonNum) && lessonNum !== drrfCurrentLesson) {
+                drrfShowTopicLockedMessage(lessonNum);
+                return;
             }
-
-            // Show selected lesson
-            lessonSections.forEach(section => section.classList.remove('active'));
-            document.getElementById(`lesson${lessonNum}`).classList.add('active');
-
-            // Update state and indicators
-            drrfCurrentLesson = parseInt(lessonNum, 10);
-            drrfUpdateNavigationButtons();
-            drrfUpdateProgressIndicators();
-            drrfUpdateLessonCompletionStatus();
-
-            // Smooth scroll to top of lesson content
-            const lessonContent = document.querySelector('.lesson-content');
-            if (lessonContent) lessonContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-            // Add animation
-            const activeSection = document.getElementById(`lesson${lessonNum}`);
-            activeSection.classList.add('fade-in');
+            
+            const isExpanded = topic.classList.contains('expanded');
+            document.querySelectorAll('.lesson-topic').forEach(t => t.classList.remove('expanded'));
+            if (!isExpanded) {
+                topic.classList.add('expanded');
+                this.setAttribute('aria-expanded', 'true');
+                drrfShowLesson(lessonNum);
+                setSidebarActive(lessonNum, 'objective');
+            } else {
+                this.setAttribute('aria-expanded', 'false');
+            }
         });
     });
+    
+    // Subitems - navigate to sections
+    sidebar.querySelectorAll('.lesson-subitem').forEach(subitem => {
+        subitem.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const lessonNum = parseInt(this.dataset.lesson);
+            const sectionId = this.dataset.sectionId;
+            
+            // Check if topic is accessible
+            if (!drrfCanAccessTopic(lessonNum)) {
+                drrfShowTopicLockedMessage(lessonNum);
+                return;
+            }
+            
+            // Show lesson and scroll to section
+            drrfShowLesson(lessonNum, false);
+            setSidebarActive(lessonNum, this.dataset.section);
+            
+            const topic = document.getElementById(`sidebar-topic-${lessonNum}`);
+            if (topic && !topic.classList.contains('expanded')) {
+                topic.classList.add('expanded');
+                topic.querySelector('.lesson-topic-header')?.setAttribute('aria-expanded', 'true');
+            }
+            
+            if (sectionId) {
+                setTimeout(() => {
+                    const section = document.getElementById(sectionId);
+                    if (section) {
+                        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }, 100);
+            }
+            
+            // Close mobile sidebar
+            if (window.innerWidth < 1024) {
+                sidebar.classList.remove('open');
+                const backdrop = document.getElementById('mobileBackdrop');
+                if (backdrop) backdrop.classList.add('hidden');
+            }
+        });
+    });
+    
+    // Mobile sidebar toggle
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const mobileBackdrop = document.getElementById('mobileBackdrop');
+    
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('open');
+            if (mobileBackdrop) mobileBackdrop.classList.toggle('hidden');
+        });
+    }
+    
+    if (mobileBackdrop) {
+        mobileBackdrop.addEventListener('click', function() {
+            sidebar.classList.remove('open');
+            this.classList.add('hidden');
+        });
+    }
+    
+    // Update sidebar progress
+    drrfUpdateSidebarProgress();
+}
 
-    // Initialize first lesson as active
-    if (lessonNavBtns[0]) lessonNavBtns[0].click();
+function setSidebarActive(lessonNum, section) {
+    // Update subitems
+    document.querySelectorAll('.lesson-subitem').forEach(item => {
+        item.classList.remove('active');
+        if (parseInt(item.dataset.lesson) === lessonNum && item.dataset.section === section) {
+            item.classList.add('active');
+        }
+    });
+    
+    // Update topic headers
+    document.querySelectorAll('.lesson-topic-header').forEach(header => {
+        header.classList.remove('active');
+        const topic = header.closest('.lesson-topic');
+        if (parseInt(topic.dataset.lesson) === lessonNum) {
+            header.classList.add('active');
+            topic.classList.add('expanded');
+        }
+    });
+}
 
+function drrfUpdateSidebarProgress() {
+    for (let i = 1; i <= drrfTotalLessons; i++) {
+        const topic = document.getElementById(`sidebar-topic-${i}`);
+        if (!topic) continue;
+        
+        const dot = topic.querySelector('.lesson-topic-dot');
+        const progressText = topic.querySelector('.topic-status-text');
+        const accessible = drrfCanAccessTopic(i);
+        const complete = drrfCompletedLessons.has(i);
+        
+        // Never lock a topic that is already completed
+        topic.classList.toggle('locked', !accessible && !complete);
+        
+        if (progressText) {
+            if (complete) {
+                progressText.textContent = '✓';
+            } else if (!accessible) {
+                progressText.textContent = '—';
+            } else {
+                progressText.textContent = ''; // Empty for accessible but incomplete
+            }
+        }
+        
+        if (dot) {
+            if (complete) {
+                dot.classList.add('completed');
+                dot.innerHTML = '<i class="fas fa-check"></i>';
+            } else {
+                dot.classList.remove('completed');
+            }
+        }
+    }
+}
+
+function drrfCanAccessTopic(lessonNum) {
+    if (lessonNum === 1) return true;
+    return drrfCompletedLessons.has(lessonNum - 1);
+}
+
+function drrfShowTopicLockedMessage(lessonNum) {
+    Swal.fire({
+        icon: 'info',
+        title: 'Topic Locked',
+        html: `
+            <div class="text-left">
+                <p class="mb-3">You need to complete Topic ${lessonNum - 1} before accessing Topic ${lessonNum}.</p>
+                <p class="text-sm text-gray-600">Complete the quiz for Topic ${lessonNum - 1} to unlock this topic.</p>
+            </div>
+        `,
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#667eea'
+    });
+}
+
+// ------------------------------
+// Quiz System (matching functions.html)
+// ------------------------------
+function drrfShuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
+function drrfShuffleQuiz(quizArray) {
+    const shuffled = drrfShuffleArray(quizArray);
+    return shuffled.map(quiz => {
+        const options = [...quiz.options];
+        const correctIndex = quiz.correct;
+        const correctAnswer = options[correctIndex];
+        
+        const shuffledOptions = drrfShuffleArray(options);
+        const newCorrectIndex = shuffledOptions.indexOf(correctAnswer);
+        
+        return {
+            ...quiz,
+            options: shuffledOptions,
+            correct: newCorrectIndex
+        };
+    });
+}
+
+function drrfGenerateExplanation(quiz, selectedAnswer) {
+    if (!quiz || !quiz.options) return '';
+    const isCorrect = selectedAnswer === quiz.correct;
+    const correctAnswer = quiz.options[quiz.correct];
+    const selectedAnswerText = quiz.options[selectedAnswer];
+    const question = (quiz.question || '').toLowerCase();
+    
+    let explanation = '';
+    if (isCorrect) {
+        explanation = `✓ Correct! "${correctAnswer}" is the right answer.\n\n`;
+    } else {
+        explanation = `✗ Incorrect. You selected "${selectedAnswerText}", but the correct answer is "${correctAnswer}".\n\n`;
+    }
+    
+    if (question.includes('domain')) {
+        explanation += 'HOW TO SOLVE:\nThe domain of a rational function excludes values that make the denominator zero. Set the denominator equal to zero and solve for x. Those values are NOT in the domain.';
+    } else if (question.includes('range')) {
+        explanation += 'HOW TO SOLVE:\nThe range of a rational function depends on horizontal asymptotes and any restrictions. Analyze the function behavior as x approaches ±∞ and near vertical asymptotes.';
+    } else if (question.includes('asymptote')) {
+        explanation += 'HOW TO SOLVE:\nVertical asymptotes occur where the denominator equals zero (and numerator doesn\'t). Horizontal asymptotes depend on the degrees of numerator and denominator polynomials.';
+    } else if (question.includes('rational function')) {
+        explanation += 'HOW TO SOLVE:\nA rational function is a fraction of polynomials. Key concepts: domain (denominator ≠ 0), vertical asymptotes (zeros of denominator), horizontal asymptotes (degree comparison).';
+    } else {
+        explanation += 'HOW TO SOLVE:\n1. Read the question carefully\n2. Identify what concept is being tested\n3. Apply the relevant rules or formulas\n4. Check your answer makes sense';
+    }
+    return explanation;
+}
+
+async function drrfRunLessonQuiz(lessonNum) {
+    const quizArray = [
+        drrfLesson1Quiz,
+        drrfLesson2Quiz,
+        drrfLesson3Quiz,
+        drrfLesson4Quiz
+    ][lessonNum - 1];
+    
+    if (!quizArray) return false;
+    
+    // Track quiz start time
+    window.drrfQuizStartTime = Date.now();
+    
+    // Shuffle quiz questions and options
+    const shuffledQuiz = drrfShuffleQuiz(quizArray);
+    
+    let currentQuestion = 0;
+    let score = 0;
+    const userAnswers = [];
+    
+    // Show intro modal
+    const introResult = await Swal.fire({
+        title: `📚 Topic ${lessonNum} Quiz`,
+        html: `
+            <div class="text-left space-y-4">
+                <div class="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg p-5 border-l-4 border-primary">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
+                        <i class="fas fa-info-circle text-primary mr-2"></i>
+                        Quiz Instructions
+                    </h3>
+                    <p class="text-gray-700 mb-2">
+                        You will answer <strong>5 questions</strong> for Topic ${lessonNum}.
+                    </p>
+                    <p class="text-sm text-gray-600 mb-2">
+                        <strong>Passing:</strong> at least <strong>3/5</strong> correct (60%).
+                    </p>
+                    <div class="mt-3 pt-3 border-t border-primary/20">
+                        <p class="text-sm font-semibold text-gray-700 mb-2">What to expect:</p>
+                        <ul class="text-sm text-gray-600 space-y-1 list-disc list-inside">
+                            <li>Questions are randomized for each attempt</li>
+                            <li>Answer options are shuffled</li>
+                            <li>You cannot go back to previous questions</li>
+                            <li>Review your answers at the end</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border-l-4 border-green-500">
+                    <p class="text-sm text-gray-700">
+                        <i class="fas fa-lightbulb text-green-500 mr-2"></i>
+                        <strong>Tip:</strong> Take your time and read each question carefully. You can try again if needed.
+                    </p>
+                </div>
+            </div>
+        `,
+        icon: 'info',
+        confirmButtonText: 'Start Quiz',
+        confirmButtonColor: '#667eea',
+        cancelButtonText: 'Cancel',
+        showCancelButton: true,
+        cancelButtonColor: '#ef4444',
+        allowOutsideClick: false,
+        width: '650px',
+        customClass: {
+            popup: 'rounded-2xl',
+            title: 'text-slate-800',
+            htmlContainer: 'text-left'
+        }
+    });
+    
+    if (!introResult.isConfirmed) {
+        return false;
+    }
+    
+    window.drrfQuizStartTime = Date.now();
+    
+    return new Promise((resolve) => {
+        window.drrfQuizResolve = resolve;
+        
+        function displayQuestion() {
+            if (currentQuestion >= shuffledQuiz.length) {
+                showQuizResults();
+                return;
+            }
+            
+            const quiz = shuffledQuiz[currentQuestion];
+            const progressPercentage = ((currentQuestion + 1) / shuffledQuiz.length) * 100;
+            
+            const optionsHtml = quiz.options.map((option, index) =>
+                `<button type="button" class="quiz-option w-full text-left px-5 py-4 mb-3 bg-white border-2 border-gray-300 rounded-lg hover:border-primary hover:bg-gradient-to-r hover:from-primary/10 hover:to-secondary/10 hover:shadow-md transition-all duration-200 font-medium text-gray-800 transform hover:scale-[1.02]" data-answer="${index}">
+                    <span class="flex items-center">
+                        <span class="w-8 h-8 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center mr-3 font-semibold text-gray-700 border border-gray-300">${String.fromCharCode(65 + index)}</span>
+                        <span>${option}</span>
+                    </span>
+                </button>`
+            ).join('');
+            
+            Swal.fire({
+                title: `<div class="flex items-center justify-center w-full">
+                    <span class="text-center">Question ${currentQuestion + 1} of ${shuffledQuiz.length}</span>
+                </div>`,
+                html: `
+                    <div class="text-left">
+                        <!-- Progress Bar -->
+                        <div class="w-full bg-gray-200 rounded-full h-2 mb-6">
+                            <div class="bg-gradient-to-r from-primary to-secondary h-2 rounded-full transition-all duration-300" style="width: ${progressPercentage}%"></div>
+                        </div>
+                        
+                        <p class="text-xl font-semibold mb-6 text-gray-900">${quiz.question}</p>
+                        <div class="space-y-3">${optionsHtml}</div>
+                    </div>
+                `,
+                showConfirmButton: false,
+                showCancelButton: true,
+                cancelButtonText: 'Cancel Quiz',
+                cancelButtonColor: '#ef4444',
+                allowOutsideClick: false,
+                width: '750px',
+                customClass: {
+                    popup: 'rounded-2xl shadow-2xl',
+                    title: 'text-primary text-2xl font-bold mb-4 text-center',
+                    htmlContainer: 'text-left',
+                    cancelButton: 'px-6 py-3 rounded-lg font-semibold'
+                },
+                didOpen: () => {
+                    const questionIndex = currentQuestion;
+                    const currentQuiz = shuffledQuiz[questionIndex];
+                    const container = document.querySelector('.swal2-popup .swal2-html-container') || document.querySelector('.swal2-html-container');
+                    if (!container) return;
+                    container.addEventListener('click', function optionClick(e) {
+                        const btn = e.target.closest('.quiz-option');
+                        if (!btn || btn.disabled) return;
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const selectedAnswer = parseInt(btn.dataset.answer, 10);
+                        if (isNaN(selectedAnswer) || selectedAnswer < 0 || !currentQuiz.options || selectedAnswer >= currentQuiz.options.length) return;
+                        let explanation = '';
+                        try {
+                            explanation = drrfGenerateExplanation(currentQuiz, selectedAnswer);
+                        } catch (err) {
+                            explanation = selectedAnswer === currentQuiz.correct ? 'Correct.' : 'Incorrect.';
+                        }
+                        userAnswers[questionIndex] = {
+                            question: currentQuiz.question,
+                            options: currentQuiz.options,
+                            selected: selectedAnswer,
+                            selectedText: currentQuiz.options[selectedAnswer],
+                            correct: currentQuiz.correct,
+                            correctText: currentQuiz.options[currentQuiz.correct],
+                            isCorrect: selectedAnswer === currentQuiz.correct,
+                            explanation: explanation
+                        };
+                        if (selectedAnswer === currentQuiz.correct) score++;
+                        container.querySelectorAll('.quiz-option').forEach(b => { b.disabled = true; });
+                        container.removeEventListener('click', optionClick);
+                        setTimeout(() => {
+                            Swal.close();
+                            currentQuestion++;
+                            setTimeout(displayQuestion, 80);
+                        }, 400);
+                    });
+                }
+            });
+        }
+        
+        function showQuizResults() {
+            const percentage = Math.round((score / shuffledQuiz.length) * 100);
+            const passed = score >= 3;
+            
+            // Calculate time taken
+            const timeTaken = window.drrfQuizStartTime ? Math.floor((Date.now() - window.drrfQuizStartTime) / 1000) : 0;
+            
+            // Store quiz data
+            drrfStoreQuizData(lessonNum, score, shuffledQuiz.length, userAnswers, timeTaken);
+            
+            Swal.fire({
+                title: passed ? '🎉 Great Job!' : '📚 Keep Learning',
+                html: `
+                    <div class="text-center">
+                        <div class="text-4xl font-bold mb-4 ${passed ? 'text-green-600' : 'text-orange-600'}">
+                            ${score}/${shuffledQuiz.length} (${percentage}%)
+                        </div>
+                        ${passed ? 
+                            '<p class="text-lg text-gray-700 mb-4">You passed! You can now proceed to the next topic.</p>' :
+                            '<p class="text-lg text-gray-700 mb-4">You need at least 3 correct answers to pass. Review the topic and try again!</p>'
+                        }
+                    </div>
+                `,
+                icon: passed ? 'success' : 'info',
+                confirmButtonText: passed ? 'Continue' : 'Review Topic',
+                confirmButtonColor: passed ? '#10b981' : '#667eea'
+            }).then(async () => {
+                if (passed) {
+                    // IMPORTANT: Save final study time BEFORE marking as completed
+                    // This ensures drrfSaveStudyTimeForCurrentLesson() doesn't skip saving
+                    drrfSaveStudyTimeForCurrentLesson();
+                    
+                    // Wait a moment for the save to complete
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                    
+                    // Complete lesson and stop timer (this will save final time again and mark as complete)
+                    await drrfCompleteLesson(lessonNum);
+                    
+                    // Mark as completed AFTER saving time
+                    drrfCompletedLessons.add(lessonNum);
+                    drrfUpdateSidebarProgress();
+                    
+                    // Reload study time to ensure we have the latest saved time from server
+                    await drrfLoadAndDisplayStudyTime();
+                    
+                    // Update timer display with the loaded time
+                    drrfUpdateLiveTimer();
+                    
+                    // Hide Topic 4 quiz button if this is Topic 4
+                    if (lessonNum === 4) {
+                        const topic4QuizButton = document.getElementById('topic4QuizButton');
+                        if (topic4QuizButton) {
+                            topic4QuizButton.style.display = 'none';
+                        }
+                    }
+                    
+                    // Check if all lessons are completed and show performance analysis section
+                    if (drrfCompletedLessons.size === drrfTotalLessons) {
+                        drrfShowPerformanceAnalysisSection();
+                    }
+                }
+                if (window.drrfQuizResolve) {
+                    window.drrfQuizResolve(passed);
+                    window.drrfQuizResolve = null;
+                }
+            });
+        }
+        
+        displayQuestion();
+    });
+}
+
+async function drrfStoreQuizData(lessonNum, score, total, userAnswers, timeTaken = 0) {
+    try {
+        const response = await fetch('../php/store-quiz-data.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                topic: 'domain-range-rational-functions',
+                lesson: lessonNum,
+                score: score,
+                total: total,
+                user_answers: userAnswers,
+                time_taken_seconds: timeTaken
+            }),
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            return data.success || false;
+        }
+        return false;
+    } catch (error) {
+        console.error('Error storing quiz data:', error);
+        return false;
+    }
+}
+
+// Show Topic 4 Quiz
+function drrfShowTopic4Quiz() {
+    if (drrfCompletedLessons.has(4)) {
+        Swal.fire({
+            title: 'Already Completed',
+            text: 'You have already completed Topic 4 quiz.',
+            icon: 'info',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+    drrfRunLessonQuiz(4);
+}
+
+// ------------------------------
+// Timer Functions
+// ------------------------------
+// ------------------------------
+// Timer Functions (matching functions.html)
+// ------------------------------
+let drrfLessonStartTime = {};
+let drrfTotalStudyTime = {}; // Track total time per lesson in seconds
+let drrfLastSavedTime = {}; // Track last confirmed saved time from server (to prevent double counting)
+let drrfLastSaveTimestamp = {}; // Track when we last saved (to calculate elapsed correctly)
+let drrfStudyTimeInterval = null;
+let drrfTimerUpdateInterval = null; // For live timer display
+
+function drrfStartLiveTimer() {
+    // Clear existing timer
+    if (drrfTimerUpdateInterval) {
+        clearInterval(drrfTimerUpdateInterval);
+    }
+    
+    // Don't start timer if lesson is already completed
+    if (drrfCompletedLessons.has(drrfCurrentLesson)) {
+        drrfUpdateLiveTimer(); // Just show final time
+        return;
+    }
+    
+    // Update timer immediately
+    drrfUpdateLiveTimer();
+    
+    // Update timer every second
+    drrfTimerUpdateInterval = setInterval(function() {
+        // Stop if lesson becomes completed
+        if (drrfCompletedLessons.has(drrfCurrentLesson)) {
+            clearInterval(drrfTimerUpdateInterval);
+            drrfTimerUpdateInterval = null;
+            drrfUpdateLiveTimer(); // Show final time
+            return;
+        }
+        drrfUpdateLiveTimer();
+    }, 1000);
+}
+
+function drrfUpdateLiveTimer() {
+    if (!drrfCurrentLesson) return;
+    
+    const section = document.getElementById(`lesson${drrfCurrentLesson}`);
+    if (!section) return;
+    
+    // Ensure timer container is visible
+    const timerContainer = section.querySelector('.flex-shrink-0.ml-6');
+    if (timerContainer) {
+        timerContainer.classList.remove('hidden');
+        timerContainer.style.display = 'flex';
+        timerContainer.style.visibility = 'visible';
+    }
+    
+    const timerDisplay = section.querySelector('.lesson-timer-display');
+    if (!timerDisplay) return;
+    
+    // Don't update timer if lesson is already completed
+    if (drrfCompletedLessons.has(drrfCurrentLesson)) {
+        // Show final time for completed lesson
+        let finalTime = drrfTotalStudyTime[drrfCurrentLesson] || drrfLastSavedTime[drrfCurrentLesson] || 0;
+        
+        // Ensure finalTime is in seconds (not milliseconds)
+        if (finalTime > 86400) {
+            const asSeconds = Math.floor(finalTime / 1000);
+            if (asSeconds <= 86400) {
+                finalTime = asSeconds;
+            } else {
+                finalTime = Math.min(finalTime, 86400);
+            }
+        }
+        finalTime = Math.min(finalTime, 86400);
+        
+        const hours = Math.floor(finalTime / 3600);
+        const minutes = Math.floor((finalTime % 3600) / 60);
+        const secs = finalTime % 60;
+        
+        let timeDisplay = '';
+        if (hours > 0) {
+            timeDisplay = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        } else {
+            timeDisplay = `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+        
+        timerDisplay.textContent = timeDisplay;
+        
+        // Ensure timer text is visible
+        timerDisplay.style.visibility = 'visible';
+        timerDisplay.style.display = 'block';
+        
+        // Update circular progress (final state)
+        const maxTime = 7200;
+        const progress = Math.min((finalTime / maxTime) * 100, 100);
+        const circumference = 2 * Math.PI * 34;
+        const offset = circumference - (progress / 100) * circumference;
+        
+        const progressCircle = section.querySelector('.timer-progress');
+        if (progressCircle) {
+            progressCircle.style.strokeDashoffset = offset;
+            progressCircle.style.stroke = '#10b981'; // Green for completed
+        }
+        
+        return; // Stop here for completed lessons
+    }
+    
+    // For active lessons, calculate current time
+    const baseTime = drrfLastSavedTime[drrfCurrentLesson] || 0;
+    
+    let currentSessionElapsed = 0;
+    const saveStartTime = drrfLastSaveTimestamp[drrfCurrentLesson] || drrfLessonStartTime[drrfCurrentLesson];
+    if (saveStartTime) {
+        const now = Date.now();
+        const elapsedMs = now - saveStartTime;
+        currentSessionElapsed = Math.floor(elapsedMs / 1000);
+        
+        if (currentSessionElapsed > 7200) {
+            console.warn(`Session elapsed time too large (${currentSessionElapsed}s) for lesson ${drrfCurrentLesson}, resetting start time`);
+            drrfLessonStartTime[drrfCurrentLesson] = now;
+            drrfLastSaveTimestamp[drrfCurrentLesson] = now;
+            currentSessionElapsed = 0;
+        }
+        
+        if (currentSessionElapsed < 0) {
+            console.warn(`Negative elapsed time detected for lesson ${drrfCurrentLesson}, resetting start time`);
+            drrfLessonStartTime[drrfCurrentLesson] = now;
+            drrfLastSaveTimestamp[drrfCurrentLesson] = now;
+            currentSessionElapsed = 0;
+        }
+    }
+    
+    const totalTime = baseTime + currentSessionElapsed;
+    const cappedTime = Math.min(totalTime, 86400);
+    
+    const hours = Math.floor(cappedTime / 3600);
+    const minutes = Math.floor((cappedTime % 3600) / 60);
+    const seconds = cappedTime % 60;
+    
+    let timeDisplay = '';
+    if (hours > 0) {
+        timeDisplay = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    } else {
+        timeDisplay = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+    
+    timerDisplay.textContent = timeDisplay;
+    
+    // Ensure timer text is visible
+    timerDisplay.style.visibility = 'visible';
+    timerDisplay.style.display = 'block';
+    
+    // Update circular progress (max 2 hours = 7200 seconds)
+    const maxTime = 7200;
+    const progress = Math.min((cappedTime / maxTime) * 100, 100);
+    const circumference = 2 * Math.PI * 34;
+    const offset = circumference - (progress / 100) * circumference;
+    
+    const progressCircle = section.querySelector('.timer-progress');
+    if (progressCircle) {
+        progressCircle.style.strokeDashoffset = offset;
+    }
+}
+
+function drrfSaveStudyTimeForCurrentLesson() {
+    if (!drrfCurrentLesson) return;
+    
+    // CRITICAL: Never save time for completed lessons
+    if (drrfCompletedLessons.has(drrfCurrentLesson)) {
+        console.log(`Lesson ${drrfCurrentLesson} is completed, skipping timer save`);
+        return;
+    }
+    
+    const saveStartTime = drrfLastSaveTimestamp[drrfCurrentLesson] || drrfLessonStartTime[drrfCurrentLesson];
+    if (!saveStartTime) return;
+    
+    const now = Date.now();
+    const elapsed = Math.floor((now - saveStartTime) / 1000);
+    
+    if (elapsed > 0 && elapsed < 7200) {
+        const baseTime = drrfLastSavedTime[drrfCurrentLesson] || 0;
+        const newTotalTime = baseTime + elapsed;
+        
+        drrfTotalStudyTime[drrfCurrentLesson] = newTotalTime;
+        drrfLastSavedTime[drrfCurrentLesson] = newTotalTime;
+        drrfLastSaveTimestamp[drrfCurrentLesson] = now;
+        drrfLessonStartTime[drrfCurrentLesson] = now;
+        
+        drrfSendStudyTimeToServer();
+    } else if (elapsed >= 7200) {
+        drrfLessonStartTime[drrfCurrentLesson] = now;
+        drrfLastSaveTimestamp[drrfCurrentLesson] = now;
+    }
+}
+
+function drrfSendStudyTimeToServer() {
+    if (!drrfCurrentLesson) return;
+    
+    const studyTimeData = {};
+    if (!drrfCompletedLessons.has(drrfCurrentLesson) && drrfTotalStudyTime[drrfCurrentLesson] && drrfTotalStudyTime[drrfCurrentLesson] > 0) {
+        studyTimeData[drrfCurrentLesson] = drrfTotalStudyTime[drrfCurrentLesson];
+    }
+    
+    if (Object.keys(studyTimeData).length === 0) return;
+    
+    fetch('../php/store-study-time.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            topic: 'domain-range-rational-functions',
+            study_time: studyTimeData
+        }),
+        credentials: 'include'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update lastSavedTime and lastSaveTimestamp locally after successful save
+            Object.keys(studyTimeData).forEach(lesson => {
+                const lessonNum = parseInt(lesson);
+                drrfLastSavedTime[lessonNum] = drrfTotalStudyTime[lessonNum];
+                drrfLastSaveTimestamp[lessonNum] = Date.now();
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error saving study time:', error);
+    });
+}
+
+async function drrfLoadAndDisplayStudyTime() {
+    // Load study time for all lessons (not just current) to ensure consistency
+    try {
+        const response = await fetch(`../php/get-study-time.php?topic=domain-range-rational-functions`, {
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.study_time) {
+                // Load study time for all lessons
+                for (const lesson in data.study_time) {
+                    const lessonNum = parseInt(lesson);
+                    const seconds = parseInt(data.study_time[lesson]);
+                    
+                    if (!isNaN(seconds) && seconds >= 0) {
+                        drrfTotalStudyTime[lessonNum] = seconds;
+                        drrfLastSavedTime[lessonNum] = seconds;
+                        const now = Date.now();
+                        drrfLastSaveTimestamp[lessonNum] = now;
+                        
+                        // For completed lessons, don't update lessonStartTime
+                        if (!drrfCompletedLessons.has(lessonNum)) {
+                            if (!drrfLessonStartTime[lessonNum]) {
+                                drrfLessonStartTime[lessonNum] = now;
+                            }
+                        }
+                    }
+                }
+                
+                // Update timer display for current lesson
+                if (drrfCurrentLesson) {
+                    // Ensure timer container is visible for current lesson
+                    const section = document.getElementById(`lesson${drrfCurrentLesson}`);
+                    if (section) {
+                        const timerContainer = section.querySelector('.flex-shrink-0.ml-6');
+                        if (timerContainer) {
+                            timerContainer.classList.remove('hidden');
+                            timerContainer.style.display = 'flex';
+                            timerContainer.style.visibility = 'visible';
+                        }
+                    }
+                    
+                    drrfUpdateLiveTimer();
+                }
+            }
+        }
+    } catch (e) {
+        console.error('Error loading study time:', e);
+    }
+}
+
+// ------------------------------
+// Performance Analysis (Custom AI - matching functions.html)
+// ------------------------------
+function drrfShowPerformanceAnalysisSection() {
+    // Check if all 4 topics are completed
+    if (drrfCompletedLessons.size !== drrfTotalLessons) {
+        console.log('Performance analysis will only show after completing all quizzes. Current completed:', drrfCompletedLessons.size, '/', drrfTotalLessons);
+        return;
+    }
+    
+    const analysisDiv = document.getElementById('performanceAnalysisSection');
+    if (analysisDiv) {
+        analysisDiv.style.display = 'block';
+        setTimeout(() => {
+            analysisDiv.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }, 300);
+    }
+}
+
+async function drrfAnalyzePerformance() {
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const resultSection = document.getElementById('analysisResult');
+    
+    if (analyzeBtn) {
+        analyzeBtn.disabled = true;
+        analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Analyzing...';
+    }
+    
+    try {
+        const response = await fetch(`../php/analyze-quiz-performance.php?topic=domain-range-rational-functions`, {
+            method: 'GET',
+            credentials: 'include'
+        });
+        
+        const responseText = await response.text();
+        console.log('Raw response:', responseText.substring(0, 500));
+        
+        if (!response.ok) {
+            let errorMessage = `Server error: ${response.status} ${response.statusText}`;
+            try {
+                const errorData = JSON.parse(responseText);
+                errorMessage = errorData.message || errorMessage;
+            } catch (e) {
+                errorMessage = responseText.substring(0, 200);
+            }
+            throw new Error(errorMessage);
+        }
+        
+        const result = JSON.parse(responseText);
+        
+        if (result.success && result.analysis) {
+            drrfDisplayPerformanceAnalysis(result.analysis);
+        } else {
+            throw new Error(result.message || 'Failed to analyze performance');
+        }
+    } catch (error) {
+        console.error('Error analyzing performance:', error);
+        if (resultSection) {
+            resultSection.classList.remove('hidden');
+            resultSection.innerHTML = `
+                <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                    <p class="text-red-700"><strong>Error:</strong> ${error.message}</p>
+                    <p class="text-sm text-red-600 mt-2">Please try again later.</p>
+                </div>
+            `;
+        }
+    } finally {
+        if (analyzeBtn) {
+            analyzeBtn.disabled = false;
+            analyzeBtn.innerHTML = '<i class="fas fa-chart-line mr-2"></i>Analyze My Performance';
+        }
+    }
+}
+
+function drrfDisplayPerformanceAnalysis(analysis) {
+    const resultSection = document.getElementById('analysisResult');
+    if (!resultSection) return;
+    
+    const { overall_score, strengths, weaknesses, recommendations, topic_scores } = analysis;
+    
+    let html = `
+        <div class="space-y-6">
+            <!-- Overall Score -->
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border-l-4 border-blue-500">
+                <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-chart-line text-blue-500 mr-2"></i>
+                    Overall Performance
+                </h4>
+                <div class="text-4xl font-bold text-primary mb-2">${overall_score}%</div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-primary h-2 rounded-full transition-all" style="width: ${overall_score}%"></div>
+                </div>
+            </div>
+            
+            <!-- Topic Scores -->
+            ${topic_scores && Object.keys(topic_scores).length > 0 ? `
+                <div class="bg-white rounded-xl p-6 border-2 border-gray-200">
+                    <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-list-ol text-primary mr-2"></i>
+                        Topic Scores
+                    </h4>
+                    <div class="space-y-4">
+                        ${Object.entries(topic_scores).map(([topic, score]) => `
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                <span class="font-semibold text-gray-700">Topic ${topic}</span>
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-32 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-primary h-2 rounded-full transition-all" style="width: ${score}%"></div>
+                                    </div>
+                                    <span class="text-lg font-bold text-primary w-12 text-right">${score}%</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            ` : ''}
+            
+            <!-- Strengths -->
+            ${strengths && strengths.length > 0 ? `
+                <div class="bg-green-50 rounded-xl p-6 border-l-4 border-green-500">
+                    <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                        Strengths
+                    </h4>
+                    <ul class="space-y-2">
+                        ${strengths.map(strength => `<li class="text-gray-700 flex items-start"><i class="fas fa-arrow-right text-green-500 mr-2 mt-1"></i>${strength}</li>`).join('')}
+                    </ul>
+                </div>
+            ` : ''}
+            
+            <!-- Weaknesses -->
+            ${weaknesses && weaknesses.length > 0 ? `
+                <div class="bg-orange-50 rounded-xl p-6 border-l-4 border-orange-500">
+                    <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-exclamation-triangle text-orange-500 mr-2"></i>
+                        Areas for Improvement
+                    </h4>
+                    <ul class="space-y-2">
+                        ${weaknesses.map(weakness => `<li class="text-gray-700 flex items-start"><i class="fas fa-arrow-right text-orange-500 mr-2 mt-1"></i>${weakness}</li>`).join('')}
+                    </ul>
+                </div>
+            ` : ''}
+            
+            <!-- Recommendations -->
+            ${recommendations && recommendations.length > 0 ? `
+                <div class="bg-purple-50 rounded-xl p-6 border-l-4 border-purple-500">
+                    <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-lightbulb text-purple-500 mr-2"></i>
+                        Recommendations
+                    </h4>
+                    <ul class="space-y-2">
+                        ${recommendations.map(rec => `<li class="text-gray-700 flex items-start"><i class="fas fa-arrow-right text-purple-500 mr-2 mt-1"></i>${rec}</li>`).join('')}
+                    </ul>
+                </div>
+            ` : ''}
+        </div>
+    `;
+    
+    resultSection.classList.remove('hidden');
+    resultSection.innerHTML = html;
+}
+
+function drrfGetTopicNameForAnalysis() {
+    return 'domain-range-rational-functions';
+}
+
+// ------------------------------
+// User Dropdown Functions
+// ------------------------------
+function toggleUserDropdown() {
+    const menu = document.getElementById('userDropdownMenu');
+    if (menu) {
+        menu.classList.toggle('hidden');
+    }
+}
+
+function toggleMobileMenu() {
+    const menu = document.getElementById('mobileMenu');
+    if (menu) {
+        menu.classList.toggle('hidden');
+    }
+}
+
+function confirmLogout() {
+    Swal.fire({
+        title: 'Logout?',
+        text: 'Are you sure you want to logout?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Yes, logout'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = '../php/logout.php';
+        }
+    });
+}
+
+function loadProfilePicture() {
+    fetch('../php/user.php', { credentials: 'include', cache: 'no-store' })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success && data.user) {
+                const userName = `${data.user.first_name || ''} ${data.user.last_name || ''}`.trim() || 'Student';
+                document.querySelectorAll('#userName, #userNameDropdown, #userNameMobile').forEach(el => {
+                    if (el) el.textContent = userName;
+                });
+                const profileImages = document.querySelectorAll('#userProfileImage, #userProfileImageDropdown, #userProfileImageMobile');
+                const profileIcons = document.querySelectorAll('#userProfileIcon, #userProfileIconDropdown, #userProfileIconMobile');
+                if (data.user.profile_picture) {
+                    const path = `../${data.user.profile_picture}?t=${Date.now()}`;
+                    profileImages.forEach(img => {
+                        if (img) { img.src = path; img.classList.remove('hidden'); }
+                    });
+                    profileIcons.forEach(icon => { if (icon) icon.style.display = 'none'; });
+                } else {
+                    profileImages.forEach(img => { if (img) { img.src = ''; img.classList.add('hidden'); } });
+                    profileIcons.forEach(icon => { if (icon) icon.style.display = 'block'; });
+                }
+            }
+        })
+        .catch(err => console.error('Error loading profile:', err));
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('userDropdown');
+    if (dropdown && !dropdown.contains(event.target)) {
+        const menu = document.getElementById('userDropdownMenu');
+        if (menu) menu.classList.add('hidden');
+    }
+});
+
+document.addEventListener('DOMContentLoaded', async function() {
+    // Initialize sidebar navigation
+    initializeSidebar();
+    
+    // Load profile picture
+    loadProfilePicture();
+    
     // Load completion state from server
-    drrfLoadCompletedLessons();
-    drrfUpdateCompletionButtonsUI();
-
+    await drrfLoadCompletedLessons();
+    
+    // Start study time interval (save every 30 seconds)
+    drrfStudyTimeInterval = setInterval(() => {
+        if (drrfCurrentLesson && !drrfCompletedLessons.has(drrfCurrentLesson)) {
+            drrfSaveStudyTimeForCurrentLesson();
+        }
+    }, 30000);
+    
+    // Load and display study time for current lesson
+    await drrfLoadAndDisplayStudyTime();
+    
+    // Initialize first lesson
+    await drrfShowLesson(1, false);
+    
     // Initialize authentication guard and user progress
     initializeAuthGuard();
     loadUserProgress();
 
     // Initialize interactive tools
     try { initializeCalculators(); } catch (_) {}
+    
+    // Add visibility change listener to handle tab switching
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            // Page is hidden, save current time
+            if (drrfCurrentLesson && !drrfCompletedLessons.has(drrfCurrentLesson)) {
+                drrfSaveStudyTimeForCurrentLesson();
+            }
+        } else {
+            // Page is visible again, reload time and restart timer
+            if (drrfCurrentLesson && !drrfCompletedLessons.has(drrfCurrentLesson)) {
+                const now = Date.now();
+                if (!drrfLastSaveTimestamp[drrfCurrentLesson]) {
+                    drrfLastSaveTimestamp[drrfCurrentLesson] = now;
+                }
+                if (!drrfLessonStartTime[drrfCurrentLesson]) {
+                    drrfLessonStartTime[drrfCurrentLesson] = now;
+                }
+                drrfLoadAndDisplayStudyTime().then(() => {
+                    drrfStartLiveTimer();
+                });
+            } else if (drrfCurrentLesson && drrfCompletedLessons.has(drrfCurrentLesson)) {
+                // Just show final time for completed lessons
+                drrfUpdateLiveTimer();
+            }
+        }
+    });
+    
+    // Save time before page unload
+    window.addEventListener('beforeunload', function() {
+        if (drrfCurrentLesson && !drrfCompletedLessons.has(drrfCurrentLesson)) {
+            drrfSaveStudyTimeForCurrentLesson();
+            // Use sendBeacon for more reliable sending on page unload
+            const studyTimeData = {};
+            if (drrfTotalStudyTime[drrfCurrentLesson] && drrfTotalStudyTime[drrfCurrentLesson] > 0) {
+                studyTimeData[drrfCurrentLesson] = drrfTotalStudyTime[drrfCurrentLesson];
+            }
+            if (Object.keys(studyTimeData).length > 0) {
+                navigator.sendBeacon('../php/store-study-time.php', JSON.stringify({
+                    topic: 'domain-range-rational-functions',
+                    study_time: studyTimeData
+                }));
+            }
+        }
+    });
+    
+    // Handle window focus/blur
+    window.addEventListener('focus', function() {
+        if (drrfCurrentLesson && !drrfCompletedLessons.has(drrfCurrentLesson)) {
+            const now = Date.now();
+            if (!drrfLastSaveTimestamp[drrfCurrentLesson]) {
+                drrfLastSaveTimestamp[drrfCurrentLesson] = now;
+            }
+            drrfStartLiveTimer();
+        }
+    });
+    
+    window.addEventListener('blur', function() {
+        if (drrfCurrentLesson && !drrfCompletedLessons.has(drrfCurrentLesson)) {
+            drrfSaveStudyTimeForCurrentLesson();
+        }
+    });
 });
 
-function drrfInjectLessonControls() {
-    const sections = document.querySelectorAll('.lesson-section');
-    sections.forEach((section, index) => {
-        const lessonNum = index + 1;
-        if (section.querySelector('[data-drrf-controls]')) return;
-
-        const wrapper = document.createElement('div');
-        wrapper.setAttribute('data-drrf-controls', 'true');
-        wrapper.innerHTML = `
-            <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8">
-                <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
-                    <i class="fas fa-check-circle text-emerald-500 mr-2"></i>Complete This Lesson
-                </h3>
-                <p class="text-gray-600 text-center mb-6">Mark this lesson as completed to track your progress and unlock the next lesson.</p>
-                <div class="text-center">
-                    <button onclick="drrfCompleteLesson(${lessonNum})" class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold" data-drrf-complete-btn="${lessonNum}">
-                        <i class="fas fa-check mr-2"></i>Mark as Complete
-                    </button>
-                </div>
-            </div>
-
-            <div class="flex justify-between items-center mb-8">
-                <button onclick="drrfNavigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" data-drrf-prev>
-                    <i class="fas fa-chevron-left mr-2"></i>Previous Lesson
-                </button>
-                <div class="flex items-center space-x-4">
-                    <div class="text-center">
-                        <div class="text-lg font-semibold text-primary"><span id="drrfCurrentLessonNum">${drrfCurrentLesson}</span> of ${drrfTotalLessons}</div>
-                    </div>
-                    <div class="w-32 bg-gray-200 rounded-full h-2">
-                        <div id="drrfLessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: ${(drrfCurrentLesson / drrfTotalLessons) * 100}%"></div>
-                    </div>
-                </div>
-                <button onclick="drrfNavigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed" data-drrf-next>
-                    Next Lesson<i class="fas fa-chevron-right ml-2"></i>
-                </button>
-            </div>
-        `;
-
-        section.appendChild(wrapper);
-    });
-
-    drrfUpdateNavigationButtons();
+// Navigation buttons are already in HTML, just need to update them
+function drrfUpdateNavigationButtons() {
+    // Update all navigation button sets in each lesson
+    for (let i = 1; i <= drrfTotalLessons; i++) {
+        const lessonSection = document.getElementById(`lesson${i}`);
+        if (!lessonSection) continue;
+        
+        // Find prev button
+        const prevBtn = lessonSection.querySelector('button[onclick*="drrfNavigateLesson(-1)"]');
+        if (prevBtn) {
+            prevBtn.disabled = drrfCurrentLesson === 1;
+        }
+        
+        // Find next button
+        const nextBtn = lessonSection.querySelector('button[onclick*="drrfNavigateLesson(1)"]');
+        if (nextBtn) {
+            nextBtn.disabled = drrfCurrentLesson === drrfTotalLessons;
+        }
+    }
 }
 
 function drrfNavigateLesson(direction) {
     const newLesson = drrfCurrentLesson + direction;
-    if (newLesson >= 1 && newLesson <= drrfTotalLessons) {
-        drrfShowLesson(newLesson, true);
+    if (newLesson < 1 || newLesson > drrfTotalLessons) return;
+    
+    // Check if current lesson's quiz has been passed
+    if (direction > 0 && !drrfCompletedLessons.has(drrfCurrentLesson)) {
+        // Trigger quiz for current lesson
+        drrfRunLessonQuiz(drrfCurrentLesson).then(passed => {
+            if (passed) {
+                drrfShowLesson(newLesson, true);
+            }
+        });
+        return;
     }
+    
+    // Check if target lesson is accessible
+    if (!drrfCanAccessTopic(newLesson)) {
+        drrfShowTopicLockedMessage(newLesson);
+        return;
+    }
+    
+    drrfShowLesson(newLesson, true);
 }
 
-function drrfShowLesson(lessonNum, scrollToTop = false) {
-    const lessonSections = document.querySelectorAll('.lesson-section');
+async function drrfShowLesson(lessonNum, scrollToTop = false) {
+    // Check if lesson is accessible
+    if (!drrfCanAccessTopic(lessonNum)) {
+        drrfShowTopicLockedMessage(lessonNum);
+        return;
+    }
+    
+    // Save time for previous lesson before switching
+    if (drrfCurrentLesson && !drrfCompletedLessons.has(drrfCurrentLesson)) {
+        drrfSaveStudyTimeForCurrentLesson();
+    }
+    
+    // Update current lesson
     drrfCurrentLesson = lessonNum;
+    
+    // Hide all lesson sections
+    const lessonSections = document.querySelectorAll('.lesson-section');
     lessonSections.forEach(s => s.classList.remove('active'));
-    const target = document.getElementById(`lesson${lessonNum}`);
-    if (target) target.classList.add('active');
+    
+    // Show selected lesson
+    const activeSection = document.getElementById(`lesson${lessonNum}`);
+    if (activeSection) {
+        activeSection.classList.add('active');
+        
+        // Ensure timer container is visible
+        const timerContainer = activeSection.querySelector('.flex-shrink-0.ml-6');
+        if (timerContainer) {
+            timerContainer.classList.remove('hidden');
+            timerContainer.style.display = 'flex';
+            timerContainer.style.visibility = 'visible';
+        }
+    }
+    
+    // Start tracking for new lesson - only if not completed
+    if (!drrfCompletedLessons.has(lessonNum)) {
+        if (!drrfLessonStartTime[lessonNum]) {
+            drrfLessonStartTime[lessonNum] = Date.now();
+        }
+        // Ensure lastSavedTime and lastSaveTimestamp are initialized
+        if (drrfLastSavedTime[lessonNum] === undefined) {
+            drrfLastSavedTime[lessonNum] = drrfTotalStudyTime[lessonNum] || 0;
+        }
+        if (!drrfLastSaveTimestamp[lessonNum]) {
+            drrfLastSaveTimestamp[lessonNum] = Date.now();
+        }
+    } else {
+        // If lesson is completed, clear start time to prevent timer from running
+        drrfLessonStartTime[lessonNum] = null;
+        if (drrfTimerUpdateInterval) {
+            clearInterval(drrfTimerUpdateInterval);
+            drrfTimerUpdateInterval = null;
+        }
+    }
+    
+    // Load and display study time for this lesson
+    await drrfLoadAndDisplayStudyTime();
+    
+    // Start/restart live timer display (will show final time if completed, but won't update)
+    drrfStartLiveTimer();
+    
+    // Ensure timer is updated after loading
+    drrfUpdateLiveTimer();
+    
+    // Show/hide Topic 4 quiz button
+    const topic4QuizButton = document.getElementById('topic4QuizButton');
+    if (topic4QuizButton) {
+        if (lessonNum === 4 && !drrfCompletedLessons.has(4)) {
+            topic4QuizButton.style.display = 'block';
+        } else {
+            topic4QuizButton.style.display = 'none';
+        }
+    }
+    
+    // Update UI
     drrfUpdateNavigationButtons();
     drrfUpdateProgressIndicators();
     drrfUpdateLessonCompletionStatus();
+    drrfUpdateSidebarProgress();
+    setSidebarActive(lessonNum, 'objective');
+    
     if (scrollToTop) {
-        const lessonContent = document.querySelector('.lesson-content');
-        if (lessonContent) lessonContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const lessonMain = document.querySelector('.lesson-main');
+        if (lessonMain) lessonMain.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+function updateAIAnalysisVisibility() {
+    const aiSection = document.getElementById('aiAnalysisSection');
+    if (aiSection) {
+        // Only show if all lessons are completed AND we're on Topic 4
+        if (drrfCompletedLessons.size === drrfTotalLessons && drrfCurrentLesson === drrfTotalLessons) {
+            aiSection.classList.remove('hidden');
+        } else {
+            aiSection.classList.add('hidden');
+        }
     }
 }
 
@@ -201,11 +1543,138 @@ function drrfUpdateCompletionButtonsUI() {
 
 async function drrfCompleteLesson(lessonNum) {
     try {
+        let savedFinalTime = 0; // Store the final time for use in setTimeout callbacks
+        
+        // Save final study time before marking as complete
+        if (lessonNum === drrfCurrentLesson && !drrfCompletedLessons.has(lessonNum)) {
+            // Save current accumulated time first
+            drrfSaveStudyTimeForCurrentLesson();
+            
+            // Wait a bit for the save to update local variables
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            // Calculate final time - use the most recent saved time
+            const baseTime = drrfLastSavedTime[lessonNum] || drrfTotalStudyTime[lessonNum] || 0;
+            const saveStartTime = drrfLastSaveTimestamp[lessonNum] || drrfLessonStartTime[lessonNum];
+            let finalTime = baseTime;
+            
+            if (saveStartTime) {
+                const now = Date.now();
+                const elapsed = Math.floor((now - saveStartTime) / 1000);
+                if (elapsed > 0 && elapsed < 7200) {
+                    finalTime = baseTime + elapsed;
+                }
+            }
+            
+            // Ensure finalTime is at least the baseTime if no elapsed time
+            if (finalTime === 0 && baseTime > 0) {
+                finalTime = baseTime;
+            }
+            
+            // If still 0, try to get from current session time
+            if (finalTime === 0 && drrfLessonStartTime[lessonNum]) {
+                const now = Date.now();
+                const sessionElapsed = Math.floor((now - drrfLessonStartTime[lessonNum]) / 1000);
+                if (sessionElapsed > 0 && sessionElapsed < 7200) {
+                    finalTime = sessionElapsed;
+                }
+            }
+            
+            // Always save the final time (even if 0, to ensure consistency)
+            const timeToSave = finalTime > 0 ? finalTime : (drrfLastSavedTime[lessonNum] || drrfTotalStudyTime[lessonNum] || 0);
+            savedFinalTime = timeToSave;
+            
+            if (timeToSave > 0) {
+                const saveResponse = await fetch('../php/store-study-time.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        topic: 'domain-range-rational-functions',
+                        study_time: { [lessonNum]: timeToSave },
+                        is_final: true
+                    }),
+                    credentials: 'include'
+                });
+                
+                const saveData = await saveResponse.json();
+                if (saveData.success) {
+                    drrfTotalStudyTime[lessonNum] = timeToSave;
+                    drrfLastSavedTime[lessonNum] = timeToSave;
+                    drrfLastSaveTimestamp[lessonNum] = Date.now();
+                }
+            } else {
+                // If timeToSave is still 0, use whatever we have locally
+                const lastSaved = drrfLastSavedTime[lessonNum] || drrfTotalStudyTime[lessonNum] || 0;
+                if (lastSaved > 0) {
+                    drrfTotalStudyTime[lessonNum] = lastSaved;
+                    drrfLastSavedTime[lessonNum] = lastSaved;
+                    savedFinalTime = lastSaved;
+                }
+            }
+            
+            // Stop timer intervals
+            if (drrfTimerUpdateInterval) {
+                clearInterval(drrfTimerUpdateInterval);
+                drrfTimerUpdateInterval = null;
+            }
+            if (drrfStudyTimeInterval) {
+                clearInterval(drrfStudyTimeInterval);
+                drrfStudyTimeInterval = null;
+            }
+            
+            // Clear start time
+            drrfLessonStartTime[lessonNum] = null;
+            
+            // Update timer display to show final time (green)
+            drrfUpdateLiveTimer();
+            
+            // Ensure timer container is visible
+            const section = document.getElementById(`lesson${lessonNum}`);
+            if (section) {
+                const timerContainer = section.querySelector('.flex-shrink-0.ml-6');
+                if (timerContainer) {
+                    timerContainer.classList.remove('hidden');
+                    timerContainer.style.display = 'flex';
+                    timerContainer.style.visibility = 'visible';
+                }
+            }
+            
+            // Reload study time after a short delay to ensure server has saved it
+            setTimeout(async () => {
+                await drrfLoadAndDisplayStudyTime();
+                
+                // Ensure we have a valid time displayed
+                const currentTime = drrfTotalStudyTime[lessonNum] || drrfLastSavedTime[lessonNum] || 0;
+                
+                if (currentTime === 0 && savedFinalTime > 0) {
+                    // Use the saved time as fallback
+                    drrfTotalStudyTime[lessonNum] = savedFinalTime;
+                    drrfLastSavedTime[lessonNum] = savedFinalTime;
+                }
+                
+                drrfUpdateLiveTimer();
+                
+                // If still 0 after reload, try one more time
+                const retryTime = drrfTotalStudyTime[lessonNum] || drrfLastSavedTime[lessonNum] || 0;
+                if (retryTime === 0 && savedFinalTime > 0) {
+                    setTimeout(async () => {
+                        await drrfLoadAndDisplayStudyTime();
+                        const finalRetryTime = drrfTotalStudyTime[lessonNum] || drrfLastSavedTime[lessonNum] || 0;
+                        if (finalRetryTime === 0 && savedFinalTime > 0) {
+                            drrfTotalStudyTime[lessonNum] = savedFinalTime;
+                            drrfLastSavedTime[lessonNum] = savedFinalTime;
+                        }
+                        drrfUpdateLiveTimer();
+                    }, 1000);
+                }
+            }, 800);
+        }
+        
         console.log('Attempting to complete lesson:', lessonNum);
         
         if (drrfCompletedLessons.has(lessonNum)) { 
             drrfSetCompleteButtonState(lessonNum, { completed: true }); 
-            return; 
+            return true; 
         }
         
         drrfSetCompleteButtonState(lessonNum, { loading: true });
@@ -272,11 +1741,18 @@ async function drrfCompleteLesson(lessonNum) {
             });
             
             drrfSetCompleteButtonState(lessonNum, { completed: false });
-            return;
+            return false;
         }
         
         if (data && data.success) {
             await drrfLoadCompletedLessons();
+            
+            // Reload study time after completion to ensure we have the latest saved time
+            await drrfLoadAndDisplayStudyTime();
+            
+            // Update timer display with the loaded time
+            drrfUpdateLiveTimer();
+            
             drrfSetCompleteButtonState(lessonNum, { completed: true });
             drrfUpdateLessonCompletionStatus();
             
@@ -309,6 +1785,7 @@ async function drrfCompleteLesson(lessonNum) {
                 }
             });
             
+            return true;
         } else {
             drrfSetCompleteButtonState(lessonNum, { completed: false });
             
@@ -338,6 +1815,8 @@ async function drrfCompleteLesson(lessonNum) {
                 confirmButtonText: 'Try Again',
                 confirmButtonColor: '#ef4444'
             });
+            
+            return false;
         }
     } catch (e) {
         console.error('Error completing lesson:', e);
@@ -369,6 +1848,8 @@ async function drrfCompleteLesson(lessonNum) {
             confirmButtonText: 'OK',
             confirmButtonColor: '#ef4444'
         });
+        
+        return false;
     }
 }
 
@@ -410,7 +1891,47 @@ async function drrfLoadCompletedLessons() {
             
             const list = Array.isArray(data.completed_lessons) ? data.completed_lessons.map(Number) : [];
             drrfCompletedLessons = new Set(list);
+            
+            // Load study time for all lessons (including completed ones)
+            try {
+                const timeRes = await fetch(`../php/get-study-time.php?topic=domain-range-rational-functions`, {
+                    credentials: 'include'
+                });
+                if (timeRes.ok) {
+                    const timeData = await timeRes.json();
+                    if (timeData.success && timeData.study_time) {
+                        for (const lesson in timeData.study_time) {
+                            const lessonNum = parseInt(lesson);
+                            const seconds = parseInt(timeData.study_time[lesson]);
+                            
+                            if (!isNaN(seconds) && seconds >= 0) {
+                                drrfTotalStudyTime[lessonNum] = seconds;
+                                drrfLastSavedTime[lessonNum] = seconds;
+                                drrfLastSaveTimestamp[lessonNum] = Date.now();
+                            }
+                        }
+                        
+                        // Update timer display if we're viewing a completed lesson
+                        if (drrfCurrentLesson && drrfCompletedLessons.has(drrfCurrentLesson)) {
+                            drrfUpdateLiveTimer();
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error('Error loading study time:', e);
+            }
+            
             drrfUpdateLessonCompletionStatus();
+            drrfUpdateSidebarProgress();
+            
+            // Hide Topic 4 quiz button if Topic 4 is completed
+            if (drrfCompletedLessons.has(4)) {
+                const topic4QuizButton = document.getElementById('topic4QuizButton');
+                if (topic4QuizButton) {
+                    topic4QuizButton.style.display = 'none';
+                }
+            }
+            
             return;
         }
         
@@ -439,6 +1960,8 @@ async function drrfLoadCompletedLessons() {
             const approx = Array.from({ length: Math.max(0, Math.min(count, drrfTotalLessons)) }, (_, i) => i + 1);
             drrfCompletedLessons = new Set(approx);
             drrfUpdateLessonCompletionStatus();
+            drrfUpdateSidebarProgress();
+            updateAIAnalysisVisibility();
         } else {
             console.error('Fallback request failed:', fallback.status);
             throw new Error('Both primary and fallback requests failed');
@@ -467,31 +1990,73 @@ function initializeInteractiveRangeAnalyzer() {
 // Set Range Example
 function drrfSetRangeExample(functionInput) {
     try {
-        // Display the function
-        document.getElementById('rangeFunctionDisplay').innerHTML = `
-            <h4 class="font-semibold text-gray-800 mb-2">Selected Function:</h4>
-            <div class="text-lg font-mono text-primary">f(x) = ${functionInput}</div>
-        `;
-        
-        // Analyze horizontal asymptote
-        const horizontalAsymptote = drrfAnalyzeHorizontalAsymptote(functionInput);
-        document.getElementById('horizontalAsymptote').innerHTML = `
-            <h4 class="font-semibold text-gray-800 mb-2">Horizontal Asymptote:</h4>
-            <div class="text-gray-700">${horizontalAsymptote}</div>
-        `;
-        
-        // Analyze range
-        const rangeAnalysis = drrfAnalyzeRangeRestrictions(functionInput);
-        document.getElementById('rangeNotation').innerHTML = `
-            <h4 class="font-semibold text-gray-800 mb-2">Range in Interval Notation:</h4>
-            <div class="text-gray-700 font-mono">${rangeAnalysis.intervalNotation}</div>
-        `;
-        
-        // Display step-by-step explanation
-        document.getElementById('rangeExplanation').innerHTML = `
-            <h4 class="font-semibold text-gray-800 mb-2">Step-by-Step Explanation:</h4>
-            <div class="text-gray-700">${rangeAnalysis.explanation}</div>
-        `;
+        // Add loading animation
+        const displays = ['rangeFunctionDisplay', 'horizontalAsymptote', 'rangeNotation', 'rangeExplanation'];
+        displays.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.style.opacity = '0.5';
+                el.style.transform = 'scale(0.95)';
+            }
+        });
+
+        setTimeout(() => {
+            // Display the function with animation
+            document.getElementById('rangeFunctionDisplay').innerHTML = `
+                <div class="flex items-center mb-3">
+                    <div class="bg-green-500 rounded-full p-2 mr-3">
+                        <i class="fas fa-function text-white text-sm"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-lg">Selected Function:</h4>
+                </div>
+                <div class="text-xl font-mono text-green-900 font-bold bg-white rounded-lg p-3 text-center animate-pulse-once">f(x) = ${functionInput}</div>
+            `;
+            
+            // Analyze horizontal asymptote
+            const horizontalAsymptote = drrfAnalyzeHorizontalAsymptote(functionInput);
+            document.getElementById('horizontalAsymptote').innerHTML = `
+                <div class="flex items-center mb-3">
+                    <div class="bg-blue-500 rounded-full p-2 mr-3">
+                        <i class="fas fa-arrows-alt-h text-white text-sm"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-lg">Horizontal Asymptote:</h4>
+                </div>
+                <div class="text-gray-800 bg-white rounded-lg p-3 font-semibold text-lg">${horizontalAsymptote}</div>
+            `;
+            
+            // Analyze range
+            const rangeAnalysis = drrfAnalyzeRangeRestrictions(functionInput);
+            document.getElementById('rangeNotation').innerHTML = `
+                <div class="flex items-center mb-3">
+                    <div class="bg-teal-500 rounded-full p-2 mr-3">
+                        <i class="fas fa-brackets-curly text-white text-sm"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-lg">Range in Interval Notation:</h4>
+                </div>
+                <div class="text-gray-800 font-mono bg-white rounded-lg p-3 text-center font-bold text-lg text-teal-700">${rangeAnalysis.intervalNotation}</div>
+            `;
+            
+            // Display step-by-step explanation
+            document.getElementById('rangeExplanation').innerHTML = `
+                <div class="flex items-center mb-3">
+                    <div class="bg-purple-500 rounded-full p-2 mr-3">
+                        <i class="fas fa-list-ol text-white text-sm"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-lg">Step-by-Step Explanation:</h4>
+                </div>
+                <div class="text-gray-800 bg-white rounded-lg p-4">${rangeAnalysis.explanation}</div>
+            `;
+
+            // Restore opacity and add animation
+            displays.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.style.opacity = '1';
+                    el.style.transform = 'scale(1)';
+                    el.style.transition = 'all 0.3s ease';
+                }
+            });
+        }, 150);
         
     } catch (error) {
         console.error('Error analyzing range:', error);
@@ -623,35 +2188,81 @@ function initializeInteractiveDomainRangeCalculator() {
 // Set Domain Range Example
 function drrfSetDomainRangeExample(functionInput) {
     try {
-        // Display the function
-        document.getElementById('functionDisplay').innerHTML = `
-            <h4 class="font-semibold text-gray-800 mb-2">Selected Function:</h4>
-            <div class="text-lg font-mono text-primary">f(x) = ${functionInput}</div>
-        `;
-        
-        // Calculate domain
-        const domainAnalysis = drrfAnalyzeDomainRestrictions(functionInput);
-        document.getElementById('domainResult').innerHTML = `
-            <h4 class="font-semibold text-gray-800 mb-2">Domain:</h4>
-            <div class="text-gray-700 font-mono">${domainAnalysis.intervalNotation}</div>
-            <div class="text-sm text-gray-600 mt-1">${domainAnalysis.restrictions}</div>
-        `;
-        
-        // Calculate range
-        const rangeAnalysis = drrfAnalyzeRangeRestrictions(functionInput);
-        const horizontalAsymptote = drrfAnalyzeHorizontalAsymptote(functionInput);
-        document.getElementById('rangeResult').innerHTML = `
-            <h4 class="font-semibold text-gray-800 mb-2">Range:</h4>
-            <div class="text-gray-700 font-mono">${rangeAnalysis.intervalNotation}</div>
-            <div class="text-sm text-gray-600 mt-1">${horizontalAsymptote}</div>
-        `;
-        
-        // Show complete step-by-step solution
-        const stepByStepSolution = drrfGenerateCompleteStepByStepSolution(functionInput);
-        document.getElementById('stepByStepSolution').innerHTML = `
-            <h4 class="font-semibold text-gray-800 mb-2">Complete Step-by-Step Solution:</h4>
-            <div class="text-gray-700">${stepByStepSolution}</div>
-        `;
+        // Add loading animation
+        const displays = ['functionDisplay', 'domainResult', 'rangeResult', 'stepByStepSolution'];
+        displays.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.style.opacity = '0.5';
+                el.style.transform = 'scale(0.95)';
+            }
+        });
+
+        setTimeout(() => {
+            // Display the function with animation
+            document.getElementById('functionDisplay').innerHTML = `
+                <div class="flex items-center mb-3">
+                    <div class="bg-indigo-500 rounded-full p-2 mr-3">
+                        <i class="fas fa-function text-white text-sm"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-lg">Selected Function:</h4>
+                </div>
+                <div class="text-xl font-mono text-indigo-900 font-bold bg-white rounded-lg p-3 text-center animate-pulse-once">f(x) = ${functionInput}</div>
+            `;
+            
+            // Calculate domain
+            const domainAnalysis = drrfAnalyzeDomainRestrictions(functionInput);
+            document.getElementById('domainResult').innerHTML = `
+                <div class="flex items-center mb-3">
+                    <div class="bg-blue-500 rounded-full p-2 mr-3">
+                        <i class="fas fa-search text-white text-sm"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-lg">Domain:</h4>
+                </div>
+                <div class="bg-white rounded-lg p-4">
+                    <div class="text-gray-800 font-mono text-lg font-bold text-blue-700 mb-2">${domainAnalysis.intervalNotation}</div>
+                    <div class="text-sm text-gray-600 border-t pt-2">${domainAnalysis.restrictions}</div>
+                </div>
+            `;
+            
+            // Calculate range
+            const rangeAnalysis = drrfAnalyzeRangeRestrictions(functionInput);
+            const horizontalAsymptote = drrfAnalyzeHorizontalAsymptote(functionInput);
+            document.getElementById('rangeResult').innerHTML = `
+                <div class="flex items-center mb-3">
+                    <div class="bg-pink-500 rounded-full p-2 mr-3">
+                        <i class="fas fa-chart-bar text-white text-sm"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-lg">Range:</h4>
+                </div>
+                <div class="bg-white rounded-lg p-4">
+                    <div class="text-gray-800 font-mono text-lg font-bold text-pink-700 mb-2">${rangeAnalysis.intervalNotation}</div>
+                    <div class="text-sm text-gray-600 border-t pt-2">${horizontalAsymptote}</div>
+                </div>
+            `;
+            
+            // Show complete step-by-step solution
+            const stepByStepSolution = drrfGenerateCompleteStepByStepSolution(functionInput);
+            document.getElementById('stepByStepSolution').innerHTML = `
+                <div class="flex items-center mb-3">
+                    <div class="bg-purple-500 rounded-full p-2 mr-3">
+                        <i class="fas fa-list-ol text-white text-sm"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-lg">Complete Step-by-Step Solution:</h4>
+                </div>
+                <div class="bg-white rounded-lg p-4">${stepByStepSolution}</div>
+            `;
+
+            // Restore opacity and add animation
+            displays.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.style.opacity = '1';
+                    el.style.transform = 'scale(1)';
+                    el.style.transition = 'all 0.3s ease';
+                }
+            });
+        }, 150);
         
     } catch (error) {
         console.error('Error calculating domain and range:', error);
@@ -691,6 +2302,26 @@ function drrfGenerateCompleteStepByStepSolution(functionInput) {
 window.drrfNavigateLesson = drrfNavigateLesson;
 window.drrfShowLesson = drrfShowLesson;
 window.drrfCompleteLesson = drrfCompleteLesson;
+window.drrfShuffleArray = drrfShuffleArray;
+window.drrfShuffleQuiz = drrfShuffleQuiz;
+window.drrfGenerateExplanation = drrfGenerateExplanation;
+window.drrfRunLessonQuiz = drrfRunLessonQuiz;
+window.drrfStoreQuizData = drrfStoreQuizData;
+window.drrfStartLiveTimer = drrfStartLiveTimer;
+window.drrfUpdateLiveTimer = drrfUpdateLiveTimer;
+window.drrfSaveStudyTimeForCurrentLesson = drrfSaveStudyTimeForCurrentLesson;
+window.drrfSendStudyTimeToServer = drrfSendStudyTimeToServer;
+window.drrfLoadAndDisplayStudyTime = drrfLoadAndDisplayStudyTime;
+window.drrfCompleteLesson = drrfCompleteLesson;
+window.drrfLoadCompletedLessons = drrfLoadCompletedLessons;
+window.drrfShowPerformanceAnalysisSection = drrfShowPerformanceAnalysisSection;
+window.drrfAnalyzePerformance = drrfAnalyzePerformance;
+window.drrfDisplayPerformanceAnalysis = drrfDisplayPerformanceAnalysis;
+window.drrfGetTopicNameForAnalysis = drrfGetTopicNameForAnalysis;
+window.drrfShowTopic4Quiz = drrfShowTopic4Quiz;
+window.toggleUserDropdown = toggleUserDropdown;
+window.toggleMobileMenu = toggleMobileMenu;
+window.confirmLogout = confirmLogout;
 window.drrfSetDomainExample = drrfSetDomainExample;
 window.drrfSetRangeExample = drrfSetRangeExample;
 window.drrfSetDomainRangeExample = drrfSetDomainRangeExample;
@@ -727,30 +2358,72 @@ function initializeInteractiveDomainAnalyzer() {
 // Set Domain Example
 function drrfSetDomainExample(functionInput) {
     try {
-        // Display the function
-        document.getElementById('domainFunctionDisplay').innerHTML = `
-            <h4 class="font-semibold text-gray-800 mb-2">Selected Function:</h4>
-            <div class="text-lg font-mono text-primary">f(x) = ${functionInput}</div>
-        `;
-        
-        // Analyze domain restrictions
-        const domainAnalysis = drrfAnalyzeDomainRestrictions(functionInput);
-        document.getElementById('domainRestrictions').innerHTML = `
-            <h4 class="font-semibold text-gray-800 mb-2">Domain Restrictions:</h4>
-            <div class="text-gray-700">${domainAnalysis.restrictions}</div>
-        `;
-        
-        // Display domain in interval notation
-        document.getElementById('domainNotation').innerHTML = `
-            <h4 class="font-semibold text-gray-800 mb-2">Domain in Interval Notation:</h4>
-            <div class="text-gray-700 font-mono">${domainAnalysis.intervalNotation}</div>
-        `;
-        
-        // Display step-by-step explanation
-        document.getElementById('domainExplanation').innerHTML = `
-            <h4 class="font-semibold text-gray-800 mb-2">Step-by-Step Explanation:</h4>
-            <div class="text-gray-700">${domainAnalysis.explanation}</div>
-        `;
+        // Add loading animation
+        const displays = ['domainFunctionDisplay', 'domainRestrictions', 'domainNotation', 'domainExplanation'];
+        displays.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.style.opacity = '0.5';
+                el.style.transform = 'scale(0.95)';
+            }
+        });
+
+        setTimeout(() => {
+            // Display the function with animation
+            document.getElementById('domainFunctionDisplay').innerHTML = `
+                <div class="flex items-center mb-3">
+                    <div class="bg-blue-500 rounded-full p-2 mr-3">
+                        <i class="fas fa-function text-white text-sm"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-lg">Selected Function:</h4>
+                </div>
+                <div class="text-xl font-mono text-blue-900 font-bold bg-white rounded-lg p-3 text-center animate-pulse-once">f(x) = ${functionInput}</div>
+            `;
+            
+            // Analyze domain restrictions
+            const domainAnalysis = drrfAnalyzeDomainRestrictions(functionInput);
+            document.getElementById('domainRestrictions').innerHTML = `
+                <div class="flex items-center mb-3">
+                    <div class="bg-red-500 rounded-full p-2 mr-3">
+                        <i class="fas fa-exclamation-triangle text-white text-sm"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-lg">Domain Restrictions:</h4>
+                </div>
+                <div class="text-gray-800 bg-white rounded-lg p-3 font-semibold text-lg">${domainAnalysis.restrictions}</div>
+            `;
+            
+            // Display domain in interval notation
+            document.getElementById('domainNotation').innerHTML = `
+                <div class="flex items-center mb-3">
+                    <div class="bg-green-500 rounded-full p-2 mr-3">
+                        <i class="fas fa-brackets-curly text-white text-sm"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-lg">Domain in Interval Notation:</h4>
+                </div>
+                <div class="text-gray-800 font-mono bg-white rounded-lg p-3 text-center font-bold text-lg text-green-700">${domainAnalysis.intervalNotation}</div>
+            `;
+            
+            // Display step-by-step explanation
+            document.getElementById('domainExplanation').innerHTML = `
+                <div class="flex items-center mb-3">
+                    <div class="bg-purple-500 rounded-full p-2 mr-3">
+                        <i class="fas fa-list-ol text-white text-sm"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-lg">Step-by-Step Explanation:</h4>
+                </div>
+                <div class="text-gray-800 bg-white rounded-lg p-4">${domainAnalysis.explanation}</div>
+            `;
+
+            // Restore opacity and add animation
+            displays.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.style.opacity = '1';
+                    el.style.transform = 'scale(1)';
+                    el.style.transition = 'all 0.3s ease';
+                }
+            });
+        }, 150);
         
     } catch (error) {
         console.error('Error analyzing domain:', error);

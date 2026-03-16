@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2025-01-27T00:00:00.000Z" agent="5.0" etag="dfd-level3-formal" version="22.1.16" type="device">
+  <diagram name="MathEase DFD Level 3 - Process 3.2 Decomposition" id="mathEaseDFD3">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Title -->
+        <mxCell id="title" value="Level 3" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="650" y="20" width="300" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- External Entity -->
+        <mxCell id="student" value="Student" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="100" y="300" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Sub-processes of 3.2 Join Class Request -->
+        <mxCell id="p321" value="3.2.1&#xa;Validate&#xa;Class Code" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="300" y="500" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="p322" value="3.2.2&#xa;Check Class&#xa;Availability" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="500" y="500" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="p323" value="3.2.3&#xa;Check Existing&#xa;Enrollment" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="700" y="500" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="p324" value="3.2.4&#xa;Create&#xa;Enrollment Request" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="900" y="500" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="p325" value="3.2.5&#xa;Notify Teacher" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="500" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- Data Stores -->
+        <mxCell id="d3" value="D3&#xa;Classes" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="500" y="750" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="d4" value="D4&#xa;Class&#xa;Enrollments" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="700" y="750" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="d13" value="D13&#xa;Notifications" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="750" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Data Flows from Student (X=250 for incoming) -->
+        <mxCell id="f1" value="Class Code" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="student" target="p321">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="250" y="330" />
+              <mxPoint x="250" y="540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Data Flows to Student (X=210 for outgoing, spaced vertically) -->
+        <mxCell id="f2" value="Join Status" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="p324" target="student">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="540" />
+              <mxPoint x="210" y="310" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f3" value="Error Message" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="p321" target="student">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="540" />
+              <mxPoint x="210" y="330" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f4" value="Class Full Message" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="p322" target="student">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="540" />
+              <mxPoint x="210" y="350" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f5" value="Already Enrolled Message" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="p323" target="student">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="540" />
+              <mxPoint x="210" y="370" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Process to Data Store Flows (Orthogonal routing with proper spacing) -->
+        <!-- P3.2.1 to D3 -->
+        <mxCell id="fd1" value="Class Code Query" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="p321" target="d3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="370" y="590" />
+              <mxPoint x="550" y="750" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="fd2" value="Class Validation Result" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="d3" target="p321">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="550" y="730" />
+              <mxPoint x="370" y="570" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- P3.2.2 to D3 -->
+        <mxCell id="fd3" value="Class Capacity Query" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="p322" target="d3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="570" y="590" />
+              <mxPoint x="550" y="750" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="fd4" value="Capacity Info" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="d3" target="p322">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="550" y="730" />
+              <mxPoint x="570" y="570" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- P3.2.3 to D4 -->
+        <mxCell id="fd5" value="Enrollment Query" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="p323" target="d4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="770" y="590" />
+              <mxPoint x="750" y="750" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="fd6" value="Enrollment Status" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="d4" target="p323">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="750" y="730" />
+              <mxPoint x="770" y="570" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- P3.2.4 to D4 -->
+        <mxCell id="fd7" value="New Enrollment Record" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="p324" target="d4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="970" y="590" />
+              <mxPoint x="750" y="750" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- P3.2.5 to D13 -->
+        <mxCell id="fd8" value="Notification Data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="p325" target="d13">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1170" y="590" />
+              <mxPoint x="1150" y="750" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Cross-process flows (dashed lines, orthogonal) -->
+        <mxCell id="fp1" value="Valid Class Code" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;dashed=1;" edge="1" parent="1" source="p321" target="p322">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="440" y="540" />
+              <mxPoint x="500" y="540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="fp2" value="Class Available" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;dashed=1;" edge="1" parent="1" source="p322" target="p323">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="640" y="540" />
+              <mxPoint x="700" y="540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="fp3" value="Not Enrolled" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;dashed=1;" edge="1" parent="1" source="p323" target="p324">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="840" y="540" />
+              <mxPoint x="900" y="540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="fp4" value="Enrollment Created" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;dashed=1;" edge="1" parent="1" source="p324" target="p325">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1040" y="540" />
+              <mxPoint x="1100" y="540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

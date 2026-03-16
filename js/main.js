@@ -1,18 +1,138 @@
-// Mobile Navigation Toggle
+// Mobile Navigation Toggle - Sidebar Style
 const hamburger = document.querySelector('.hamburger');
 const navMenu = document.querySelector('.nav-menu');
+const backdrop = document.getElementById('mobileMenuBackdrop');
+const body = document.body;
 
-if (hamburger && navMenu) {
-    hamburger.addEventListener('click', () => {
-        hamburger.classList.toggle('active');
-        navMenu.classList.toggle('active');
-    });
+function openMobileMenu() {
+    if (hamburger && navMenu) {
+        hamburger.classList.add('active');
+        navMenu.classList.add('active');
+        if (backdrop) backdrop.classList.add('active');
+        body.classList.add('menu-open');
+    }
+}
 
-    // Close mobile menu when clicking on a link
-    document.querySelectorAll('.nav-link').forEach(n => n.addEventListener('click', () => {
+function closeMobileMenu() {
+    if (hamburger && navMenu) {
         hamburger.classList.remove('active');
         navMenu.classList.remove('active');
-    }));
+        if (backdrop) backdrop.classList.remove('active');
+        body.classList.remove('menu-open');
+    }
+}
+
+function isMobileView() {
+    return window.innerWidth <= 768;
+}
+
+if (hamburger && navMenu) {
+    // Toggle menu on hamburger click
+    hamburger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (navMenu.classList.contains('active')) {
+            closeMobileMenu();
+        } else {
+            openMobileMenu();
+        }
+    });
+
+    // Close mobile menu when clicking on backdrop
+    if (backdrop) {
+        backdrop.addEventListener('click', () => {
+            closeMobileMenu();
+        });
+    }
+
+    // Close mobile menu when clicking on a link; on mobile close first then scroll so nav works
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            const href = link.getAttribute('href');
+            const isHash = href && href.startsWith('#') && href.length > 1;
+
+            if (isMobileView() && isHash && navMenu.classList.contains('active')) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                const target = document.querySelector(href);
+                if (target) {
+                    closeMobileMenu();
+                    setTimeout(() => {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        try { history.pushState(null, '', href); } catch (_) {}
+                        document.querySelectorAll('.nav-link[href^="#"]').forEach(nl => {
+                            nl.classList.toggle('active', nl.getAttribute('href') === href);
+                            nl.setAttribute('aria-current', nl.getAttribute('href') === href ? 'true' : 'false');
+                        });
+                    }, 350);
+                } else {
+                    closeMobileMenu();
+                }
+                return;
+            }
+
+            if (isHash) {
+                setTimeout(() => closeMobileMenu(), 300);
+            } else {
+                setTimeout(() => closeMobileMenu(), 150);
+            }
+        });
+    });
+
+    // Close menu on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+            closeMobileMenu();
+        }
+    });
+
+    // Close menu on window resize (if resizing to desktop)
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            if (window.innerWidth > 768 && navMenu.classList.contains('active')) {
+                closeMobileMenu();
+            }
+        }, 250);
+    });
+
+    // Swipe to show sidebar: swipe from right edge toward left
+    // Swipe to hide: when menu open, swipe right to close
+    const SWIPE_EDGE_WIDTH = 40;
+    const SWIPE_THRESHOLD = 50;
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    document.addEventListener('touchstart', (e) => {
+        if (!isMobileView()) return;
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+        if (!isMobileView()) return;
+        const touch = e.changedTouches[0];
+        if (!touch) return;
+        const endX = touch.clientX;
+        const endY = touch.clientY;
+        const deltaX = endX - touchStartX;
+        const deltaY = endY - touchStartY;
+        const isOpen = navMenu.classList.contains('active');
+
+        if (!isOpen) {
+            // Swipe from right edge to the left → open menu
+            if (touchStartX >= window.innerWidth - SWIPE_EDGE_WIDTH && deltaX < -SWIPE_THRESHOLD) {
+                e.preventDefault();
+                openMobileMenu();
+            }
+        } else {
+            // Swipe right → close menu (from anywhere, e.g. on backdrop or sidebar)
+            if (deltaX > SWIPE_THRESHOLD && Math.abs(deltaY) < 100) {
+                e.preventDefault();
+                closeMobileMenu();
+            }
+        }
+    }, { passive: false });
 }
 
 // Smooth scrolling for navigation links (skip empty/hash anchors)

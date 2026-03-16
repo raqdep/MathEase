@@ -234,6 +234,33 @@
             50% { transform: scale(1.2) rotate(0deg); }
             100% { transform: scale(1) rotate(0deg); }
         }
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        .animate-bounce-slow {
+            animation: bounce-slow 3s ease-in-out infinite;
+        }
+        /* User Dropdown Styles */
+        #userDropdownMenu {
+            animation: fadeInDown 0.2s ease-out;
+        }
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        #userDropdown button:focus {
+            outline: none;
+        }
+        #userDropdownMenu button:hover {
+            background-color: #f3f4f6;
+        }
         .achievement-badge i {
             font-size: 2.5rem;
             color: #b8860b;
@@ -247,6 +274,302 @@
             color: #b8860b;
             opacity: 0.8;
         }
+
+        /* ==========================================
+           QUIZ DESIGN STYLES (match functions.html)
+           ========================================== */
+
+        /* Quiz Option Buttons */
+        .quiz-option {
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .quiz-option:hover:not(:disabled) {
+            border-color: #667eea !important;
+            background: linear-gradient(to right, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)) !important;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15) !important;
+            transform: translateX(4px) scale(1.01);
+        }
+        
+        .quiz-option:active:not(:disabled) {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2) !important;
+        }
+        
+        .quiz-option:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+            background-color: #f3f4f6 !important;
+            border-color: #d1d5db !important;
+        }
+        
+        /* Letter Badge Styling */
+        .quiz-option .w-8.h-8 {
+            transition: all 0.2s ease;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border: 1px solid #d1d5db;
+        }
+        
+        .quiz-option:hover:not(:disabled) .w-8.h-8 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white !important;
+            border-color: #667eea !important;
+            transform: scale(1.1);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+        
+        /* Progress Bar Styling */
+        .swal2-popup .bg-gray-200 {
+            background-color: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+            height: 8px;
+        }
+        
+        .swal2-popup .bg-gradient-to-r.from-primary.to-secondary {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%) !important;
+            border-radius: 9999px;
+            transition: width 0.3s ease;
+            box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+        }
+        
+        /* Quiz Modal Enhancements (match functions.html) */
+        .swal2-popup {
+            border-radius: 1rem !important;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
+        }
+        
+        .swal2-title {
+            font-weight: 700 !important;
+            color: #1f2937 !important;
+            margin-bottom: 1rem !important;
+        }
+        
+        /* Quiz Question Text */
+        .swal2-html-container p.text-xl {
+            color: #111827;
+            line-height: 1.6;
+            font-weight: 600;
+        }
+        
+        /* Result Display Enhancements */
+        .swal2-popup .inline-flex {
+            animation: scaleIn 0.3s ease-out;
+        }
+        
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        /* Success/Error Badge Colors */
+        .swal2-popup .bg-green-100 {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%) !important;
+            border: 2px solid #10b981;
+        }
+        
+        .swal2-popup .bg-red-100 {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%) !important;
+            border: 2px solid #ef4444;
+        }
+        
+        /* Quiz Instructions Styling */
+        .swal2-popup .bg-gradient-to-r {
+            border-radius: 0.75rem;
+        }
+        
+        .swal2-popup .border-l-4 {
+            border-left-width: 4px;
+        }
+        
+        /* Focus States for Accessibility */
+        .quiz-option:focus-visible {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
+            border-color: #667eea;
+        }
+        
+        /* Loading State (if needed) */
+        .quiz-option.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        
+        .quiz-option.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 1rem;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #667eea;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Mobile Responsive Quiz Styles */
+        @media (max-width: 768px) {
+            .quiz-option {
+                padding: 0.875rem 1rem !important;
+                font-size: 0.875rem;
+                min-height: 48px;
+            }
+            
+            .quiz-option .w-8.h-8 {
+                width: 1.75rem !important;
+                height: 1.75rem !important;
+                font-size: 0.75rem;
+            }
+            
+            .swal2-popup {
+                width: 90% !important;
+                max-width: 100% !important;
+                padding: 1.5rem !important;
+            }
+            
+            .swal2-title {
+                font-size: 1.25rem !important;
+            }
+            
+            .swal2-html-container {
+                padding: 0.5rem !important;
+            }
+            
+            .swal2-html-container p.text-xl {
+                font-size: 1rem !important;
+            }
+            
+            /* Timer mobile layout */
+            .flex.justify-between.items-start.mb-8 {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .flex-shrink-0.ml-4 {
+                margin-left: 0 !important;
+                margin-top: 1rem;
+                align-self: flex-end;
+            }
+            
+            .relative.w-20.h-20 {
+                width: 4rem !important;
+                height: 4rem !important;
+            }
+            
+            .relative.w-20.h-20 svg {
+                width: 4rem !important;
+                height: 4rem !important;
+            }
+            
+            /* Performance Analysis Mobile */
+            #performanceAnalysisSection {
+                padding: 1.5rem !important;
+                margin: 1rem 0 !important;
+            }
+            
+            #performanceAnalysisSection h3 {
+                font-size: 1.5rem !important;
+            }
+            
+            #performanceAnalysisSection p {
+                font-size: 0.875rem !important;
+            }
+            
+            #analyzeBtn {
+                width: 100%;
+                padding: 1rem !important;
+                font-size: 1rem !important;
+            }
+            
+            #analysisResult .grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+            
+            #analysisResult .space-y-6 > div {
+                padding: 1rem !important;
+            }
+        }
+
+        /* High Contrast Mode Support */
+        @media (prefers-contrast: high) {
+            .quiz-option {
+                border-width: 3px;
+            }
+            .quiz-option:hover:not(:disabled) {
+                border-color: #000080;
+                background-color: #e6e6fa;
+            }
+        }
+
+        /* Reduced Motion Support */
+        @media (prefers-reduced-motion: reduce) {
+            .quiz-option,
+            .quiz-option .w-8.h-8,
+            .swal2-popup .bg-gradient-to-r.from-primary.to-secondary {
+                transition: none;
+                animation: none;
+            }
+            .quiz-option:hover:not(:disabled) {
+                transform: none;
+            }
+        }
+
+        /* Circular Timer Styles */
+        .timer-progress {
+            transition: stroke-dashoffset 0.5s ease;
+        }
+        .timer-bg {
+            opacity: 0.2;
+        }
+        .lesson-timer-display {
+            font-family: 'Poppins', sans-serif;
+        }
+        /* Lesson sidebar layout */
+        .lesson-layout { display: flex; gap: 0; align-items: flex-start; max-width: 1600px; margin-left: auto; margin-right: auto; }
+        .lesson-sidebar { width: 300px; min-width: 300px; flex-shrink: 0; background: #fff; border-right: 1px solid #e5e7eb; position: sticky; top: 4rem; max-height: calc(100vh - 4rem); overflow-y: auto; z-index: 30; }
+        .lesson-sidebar-list { padding: 12px 0; }
+        .lesson-topic { border-bottom: 1px solid #f3f4f6; }
+        .lesson-topic-header { display: flex; align-items: center; gap: 10px; padding: 12px 16px; cursor: pointer; transition: background 0.2s; user-select: none; }
+        .lesson-topic-header:hover { background: #f9fafb; }
+        .lesson-topic-header.active { background: #eef2ff; }
+        .lesson-topic-dot { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #667eea; background: #fff; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #667eea; }
+        .lesson-topic-dot.completed { background: #059669; color: #fff; border-color: #059669; font-size: 0; }
+        .lesson-topic-dot.completed::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; font-size: 11px; }
+        .lesson-topic-title { flex: 1; font-size: 14px; font-weight: 600; color: #1f2937; }
+        .lesson-topic-caret { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; color: #6b7280; transition: transform 0.2s; }
+        .lesson-topic.expanded .lesson-topic-caret { transform: rotate(180deg); }
+        .lesson-topic-children { display: none; border-left: 2px solid #e5e7eb; margin-left: 28px; padding-left: 8px; }
+        .lesson-topic.expanded .lesson-topic-children { display: block; }
+        .lesson-subitem { display: flex; align-items: center; gap: 10px; padding: 10px 12px; cursor: pointer; font-size: 13px; color: #4b5563; transition: background 0.2s; border-radius: 6px; margin-bottom: 2px; }
+        .lesson-subitem:hover { background: #f3f4f6; color: #1f2937; }
+        .lesson-subitem.active { background: #eef2ff; color: #667eea; font-weight: 600; }
+        .lesson-subitem-dot { width: 8px; height: 8px; border-radius: 50%; background: #d1d5db; flex-shrink: 0; }
+        .lesson-subitem.active .lesson-subitem-dot { background: #667eea; }
+        .lesson-topic.locked .lesson-topic-header { opacity: 0.75; cursor: not-allowed; }
+        .lesson-topic.locked .lesson-topic-children .lesson-subitem { opacity: 0.75; cursor: not-allowed; }
+        .lesson-topic-status.complete { color: #059669; font-weight: 700; }
+        .lesson-topic-status.locked { color: #9ca3af; }
+        .lesson-main { flex: 1; min-width: 0; padding-left: 1rem; padding-right: 2rem; }
+        @media (max-width: 1023px) {
+            .lesson-sidebar { position: fixed; left: 0; top: 4rem; height: calc(100vh - 4rem); transform: translateX(-100%); transition: transform 0.25s ease; box-shadow: 4px 0 20px rgba(0,0,0,0.08); }
+            .lesson-sidebar.open { transform: translateX(0); }
+            .lesson-main { margin-left: 0 !important; }
+        }
     </style>
 </head>
 <body class="font-poppins bg-gray-50">
@@ -255,123 +578,179 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
-                    <a href="../index.html" class="flex items-center space-x-2">
+                    <div class="flex items-center space-x-2 cursor-default pointer-events-none">
                         <img src="../css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-8 w-8">
                         <span class="text-xl font-bold text-primary">MathEase</span>
-                    </a>
+                    </div>
                 </div>
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="../dashboard.html" class="text-gray-700 hover:text-primary transition-colors">
                         <i class="fas fa-home mr-2"></i>Dashboard
                     </a>
-                    <a href="../topics.html" class="text-primary font-semibold">
+                    <span class="text-primary font-semibold cursor-default pointer-events-none">
                         <i class="fas fa-book mr-2"></i>Topics
-                    </a>
-                    <span class="text-gray-600">
-                        <i class="fas fa-user mr-2"></i><span id="userName">Student</span>
                     </span>
-                    <a href="../php/logout.php" class="text-gray-700 hover:text-red-600 transition-colors">
-                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
-                    </a>
+                    <!-- User Dropdown -->
+                    <div class="relative" id="userDropdown">
+                        <button onclick="toggleUserDropdown()" class="flex items-center space-x-2 text-gray-600 hover:text-primary transition-colors focus:outline-none">
+                            <div class="relative">
+                                <img id="userProfileImage" src="" alt="Profile" class="w-8 h-8 rounded-full object-cover border-2 border-gray-300 hidden" onerror="this.classList.add('hidden'); (function(){var iconEl = document.getElementById('userProfileIcon'); if(iconEl) iconEl.style.display='block';})();">
+                                <i id="userProfileIcon" class="fas fa-user-circle text-xl"></i>
+                            </div>
+                            <span id="userName">Student</span>
+                            <i class="fas fa-chevron-down text-xs ml-1"></i>
+                        </button>
+                        <!-- Dropdown Menu -->
+                        <div id="userDropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                            <div class="px-4 py-2 border-b border-gray-200 flex items-center space-x-3">
+                                <div class="relative">
+                                    <img id="userProfileImageDropdown" src="" alt="Profile" class="w-10 h-10 rounded-full object-cover border-2 border-gray-300 hidden" onerror="this.classList.add('hidden'); (function(){var iconEl = document.getElementById('userProfileIconDropdown'); if(iconEl) iconEl.style.display='block';})();">
+                                    <i id="userProfileIconDropdown" class="fas fa-user-circle text-2xl text-gray-400"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-800" id="userNameDropdown">Student</p>
+                                    <p class="text-xs text-gray-500">Student Account</p>
+                                </div>
+                            </div>
+                            <button onclick="confirmLogout()" class="w-full text-left block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- Header -->
-    <header class="gradient-bg text-white py-16">
+    <header class="gradient-bg text-white py-12 md:py-16 relative overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center">
-                <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
-                    <i class="fas fa-calculator mr-2"></i>
-                    <span class="font-semibold">General Mathematics 11</span>
+            <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+                <!-- Left side - Text Content -->
+                <div class="flex-1 text-center md:text-left">
+                    <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
+                        <i class="fas fa-calculator mr-2"></i>
+                        <span class="font-semibold">General Mathematics 11</span>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6">Evaluating Functions</h1>
+                    <p class="text-lg md:text-xl lg:text-2xl text-white/90 mb-6 md:mb-8 max-w-2xl mx-auto md:mx-0">
+                        Master the art of evaluating functions through interactive topics and virtual aids
+                    </p>
+                    <div class="flex justify-center md:justify-start">
+                        <div class="bg-white/20 backdrop-blur-sm rounded-full px-6 md:px-8 py-2 md:py-3">
+                            <span class="text-base md:text-lg font-semibold">4 Interactive Topics</span>
+                        </div>
+                    </div>
                 </div>
-                <h1 class="text-4xl md:text-6xl font-bold mb-6">Evaluating Functions</h1>
-                <p class="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto">
-                    Master the art of evaluating functions through interactive lessons and virtual aids
-                </p>
-                <div class="flex justify-center">
-                    <div class="bg-white/20 backdrop-blur-sm rounded-full px-8 py-3">
-                        <span class="text-lg font-semibold">4 Interactive Lessons</span>
+                <!-- Right side - Character Image -->
+                <div class="flex-shrink-0 order-first md:order-last">
+                    <div class="relative">
+                        <img src="../Img/Character/happy__1_-removebg-preview.png" 
+                             alt="MathEase Character" 
+                             class="w-48 h-48 md:w-64 md:h-64 lg:w-80 lg:h-80 object-contain drop-shadow-2xl animate-bounce-slow">
                     </div>
                 </div>
             </div>
         </div>
+        <!-- Decorative elements -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+        <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <!-- Lesson Navigation -->
-        <div class="mb-12">
-            <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
-                <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson Navigation</h2>
-                    <p class="text-lg text-gray-600">Click on any lesson to start learning. Complete lessons to track your progress.</p>
+    <main class="px-4 sm:px-6 lg:px-8 py-8">
+        <div class="lesson-layout">
+            <aside class="lesson-sidebar" id="lessonSidebar">
+                <div class="lesson-sidebar-list">
+                    <div class="lesson-topic expanded" data-lesson="1" id="sidebar-topic-1">
+                        <div class="lesson-topic-header" aria-expanded="true">
+                            <span class="lesson-topic-dot" aria-hidden="true">1</span>
+                            <span class="lesson-topic-title">Topic 1: Introduction</span>
+                            <span class="lesson-topic-caret"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="lesson-topic-children">
+                            <div class="lesson-subitem active" data-lesson="1" data-section="objective" data-section-id="lesson1-objective"><span class="lesson-subitem-dot"></span><span>Objective</span></div>
+                            <div class="lesson-subitem" data-lesson="1" data-section="example" data-section-id="lesson1-example"><span class="lesson-subitem-dot"></span><span>Example</span></div>
+                            <div class="lesson-subitem" data-lesson="1" data-section="reference" data-section-id="lesson1-reference"><span class="lesson-subitem-dot"></span><span>Reference</span></div>
+                        </div>
+                    </div>
+                    <div class="lesson-topic" data-lesson="2" id="sidebar-topic-2">
+                        <div class="lesson-topic-header" aria-expanded="false">
+                            <span class="lesson-topic-dot">2</span>
+                            <span class="lesson-topic-title">Topic 2: Types of Functions</span>
+                            <span class="lesson-topic-caret"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="lesson-topic-children">
+                            <div class="lesson-subitem" data-lesson="2" data-section="objective" data-section-id="lesson2-objective"><span class="lesson-subitem-dot"></span><span>Objective</span></div>
+                            <div class="lesson-subitem" data-lesson="2" data-section="example" data-section-id="lesson2-example"><span class="lesson-subitem-dot"></span><span>Example</span></div>
+                            <div class="lesson-subitem" data-lesson="2" data-section="reference" data-section-id="lesson2-reference"><span class="lesson-subitem-dot"></span><span>Reference</span></div>
+                        </div>
+                    </div>
+                    <div class="lesson-topic" data-lesson="3" id="sidebar-topic-3">
+                        <div class="lesson-topic-header" aria-expanded="false">
+                            <span class="lesson-topic-dot">3</span>
+                            <span class="lesson-topic-title">Topic 3: Evaluation Process</span>
+                            <span class="lesson-topic-caret"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="lesson-topic-children">
+                            <div class="lesson-subitem" data-lesson="3" data-section="objective" data-section-id="lesson3-objective"><span class="lesson-subitem-dot"></span><span>Objective</span></div>
+                            <div class="lesson-subitem" data-lesson="3" data-section="example" data-section-id="lesson3-example"><span class="lesson-subitem-dot"></span><span>Example</span></div>
+                            <div class="lesson-subitem" data-lesson="3" data-section="reference" data-section-id="lesson3-reference"><span class="lesson-subitem-dot"></span><span>Reference</span></div>
+                        </div>
+                    </div>
+                    <div class="lesson-topic" data-lesson="4" id="sidebar-topic-4">
+                        <div class="lesson-topic-header" aria-expanded="false">
+                            <span class="lesson-topic-dot">4</span>
+                            <span class="lesson-topic-title">Topic 4: Interactive Practice</span>
+                            <span class="lesson-topic-caret"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="lesson-topic-children">
+                            <div class="lesson-subitem" data-lesson="4" data-section="objective" data-section-id="lesson4-objective"><span class="lesson-subitem-dot"></span><span>Objective</span></div>
+                            <div class="lesson-subitem" data-lesson="4" data-section="example" data-section-id="lesson4-example"><span class="lesson-subitem-dot"></span><span>Example</span></div>
+                            <div class="lesson-subitem" data-lesson="4" data-section="reference" data-section-id="lesson4-reference"><span class="lesson-subitem-dot"></span><span>Reference</span></div>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="1">
-                        <div class="text-center">
-                            <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                                <i class="fas fa-play text-2xl"></i>
-                            </div>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 1</h3>
-                            <p class="text-sm text-gray-600">Introduction to Function Evaluation</p>
-                        </div>
-                    </button>
-                    
-                    <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="2">
-                        <div class="text-center">
-                            <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <i class="fas fa-cogs text-2xl"></i>
-                            </div>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 2</h3>
-                            <p class="text-sm text-gray-600">Types of Functions</p>
-                        </div>
-                    </button>
-                    
-                    <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="3">
-                        <div class="text-center">
-                            <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <i class="fas fa-calculator text-2xl"></i>
-                            </div>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 3</h3>
-                            <p class="text-sm text-gray-600">Evaluation Process</p>
-                        </div>
-                    </button>
-                    
-                    <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="4">
-                        <div class="text-center">
-                            <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <i class="fas fa-gamepad text-2xl"></i>
-                            </div>
-                            <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 4</h3>
-                            <p class="text-sm text-gray-600">Interactive Practice</p>
-                        </div>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- Lesson Content -->
+            </aside>
+            <div class="lesson-main">
+                <button type="button" id="sidebarToggle" class="lg:hidden fixed top-20 left-4 z-40 px-3 py-2 bg-white border border-gray-200 rounded-lg shadow-md text-gray-700 hover:bg-gray-50" aria-label="Open lesson menu"><i class="fas fa-list mr-2"></i>Lessons</button>
+        <!-- Topic Content -->
         <div class="lesson-content">
 
-            <!-- Lesson 1: Introduction to Function Evaluation -->
+            <!-- Topic 1: Introduction to Function Evaluation -->
             <section id="lesson1" class="lesson-section active">
             <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
-                <div class="text-center mb-8">
-                    <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-play text-3xl"></i>
+                <div class="flex justify-between items-start mb-8">
+                    <div class="flex-1">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-play text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Topic 1: Introduction to Function Evaluation</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl">
+                            Learn the fundamental concepts of function evaluation, including the process of substitution and how to find function values at specific inputs.
+                        </p>
                     </div>
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 1: Introduction to Function Evaluation</h2>
-                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                        Learn the fundamental concepts of function evaluation, including the process of substitution and how to find function values at specific inputs.
-                    </p>
+                    <!-- Live Timer Display - Small, Right Side -->
+                    <div class="flex-shrink-0 ml-4">
+                        <div class="relative w-20 h-20">
+                            <svg class="transform -rotate-90 w-20 h-20">
+                                <circle cx="40" cy="40" r="34" stroke="#e5e7eb" stroke-width="6" fill="none" class="timer-bg"></circle>
+                                <circle cx="40" cy="40" r="34" stroke="#667eea" stroke-width="6" fill="none" 
+                                        class="timer-progress" 
+                                        stroke-dasharray="213.63" 
+                                        stroke-dashoffset="213.63"
+                                        stroke-linecap="round"></circle>
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <span class="lesson-timer-display text-sm font-bold text-gray-800">00:00</span>
+                                <span class="text-xs text-gray-500 mt-0.5">Time</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Learning Objectives -->
-                <div class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
+                <div id="lesson1-objective" class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
                     <h3 class="text-xl font-semibold text-gray-800 mb-4">
                         <i class="fas fa-target mr-2"></i>Learning Objectives
                     </h3>
@@ -550,7 +929,7 @@
                 </div>
 
                 <!-- Practice Examples -->
-                <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 mb-8">
+                <div id="lesson1-example" class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 mb-8">
                     <h3 class="text-xl font-semibold text-gray-800 mb-4">
                         <i class="fas fa-pencil-alt text-orange-500 mr-2"></i>Practice Examples
                     </h3>
@@ -575,7 +954,7 @@
                 </div>
 
                 <!-- References -->
-                <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 mb-8">
+                <div id="lesson1-reference" class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 mb-8">
                     <h3 class="text-xl font-bold text-gray-800 mb-4">
                         <i class="fas fa-book text-indigo-500 mr-2"></i>References & Additional Resources
                     </h3>
@@ -599,28 +978,11 @@
                     </div>
                 </div>
 
-                <!-- Lesson Completion -->
-                <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
-                        <i class="fas fa-check-circle text-emerald-500 mr-2"></i>Complete This Lesson
-                    </h3>
-                    <p class="text-gray-600 text-center mb-6">
-                        Mark this lesson as completed to track your progress and unlock the next lesson.
-                    </p>
-                    <div class="text-center">
-                        <button onclick="completeLesson(1)" 
-                                class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold inline-flex items-center">
-                            <i class="fas fa-check mr-2"></i>
-                            Mark Lesson 1 Complete
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Lesson Navigation Controls -->
+                <!-- Topic Navigation Controls -->
                 <div class="flex justify-center items-center mb-8">
                     <div class="flex items-center space-x-4">
                         <div class="text-center">
-                            <div class="text-sm text-gray-600">Lesson Progress</div>
+                            <div class="text-sm text-gray-600">Topic Progress</div>
                             <div class="text-lg font-semibold text-primary">
                                 <span id="currentLessonNum">1</span> of 4
                             </div>
@@ -631,28 +993,47 @@
                     </div>
                     <button id="nextLessonBtn" onclick="navigateLesson(1)" 
                             class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed ml-8">
-                        Next Lesson
+                        Next Topic
                         <i class="fas fa-chevron-right ml-2"></i>
                     </button>
                 </div>
             </div>
         </section>
 
-            <!-- Lesson 2: Types of Functions -->
+            <!-- Topic 2: Types of Functions -->
             <section id="lesson2" class="lesson-section">
             <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
-                <div class="text-center mb-8">
-                    <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-cogs text-3xl"></i>
+                <div class="flex justify-between items-start mb-8">
+                    <div class="flex-1">
+                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-cogs text-3xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Topic 2: Types of Functions</h2>
+                        <p class="text-lg text-gray-600 max-w-3xl">
+                            Learn about different types of functions and how to evaluate each type. Understanding function types helps you choose the right evaluation strategy.
+                        </p>
                     </div>
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 2: Types of Functions</h2>
-                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                        Learn about different types of functions and how to evaluate each type. Understanding function types helps you choose the right evaluation strategy.
-                    </p>
+                    <!-- Live Timer Display - Small, Right Side -->
+                    <div class="flex-shrink-0 ml-4">
+                        <div class="relative w-20 h-20">
+                            <svg class="transform -rotate-90 w-20 h-20">
+                                <circle cx="40" cy="40" r="34" stroke="#e5e7eb" stroke-width="6" fill="none" class="timer-bg"></circle>
+                                <circle cx="40" cy="40" r="34" stroke="#667eea" stroke-width="6" fill="none" 
+                                        class="timer-progress" 
+                                        stroke-dasharray="213.63" 
+                                        stroke-dashoffset="213.63"
+                                        stroke-linecap="round"></circle>
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <span class="lesson-timer-display text-sm font-bold text-gray-800">00:00</span>
+                                <span class="text-xs text-gray-500 mt-0.5">Time</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Learning Objectives -->
-                <div class="bg-green-50 border-l-4 border-green-500 p-6 mb-8">
+                <div id="lesson2-objective" class="bg-green-50 border-l-4 border-green-500 p-6 mb-8">
                     <h3 class="text-xl font-semibold text-gray-800 mb-4">
                         <i class="fas fa-target mr-2"></i>Learning Objectives
                     </h3>
@@ -795,7 +1176,7 @@
                     </div>
 
                     <!-- Step-by-Step Evaluation Examples -->
-                    <div class="bg-white rounded-lg p-6 shadow-lg mb-6">
+                    <div id="lesson2-example" class="bg-white rounded-lg p-6 shadow-lg mb-6">
                         <h4 class="text-xl font-semibold text-gray-800 mb-4">
                             <i class="fas fa-calculator text-orange-500 mr-2"></i>Step-by-Step Evaluation Examples
                         </h4>
@@ -1096,7 +1477,7 @@
                 </div>
 
                 <!-- References -->
-                <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 mb-8">
+                <div id="lesson2-reference" class="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 mb-8">
                     <h3 class="text-xl font-bold text-gray-800 mb-4">
                         <i class="fas fa-book text-green-500 mr-2"></i>References & Additional Resources
                     </h3>
@@ -1120,34 +1501,17 @@
                     </div>
                 </div>
 
-                <!-- Lesson Completion -->
-                <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
-                        <i class="fas fa-check-circle text-emerald-500 mr-2"></i>Complete This Lesson
-                    </h3>
-                    <p class="text-gray-600 text-center mb-6">
-                        Mark this lesson as completed to track your progress and unlock the next lesson.
-                    </p>
-                    <div class="text-center">
-                        <button onclick="completeLesson(2)" 
-                                class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold inline-flex items-center">
-                            <i class="fas fa-check mr-2"></i>
-                            Mark Lesson 2 Complete
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Lesson Navigation Controls -->
+                <!-- Topic Navigation Controls -->
                 <div class="flex justify-center items-center mb-8">
                     <button id="prevLessonBtn" onclick="navigateLesson(-1)" 
                             class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                         <i class="fas fa-chevron-left mr-2"></i>
-                        Previous Lesson
+                        Previous Topic
                     </button>
                     
                     <div class="flex items-center space-x-4 mx-8">
                         <div class="text-center">
-                            <div class="text-sm text-gray-600">Lesson Progress</div>
+                            <div class="text-sm text-gray-600">Topic Progress</div>
                             <div class="text-lg font-semibold text-primary">
                                 <span id="currentLessonNum">2</span> of 4
                             </div>
@@ -1159,28 +1523,47 @@
                     
                     <button id="nextLessonBtn" onclick="navigateLesson(1)" 
                             class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                        Next Lesson
+                        Next Topic
                         <i class="fas fa-chevron-right ml-2"></i>
                     </button>
                 </div>
             </div>
         </section>
 
-            <!-- Lesson 3: The Evaluation Process -->
+            <!-- Topic 3: The Evaluation Process -->
             <section id="lesson3" class="lesson-section">
                 <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
-                    <div class="text-center mb-8">
-                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-calculator text-3xl"></i>
+                    <div class="flex justify-between items-start mb-8">
+                        <div class="flex-1">
+                            <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mb-4">
+                                <i class="fas fa-calculator text-3xl"></i>
+                            </div>
+                            <h2 class="text-3xl font-bold text-gray-800 mb-4">Topic 3: The Evaluation Process</h2>
+                            <p class="text-lg text-gray-600 max-w-3xl">
+                                Master the systematic approach to evaluating functions. Learn the step-by-step process that works for any function type.
+                            </p>
                         </div>
-                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 3: The Evaluation Process</h2>
-                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                            Master the systematic approach to evaluating functions. Learn the step-by-step process that works for any function type.
-                        </p>
+                        <!-- Live Timer Display - Small, Right Side -->
+                        <div class="flex-shrink-0 ml-4">
+                            <div class="relative w-20 h-20">
+                                <svg class="transform -rotate-90 w-20 h-20">
+                                    <circle cx="40" cy="40" r="34" stroke="#e5e7eb" stroke-width="6" fill="none" class="timer-bg"></circle>
+                                    <circle cx="40" cy="40" r="34" stroke="#667eea" stroke-width="6" fill="none" 
+                                            class="timer-progress" 
+                                            stroke-dasharray="213.63" 
+                                            stroke-dashoffset="213.63"
+                                            stroke-linecap="round"></circle>
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span class="lesson-timer-display text-sm font-bold text-gray-800">00:00</span>
+                                    <span class="text-xs text-gray-500 mt-0.5">Time</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                 <!-- Learning Objectives -->
-                <div class="bg-purple-50 border-l-4 border-purple-500 p-6 mb-8">
+                <div id="lesson3-objective" class="bg-purple-50 border-l-4 border-purple-500 p-6 mb-8">
                     <h3 class="text-xl font-semibold text-gray-800 mb-4">
                         <i class="fas fa-target mr-2"></i>Learning Objectives
                     </h3>
@@ -1271,7 +1654,7 @@
                     </div>
 
                     <!-- Detailed Examples -->
-                    <div class="bg-white rounded-lg p-6 shadow-lg mb-6">
+                    <div id="lesson3-example" class="bg-white rounded-lg p-6 shadow-lg mb-6">
                         <h4 class="text-xl font-semibold text-gray-800 mb-4">
                             <i class="fas fa-calculator text-orange-500 mr-2"></i>Detailed Evaluation Examples
                         </h4>
@@ -1404,7 +1787,7 @@
                 </div>
 
                 <!-- References -->
-                <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 mb-8">
+                <div id="lesson3-reference" class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 mb-8">
                     <h3 class="text-xl font-bold text-gray-800 mb-4">
                         <i class="fas fa-book text-purple-500 mr-2"></i>References & Additional Resources
                     </h3>
@@ -1428,34 +1811,17 @@
                     </div>
                 </div>
 
-                <!-- Lesson Completion -->
-                <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
-                        <i class="fas fa-check-circle text-emerald-500 mr-2"></i>Complete This Lesson
-                    </h3>
-                    <p class="text-gray-600 text-center mb-6">
-                        Mark this lesson as completed to track your progress and unlock the next lesson.
-                    </p>
-                    <div class="text-center">
-                        <button onclick="completeLesson(3)" 
-                                class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold inline-flex items-center">
-                            <i class="fas fa-check mr-2"></i>
-                            Mark Lesson 3 Complete
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Lesson Navigation Controls -->
+                <!-- Topic Navigation Controls -->
                 <div class="flex justify-center items-center mb-8">
                     <button id="prevLessonBtn" onclick="navigateLesson(-1)" 
                             class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                         <i class="fas fa-chevron-left mr-2"></i>
-                        Previous Lesson
+                        Previous Topic
                     </button>
                     
                     <div class="flex items-center space-x-4 mx-8">
                         <div class="text-center">
-                            <div class="text-sm text-gray-600">Lesson Progress</div>
+                            <div class="text-sm text-gray-600">Topic Progress</div>
                             <div class="text-lg font-semibold text-primary">
                                 <span id="currentLessonNum">3</span> of 4
                             </div>
@@ -1467,28 +1833,47 @@
                     
                     <button id="nextLessonBtn" onclick="navigateLesson(1)" 
                             class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                        Next Lesson
+                        Next Topic
                         <i class="fas fa-chevron-right ml-2"></i>
                     </button>
                 </div>
             </div>
         </section>
 
-            <!-- Lesson 4: How to Solve Function Evaluation Problems -->
+            <!-- Topic 4: How to Solve Function Evaluation Problems -->
             <section id="lesson4" class="lesson-section">
                 <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
-                    <div class="text-center mb-8">
-                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-graduation-cap text-3xl"></i>
+                    <div class="flex justify-between items-start mb-8">
+                        <div class="flex-1">
+                            <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mb-4">
+                                <i class="fas fa-graduation-cap text-3xl"></i>
+                            </div>
+                            <h2 class="text-3xl font-bold text-gray-800 mb-4">Topic 4: How to Solve Function Evaluation Problems</h2>
+                            <p class="text-lg text-gray-600 max-w-3xl">
+                                Master the art of solving function evaluation problems with our comprehensive step-by-step tutorials. Learn the strategies that work for every function type.
+                            </p>
                         </div>
-                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 4: How to Solve Function Evaluation Problems</h2>
-                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                            Master the art of solving function evaluation problems with our comprehensive step-by-step tutorials. Learn the strategies that work for every function type.
-                        </p>
+                        <!-- Live Timer Display - Small, Right Side -->
+                        <div class="flex-shrink-0 ml-4">
+                            <div class="relative w-20 h-20">
+                                <svg class="transform -rotate-90 w-20 h-20">
+                                    <circle cx="40" cy="40" r="34" stroke="#e5e7eb" stroke-width="6" fill="none" class="timer-bg"></circle>
+                                    <circle cx="40" cy="40" r="34" stroke="#667eea" stroke-width="6" fill="none" 
+                                            class="timer-progress" 
+                                            stroke-dasharray="213.63" 
+                                            stroke-dashoffset="213.63"
+                                            stroke-linecap="round"></circle>
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span class="lesson-timer-display text-sm font-bold text-gray-800">00:00</span>
+                                    <span class="text-xs text-gray-500 mt-0.5">Time</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Learning Objectives -->
-                    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 mb-8">
+                    <div id="lesson4-objective" class="bg-blue-50 border-l-4 border-blue-500 p-6 mb-8">
                         <h3 class="text-xl font-semibold text-gray-800 mb-4">
                             <i class="fas fa-target mr-2"></i>Learning Objectives
                         </h3>
@@ -1509,7 +1894,7 @@
                     </div>
 
                     <!-- Tutorial Introduction -->
-                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
+                    <div id="lesson4-example" class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
                         <h3 class="text-2xl font-bold text-gray-800 mb-4">
                             <i class="fas fa-graduation-cap text-blue-500 mr-3"></i>Step-by-Step Solving Tutorials
                         </h3>
@@ -1984,20 +2369,71 @@
                         </div>
                     </div>
 
-                <!-- Lesson Completion -->
-                <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
-                        <i class="fas fa-check-circle text-emerald-500 mr-2"></i>Complete This Lesson
+                <!-- References -->
+                <div id="lesson4-reference" class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-book text-indigo-500 mr-2"></i>References & Additional Resources
                     </h3>
-                    <p class="text-gray-600 text-center mb-6">
-                        Mark this lesson as completed to track your progress and unlock the next lesson.
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <h4 class="font-semibold text-gray-800 mb-2">Academic Sources</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• Stewart, J. (2015). <em>Precalculus: Mathematics for Calculus</em>. Cengage Learning.</li>
+                                <li>• Larson, R. (2018). <em>Precalculus with Limits</em>. Cengage Learning.</li>
+                                <li>• Blitzer, R. (2019). <em>Precalculus</em>. Pearson Education.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 shadow-sm">
+                            <h4 class="font-semibold text-gray-800 mb-2">Online Resources</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• Khan Academy: Function Evaluation</li>
+                                <li>• Purplemath: Function Notation</li>
+                                <li>• Math is Fun: Function Evaluation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Topic 4 Quiz Button -->
+                <div class="text-center mb-8" id="topic4QuizButton" style="display: none;">
+                    <button onclick="showTopic4Quiz()"
+                            class="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-8 py-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition-colors font-semibold text-lg inline-flex items-center shadow-lg transform hover:scale-105">
+                        <i class="fas fa-question-circle mr-2"></i>
+                        Take Topic 4 Quiz (5 Questions)
+                    </button>
+                    <p class="text-gray-600 mt-3 text-sm">
+                        Pass the quiz (at least 3/5 correct) to complete this topic and unlock the next topic in Dashboard
                     </p>
-                    <div class="text-center">
-                        <button onclick="completeLesson(4)" 
-                                class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold inline-flex items-center">
-                            <i class="fas fa-check mr-2"></i>
-                            Mark Lesson 4 Complete
+                </div>
+
+                <!-- Performance Analysis Section -->
+                <div id="performanceAnalysisSection" class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8 max-w-7xl mx-auto" style="display: none;">
+                    <div class="text-center mb-6">
+                        <div class="w-20 h-20 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-chart-line text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-3">
+                            <i class="fas fa-brain text-blue-500 mr-2"></i>Performance Analysis
+                        </h3>
+                        <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-2">
+                            See where you're strong and weak, and review your correct and incorrect quiz answers.
+                        </p>
+                        <p class="text-sm text-gray-500 max-w-2xl mx-auto">
+                            We'll provide personalized recommendations on how to improve.
+                        </p>
+                    </div>
+
+                    <div class="text-center mb-6">
+                        <button id="analyzeBtn" onclick="analyzePerformance()" 
+                                class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-8 py-4 rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-colors font-semibold text-lg inline-flex items-center shadow-lg transform hover:scale-105">
+                            <i class="fas fa-chart-bar mr-2"></i>
+                            Analyze My Performance
                         </button>
+                    </div>
+
+                    <!-- Analysis Results -->
+                    <div id="analysisResult" class="hidden mt-8">
+                        <!-- Results will be dynamically inserted here -->
                     </div>
                 </div>
 
@@ -2007,7 +2443,7 @@
                         <i class="fas fa-trophy text-purple-500 mr-2"></i>Complete This Topic
                     </h3>
                     <p class="text-gray-600 text-center mb-6">
-                        Congratulations! You've completed all lessons in the Evaluating Functions topic. Mark this topic as complete to update your progress.
+                        Congratulations! You've completed all topics in the Evaluating Functions topic. Mark this topic as complete to update your progress.
                     </p>
                     <div class="text-center">
                         <button onclick="completeTopic()" 
@@ -2018,17 +2454,17 @@
                     </div>
                 </div>
 
-                <!-- Lesson Navigation Controls -->
+                <!-- Topic Navigation Controls -->
                 <div class="flex justify-center items-center mb-8">
                     <button id="prevLessonBtn" onclick="navigateLesson(-1)" 
                             class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                         <i class="fas fa-chevron-left mr-2"></i>
-                        Previous Lesson
+                        Previous Topic
                     </button>
                     
                     <div class="flex items-center space-x-4 ml-8">
                         <div class="text-center">
-                            <div class="text-sm text-gray-600">Lesson Progress</div>
+                            <div class="text-sm text-gray-600">Topic Progress</div>
                             <div class="text-lg font-semibold text-primary">
                                 <span id="currentLessonNum">4</span> of 4
                             </div>
@@ -2042,20 +2478,25 @@
         </section>
 
         </div>
+            </div>
+        </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p>&copy; 2024 MathEase. All rights reserved.</p>
-        </div>
-    </footer>
 
     <script>
         // Global variables for lesson management
         let currentLesson = 1;
         let completedLessons = new Set();
         let totalLessons = 4;
+        
+        // Study time tracking
+        let lessonStartTime = {};
+        let totalStudyTime = {}; // Track total time per lesson in seconds
+        let lastSavedTime = {}; // Track last confirmed saved time from server (to prevent double counting)
+        let lastSaveTimestamp = {}; // Track when we last saved (to calculate elapsed correctly)
+        let studyTimeInterval = null;
+        let timerUpdateInterval = null; // Live timer display (updates every second)
+        let lessonTimerStartDelay = null; // Timeout ID: start timer only after 10s on lesson (not on open)
 
         // Function evaluation logic
         function evaluateFunction() {
@@ -2411,6 +2852,12 @@
                     completedLessons = new Set(data.completed_lessons);
                     updateLessonNavigation();
                     
+                    // Hide Topic 4 quiz button if already completed
+                    const topic4QuizButton = document.getElementById('topic4QuizButton');
+                    if (topic4QuizButton && completedLessons.has(4)) {
+                        topic4QuizButton.style.display = 'none';
+                    }
+                    
                     // Check if all lessons are completed and show topic completion option
                     if (completedLessons.size === totalLessons) {
                         showTopicCompletionOption();
@@ -2427,6 +2874,10 @@
         }
 
         async function completeLesson(lessonNum) {
+            if (completedLessons.has(lessonNum)) {
+                console.log('Lesson already completed in DB, skipping duplicate complete:', lessonNum);
+                return;
+            }
             console.log('Attempting to complete lesson:', lessonNum);
             
             try {
@@ -2519,8 +2970,8 @@
                     
                     // Show success message
                     Swal.fire({
-                        title: 'Lesson Completed!',
-                        text: `Great job completing Lesson ${lessonNum}!`,
+                        title: 'Topic Completed!',
+                        text: `Great job completing Topic ${lessonNum}!`,
                         icon: 'success',
                         confirmButtonText: 'Continue Learning',
                         confirmButtonColor: '#10b981',
@@ -2575,6 +3026,15 @@
             console.log('Attempting to complete topic: evaluating-functions');
             
             try {
+                // Gate topic completion behind Topic 4 quiz (since there is no Next button after Topic 4)
+                if (!completedLessons.has(4)) {
+                    runLessonQuiz(lesson4Quiz, 4, async () => {
+                        // After passing Lesson 4, retry completing the topic
+                        setTimeout(() => completeTopic(), 250);
+                    });
+                    return;
+                }
+                
                 const requestData = {
                     topic: 'evaluating-functions',
                     action: 'complete_topic'
@@ -2711,19 +3171,9 @@
         }
 
         function updateLessonNavigation() {
-            const lessonNavBtns = document.querySelectorAll('.lesson-nav-btn');
-            lessonNavBtns.forEach(btn => {
-                const lessonNum = parseInt(btn.dataset.lesson);
-                const icon = btn.querySelector('.w-16');
-                
-                if (completedLessons.has(lessonNum)) {
-                    icon.classList.remove('bg-primary', 'text-white', 'bg-gray-300', 'text-gray-600');
-                    icon.classList.add('bg-green-500', 'text-white');
-                } else {
-                    icon.classList.remove('bg-primary', 'text-white', 'bg-green-500', 'text-white');
-                    icon.classList.add('bg-gray-300', 'text-gray-600');
-                }
-            });
+            if (typeof updateSidebarProgress === 'function') updateSidebarProgress();
+            const currentLessonLabel = document.getElementById('currentLessonLabel');
+            if (currentLessonLabel) currentLessonLabel.textContent = currentLesson;
         }
 
         function showTopicCompletionOption() {
@@ -2731,133 +3181,2111 @@
             if (topicCompletionSection) {
                 topicCompletionSection.style.display = 'block';
             }
+            
+            // Show performance analysis section (only if all quizzes are completed)
+            showPerformanceAnalysisSection();
+        }
+
+        // Lesson 1 Quiz Questions
+        const lesson1Quiz = [
+            {
+                question: "What is function evaluation?",
+                options: [
+                    "Finding the output value when you substitute a specific input value",
+                    "Graphing a function",
+                    "Finding the domain of a function",
+                    "Simplifying a function"
+                ],
+                correct: 0
+            },
+            {
+                question: "If f(x) = 2x + 3, what is f(5)?",
+                options: [
+                    "10",
+                    "13",
+                    "15",
+                    "16"
+                ],
+                correct: 1
+            },
+            {
+                question: "What is the first step in evaluating a function?",
+                options: [
+                    "Simplify the expression",
+                    "Substitute the given value for x",
+                    "Graph the function",
+                    "Find the domain"
+                ],
+                correct: 1
+            },
+            {
+                question: "If f(x) = 3x - 2, what is f(4)?",
+                options: [
+                    "10",
+                    "12",
+                    "14",
+                    "16"
+                ],
+                correct: 0
+            },
+            {
+                question: "What does PEMDAS stand for in function evaluation?",
+                options: [
+                    "Parentheses, Exponents, Multiplication, Division, Addition, Subtraction",
+                    "Please Excuse My Dear Aunt Sally",
+                    "Both of the above",
+                    "None of the above"
+                ],
+                correct: 2
+            }
+        ];
+
+        // Lesson 2 Quiz Questions (Types of Functions)
+        const lesson2Quiz = [
+            {
+                question: "What is a constant function?",
+                options: [
+                    "A function that always returns the same value",
+                    "A function that changes with x",
+                    "A function with no domain",
+                    "A function that is always zero"
+                ],
+                correct: 0
+            },
+            {
+                question: "If f(x) = 5, what is f(3)?",
+                options: [
+                    "3",
+                    "5",
+                    "8",
+                    "15"
+                ],
+                correct: 1
+            },
+            {
+                question: "What is the key characteristic of a linear function?",
+                options: [
+                    "It has an exponent of 2",
+                    "It has degree one and creates a straight line",
+                    "It always equals zero",
+                    "It has a fraction"
+                ],
+                correct: 1
+            },
+            {
+                question: "For a rational function f(x) = (x+1)/(x-2), what value of x is NOT allowed?",
+                options: [
+                    "x = 0",
+                    "x = 1",
+                    "x = 2",
+                    "x = 3"
+                ],
+                correct: 2
+            },
+            {
+                question: "What is |−5|?",
+                options: [
+                    "-5",
+                    "5",
+                    "0",
+                    "10"
+                ],
+                correct: 1
+            }
+        ];
+
+        // Lesson 3 Quiz Questions (Evaluation Process)
+        const lesson3Quiz = [
+            {
+                question: "What is the correct order of operations (PEMDAS)?",
+                options: [
+                    "Parentheses, Exponents, Multiply/Divide, Add/Subtract",
+                    "Parentheses, Exponents, Add/Subtract, Multiply/Divide",
+                    "Multiply/Divide, Add/Subtract, Parentheses, Exponents",
+                    "Add/Subtract, Multiply/Divide, Parentheses, Exponents"
+                ],
+                correct: 0
+            },
+            {
+                question: "If f(x) = x² + 2x - 1, what is f(3)?",
+                options: [
+                    "12",
+                    "14",
+                    "16",
+                    "18"
+                ],
+                correct: 1
+            },
+            {
+                question: "When evaluating f(x) = 3x - 2 for x = 4, what should you do first?",
+                options: [
+                    "Subtract 2",
+                    "Multiply 3 by 4",
+                    "Add 3 and 4",
+                    "Divide by 2"
+                ],
+                correct: 1
+            },
+            {
+                question: "What is a common mistake when evaluating functions?",
+                options: [
+                    "Following the order of operations",
+                    "Forgetting to substitute the value",
+                    "Using the correct formula",
+                    "Checking your work"
+                ],
+                correct: 1
+            },
+            {
+                question: "If g(x) = 2x² - 3x + 1, what is g(2)?",
+                options: [
+                    "3",
+                    "5",
+                    "7",
+                    "9"
+                ],
+                correct: 0
+            }
+        ];
+
+        // Lesson 4 Quiz Questions (Solving Function Evaluation Problems)
+        const lesson4Quiz = [
+            {
+                question: "What is the first step in solving any function evaluation problem?",
+                options: [
+                    "Simplify the function",
+                    "Substitute the given value for x",
+                    "Graph the function",
+                    "Find the domain"
+                ],
+                correct: 1
+            },
+            {
+                question: "If f(x) = 2ˣ, what is f(3)?",
+                options: [
+                    "6",
+                    "8",
+                    "9",
+                    "12"
+                ],
+                correct: 1
+            },
+            {
+                question: "For f(x) = (x+1)/(x-2), what is f(3)?",
+                options: [
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                ],
+                correct: 2
+            },
+            {
+                question: "What is the result of evaluating f(x) = |x - 2| for x = -1?",
+                options: [
+                    "1",
+                    "2",
+                    "3",
+                    "-3"
+                ],
+                correct: 2
+            },
+            {
+                question: "When evaluating a quadratic function, what should you calculate first?",
+                options: [
+                    "Addition and subtraction",
+                    "Exponents",
+                    "Multiplication",
+                    "Division"
+                ],
+                correct: 1
+            }
+        ];
+
+        // Shuffle array using Fisher-Yates algorithm
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Shuffle quiz questions and options
+        function shuffleQuiz(quizArray) {
+            // Shuffle questions
+            const shuffledQuestions = shuffleArray(quizArray);
+            
+            // Shuffle options for each question and update correct answer index
+            return shuffledQuestions.map(quiz => {
+                const originalOptions = [...quiz.options];
+                const originalCorrect = quiz.correct;
+                
+                // Create array of indices and shuffle them
+                const indices = originalOptions.map((_, i) => i);
+                const shuffledIndices = shuffleArray(indices);
+                
+                // Map original correct index to new shuffled index
+                const newCorrectIndex = shuffledIndices.indexOf(originalCorrect);
+                
+                // Create new options array with shuffled order
+                const shuffledOptions = shuffledIndices.map(idx => originalOptions[idx]);
+                
+                return {
+                    ...quiz,
+                    options: shuffledOptions,
+                    correct: newCorrectIndex
+                };
+            });
+        }
+
+        // Generic quiz runner for Lessons 2–4 (and can be reused) - layout and logic from functions.html
+        function runLessonQuiz(quizArray, lessonNum, onPassed) {
+            window.quizStartTime = Date.now();
+            const shuffledQuiz = shuffleQuiz(quizArray);
+            let currentQuestion = 0;
+            let score = 0;
+            let userAnswers = [];
+
+            Swal.fire({
+                title: `📚 Topic ${lessonNum} Quiz`,
+                html: `
+                    <div class="text-left space-y-4">
+                        <div class="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg p-5 border-l-4 border-primary">
+                            <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
+                                <i class="fas fa-info-circle text-primary mr-2"></i>
+                                Quiz Instructions
+                            </h3>
+                            <p class="text-gray-700 mb-2">
+                                You will answer <strong>5 questions</strong> for Topic ${lessonNum}.
+                            </p>
+                            <p class="text-sm text-gray-600 mb-2">
+                                <strong>Passing:</strong> at least <strong>3/5</strong> correct (60%).
+                            </p>
+                            <div class="mt-3 pt-3 border-t border-primary/20">
+                                <p class="text-sm font-semibold text-gray-700 mb-2">What to expect:</p>
+                                <ul class="text-sm text-gray-600 space-y-1 list-disc list-inside">
+                                    <li>Questions are randomized for each attempt</li>
+                                    <li>Answer options are shuffled</li>
+                                    <li>You cannot go back to previous questions</li>
+                                    <li>Review your answers at the end</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border-l-4 border-green-500">
+                            <p class="text-sm text-gray-700">
+                                <i class="fas fa-lightbulb text-green-500 mr-2"></i>
+                                <strong>Tip:</strong> Take your time and read each question carefully. You can try again if needed.
+                            </p>
+                        </div>
+                    </div>
+                `,
+                icon: 'info',
+                confirmButtonText: 'Start Quiz',
+                confirmButtonColor: '#667eea',
+                cancelButtonText: 'Cancel',
+                showCancelButton: true,
+                cancelButtonColor: '#ef4444',
+                allowOutsideClick: false,
+                width: '650px',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    title: 'text-slate-800',
+                    htmlContainer: 'text-left'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.quizStartTime = Date.now();
+                    displayQuestion();
+                } else {
+                    showLesson(lessonNum);
+                }
+            });
+
+            function displayQuestion() {
+                if (currentQuestion >= shuffledQuiz.length) {
+                    showQuizResults();
+                    return;
+                }
+                const quiz = shuffledQuiz[currentQuestion];
+                const progressPercentage = ((currentQuestion + 1) / shuffledQuiz.length) * 100;
+                const optionsHtml = quiz.options.map((option, index) =>
+                    `<button type="button" class="quiz-option w-full text-left px-5 py-4 mb-3 bg-white border-2 border-gray-300 rounded-lg hover:border-primary hover:bg-gradient-to-r hover:from-primary/10 hover:to-secondary/10 hover:shadow-md transition-all duration-200 font-medium text-gray-800 transform hover:scale-[1.02]" data-answer="${index}">
+                        <span class="flex items-center">
+                            <span class="w-8 h-8 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center mr-3 font-semibold text-gray-700 border border-gray-300">${String.fromCharCode(65 + index)}</span>
+                            <span>${option}</span>
+                        </span>
+                    </button>`
+                ).join('');
+
+                Swal.fire({
+                    title: `<div class="flex items-center justify-center w-full">
+                        <span class="text-center">Question ${currentQuestion + 1} of ${shuffledQuiz.length}</span>
+                    </div>`,
+                    html: `
+                        <div class="text-left">
+                            <!-- Progress Bar -->
+                            <div class="w-full bg-gray-200 rounded-full h-2 mb-6">
+                                <div class="bg-gradient-to-r from-primary to-secondary h-2 rounded-full transition-all duration-300" style="width: ${progressPercentage}%"></div>
+                            </div>
+                            
+                            <p class="text-xl font-semibold mb-6 text-gray-900">${quiz.question}</p>
+                            <div class="space-y-3">${optionsHtml}</div>
+                        </div>
+                    `,
+                    showConfirmButton: false,
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel Quiz',
+                    cancelButtonColor: '#ef4444',
+                    allowOutsideClick: false,
+                    width: '750px',
+                    customClass: {
+                        popup: 'rounded-2xl shadow-2xl',
+                        title: 'text-primary text-2xl font-bold mb-4 text-center',
+                        htmlContainer: 'text-left',
+                        cancelButton: 'px-6 py-3 rounded-lg font-semibold'
+                    },
+                    didOpen: () => {
+                        const questionIndex = currentQuestion;
+                        const currentQuiz = shuffledQuiz[questionIndex];
+                        document.querySelectorAll('.quiz-option').forEach(btn => {
+                            btn.addEventListener('click', function() {
+                                const selectedAnswer = parseInt(this.dataset.answer);
+                                const explanation = generateExplanation(currentQuiz, selectedAnswer);
+                                userAnswers[questionIndex] = {
+                                    question: currentQuiz.question,
+                                    options: currentQuiz.options,
+                                    selected: selectedAnswer,
+                                    selectedText: currentQuiz.options[selectedAnswer],
+                                    correct: currentQuiz.correct,
+                                    correctText: currentQuiz.options[currentQuiz.correct],
+                                    isCorrect: selectedAnswer === currentQuiz.correct,
+                                    explanation: explanation
+                                };
+                                if (selectedAnswer === currentQuiz.correct) score++;
+                                document.querySelectorAll('.quiz-option').forEach(b => b.disabled = true);
+                                setTimeout(() => {
+                                    currentQuestion++;
+                                    displayQuestion();
+                                }, 500);
+                            });
+                        });
+                    }
+                });
+            }
+
+            function showQuizResults() {
+                const percentage = Math.round((score / shuffledQuiz.length) * 100);
+                const passed = score >= 3;
+
+                const missingAnswers = [];
+                for (let i = 0; i < shuffledQuiz.length; i++) {
+                    if (!userAnswers[i] || typeof userAnswers[i] !== 'object') {
+                        missingAnswers.push(i + 1);
+                    }
+                }
+                if (missingAnswers.length > 0) {
+                    for (let i = 0; i < shuffledQuiz.length; i++) {
+                        if (!userAnswers[i]) {
+                            const q = shuffledQuiz[i];
+                            userAnswers[i] = {
+                                question: q.question,
+                                options: q.options,
+                                selected: -1,
+                                selectedText: 'Not answered',
+                                correct: q.correct,
+                                correctText: q.options[q.correct],
+                                isCorrect: false
+                            };
+                        }
+                    }
+                }
+
+                Swal.fire({
+                    title: passed ? '🎉 Congratulations!' : '📚 Keep Learning!',
+                    html: `
+                        <div class="text-center">
+                            <div class="mb-6">
+                                <div class="inline-flex items-center justify-center w-24 h-24 rounded-full ${passed ? 'bg-green-100' : 'bg-red-100'} mb-4">
+                                    <span class="text-4xl">${passed ? '✓' : '✗'}</span>
+                                </div>
+                                <p class="text-3xl font-bold mb-2 ${passed ? 'text-green-600' : 'text-red-600'}">
+                                    Score: ${score}/${shuffledQuiz.length}
+                                </p>
+                                <p class="text-xl font-semibold ${passed ? 'text-green-600' : 'text-red-600'}">
+                                    ${percentage}%
+                                </p>
+                            </div>
+                            ${passed
+                                ? `<p class="text-lg text-gray-700 mb-4">Great job! Topic ${lessonNum} is now completed.</p>`
+                                : `<p class="text-lg text-gray-700 mb-4">You need at least 60% (3/5). Review Topic ${lessonNum} and try again.</p>`
+                            }
+                        </div>
+                    `,
+                    icon: passed ? 'success' : 'error',
+                    confirmButtonText: passed ? 'Continue' : `Review Topic ${lessonNum}`,
+                    confirmButtonColor: passed ? '#10b981' : '#667eea',
+                    allowOutsideClick: false,
+                    width: '600px',
+                    customClass: {
+                        popup: 'rounded-2xl',
+                        title: 'text-slate-800',
+                        htmlContainer: 'text-center'
+                    }
+                }).then(async (result) => {
+                    if (result.isConfirmed && passed) {
+                        try {
+                            await storeQuizData(lessonNum, score, shuffledQuiz.length, userAnswers);
+                            await new Promise(resolve => setTimeout(resolve, 200));
+                            await completeLesson(lessonNum); // Saves to DB (lesson_completion table)
+                            
+                            // Hide quiz button if Topic 4 quiz is completed
+                            if (lessonNum === 4) {
+                                const topic4QuizButton = document.getElementById('topic4QuizButton');
+                                if (topic4QuizButton) {
+                                    topic4QuizButton.style.display = 'none';
+                                }
+                                
+                                setTimeout(() => {
+                                    if (completedLessons.size === totalLessons) {
+                                        showPerformanceAnalysisSection();
+                                        showTopicCompletionOption();
+                                    }
+                                }, 500);
+                            }
+                        } catch (e) {
+                            console.error('Error storing quiz data:', e);
+                        }
+                        if (typeof onPassed === 'function') onPassed();
+                    } else {
+                        try {
+                            await storeQuizData(lessonNum, score, shuffledQuiz.length, userAnswers);
+                        } catch (e) {
+                            console.error('Error storing quiz data:', e);
+                        }
+                        showLesson(lessonNum);
+                    }
+                });
+            }
+        }
+
+        // Store quiz data to database (layout and logic from functions.html)
+        async function storeQuizData(lessonNum, score, totalQuestions, userAnswers) {
+            try {
+                const cleanedAnswers = [];
+                for (let i = 0; i < totalQuestions; i++) {
+                    if (userAnswers[i] && typeof userAnswers[i] === 'object') {
+                        const answer = {
+                            question: userAnswers[i].question || `Question ${i + 1}`,
+                            options: userAnswers[i].options || [],
+                            selected: userAnswers[i].selected !== undefined ? userAnswers[i].selected : -1,
+                            selectedText: userAnswers[i].selectedText || (userAnswers[i].options && userAnswers[i].options[userAnswers[i].selected] ? userAnswers[i].options[userAnswers[i].selected] : 'N/A'),
+                            correct: userAnswers[i].correct !== undefined ? userAnswers[i].correct : -1,
+                            correctText: userAnswers[i].correctText || (userAnswers[i].options && userAnswers[i].options[userAnswers[i].correct] ? userAnswers[i].options[userAnswers[i].correct] : 'N/A'),
+                            isCorrect: userAnswers[i].isCorrect !== undefined ? userAnswers[i].isCorrect : false,
+                            explanation: userAnswers[i].explanation || ''
+                        };
+                        cleanedAnswers.push(answer);
+                    } else {
+                        cleanedAnswers.push({
+                            question: `Question ${i + 1}`,
+                            options: [],
+                            selected: -1,
+                            selectedText: 'Not answered',
+                            correct: -1,
+                            correctText: 'N/A',
+                            isCorrect: false
+                        });
+                    }
+                }
+
+                const quizStartTime = window.quizStartTime || Date.now();
+                const timeTaken = Math.floor((Date.now() - quizStartTime) / 1000);
+
+                const response = await fetch('../php/store-quiz-data.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        topic: 'evaluating-functions',
+                        lesson: lessonNum,
+                        quiz_type: `evaluating_functions_topic_${lessonNum}`,
+                        score: score,
+                        total_questions: totalQuestions,
+                        answers: cleanedAnswers,
+                        time_taken_seconds: timeTaken
+                    }),
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    let errorMessage = `HTTP error! status: ${response.status}`;
+                    try {
+                        const errorData = await response.json();
+                        if (errorData.message) errorMessage = errorData.message;
+                    } catch (e) {}
+                    throw new Error(errorMessage);
+                }
+
+                const data = await response.json();
+                if (!data.success) {
+                    throw new Error(data.message || 'Failed to store quiz data');
+                }
+                return data;
+            } catch (error) {
+                console.error('Error storing quiz data:', error);
+                Swal.fire({
+                    title: 'Warning',
+                    html: `
+                        <div class="text-left">
+                            <p class="mb-2"><strong>Quiz data storage failed:</strong></p>
+                            <p class="mb-2 text-sm">${error.message || 'Quiz answers may not have been saved properly.'}</p>
+                            <p class="mb-2 text-xs text-gray-600">Please try the quiz again.</p>
+                        </div>
+                    `,
+                    icon: 'warning',
+                    timer: 8000,
+                    showConfirmButton: true
+                });
+                throw error;
+            }
+        }
+        
+        /**
+         * Generate detailed explanation for quiz answer with step-by-step solution
+         */
+        function generateExplanation(quiz, selectedAnswer) {
+            const isCorrect = selectedAnswer === quiz.correct;
+            const correctAnswer = quiz.options[quiz.correct];
+            const selectedAnswerText = quiz.options[selectedAnswer];
+            const question = quiz.question.toLowerCase();
+            
+            // If quiz has manual explanation, use it
+            if (quiz.explanation) {
+                return quiz.explanation;
+            }
+            
+            // Generate detailed explanation based on question content
+            let explanation = '';
+            
+            if (isCorrect) {
+                explanation = `✓ Correct! "${correctAnswer}" is the right answer.\n\n`;
+            } else {
+                explanation = `✗ Incorrect. You selected "${selectedAnswerText}", but the correct answer is "${correctAnswer}".\n\n`;
+            }
+            
+            // Add detailed step-by-step explanations based on question type
+            if (question.includes('function evaluation') || question.includes('what is function evaluation')) {
+                explanation += 'HOW TO SOLVE:\n';
+                explanation += 'Function evaluation means finding the output when you substitute a specific input:\n';
+                explanation += '1. Replace x with the given value\n';
+                explanation += '2. Follow the order of operations (PEMDAS)\n';
+                explanation += '3. Simplify to get the final answer\n';
+                explanation += 'Example: f(x) = 2x + 3, f(5) = 2(5) + 3 = 10 + 3 = 13';
+            } else if (question.includes('f(5)') || question.includes('f(4)') || (question.includes('evaluate') && question.includes('f('))) {
+                // Extract the number from question like "f(4)" or "f(5)"
+                const match = question.match(/f\((\d+)\)/);
+                if (match) {
+                    const num = match[1];
+                    // Try to extract the function from question
+                    const funcMatch = question.match(/f\(x\)\s*=\s*([^,]+)/);
+                    if (funcMatch) {
+                        const func = funcMatch[1].trim();
+                        explanation += `HOW TO SOLVE:\n`;
+                        explanation += `To evaluate f(${num}), substitute ${num} for x:\n`;
+                        explanation += `1. Start with: f(x) = ${func}\n`;
+                        explanation += `2. Replace x with ${num}: f(${num}) = ${func.replace(/x/g, num)}\n`;
+                        explanation += `3. Calculate: f(${num}) = ${correctAnswer}\n`;
+                        explanation += `Answer: ${correctAnswer}`;
+                    } else {
+                        explanation += 'HOW TO SOLVE:\n';
+                        explanation += `To evaluate f(${num}):\n`;
+                        explanation += `1. Substitute ${num} for x in the function\n`;
+                        explanation += `2. Follow PEMDAS (Parentheses, Exponents, Multiply/Divide, Add/Subtract)\n`;
+                        explanation += `3. Simplify to get the final answer: ${correctAnswer}`;
+                    }
+                } else {
+                    explanation += 'HOW TO SOLVE:\n';
+                    explanation += 'To evaluate a function:\n';
+                    explanation += '1. Substitute the given value for x\n';
+                    explanation += '2. Follow the order of operations (PEMDAS)\n';
+                    explanation += '3. Simplify to get the final answer';
+                }
+            } else if (question.includes('pemdas') || question.includes('order of operations')) {
+                explanation += 'HOW TO SOLVE:\n';
+                explanation += 'PEMDAS stands for:\n';
+                explanation += '1. P - Parentheses (work inside first)\n';
+                explanation += '2. E - Exponents (calculate powers)\n';
+                explanation += '3. MD - Multiply/Divide (left to right)\n';
+                explanation += '4. AS - Add/Subtract (left to right)\n';
+                explanation += 'Remember: "Please Excuse My Dear Aunt Sally" helps you remember the order!';
+            } else if (question.includes('constant function')) {
+                explanation += 'HOW TO SOLVE:\n';
+                explanation += 'A constant function always returns the same value:\n';
+                explanation += '1. No matter what x is, the answer is always the same\n';
+                explanation += '2. Example: f(x) = 5 means f(3) = 5, f(10) = 5, f(100) = 5\n';
+                explanation += '3. There\'s no calculation needed - just use the constant value';
+            } else if (question.includes('linear function')) {
+                explanation += 'HOW TO SOLVE:\n';
+                explanation += 'Linear functions have degree one (x to the first power):\n';
+                explanation += '1. Substitute the value for x\n';
+                explanation += '2. Multiply first (PEMDAS)\n';
+                explanation += '3. Then add or subtract\n';
+                explanation += 'Example: f(x) = 3x - 2, f(4) = 3(4) - 2 = 12 - 2 = 10';
+            } else if (question.includes('rational function') || question.includes('not allowed')) {
+                explanation += 'HOW TO SOLVE:\n';
+                explanation += 'Rational functions are fractions:\n';
+                explanation += '1. The denominator cannot be zero\n';
+                explanation += '2. Find what makes the denominator = 0\n';
+                explanation += '3. That value is NOT allowed in the domain\n';
+                explanation += 'Example: f(x) = (x+1)/(x-2), x-2 = 0 when x = 2, so x = 2 is NOT allowed';
+            } else if (question.includes('absolute value') || question.includes('|-5|')) {
+                explanation += 'HOW TO SOLVE:\n';
+                explanation += 'Absolute value makes any number positive:\n';
+                explanation += '1. Evaluate inside the absolute value first\n';
+                explanation += '2. Then take the absolute value (always positive or zero)\n';
+                explanation += '3. |positive| = positive, |negative| = positive, |0| = 0\n';
+                explanation += 'Example: |-5| = 5, |3| = 3, |0| = 0';
+            } else {
+                explanation += 'HOW TO SOLVE:\n';
+                explanation += '1. Read the question carefully\n';
+                explanation += '2. Identify what concept is being tested\n';
+                explanation += '3. Apply the relevant rules or formulas\n';
+                explanation += '4. Check your answer makes sense\n';
+                explanation += 'Review the lesson content for more details on this topic.';
+            }
+            
+            return explanation;
+        }
+
+        // Show Topic 4 Quiz
+        function showTopic4Quiz() {
+            if (completedLessons.has(4)) {
+                Swal.fire({
+                    title: 'Already Completed',
+                    text: 'You have already completed Topic 4 quiz.',
+                    icon: 'info',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+            runLessonQuiz(lesson4Quiz, 4, async () => {
+                // After passing, show topic completion option
+                setTimeout(() => {
+                    if (completedLessons.size === totalLessons) {
+                        showTopicCompletionOption();
+                    }
+                }, 500);
+            });
+        }
+
+        // Show performance analysis section (only when all quizzes are completed)
+        function showPerformanceAnalysisSection() {
+            // Check if all 4 topics are completed
+            const totalLessons = 4;
+            if (completedLessons.size !== totalLessons) {
+                console.log('Performance analysis will only show after completing all quizzes. Current completed:', completedLessons.size, '/', totalLessons);
+                return;
+            }
+            
+            const analysisDiv = document.getElementById('performanceAnalysisSection');
+            if (analysisDiv) {
+                analysisDiv.style.display = 'block';
+                // Scroll to analysis section smoothly
+                setTimeout(() => {
+                    analysisDiv.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                }, 300);
+            }
+        }
+
+        /**
+         * Analyze quiz performance using custom AI
+         */
+        async function analyzePerformance() {
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const resultSection = document.getElementById('analysisResult');
+            
+            // Show loading state
+            if (analyzeBtn) {
+                analyzeBtn.disabled = true;
+                analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Analyzing...';
+            }
+            
+            try {
+                const response = await fetch(`../php/analyze-quiz-performance.php?topic=evaluating-functions`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                // Get response text first to see what we got
+                const responseText = await response.text();
+                console.log('Raw response:', responseText.substring(0, 500));
+                
+                if (!response.ok) {
+                    // Try to parse error message
+                    let errorMessage = `Server error: ${response.status} ${response.statusText}`;
+                    try {
+                        const errorData = JSON.parse(responseText);
+                        errorMessage = errorData.message || errorMessage;
+                        if (errorData.debug) {
+                            errorMessage += '\n\nDebug: ' + errorData.debug;
+                        }
+                    } catch (e) {
+                        // Not JSON, use raw text
+                        errorMessage = responseText.substring(0, 200);
+                    }
+                    throw new Error(errorMessage);
+                }
+                
+                const result = JSON.parse(responseText);
+                
+                if (result.success && result.analysis) {
+                    displayPerformanceAnalysis(result.analysis);
+                    
+                    Swal.fire({
+                        title: 'Analysis Complete!',
+                        text: 'Your performance analysis has been completed.',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                } else {
+                    throw new Error(result.message || 'Failed to analyze performance');
+                }
+                
+            } catch (error) {
+                console.error('Performance Analysis Error:', error);
+                
+                Swal.fire({
+                    title: 'Analysis Error',
+                    html: `
+                        <div class="text-left">
+                            <p class="text-gray-700 mb-3"><strong>Error:</strong> ${error.message}</p>
+                            <p class="text-sm text-gray-600 mb-3">Unable to analyze your performance right now. Please try again later.</p>
+                            <p class="text-sm text-gray-600 mb-3">Make sure you have completed at least one quiz before analyzing.</p>
+                        </div>
+                    `,
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#667eea'
+                });
+            } finally {
+                // Reset button
+                if (analyzeBtn) {
+                    analyzeBtn.disabled = false;
+                    analyzeBtn.innerHTML = '<i class="fas fa-chart-bar mr-2"></i>Analyze My Performance';
+                }
+            }
+        }
+        
+        /**
+         * Display performance analysis results
+         */
+        function displayPerformanceAnalysis(analysis) {
+            const resultSection = document.getElementById('analysisResult');
+            if (!resultSection) return;
+            
+            resultSection.classList.remove('hidden');
+            
+            const overallAverage = analysis.overallAverage || 0;
+            const totalQuizzes = analysis.totalQuizzes || 0;
+            const strengths = analysis.strengths || [];
+            const weaknesses = analysis.weaknesses || [];
+            const correctAnswers = analysis.correctAnswers || [];
+            const incorrectAnswers = analysis.incorrectAnswers || [];
+            const recommendations = analysis.recommendations || [];
+            const topicPerformance = analysis.topicPerformance || {};
+            
+            // Helper function to get topic name
+            function getTopicNameForAnalysis(topicNum) {
+                const topicNames = {
+                    1: 'Topic 1: Introduction to Function Evaluation',
+                    2: 'Topic 2: Types of Functions',
+                    3: 'Topic 3: The Evaluation Process',
+                    4: 'Topic 4: Interactive Practice'
+                };
+                return topicNames[topicNum] || 'Topic ' + topicNum;
+            }
+            
+            // Build HTML
+            let html = `
+                <div class="space-y-6">
+                    <!-- Overall Performance -->
+                    <div class="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-6 border-l-4 border-indigo-500">
+                        <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-trophy text-indigo-500 mr-2"></i>
+                            Overall Performance
+                        </h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="bg-white rounded-lg p-4 text-center">
+                                <div class="text-3xl font-bold text-blue-600">${overallAverage}%</div>
+                                <div class="text-sm text-gray-600 mt-1">Average Score</div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 text-center">
+                                <div class="text-3xl font-bold text-green-600">${correctAnswers.length}</div>
+                                <div class="text-sm text-gray-600 mt-1">Correct</div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 text-center">
+                                <div class="text-3xl font-bold text-red-600">${incorrectAnswers.length}</div>
+                                <div class="text-sm text-gray-600 mt-1">Incorrect</div>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 text-center">
+                                <div class="text-3xl font-bold text-purple-600">${totalQuizzes}</div>
+                                <div class="text-sm text-gray-600 mt-1">Quizzes Taken</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Topic Performance -->
+                    <div class="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
+                        <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-chart-bar text-blue-500 mr-2"></i>
+                            Performance per Topic
+                        </h4>
+                        <div class="space-y-4">
+            `;
+            
+            // Display each topic performance
+            for (let topicNum = 1; topicNum <= 4; topicNum++) {
+                if (topicPerformance[topicNum]) {
+                    const perf = topicPerformance[topicNum];
+                    const percentage = perf.total > 0 ? Math.round((perf.correct / perf.total) * 100) : 0;
+                    const topicName = getTopicNameForAnalysis(topicNum);
+                    const colorClass = percentage >= 80 ? 'text-green-600' : percentage >= 60 ? 'text-yellow-600' : 'text-red-600';
+                    const borderClass = percentage >= 80 ? 'border-green-500' : percentage >= 60 ? 'border-yellow-500' : 'border-red-500';
+                    
+                    html += `
+                        <div class="border-l-4 ${borderClass} bg-gray-50 rounded p-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <h5 class="font-semibold text-gray-800">${topicName}</h5>
+                                <span class="text-2xl font-bold ${colorClass}">${percentage}%</span>
+                            </div>
+                            <div class="text-sm text-gray-600 mb-2">
+                                Correct: ${perf.correct} | Incorrect: ${perf.incorrect} | Total: ${perf.total}
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-primary h-2 rounded-full transition-all" style="width: ${percentage}%"></div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            html += `
+                        </div>
+                    </div>
+                    
+                    <!-- Strengths -->
+                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border-l-4 border-green-500">
+                        <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            Your Strengths
+                        </h4>
+                        ${strengths.length > 0 ? `
+                            <ul class="space-y-2">
+                                ${strengths.map(strength => `
+                                    <li class="flex items-start">
+                                        <span class="text-green-500 mr-2">✓</span>
+                                        <span class="text-gray-700">${typeof strength === 'object' && strength.message ? strength.message : strength}</span>
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        ` : '<p class="text-gray-600">No strengths recorded yet. Take a quiz to see your strengths.</p>'}
+                    </div>
+                    
+                    <!-- Weaknesses -->
+                    <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl p-6 border-l-4 border-red-500">
+                        <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>
+                            Areas to Improve
+                        </h4>
+                        ${weaknesses.length > 0 ? `
+                            <ul class="space-y-2">
+                                ${weaknesses.map(weakness => `
+                                    <li class="flex items-start">
+                                        <span class="text-red-500 mr-2">⚠</span>
+                                        <span class="text-gray-700">${typeof weakness === 'object' && weakness.message ? weakness.message : weakness}</span>
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        ` : '<p class="text-gray-600">No weaknesses recorded. Keep up the great work!</p>'}
+                    </div>
+                    
+                    <!-- Correct Answers -->
+                    ${correctAnswers.length > 0 ? `
+                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border-l-4 border-green-500">
+                        <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-check text-green-500 mr-2"></i>
+                            Your Correct Answers (${correctAnswers.length})
+                        </h4>
+                        <div class="space-y-3 max-h-96 overflow-y-auto">
+                            ${correctAnswers.map((answer, index) => `
+                                <div class="bg-white rounded-lg p-3 border border-green-200">
+                                    <div class="flex items-start justify-between">
+                                        <div class="flex-1">
+                                            <div class="font-semibold text-green-700">Topic ${answer.topic} - Q${answer.questionNum}</div>
+                                            <div class="text-sm text-gray-600 mt-1">${answer.question}</div>
+                                            <div class="text-sm text-gray-700 mt-2">
+                                                <span class="font-semibold">Your answer:</span> ${answer.selected}
+                                            </div>
+                                            ${answer.explanation ? `
+                                                <div class="text-sm text-gray-600 mt-3 bg-green-50 p-3 rounded border-l-2 border-green-400">
+                                                    <span class="font-semibold text-green-700 block mb-2">Explanation:</span>
+                                                    <div class="whitespace-pre-line text-gray-700">${answer.explanation}</div>
+                                                </div>
+                                            ` : ''}
+                                        </div>
+                                        <span class="text-green-500 text-xl ml-2">✓</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+                    
+                    <!-- Incorrect Answers -->
+                    ${incorrectAnswers.length > 0 ? `
+                    <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl p-6 border-l-4 border-red-500">
+                        <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-times text-red-500 mr-2"></i>
+                            Your Incorrect Answers (${incorrectAnswers.length})
+                        </h4>
+                        <div class="space-y-3 max-h-96 overflow-y-auto">
+                            ${incorrectAnswers.map((answer, index) => `
+                                <div class="bg-white rounded-lg p-4 border border-red-200">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <div class="flex-1">
+                                            <div class="font-semibold text-red-700">Topic ${answer.topic} - Q${answer.questionNum}</div>
+                                            <div class="text-sm text-gray-700 mt-1">${answer.question}</div>
+                                        </div>
+                                        <span class="text-red-500 text-xl ml-2">✗</span>
+                                    </div>
+                                    <div class="mt-2 space-y-1">
+                                        <div class="text-sm">
+                                            <span class="font-semibold text-red-600">Your incorrect answer:</span> 
+                                            <span class="text-gray-700">${answer.selected}</span>
+                                        </div>
+                                        <div class="text-sm">
+                                            <span class="font-semibold text-green-600">Correct answer:</span> 
+                                            <span class="text-gray-700">${answer.correct}</span>
+                                        </div>
+                                        ${answer.explanation ? `
+                                            <div class="text-sm text-gray-700 mt-3 bg-blue-50 p-3 rounded border-l-2 border-blue-400">
+                                                <span class="font-semibold text-blue-700 block mb-2">Explanation:</span>
+                                                <div class="whitespace-pre-line text-gray-700">${answer.explanation}</div>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+                    
+                    <!-- Recommendations -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border-l-4 border-blue-500">
+                        <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-lightbulb text-blue-500 mr-2"></i>
+                            Recommendations to Improve
+                        </h4>
+                        <ul class="space-y-4">
+                            ${recommendations.map((rec, index) => {
+                                // Check if recommendation has line breaks (multi-line)
+                                const hasLineBreaks = rec.includes('\n');
+                                const isFocusReview = rec.includes('FOCUS REVIEW:');
+                                
+                                if (hasLineBreaks) {
+                                    // Split by line breaks and format
+                                    const lines = rec.split('\n');
+                                    const mainLine = lines[0];
+                                    const subLines = lines.slice(1);
+                                    
+                                    return `
+                                        <li class="flex items-start">
+                                            <span class="text-blue-500 mr-3 mt-1 font-bold">${index + 1}.</span>
+                                            <div class="flex-1">
+                                                <div class="text-gray-800 font-semibold mb-1">${mainLine}</div>
+                                                ${subLines.map(line => `
+                                                    <div class="text-gray-700 text-sm ml-4 mb-1">${line}</div>
+                                                `).join('')}
+                                            </div>
+                                        </li>
+                                    `;
+                                } else {
+                                    return `
+                                        <li class="flex items-start">
+                                            <span class="text-blue-500 mr-3 mt-1 font-bold">${index + 1}.</span>
+                                            <span class="text-gray-700 ${isFocusReview ? 'font-semibold text-gray-800' : ''}">${rec}</span>
+                                        </li>
+                                    `;
+                                }
+                            }).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+            
+            resultSection.innerHTML = html;
+        }
+        
+        // Show Lesson 1 Quiz
+        function showLesson1Quiz() {
+            if (completedLessons.has(1)) { // already passed, skip quiz
+                showLesson(2);
+                return;
+            }
+            
+            // Track quiz start time
+            window.quizStartTime = Date.now();
+            
+            // Shuffle quiz questions and options
+            const shuffledQuiz = shuffleQuiz(lesson1Quiz);
+            
+            let currentQuestion = 0;
+            let score = 0;
+            let userAnswers = [];
+
+            Swal.fire({
+                title: `📚 Topic 1 Quiz`,
+                html: `
+                    <div class="text-left space-y-4">
+                        <div class="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg p-5 border-l-4 border-primary">
+                            <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
+                                <i class="fas fa-info-circle text-primary mr-2"></i>
+                                Quiz Instructions
+                            </h3>
+                            <p class="text-gray-700 mb-2">
+                                You will answer <strong>5 questions</strong> for Topic 1.
+                            </p>
+                            <p class="text-sm text-gray-600 mb-2">
+                                <strong>Passing:</strong> at least <strong>3/5</strong> correct (60%).
+                            </p>
+                            <div class="mt-3 pt-3 border-t border-primary/20">
+                                <p class="text-sm font-semibold text-gray-700 mb-2">What to expect:</p>
+                                <ul class="text-sm text-gray-600 space-y-1 list-disc list-inside">
+                                    <li>Questions are randomized for each attempt</li>
+                                    <li>Answer options are shuffled</li>
+                                    <li>You cannot go back to previous questions</li>
+                                    <li>Review your answers at the end</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border-l-4 border-green-500">
+                            <p class="text-sm text-gray-700">
+                                <i class="fas fa-lightbulb text-green-500 mr-2"></i>
+                                <strong>Tip:</strong> Take your time and read each question carefully. You can try again if needed.
+                            </p>
+                        </div>
+                    </div>
+                `,
+                icon: 'info',
+                confirmButtonText: 'Start Quiz',
+                confirmButtonColor: '#667eea',
+                cancelButtonText: 'Cancel',
+                showCancelButton: true,
+                cancelButtonColor: '#ef4444',
+                allowOutsideClick: false,
+                width: '650px',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    title: 'text-slate-800',
+                    htmlContainer: 'text-left'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) displayQuestion();
+                else showLesson(1);
+            });
+
+            function displayQuestion() {
+                if (currentQuestion >= shuffledQuiz.length) {
+                    showResults();
+                    return;
+                }
+
+                const q = shuffledQuiz[currentQuestion];
+                const progressPercentage = ((currentQuestion + 1) / shuffledQuiz.length) * 100;
+                const optionsHtml = q.options.map((opt, idx) =>
+                    `<button type="button" class="quiz-option w-full text-left px-5 py-4 mb-3 bg-white border-2 border-gray-300 rounded-lg hover:border-primary hover:bg-gradient-to-r hover:from-primary/10 hover:to-secondary/10 hover:shadow-md transition-all duration-200 font-medium text-gray-800 transform hover:scale-[1.02]" data-answer="${idx}">
+                        <span class="flex items-center">
+                            <span class="w-8 h-8 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center mr-3 font-semibold text-gray-700 border border-gray-300">${String.fromCharCode(65 + idx)}</span>
+                            <span>${opt}</span>
+                        </span>
+                    </button>`
+                ).join('');
+
+                Swal.fire({
+                    title: `<div class="flex items-center justify-center w-full">
+                        <span class="text-center">Question ${currentQuestion + 1} of ${shuffledQuiz.length}</span>
+                    </div>`,
+                    html: `
+                        <div class="text-left">
+                            <!-- Progress Bar -->
+                            <div class="w-full bg-gray-200 rounded-full h-2 mb-6">
+                                <div class="bg-gradient-to-r from-primary to-secondary h-2 rounded-full transition-all duration-300" style="width: ${progressPercentage}%"></div>
+                            </div>
+                            
+                            <p class="text-xl font-semibold mb-6 text-gray-900">${q.question}</p>
+                            <div class="space-y-3">${optionsHtml}</div>
+                        </div>
+                    `,
+                    showConfirmButton: false,
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel Quiz',
+                    cancelButtonColor: '#ef4444',
+                    allowOutsideClick: false,
+                    width: '750px',
+                    customClass: {
+                        popup: 'rounded-2xl shadow-2xl',
+                        title: 'text-primary text-2xl font-bold mb-4 text-center',
+                        htmlContainer: 'text-left',
+                        cancelButton: 'px-6 py-3 rounded-lg font-semibold'
+                    },
+                    didOpen: () => {
+                        const questionIndex = currentQuestion;
+                        const currentQuiz = shuffledQuiz[questionIndex];
+                        document.querySelectorAll('.quiz-option').forEach(btn => {
+                            btn.addEventListener('click', function() {
+                                const selectedAnswer = parseInt(this.dataset.answer);
+                                const explanation = generateExplanation(currentQuiz, selectedAnswer);
+                                userAnswers[questionIndex] = {
+                                    question: currentQuiz.question,
+                                    options: currentQuiz.options,
+                                    selected: selectedAnswer,
+                                    selectedText: currentQuiz.options[selectedAnswer],
+                                    correct: currentQuiz.correct,
+                                    correctText: currentQuiz.options[currentQuiz.correct],
+                                    isCorrect: selectedAnswer === currentQuiz.correct,
+                                    explanation: explanation
+                                };
+                                if (selectedAnswer === currentQuiz.correct) score++;
+                                document.querySelectorAll('.quiz-option').forEach(b => b.disabled = true);
+                                setTimeout(() => {
+                                    currentQuestion++;
+                                    displayQuestion();
+                                }, 500);
+                            });
+                        });
+                    }
+                });
+            }
+
+            function showResults() {
+                const percentage = Math.round((score / shuffledQuiz.length) * 100);
+                const passed = score >= 3;
+
+                // Show only score and message — huwag ipakita ang tama at maling sagot
+                Swal.fire({
+                    title: passed ? '🎉 Congratulations!' : '📚 Keep Learning!',
+                    html: `
+                        <div class="text-center">
+                            <div class="mb-6">
+                                <div class="inline-flex items-center justify-center w-24 h-24 rounded-full ${passed ? 'bg-green-100' : 'bg-red-100'} mb-4">
+                                    <span class="text-4xl">${passed ? '✓' : '✗'}</span>
+                                </div>
+                                <p class="text-3xl font-bold mb-2 ${passed ? 'text-green-600' : 'text-red-600'}">
+                                    Score: ${score}/${shuffledQuiz.length}
+                                </p>
+                                <p class="text-xl font-semibold ${passed ? 'text-green-600' : 'text-red-600'}">
+                                    ${percentage}%
+                                </p>
+                            </div>
+                            ${passed
+                                ? `<p class="text-lg text-gray-700 mb-4">Great job! Topic 1 is now completed.</p>`
+                                : `<p class="text-lg text-gray-700 mb-4">You need at least 60% (3/5). Review Topic 1 and try again.</p>`
+                            }
+                        </div>
+                    `,
+                    icon: passed ? 'success' : 'error',
+                    confirmButtonText: passed ? 'Continue' : 'Review Topic 1',
+                    confirmButtonColor: passed ? '#10b981' : '#667eea',
+                    allowOutsideClick: false,
+                    width: '600px',
+                    customClass: {
+                        popup: 'rounded-2xl',
+                        title: 'text-slate-800',
+                        htmlContainer: 'text-center'
+                    }
+                }).then(async (result) => {
+                    if (result.isConfirmed && passed) {
+                        // Mark lesson as complete and proceed to next lesson
+                        try {
+                            // Store quiz data before completing lesson
+                            await storeQuizData(1, score, shuffledQuiz.length, userAnswers);
+                            await completeLesson(1);
+                            // Small delay to ensure completion is saved
+                            setTimeout(() => {
+                                showLesson(2);
+                            }, 500);
+                        } catch (error) {
+                            console.error('Error completing lesson:', error);
+                            // Still proceed to next lesson even if save fails
+                            showLesson(2);
+                        }
+                    } else if (!passed) {
+                        // Store quiz data even if failed (for analysis)
+                        try {
+                            await storeQuizData(1, score, shuffledQuiz.length, userAnswers);
+                        } catch (e) {
+                            console.error('Error storing quiz data:', e);
+                        }
+                        // Stay on Lesson 1
+                        showLesson(1);
+                    }
+                });
+            }
         }
 
         function navigateLesson(direction) {
             const newLesson = currentLesson + direction;
+            
+            // If trying to go to next lesson from Lesson 1, show quiz first (unless already completed)
+            if (currentLesson === 1 && direction === 1 && !completedLessons.has(1)) {
+                showLesson1Quiz();
+                return;
+            }
+            // Gate Lesson 2 -> 3 (skip if already completed)
+            if (currentLesson === 2 && direction === 1 && !completedLessons.has(2)) {
+                runLessonQuiz(lesson2Quiz, 2, () => setTimeout(() => showLesson(3), 300));
+                return;
+            }
+            // Gate Lesson 3 -> 4 (skip if already completed)
+            if (currentLesson === 3 && direction === 1 && !completedLessons.has(3)) {
+                runLessonQuiz(lesson3Quiz, 3, () => setTimeout(() => showLesson(4), 300));
+                return;
+            }
+            
             if (newLesson >= 1 && newLesson <= totalLessons) {
                 showLesson(newLesson);
             }
         }
 
+        // Study time tracking functions
+        async function startStudyTimeTracking() {
+            let canSaveToServer = false;
+            try {
+                const authResponse = await fetch('../php/user.php', { 
+                    credentials: 'include', 
+                    cache: 'no-store' 
+                });
+                if (authResponse.status === 401 || authResponse.status === 403) {
+                    console.log('User not authenticated, timer display only (no server save)');
+                } else {
+                    canSaveToServer = true;
+                }
+            } catch (error) {
+                console.warn('Auth check failed, timer display only (no server save):', error.message);
+            }
+            
+            // Huwag mag-start ng timer dito — mag-start lang pag na-delay na 10s sa lesson (see showLesson)
+            
+            // Initialize time tracking for current lesson (only if not completed)
+            if (currentLesson && !completedLessons.has(currentLesson)) {
+                const now = Date.now();
+                // Only set lessonStartTime if not already set
+                if (!lessonStartTime[currentLesson]) {
+                    lessonStartTime[currentLesson] = now;
+                }
+                // Initialize lastSavedTime and lastSaveTimestamp if not set (will be set when loading from server)
+                if (lastSavedTime[currentLesson] === undefined) {
+                    lastSavedTime[currentLesson] = totalStudyTime[currentLesson] || 0;
+                    lastSaveTimestamp[currentLesson] = now;
+                }
+            }
+            
+            // Only set up server save interval when authenticated
+            if (canSaveToServer) {
+                if (studyTimeInterval) {
+                    clearInterval(studyTimeInterval);
+                }
+                studyTimeInterval = setInterval(function() {
+                    if (!completedLessons.has(currentLesson)) {
+                        saveStudyTimeForCurrentLesson();
+                    }
+                    // Huwag mag-load from server dito para iwas doble (no periodic refresh)
+                }, 30000);
+            }
+            
+            // Always start live timer display (works even without server save)
+            startLiveTimer();
+        }
+        
+        // Start live timer that updates every second
+        function startLiveTimer() {
+            // Clear existing timer
+            if (timerUpdateInterval) {
+                clearInterval(timerUpdateInterval);
+            }
+            
+            // Don't start timer if lesson is already completed
+            if (completedLessons.has(currentLesson)) {
+                updateLiveTimer(); // Just show final time
+                return;
+            }
+            
+            // Update timer immediately
+            updateLiveTimer();
+            
+            // Update timer every second
+            timerUpdateInterval = setInterval(function() {
+                // Stop if lesson becomes completed
+                if (completedLessons.has(currentLesson)) {
+                    clearInterval(timerUpdateInterval);
+                    timerUpdateInterval = null;
+                    updateLiveTimer(); // Show final time
+                    return;
+                }
+                updateLiveTimer();
+            }, 1000);
+        }
+        
+        // Update live timer display for current lesson
+        function updateLiveTimer() {
+            if (!currentLesson) return;
+            
+            // Don't update timer if lesson is already completed
+            if (completedLessons.has(currentLesson)) {
+                // Show final time for completed lesson
+                let finalTime = totalStudyTime[currentLesson] || 0;
+                
+                // Ensure finalTime is in seconds (not milliseconds)
+                // If it's suspiciously large (> 86400 = 24 hours), it might be in milliseconds
+                if (finalTime > 86400) {
+                    // Check if it's in milliseconds (divide by 1000)
+                    const asSeconds = Math.floor(finalTime / 1000);
+                    if (asSeconds <= 86400) {
+                        finalTime = asSeconds;
+                    } else {
+                        // Still too large, cap it
+                        finalTime = Math.min(finalTime, 86400);
+                    }
+                }
+                
+                // Cap at 24 hours maximum
+                finalTime = Math.min(finalTime, 86400);
+                
+                const hours = Math.floor(finalTime / 3600);
+                const minutes = Math.floor((finalTime % 3600) / 60);
+                const secs = finalTime % 60;
+                
+                let timeDisplay = '';
+                if (hours > 0) {
+                    timeDisplay = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                } else {
+                    timeDisplay = `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                }
+                
+                const activeSection = document.getElementById(`lesson${currentLesson}`);
+                if (activeSection) {
+                    const timer = activeSection.querySelector('.lesson-timer-display');
+                    if (timer) {
+                        timer.textContent = timeDisplay;
+                    }
+                    
+                    // Update circular progress (max 2 hours = 7200 seconds)
+                    const maxTime = 7200; // 2 hours max
+                    const progress = Math.min((finalTime / maxTime) * 100, 100);
+                    const circumference = 2 * Math.PI * 34; // radius = 34 (smaller timer)
+                    const offset = circumference - (progress / 100) * circumference;
+                    
+                    const progressCircle = activeSection.querySelector('.timer-progress');
+                    if (progressCircle) {
+                        progressCircle.style.strokeDashoffset = offset;
+                    }
+                }
+                return;
+            }
+            
+            // For active lessons, calculate time accurately
+            // Use lastSavedTime (confirmed saved to server) + elapsed since last save
+            const baseTime = lastSavedTime[currentLesson] || 0; // This is the last confirmed saved time from server
+            
+            // Calculate elapsed time since last save (or since lesson started if no save yet)
+            let currentSessionElapsed = 0;
+            const saveStartTime = lastSaveTimestamp[currentLesson] || lessonStartTime[currentLesson];
+            if (saveStartTime) {
+                const now = Date.now();
+                const elapsedMs = now - saveStartTime;
+                currentSessionElapsed = Math.floor(elapsedMs / 1000); // in seconds
+                
+                // Cap current session at 2 hours to prevent unreasonable values
+                // If elapsed is suspiciously large, it might be because page was left open
+                if (currentSessionElapsed > 7200) {
+                    // Reset start time if session is too long (likely page was left open)
+                    console.warn(`Session elapsed time too large (${currentSessionElapsed}s) for lesson ${currentLesson}, resetting start time`);
+                    lessonStartTime[currentLesson] = now;
+                    lastSaveTimestamp[currentLesson] = now;
+                    currentSessionElapsed = 0;
+                }
+                
+                // Also check if elapsed is negative (shouldn't happen, but handle it)
+                if (currentSessionElapsed < 0) {
+                    console.warn(`Negative elapsed time detected for lesson ${currentLesson}, resetting start time`);
+                    lessonStartTime[currentLesson] = now;
+                    lastSaveTimestamp[currentLesson] = now;
+                    currentSessionElapsed = 0;
+                }
+            }
+            
+            // Total time = last saved time (from server) + elapsed since last save
+            // This prevents double-counting because baseTime is the confirmed saved time
+            // and currentSessionElapsed is only the NEW time since last save
+            const totalTime = baseTime + currentSessionElapsed;
+            const cappedTime = Math.min(totalTime, 86400); // cap display at 24 hours (match functions.html)
+            
+            // Format time as MM:SS or HH:MM:SS
+            const hours = Math.floor(cappedTime / 3600);
+            const minutes = Math.floor((cappedTime % 3600) / 60);
+            const seconds = cappedTime % 60;
+            
+            let timeDisplay = '';
+            if (hours > 0) {
+                timeDisplay = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            } else {
+                timeDisplay = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+            
+            // Update timer display only for the active lesson section
+            const activeSection = document.getElementById(`lesson${currentLesson}`);
+            if (activeSection) {
+                const timer = activeSection.querySelector('.lesson-timer-display');
+                if (timer) {
+                    timer.textContent = timeDisplay;
+                }
+                
+                // Update circular progress (max 2 hours = 7200 seconds)
+                const maxTime = 7200; // 2 hours max
+                const progress = Math.min((cappedTime / maxTime) * 100, 100);
+                const circumference = 2 * Math.PI * 56; // radius = 56
+                const offset = circumference - (progress / 100) * circumference;
+                
+                const progressCircle = activeSection.querySelector('.timer-progress');
+                if (progressCircle) {
+                    progressCircle.style.strokeDashoffset = offset;
+                }
+            }
+        }
+        
+        function saveStudyTimeForCurrentLesson() {
+            if (!currentLesson) return;
+            
+            // CRITICAL: Never save time for completed lessons
+            // Once a lesson is completed, the timer should be frozen
+            if (completedLessons.has(currentLesson)) {
+                console.log(`Lesson ${currentLesson} is completed, skipping timer save`);
+                return;
+            }
+            
+            // Use lastSaveTimestamp if available, otherwise use lessonStartTime
+            const saveStartTime = lastSaveTimestamp[currentLesson] || lessonStartTime[currentLesson];
+            if (!saveStartTime) return;
+            
+            const now = Date.now();
+            const elapsed = Math.floor((now - saveStartTime) / 1000); // in seconds
+            
+            // Only add time if it's reasonable (less than 2 hours per session)
+            if (elapsed > 0 && elapsed < 7200) {
+                // Get the last confirmed saved time (from server)
+                const baseTime = lastSavedTime[currentLesson] || 0;
+                
+                // Calculate new total: last saved time + NEW elapsed time since last save
+                const newTotalTime = baseTime + elapsed;
+                
+                // Update both totalStudyTime and lastSavedTime
+                totalStudyTime[currentLesson] = newTotalTime;
+                lastSavedTime[currentLesson] = newTotalTime;
+                lastSaveTimestamp[currentLesson] = now;
+                
+                // Reset lessonStartTime to now for next interval
+                lessonStartTime[currentLesson] = now;
+                
+                // Update display immediately
+                displayStudyTimeFromLocal();
+                
+                // Send only the DELTA (elapsed) to server so backend can ADD — prevents double count
+                sendStudyTimeToServer({ [currentLesson]: elapsed });
+            } else if (elapsed >= 7200) {
+                // If elapsed time is too large, reset everything (likely page was left open)
+                lessonStartTime[currentLesson] = now;
+                lastSaveTimestamp[currentLesson] = now;
+            }
+        }
+        
+        // Send study time to server. Pass deltaPayload = { lessonNum: elapsedSeconds } to add
+        // only new time (prevents double count). If no payload, does nothing (save already sent).
+        async function sendStudyTimeToServer(deltaPayload) {
+            try {
+                const studyTimeData = deltaPayload || {};
+                if (Object.keys(studyTimeData).length === 0) return;
+                
+                const response = await fetch('../php/store-study-time.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        topic: 'evaluating-functions',
+                        study_time: studyTimeData,
+                        delta: true
+                    }),
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    console.log('Study time saved successfully');
+                    // Update lastSavedTime with what we just saved (don't reload from server immediately to avoid race condition)
+                    for (let lesson in studyTimeData) {
+                        const lessonNum = parseInt(lesson);
+                        const delta = studyTimeData[lesson];
+                        // lastSavedTime was already updated in saveStudyTimeForCurrentLesson, so this is just confirmation
+                        // But we can optionally reload from server after a delay to ensure sync
+                        setTimeout(() => {
+                            loadAndDisplayStudyTime();
+                        }, 1000);
+                    }
+                }
+            } catch (error) {
+                console.error('Error saving study time:', error);
+            }
+        }
+        
+        // Load and display study time from server
+        async function loadAndDisplayStudyTime() {
+            try {
+                const response = await fetch('../php/get-study-time.php?topic=evaluating-functions', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                if (data.success && data.studyTime) {
+                    displayStudyTime(data.studyTime);
+                } else {
+                    // If no data, show current local tracking
+                    displayStudyTimeFromLocal();
+                }
+            } catch (error) {
+                console.error('Error loading study time:', error);
+                // Fallback to local tracking
+                displayStudyTimeFromLocal();
+            }
+        }
+        
+        // Display study time from server data
+        function displayStudyTime(studyTimeData) {
+            // IMPORTANT: When loading from server, set totalStudyTime and lastSavedTime directly
+            // This prevents double-counting when the timer updates
+            // Server time is the total accumulated time, so set it directly
+            const now = Date.now();
+            for (let lesson = 1; lesson <= totalLessons; lesson++) {
+                if (studyTimeData[lesson] !== undefined) {
+                    let seconds = parseInt(studyTimeData[lesson]) || 0;
+                    
+                    // Ensure seconds is actually in seconds, not milliseconds
+                    // If it's suspiciously large (> 86400 = 24 hours), it might be in milliseconds
+                    if (seconds > 86400) {
+                        // Check if it's in milliseconds (divide by 1000)
+                        const asSeconds = Math.floor(seconds / 1000);
+                        if (asSeconds <= 86400) {
+                            seconds = asSeconds;
+                        } else {
+                            // Still too large, cap it at 24 hours
+                            seconds = 86400;
+                        }
+                    }
+                    
+                    // Set totalStudyTime and lastSavedTime directly from server (this is the total accumulated time)
+                    totalStudyTime[lesson] = seconds;
+                    lastSavedTime[lesson] = seconds;
+                    // Update lastSaveTimestamp to now so we know when we last synced with server
+                    lastSaveTimestamp[lesson] = now;
+                }
+            }
+            
+            // Update timer displays for all lessons
+            updateLiveTimer();
+        }
+        
+        // Display study time from local tracking (fallback)
+        function displayStudyTimeFromLocal() {
+            // Update timer displays for all lessons
+            updateLiveTimer();
+        }
+        
+        function canAccessTopic(lessonNum) {
+            if (lessonNum <= 1) return true;
+            for (let i = 1; i < lessonNum; i++) {
+                if (!completedLessons.has(i)) return false;
+            }
+            return true;
+        }
+        
+        function showTopicLockedMessage(lessonNum) {
+            const prev = lessonNum - 1;
+            Swal.fire({
+                icon: 'info',
+                title: 'Complete Previous Topic First',
+                html: `You need to <strong>pass the 5 questions</strong> for Topic ${prev} before you can open Topic ${lessonNum}.<br><br>Stay on Topic ${prev}, finish the lesson, then take the quiz and get at least <strong>3/5 correct</strong> (60%) to unlock Topic ${lessonNum}.`,
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#667eea'
+            });
+        }
+        
+        function setSidebarActive(lessonNum, section) {
+            document.querySelectorAll('.lesson-topic-header').forEach(h => h.classList.remove('active'));
+            document.querySelectorAll('.lesson-subitem').forEach(s => s.classList.remove('active'));
+            const topic = document.getElementById('sidebar-topic-' + lessonNum);
+            if (topic) {
+                topic.querySelector('.lesson-topic-header').classList.add('active');
+                const dot = topic.querySelector('.lesson-topic-dot');
+                if (dot) {
+                    dot.classList.remove('completed');
+                    if (completedLessons.has(lessonNum)) dot.classList.add('completed');
+                }
+            }
+            const sub = document.querySelector(`.lesson-subitem[data-lesson="${lessonNum}"][data-section="${section}"]`);
+            if (sub) sub.classList.add('active');
+        }
+        
+        function updateSidebarProgress() {
+            document.querySelectorAll('.lesson-topic').forEach(topic => {
+                const n = parseInt(topic.dataset.lesson, 10);
+                const accessible = canAccessTopic(n);
+                const complete = completedLessons.has(n);
+                // Never lock a topic that is already completed
+                topic.classList.toggle('locked', !accessible && !complete);
+                const dot = topic.querySelector('.lesson-topic-dot');
+                if (dot) {
+                    if (complete) dot.classList.add('completed');
+                    else dot.classList.remove('completed');
+                }
+            });
+        }
+        
         function showLesson(lessonNum) {
-            const lessonNavBtns = document.querySelectorAll('.lesson-nav-btn');
             const lessonSections = document.querySelectorAll('.lesson-section');
+            
+            if (currentLesson && currentLesson !== lessonNum) {
+                saveStudyTimeForCurrentLesson();
+            }
             
             currentLesson = lessonNum;
             
-            // Update navigation buttons
-            lessonNavBtns.forEach(b => {
-                const btnLessonNum = parseInt(b.dataset.lesson);
-                b.classList.remove('border-primary', 'bg-primary');
-                b.classList.add('border-transparent');
-                const icon = b.querySelector('.w-16');
-                
-                if (completedLessons.has(btnLessonNum)) {
-                    icon.classList.remove('bg-primary', 'text-white', 'bg-gray-300', 'text-gray-600');
-                    icon.classList.add('bg-green-500', 'text-white');
+            // Clear any pending "start timer after 10s" for previous lesson
+            if (lessonTimerStartDelay) {
+                clearTimeout(lessonTimerStartDelay);
+                lessonTimerStartDelay = null;
+            }
+            
+            if (completedLessons.has(lessonNum)) {
+                lessonStartTime[lessonNum] = null;
+            } else {
+                // Huwag mag-start ng timer pag open lang — start lang after 10 seconds on this lesson
+                lessonTimerStartDelay = setTimeout(function() {
+                    lessonTimerStartDelay = null;
+                    if (currentLesson === lessonNum && !completedLessons.has(lessonNum)) {
+                        lessonStartTime[lessonNum] = Date.now();
+                        startLiveTimer();
+                    }
+                }, 10000);
+            }
+            
+            setSidebarActive(lessonNum, 'objective');
+            updateSidebarProgress();
+            document.querySelectorAll('.lesson-topic').forEach(t => {
+                const n = parseInt(t.dataset.lesson, 10);
+                if (n === lessonNum) {
+                    t.classList.add('expanded');
+                    t.querySelector('.lesson-topic-header')?.setAttribute('aria-expanded', 'true');
                 } else {
-                    icon.classList.remove('bg-primary', 'text-white', 'bg-green-500', 'text-white');
-                    icon.classList.add('bg-gray-300', 'text-gray-600');
+                    t.classList.remove('expanded');
+                    t.querySelector('.lesson-topic-header')?.setAttribute('aria-expanded', 'false');
                 }
             });
             
-            // Highlight current lesson
-            const currentBtn = document.querySelector(`[data-lesson="${lessonNum}"]`);
-            if (currentBtn) {
-                currentBtn.classList.add('border-primary', 'bg-primary');
-                currentBtn.classList.remove('border-transparent');
-                const icon = currentBtn.querySelector('.w-16');
-                icon.classList.add('bg-primary', 'text-white');
-                icon.classList.remove('bg-gray-300', 'text-gray-600', 'bg-green-500');
-            }
-            
-            // Show selected lesson
             lessonSections.forEach(section => {
                 section.classList.remove('active');
             });
             document.getElementById(`lesson${lessonNum}`).classList.add('active');
             
-            // Update progress indicators
+            // Show timer only for active lesson
+            document.querySelectorAll('.lesson-timer-display').forEach(timer => {
+                const section = timer.closest('.lesson-section');
+                if (section && section.id === `lesson${lessonNum}`) {
+                    const timerContainer = timer.closest('.flex');
+                    if (timerContainer) {
+                        timerContainer.style.display = 'flex';
+                    }
+                } else {
+                    const timerContainer = timer.closest('.flex');
+                    if (timerContainer) {
+                        timerContainer.style.display = 'none';
+                    }
+                }
+            });
+            
             updateProgressIndicators();
             updateNavigationButtons();
+            updateLessonNavigation();
             
-            // Scroll to the top of the lesson
+            // Stop previous lesson's live timer to prevent double intervals (match functions.html)
+            if (timerUpdateInterval) {
+                clearInterval(timerUpdateInterval);
+                timerUpdateInterval = null;
+            }
+            
+            updateLiveTimer();
+            startLiveTimer();
+            
+            // Show "Take Quiz" button on last topic (Topic 4) if not yet completed
+            const topic4QuizButton = document.getElementById('topic4QuizButton');
+            if (topic4QuizButton) {
+                // Hide button if Topic 4 quiz is already completed
+                if (completedLessons.has(4)) {
+                    topic4QuizButton.style.display = 'none';
+                } else if (lessonNum === 4) {
+                    // Show button only when viewing Topic 4 and not completed
+                    topic4QuizButton.style.display = 'block';
+                } else {
+                    topic4QuizButton.style.display = 'none';
+                }
+            }
+            
             setTimeout(() => {
                 const lessonSection = document.getElementById(`lesson${lessonNum}`);
                 if (lessonSection) {
-                    lessonSection.scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'start' 
-                    });
+                    lessonSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             }, 100);
         }
 
         function updateProgressIndicators() {
-            const currentLessonNum = document.getElementById('currentLessonNum');
-            const lessonProgressBar = document.getElementById('lessonProgressBar');
-            
-            if (currentLessonNum) {
-                currentLessonNum.textContent = currentLesson;
-            }
-            
-            if (lessonProgressBar) {
-                const progressPercentage = (currentLesson / totalLessons) * 100;
-                lessonProgressBar.style.width = `${progressPercentage}%`;
-            }
+            document.querySelectorAll('#currentLessonNum').forEach(el => { el.textContent = currentLesson; });
+            const currentLessonLabel = document.getElementById('currentLessonLabel');
+            if (currentLessonLabel) currentLessonLabel.textContent = currentLesson;
+            const progressPercentage = (currentLesson / totalLessons) * 100;
+            document.querySelectorAll('#lessonProgressBar').forEach(bar => {
+                bar.style.width = `${progressPercentage}%`;
+            });
         }
 
         function updateNavigationButtons() {
-            const prevBtn = document.getElementById('prevLessonBtn');
-            const nextBtn = document.getElementById('nextLessonBtn');
+            document.querySelectorAll('#prevLessonBtn').forEach(btn => {
+                btn.style.display = currentLesson === 1 ? 'none' : 'flex';
+            });
+            document.querySelectorAll('#nextLessonBtn').forEach(btn => {
+                btn.style.display = currentLesson === totalLessons ? 'none' : 'flex';
+            });
+        }
+
+        // User Dropdown Functions
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('userDropdownMenu');
+            dropdown.classList.toggle('hidden');
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('userDropdown');
+            const dropdownMenu = document.getElementById('userDropdownMenu');
             
-            if (prevBtn) {
-                prevBtn.style.display = currentLesson === 1 ? 'none' : 'flex';
+            if (dropdown && dropdownMenu) {
+                if (!dropdown.contains(event.target) && !dropdownMenu.classList.contains('hidden')) {
+                    dropdownMenu.classList.add('hidden');
+                }
             }
-            
-            if (nextBtn) {
-                nextBtn.style.display = currentLesson === totalLessons ? 'none' : 'flex';
+        });
+        
+        // Logout with confirmation
+        function confirmLogout() {
+            Swal.fire({
+                title: 'Logout?',
+                text: 'Are you sure you want to logout?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Yes, Logout',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                customClass: {
+                    popup: 'rounded-2xl',
+                    title: 'text-slate-800',
+                    content: 'text-slate-600'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const dropdownMenu = document.getElementById('userDropdownMenu');
+                    if (dropdownMenu) dropdownMenu.classList.add('hidden');
+                    window.location.href = '../php/logout.php';
+                }
+            });
+        }
+        
+        // Load and display profile picture
+        async function loadProfilePicture(userId) {
+            try {
+                const profileResponse = await fetch(`../php/get-profile.php?user_id=${userId}`, {
+                    credentials: 'include'
+                });
+                
+                if (profileResponse.ok) {
+                    const profileData = await profileResponse.json();
+                    if (profileData.success && profileData.user && profileData.user.profile_picture) {
+                        const profilePicPath = `../${profileData.user.profile_picture}?t=${Date.now()}`;
+                        
+                        // Update profile image in dropdown button
+                        const profileImg = document.getElementById('userProfileImage');
+                        const profileIcon = document.getElementById('userProfileIcon');
+                        if (profileImg && profileIcon) {
+                            profileImg.src = profilePicPath;
+                            profileImg.onload = function() {
+                                profileImg.classList.remove('hidden');
+                                profileIcon.style.display = 'none';
+                            };
+                            profileImg.onerror = function() {
+                                profileImg.classList.add('hidden');
+                                profileIcon.style.display = 'block';
+                            };
+                        }
+                        
+                        // Update profile image in dropdown menu
+                        const profileImgDropdown = document.getElementById('userProfileImageDropdown');
+                        const profileIconDropdown = document.getElementById('userProfileIconDropdown');
+                        if (profileImgDropdown && profileIconDropdown) {
+                            profileImgDropdown.src = profilePicPath;
+                            profileImgDropdown.onload = function() {
+                                profileImgDropdown.classList.remove('hidden');
+                                profileIconDropdown.style.display = 'none';
+                            };
+                            profileImgDropdown.onerror = function() {
+                                profileImgDropdown.classList.add('hidden');
+                                profileIconDropdown.style.display = 'block';
+                            };
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error('Error loading profile picture:', e);
             }
         }
 
         // Auth guard and Lesson Navigation
         document.addEventListener('DOMContentLoaded', async function() {
+            let res;
+            let data;
             try {
-                const res = await fetch('../php/user.php', { credentials: 'include', cache: 'no-store' });
-                if (res.status === 401) { window.location.href = '../login.html'; return; }
-                const data = await res.json();
-                if (!data.success) { window.location.href = '../login.html'; return; }
+                res = await fetch('../php/user.php', { credentials: 'include', cache: 'no-store' });
+                // Retry once on server/network glitch (e.g. 500 or 0) - avoid redirecting logged-in users
+                if ((!res.ok && res.status >= 500) || res.status === 0) {
+                    await new Promise(function(r) { setTimeout(r, 300); });
+                    res = await fetch('../php/user.php', { credentials: 'include', cache: 'no-store' });
+                }
+                // Only redirect on definitive auth failure (401/403)
+                if (res.status === 401 || res.status === 403) {
+                    window.location.href = '../login.html';
+                    return;
+                }
+                
+                // Check if response is OK before parsing JSON
+                if (!res.ok) {
+                    console.error('Failed to fetch user data:', res.status, res.statusText);
+                    let errorMessage = `HTTP ${res.status}`;
+                    try {
+                        const errorText = await res.text();
+                        if (errorText && errorText.length) {
+                            try {
+                                const errorData = JSON.parse(errorText);
+                                errorMessage = errorData.message || errorMessage;
+                            } catch (e) {
+                                errorMessage = errorText.substring(0, 100);
+                            }
+                        }
+                    } catch (e) {}
+                    console.warn('Non-authentication error loading user data:', errorMessage);
+                    console.warn('Page will continue to load, but some features may not work');
+                    showLesson(1);
+                    updateSidebarProgress();
+                    return;
+                }
+                
+                try {
+                    data = await res.json();
+                } catch (parseErr) {
+                    console.warn('Invalid JSON from user.php, continuing without user data:', parseErr.message);
+                    showLesson(1);
+                    updateSidebarProgress();
+                    return;
+                }
+                
+                if (!data || data.success !== true) {
+                    // Only redirect if server explicitly said not authenticated
+                    if (data && typeof data.message === 'string' && (data.message.toLowerCase().includes('not authenticated') || data.message.toLowerCase().includes('login'))) {
+                        window.location.href = '../login.html';
+                        return;
+                    }
+                    console.warn('User data success false or missing, continuing with limited features:', data);
+                    showLesson(1);
+                    updateSidebarProgress();
+                    return;
+                }
+                
                 const u = data.user || {};
-                const gradeOk = !u.grade_level || String(u.grade_level) === '11';
-                const strandOk = !u.strand || String(u.strand).toUpperCase() === 'STEM';
+                const isTeacher = data.user_type === 'teacher';
+                const gradeOk = isTeacher || !u || !u.grade_level || String(u.grade_level) === '11';
+                const strandOk = isTeacher || !u || !u.strand || String(u.strand).toUpperCase() === 'STEM';
                 if (!gradeOk || !strandOk) { window.location.href = '../dashboard.html'; return; }
+                if (isTeacher) {
+                    fetch('../php/teacher-lesson-progress.php', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'action=record_view&topic_slug=evaluating-functions&topic_name=Evaluating Functions', credentials: 'include' }).catch(function() {});
+                }
                 
                 // Update user name
                 const userNameEl = document.getElementById('userName');
+                const userNameDropdown = document.getElementById('userNameDropdown');
                 if (userNameEl && u.first_name) {
                     userNameEl.textContent = `${u.first_name} ${u.last_name || ''}`.trim();
+                }
+                if (userNameDropdown && u.first_name) {
+                    userNameDropdown.textContent = `${u.first_name} ${u.last_name || ''}`.trim();
+                }
+                
+                // Load and display profile picture
+                loadProfilePicture(u.id);
+                
+                // Set total lesson label
+                const totalLessonLabel = document.getElementById('totalLessonLabel');
+                if (totalLessonLabel) {
+                    totalLessonLabel.textContent = totalLessons;
                 }
                 
                 // Load completed lessons
                 await loadCompletedLessons();
                 
-                // Initialize lesson navigation
-                const lessonNavBtns = document.querySelectorAll('.lesson-nav-btn');
-                const lessonSections = document.querySelectorAll('.lesson-section');
+                // Hide Topic 4 quiz button if already completed
+                const topic4QuizButton = document.getElementById('topic4QuizButton');
+                if (topic4QuizButton && completedLessons.has(4)) {
+                    topic4QuizButton.style.display = 'none';
+                }
                 
-                lessonNavBtns.forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const lessonNum = parseInt(this.dataset.lesson);
-                        showLesson(lessonNum);
+                // Sidebar: topic expand/collapse and click
+                document.querySelectorAll('.lesson-topic-header').forEach(header => {
+                    header.addEventListener('click', function(e) {
+                        if (e.target.closest('.lesson-subitem')) return;
+                        const topic = this.closest('.lesson-topic');
+                        const lessonNum = parseInt(topic.dataset.lesson, 10);
+                        if (topic.classList.contains('locked') || !canAccessTopic(lessonNum)) {
+                            showTopicLockedMessage(lessonNum);
+                            return;
+                        }
+                        topic.classList.toggle('expanded');
+                        this.setAttribute('aria-expanded', topic.classList.contains('expanded'));
+                        if (topic.classList.contains('expanded')) {
+                            showLesson(lessonNum);
+                            setSidebarActive(lessonNum, 'objective');
+                        }
                     });
                 });
+                document.querySelectorAll('.lesson-subitem').forEach(sub => {
+                    sub.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const lessonNum = parseInt(this.dataset.lesson, 10);
+                        if (!canAccessTopic(lessonNum)) {
+                            showTopicLockedMessage(lessonNum);
+                            return;
+                        }
+                        const section = this.dataset.section;
+                        const sectionId = this.dataset.sectionId;
+                        showLesson(lessonNum);
+                        setSidebarActive(lessonNum, section);
+                        const topic = document.getElementById('sidebar-topic-' + lessonNum);
+                        if (topic && !topic.classList.contains('expanded')) {
+                            topic.classList.add('expanded');
+                            topic.querySelector('.lesson-topic-header').setAttribute('aria-expanded', 'true');
+                        }
+                        if (sectionId) {
+                            setTimeout(() => {
+                                const el = document.getElementById(sectionId);
+                                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }, 100);
+                        }
+                        if (window.innerWidth < 1024) document.getElementById('lessonSidebar')?.classList.remove('open');
+                    });
+                });
+                document.getElementById('sidebarToggle')?.addEventListener('click', function() {
+                    document.getElementById('lessonSidebar')?.classList.toggle('open');
+                });
+                
+                // Load study time from server first
+                await loadAndDisplayStudyTime();
                 
                 // Initialize first lesson as active
                 showLesson(1);
+                updateSidebarProgress();
+                
+                // Start study time tracking (only after user is authenticated and data is loaded)
+                startStudyTimeTracking();
+                
+                // Track time when page is visible (match functions.html to prevent double-count)
+                document.addEventListener('visibilitychange', function() {
+                    if (!document.hidden) {
+                        // Page became visible, resume tracking (only if lesson is not completed)
+                        if (currentLesson && !completedLessons.has(currentLesson)) {
+                            const now = Date.now();
+                            // Only start/resume timer if not already started
+                            if (!lessonStartTime[currentLesson]) {
+                                lessonStartTime[currentLesson] = now;
+                            }
+                            // Ensure lastSavedTime and lastSaveTimestamp are initialized
+                            if (lastSavedTime[currentLesson] === undefined) {
+                                lastSavedTime[currentLesson] = totalStudyTime[currentLesson] || 0;
+                            }
+                            if (!lastSaveTimestamp[currentLesson]) {
+                                lastSaveTimestamp[currentLesson] = now;
+                            }
+                            startLiveTimer();
+                        } else if (currentLesson && completedLessons.has(currentLesson)) {
+                            // Just update display for completed lesson (don't start timer)
+                            updateLiveTimer();
+                        }
+                    } else {
+                        // Page hidden, save current time (only if lesson is not completed)
+                        if (!completedLessons.has(currentLesson)) {
+                            saveStudyTimeForCurrentLesson();
+                        }
+                        // Stop timer display
+                        if (timerUpdateInterval) {
+                            clearInterval(timerUpdateInterval);
+                            timerUpdateInterval = null;
+                        }
+                    }
+                });
+                
+                // Save study time before page unload (saveStudyTimeForCurrentLesson sends delta)
+                window.addEventListener('beforeunload', function() {
+                    saveStudyTimeForCurrentLesson();
+                });
+                
+                // Do NOT set lessonStartTime on focus — that would reset the timer every time
+                // the user clicks back on the window. Visibility change already handles
+                // resume when returning from another tab (only sets start time if not set).
                 
             } catch (e) {
-                window.location.href = '../login.html';
+                console.error('Error in DOMContentLoaded:', e);
+                console.warn('Attempting to continue page load despite error:', e.message);
+                try {
+                    showLesson(1);
+                    updateSidebarProgress();
+                    // Still try to start timer (display + server save if auth succeeds)
+                    startStudyTimeTracking();
+                } catch (initError) {
+                    console.error('Failed to initialize page:', initError);
+                }
             }
         });
     </script>

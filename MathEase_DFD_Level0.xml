@@ -1,0 +1,221 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36" version="29.2.7">
+  <diagram name="MathEase DFD Level 0 - Context Diagram" id="mathEaseDFD0">
+    <mxGraphModel dx="1585" dy="845" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#000000;" value="Level 0" vertex="1">
+          <mxGeometry height="40" width="200" x="700" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="processNumber" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1;fontColor=#000000;" value="0" vertex="1">
+          <mxGeometry height="30" width="40" x="800" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="system" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontStyle=1;fontColor=#000000;" value="MathEase&#xa;Learning Platform" vertex="1">
+          <mxGeometry height="80" width="300" x="630" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="student" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontStyle=1;fontColor=#000000;" value="Student" vertex="1">
+          <mxGeometry height="60" width="120" x="340" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="teacher" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontStyle=1;fontColor=#000000;" value="Teacher" vertex="1">
+          <mxGeometry height="60" width="120" x="1460" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="admin" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontStyle=1;fontColor=#000000;" value="Admin" vertex="1">
+          <mxGeometry height="60" width="120" x="1070" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="email" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=14;fontStyle=1;fontColor=#000000;" value="Email System" vertex="1">
+          <mxGeometry height="60" width="120" x="1080" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="flow1" edge="1" parent="1" source="student" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="system" value="Registration Data">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="505" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow2" edge="1" parent="1" source="student" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="system" value="Login Credentials">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="520" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow3" edge="1" parent="1" source="student" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="system" value="Class Join Request">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="535" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow4" edge="1" parent="1" source="student" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="system" value="Lesson Completion">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="550" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow5" edge="1" parent="1" source="student" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="system" value="Quiz Answers">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="565" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow6" edge="1" parent="1" source="system" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="student" value="Lessons">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="340" y="505" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow7" edge="1" parent="1" source="system" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="student" value="Quizzes">
+          <mxGeometry relative="1" x="-0.0417" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="340" y="520" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow8" edge="1" parent="1" source="system" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="student" value="Progress Reports">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="340" y="535" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow9" edge="1" parent="1" source="system" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="student" value="Notifications">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="340" y="550" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow10" edge="1" parent="1" source="teacher" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="system" value="Class Creation">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1300" y="505" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow11" edge="1" parent="1" source="teacher" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="system" value="Enrollment Approval">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1300" y="520" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow12" edge="1" parent="1" source="teacher" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="system" value="Topic Lock Settings">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1300" y="535" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow13" edge="1" parent="1" source="teacher" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="system" value="Performance Reports Request">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1300" y="550" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow14" edge="1" parent="1" source="system" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="teacher" value="Class Lists">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1260" y="505" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow15" edge="1" parent="1" source="system" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="teacher" value="Student Progress">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1260" y="520" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow16" edge="1" parent="1" source="system" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="teacher" value="Enrollment Requests">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1260" y="535" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow17" edge="1" parent="1" source="system" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="teacher" value="Performance Analytics">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1260" y="550" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow18" edge="1" parent="1" source="admin" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="system" value="Teacher Approval">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="780" y="260" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow19" edge="1" parent="1" source="admin" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="system" value="System Configuration">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="780" y="280" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow20" edge="1" parent="1" source="admin" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="system" value="User Management">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="780" y="300" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow21" edge="1" parent="1" source="system" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="admin" value="System Statistics">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="820" y="460" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow22" edge="1" parent="1" source="system" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="admin" value="User Reports">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="820" y="480" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow23" edge="1" parent="1" source="system" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="admin" value="Teacher Requests">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="820" y="500" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow24" edge="1" parent="1" source="system" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="email" value="Verification Email">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="780" y="800" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow25" edge="1" parent="1" source="system" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="email" value="OTP Code">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="780" y="820" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow26" edge="1" parent="1" source="system" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="email" value="Password Reset Link">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="780" y="840" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="flow27" edge="1" parent="1" source="email" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontColor=#000000;" target="system" value="Email Delivery Status">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="820" y="860" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

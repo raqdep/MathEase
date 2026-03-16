@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="domain-range-rational-functions.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -25,6 +26,54 @@
             }
         }
     </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .lesson-section {
+            display: none;
+        }
+        .lesson-section.active {
+            display: block;
+        }
+        .timer-progress {
+            transition: stroke-dashoffset 0.5s ease;
+        }
+        .timer-bg {
+            opacity: 0.2;
+        }
+        .lesson-timer-display {
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 0.05em;
+        }
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        .animate-bounce-slow {
+            animation: bounce-slow 3s ease-in-out infinite;
+        }
+        @media (max-width: 768px) {
+            header.gradient-bg .flex-shrink-0 .relative img {
+                width: 8rem; height: 8rem;
+                max-width: 160px; max-height: 160px;
+            }
+            header.gradient-bg h1 { font-size: 2rem; }
+            .lesson-main .bg-white.rounded-2xl.shadow-xl { padding: 1.5rem !important; }
+            .lesson-main .bg-white.rounded-2xl h2 { font-size: 1.5rem !important; }
+            #sidebarToggle { font-size: 0.875rem !important; padding: 0.5rem 0.875rem !important; }
+        }
+        @media (max-width: 480px) {
+            header.gradient-bg .flex-shrink-0 .relative img {
+                width: 6rem; height: 6rem;
+                max-width: 120px; max-height: 120px;
+            }
+            header.gradient-bg h1 { font-size: 1.5rem; }
+            .lesson-main .bg-white.rounded-2xl.shadow-xl { padding: 1rem !important; }
+            .lesson-main .bg-white.rounded-2xl h2 { font-size: 1.375rem !important; }
+            #sidebarToggle { font-size: 0.8125rem !important; padding: 0.5rem 0.75rem !important; }
+        }
+    </style>
 </head>
 <body class="font-poppins bg-gray-50">
     <!-- Navigation -->
@@ -44,86 +93,206 @@
                     <a href="../topics.html" class="text-primary font-semibold">
                         <i class="fas fa-book mr-2"></i>Topics
                     </a>
-                    <span class="text-gray-600">
-                        <i class="fas fa-user mr-2"></i><span id="userName">Student</span>
-                    </span>
-                    <a href="../php/logout.php" class="text-gray-700 hover:text-red-600 transition-colors">
-                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
-                    </a>
+                    <!-- User Dropdown -->
+                    <div class="relative" id="userDropdown">
+                        <button onclick="toggleUserDropdown()" class="flex items-center space-x-2 text-gray-600 hover:text-primary transition-colors focus:outline-none">
+                            <div class="relative">
+                                <img id="userProfileImage" src="" alt="Profile" class="w-8 h-8 rounded-full object-cover border-2 border-gray-300 hidden" onerror="this.classList.add('hidden'); (function(){var iconEl = document.getElementById('userProfileIcon'); if(iconEl) iconEl.style.display='block';})();">
+                                <i id="userProfileIcon" class="fas fa-user-circle text-xl"></i>
+                            </div>
+                            <span id="userName">Student</span>
+                            <i class="fas fa-chevron-down text-xs ml-1"></i>
+                        </button>
+                        <!-- Dropdown Menu -->
+                        <div id="userDropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                            <div class="px-4 py-2 border-b border-gray-200 flex items-center space-x-3">
+                                <div class="relative">
+                                    <img id="userProfileImageDropdown" src="" alt="Profile" class="w-10 h-10 rounded-full object-cover border-2 border-gray-300 hidden" onerror="this.classList.add('hidden'); (function(){var iconEl = document.getElementById('userProfileIconDropdown'); if(iconEl) iconEl.style.display='block';})();">
+                                    <i id="userProfileIconDropdown" class="fas fa-user-circle text-2xl text-gray-400"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-800" id="userNameDropdown">Student</p>
+                                    <p class="text-xs text-gray-500">Student Account</p>
+                                </div>
+                            </div>
+                            <button onclick="confirmLogout()" class="w-full text-left block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mobile Menu -->
+                <div class="md:hidden">
+                    <button onclick="toggleMobileMenu()" class="text-gray-600 hover:text-primary transition-colors">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <!-- Mobile Dropdown -->
+                    <div id="mobileMenu" class="hidden absolute top-16 left-0 right-0 bg-white shadow-lg border-b border-gray-200 z-50">
+                        <div class="px-4 py-3 border-b border-gray-200 flex items-center space-x-3">
+                            <div class="relative">
+                                <img id="userProfileImageMobile" src="" alt="Profile" class="w-10 h-10 rounded-full object-cover border-2 border-gray-300 hidden" onerror="this.classList.add('hidden'); (function(){var iconEl = document.getElementById('userProfileIconMobile'); if(iconEl) iconEl.style.display='block';})();">
+                                <i id="userProfileIconMobile" class="fas fa-user-circle text-2xl text-gray-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-gray-800" id="userNameMobile">Student</p>
+                                <p class="text-xs text-gray-500">Student Account</p>
+                            </div>
+                        </div>
+                        <button onclick="confirmLogout()" class="w-full text-left block px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- Header -->
-    <header class="gradient-bg text-white py-16">
+    <header class="gradient-bg text-white py-12 md:py-16 relative overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center">
-                <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
-                    <i class="fas fa-expand-arrows-alt mr-2"></i>
-                    <span class="font-semibold">General Mathematics 11</span>
+            <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+                <!-- Left side - Text Content -->
+                <div class="flex-1 text-center md:text-left">
+                    <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
+                        <i class="fas fa-expand-arrows-alt mr-2"></i>
+                        <span class="font-semibold">General Mathematics 11</span>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6">The Domain and Range of a Rational Functions</h1>
+                    <p class="text-lg md:text-xl lg:text-2xl text-white/90 mb-6 md:mb-8 max-w-2xl mx-auto md:mx-0">
+                        Master the concepts of domain and range for rational functions through interactive lessons aligned with DepEd MELCs 2025-2026
+                    </p>
+                    <div class="flex justify-center md:justify-start">
+                        <div class="bg-white/20 backdrop-blur-sm rounded-full px-6 md:px-8 py-2 md:py-3">
+                            <span class="text-base md:text-lg font-semibold">4 Interactive Topics</span>
+                        </div>
+                    </div>
                 </div>
-                <h1 class="text-4xl md:text-6xl font-bold mb-6">The Domain and Range of a Rational Functions</h1>
-                <p class="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto">
-                    Master the concepts of domain and range for rational functions through interactive lessons aligned with DepEd MELCs 2025-2026
-                </p>
-                <div class="flex justify-center">
-                    <div class="bg-white/20 backdrop-blur-sm rounded-full px-8 py-3">
-                        <span class="text-lg font-semibold">4 Interactive Lessons</span>
+                <!-- Right side - Character Image -->
+                <div class="flex-shrink-0 order-first md:order-last">
+                    <div class="relative">
+                        <img src="../Img/Character/happy__1_-removebg-preview.png" 
+                             alt="MathEase Character" 
+                             class="w-48 h-48 md:w-64 md:h-64 lg:w-80 lg:h-80 object-contain drop-shadow-2xl animate-bounce-slow">
                     </div>
                 </div>
             </div>
         </div>
+        <!-- Decorative elements -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+        <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <!-- Lesson Navigation -->
-        <div class="mb-12">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="1">
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-search text-2xl"></i>
+    <main class="px-4 sm:px-6 lg:px-8 py-8">
+        <div class="lesson-layout">
+            <!-- Lesson Sidebar -->
+            <aside class="lesson-sidebar" id="lessonSidebar">
+                <div class="lesson-sidebar-list">
+                    <!-- Topic 1 -->
+                    <div class="lesson-topic expanded" data-lesson="1" id="sidebar-topic-1">
+                        <div class="lesson-topic-header" aria-expanded="true">
+                            <span class="lesson-topic-dot" aria-hidden="true">1</span>
+                            <span class="lesson-topic-title">Topic 1: Understanding Domain</span>
+                            <span class="lesson-topic-progress"><span class="topic-status-text"></span></span>
+                            <span class="lesson-topic-caret"><i class="fas fa-chevron-down"></i></span>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 1</h3>
-                        <p class="text-sm text-gray-600">Understanding Domain</p>
-                    </div>
-                </button>
-                
-                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="2">
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-chart-bar text-2xl"></i>
+                        <div class="lesson-topic-children">
+                            <div class="lesson-subitem active" data-lesson="1" data-section="objective" data-section-id="lesson1-objective">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Objective</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="1" data-section="example" data-section-id="lesson1-example">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Example</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="1" data-section="reference" data-section-id="lesson1-reference">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Reference</span>
+                            </div>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 2</h3>
-                        <p class="text-sm text-gray-600">Understanding Range</p>
                     </div>
-                </button>
-                
-                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="3">
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-calculator text-2xl"></i>
+                    <!-- Topic 2 -->
+                    <div class="lesson-topic" data-lesson="2" id="sidebar-topic-2">
+                        <div class="lesson-topic-header" aria-expanded="false">
+                            <span class="lesson-topic-dot">2</span>
+                            <span class="lesson-topic-title">Topic 2: Understanding Range</span>
+                            <span class="lesson-topic-progress"><span class="topic-status-text">—</span></span>
+                            <span class="lesson-topic-caret"><i class="fas fa-chevron-down"></i></span>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 3</h3>
-                        <p class="text-sm text-gray-600">Finding Domain & Range</p>
-                    </div>
-                </button>
-                
-                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="4">
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-globe text-2xl"></i>
+                        <div class="lesson-topic-children">
+                            <div class="lesson-subitem" data-lesson="2" data-section="objective" data-section-id="lesson2-objective">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Objective</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="2" data-section="example" data-section-id="lesson2-example">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Example</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="2" data-section="reference" data-section-id="lesson2-reference">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Reference</span>
+                            </div>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 4</h3>
-                        <p class="text-sm text-gray-600">Applications & Problem Solving</p>
                     </div>
-                </button>
-            </div>
-        </div>
+                    <!-- Topic 3 -->
+                    <div class="lesson-topic" data-lesson="3" id="sidebar-topic-3">
+                        <div class="lesson-topic-header" aria-expanded="false">
+                            <span class="lesson-topic-dot">3</span>
+                            <span class="lesson-topic-title">Topic 3: Finding Domain & Range</span>
+                            <span class="lesson-topic-progress"><span class="topic-status-text">—</span></span>
+                            <span class="lesson-topic-caret"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="lesson-topic-children">
+                            <div class="lesson-subitem" data-lesson="3" data-section="objective" data-section-id="lesson3-objective">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Objective</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="3" data-section="example" data-section-id="lesson3-example">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Example</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="3" data-section="reference" data-section-id="lesson3-reference">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Reference</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Topic 4 -->
+                    <div class="lesson-topic" data-lesson="4" id="sidebar-topic-4">
+                        <div class="lesson-topic-header" aria-expanded="false">
+                            <span class="lesson-topic-dot">4</span>
+                            <span class="lesson-topic-title">Topic 4: Applications & Problem Solving</span>
+                            <span class="lesson-topic-progress"><span class="topic-status-text">—</span></span>
+                            <span class="lesson-topic-caret"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="lesson-topic-children">
+                            <div class="lesson-subitem" data-lesson="4" data-section="objective" data-section-id="lesson4-objective">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Objective</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="4" data-section="example" data-section-id="lesson4-example">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Example</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="4" data-section="reference" data-section-id="lesson4-reference">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Reference</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
 
-        <!-- Lesson Content -->
+            <!-- Main lesson content -->
+            <div class="lesson-main flex-1 min-w-0 px-4 lg:px-8" style="margin-left: 0;">
+                <button type="button" id="sidebarToggle" class="lg:hidden fixed top-20 left-4 z-40 px-3 py-2 bg-white border border-gray-200 rounded-lg shadow-md text-gray-700 hover:bg-gray-50" aria-label="Open lesson menu">
+                    <i class="fas fa-list mr-2"></i>Lessons
+                </button>
+                <!-- Mobile Backdrop -->
+                <div id="mobileBackdrop" class="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30 hidden"></div>
+
+        <!-- Topic Content -->
         <div class="lesson-content">
             <!-- Lesson 1: Understanding Domain -->
             <section id="lesson1" class="lesson-section active">
@@ -132,32 +301,33 @@
                     <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-search text-3xl"></i>
                     </div>
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 1: Understanding Domain</h2>
-                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Topic 1: Understanding Domain</h2>
+                    <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-4">
                         Learn what domain means for rational functions, how to identify restrictions, and why certain values are excluded from the domain.
                     </p>
-                </div>
-                
-                    <!-- MELCs Alignment -->
-                    <div class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
-                            <i class="fas fa-graduation-cap text-primary mr-2"></i>DepEd MELCs 2025-2026 Alignment
-                        </h3>
-                        <div class="bg-white rounded-lg p-4 shadow-sm">
-                            <p class="text-gray-700 mb-2"><strong>Learning Competency:</strong></p>
-                            <p class="text-gray-600 mb-3">Finds the domain and range of a rational function (M11GM-Ib-1)</p>
-                            <p class="text-gray-700 mb-2"><strong>Learning Objectives:</strong></p>
-                            <ul class="text-gray-600 space-y-1">
-                                <li>• Define domain of a rational function</li>
-                                <li>• Identify domain restrictions from the denominator</li>
-                                <li>• Express domain in interval notation</li>
-                                <li>• Analyze domain restrictions in real-world contexts</li>
-                            </ul>
+                    <!-- Timer Display -->
+                    <div class="flex justify-end">
+                        <div class="flex-shrink-0 ml-6 hidden md:flex">
+                            <div class="relative w-20 h-20">
+                                <svg class="transform -rotate-90 w-20 h-20">
+                                    <circle cx="40" cy="40" r="34" stroke="#e5e7eb" stroke-width="6" fill="none" class="timer-bg"></circle>
+                                    <circle cx="40" cy="40" r="34" stroke="#667eea" stroke-width="6" fill="none" 
+                                            class="timer-progress" 
+                                            stroke-dasharray="213.63" 
+                                            stroke-dashoffset="213.63"
+                                            stroke-linecap="round"></circle>
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span class="lesson-timer-display text-lg font-bold text-gray-800">00:00</span>
+                                    <span class="text-xs text-gray-500 mt-0.5">Study Time</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                </div>
 
                     <!-- Learning Objectives -->
-                    <div class="bg-green-50 border-l-4 border-green-500 p-6 mb-8">
+                    <div id="lesson1-objective" class="bg-green-50 border-l-4 border-green-500 p-6 mb-8">
                         <h3 class="text-xl font-semibold text-gray-800 mb-4">
                             <i class="fas fa-target mr-2"></i>Learning Objectives
                         </h3>
@@ -261,46 +431,245 @@
                     </div>
                 </div>
 
-                <!-- Examples -->
-                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-8 mb-8">
+                <!-- Concept Deep Dive -->
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-8 mb-8">
                     <h3 class="text-2xl font-bold text-gray-800 mb-6">
-                        <i class="fas fa-lightbulb text-green-500 mr-3"></i>Worked Examples
+                        <i class="fas fa-graduation-cap text-purple-500 mr-3"></i>Concept Deep Dive: Understanding Domain
                     </h3>
                     
                     <div class="space-y-6">
                         <div class="bg-white rounded-lg p-6 shadow-md">
-                            <h4 class="text-lg font-semibold text-gray-800 mb-4">Example 1: Simple Domain</h4>
-                            <p class="text-gray-700 mb-4">
-                                Find the domain of f(x) = 1/(x-3)
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <span class="bg-purple-500 text-white rounded-full w-8 h-8 inline-flex items-center justify-center text-sm font-bold mr-3">1</span>
+                                The Foundation: Why Domain Matters
+                            </h4>
+                            <p class="text-gray-700 mb-3 leading-relaxed">
+                                The domain is fundamental because it tells us <strong>where</strong> a function exists. For rational functions, the domain is determined by one critical rule: <strong>the denominator must never equal zero</strong>.
                             </p>
-                            <div class="bg-gray-50 rounded-lg p-4">
-                                <p class="text-gray-700 mb-2"><strong>Solution:</strong></p>
-                                <p class="text-gray-700 mb-2">Set the denominator equal to zero: x - 3 = 0</p>
-                                <p class="text-gray-700 mb-2">Solve: x = 3</p>
-                                <p class="text-gray-700"><strong>Domain:</strong> All real numbers except x = 3</p>
-                                <p class="text-gray-600 text-sm mt-2">Domain: (-∞, 3) ∪ (3, ∞)</p>
+                            <div class="bg-purple-50 border-l-4 border-purple-500 p-4 rounded">
+                                <p class="text-gray-700 text-sm">
+                                    <strong>Key Insight:</strong> When you divide by zero, mathematics breaks down. That's why we exclude values that make the denominator zero from the domain.
+                                </p>
                             </div>
                         </div>
 
                         <div class="bg-white rounded-lg p-6 shadow-md">
-                            <h4 class="text-lg font-semibold text-gray-800 mb-4">Example 2: Multiple Restrictions</h4>
-                            <p class="text-gray-700 mb-4">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <span class="bg-purple-500 text-white rounded-full w-8 h-8 inline-flex items-center justify-center text-sm font-bold mr-3">2</span>
+                                Step-by-Step Process for Finding Domain
+                            </h4>
+                            <div class="space-y-3">
+                                <div class="flex items-start">
+                                    <span class="bg-blue-100 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-3 mt-1 flex-shrink-0">A</span>
+                                    <div>
+                                        <strong class="text-gray-800">Identify the Denominator:</strong>
+                                        <p class="text-gray-700 text-sm mt-1">Look at the bottom part of the fraction. This is what you need to analyze.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-blue-100 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-3 mt-1 flex-shrink-0">B</span>
+                                    <div>
+                                        <strong class="text-gray-800">Set Denominator = 0:</strong>
+                                        <p class="text-gray-700 text-sm mt-1">Solve this equation to find the "forbidden" values.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-blue-100 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-3 mt-1 flex-shrink-0">C</span>
+                                    <div>
+                                        <strong class="text-gray-800">Exclude Solutions:</strong>
+                                        <p class="text-gray-700 text-sm mt-1">Remove these values from all real numbers to get the domain.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-blue-100 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-3 mt-1 flex-shrink-0">D</span>
+                                    <div>
+                                        <strong class="text-gray-800">Express in Interval Notation:</strong>
+                                        <p class="text-gray-700 text-sm mt-1">Write your answer using intervals, which is the standard mathematical notation.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 shadow-md">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <span class="bg-purple-500 text-white rounded-full w-8 h-8 inline-flex items-center justify-center text-sm font-bold mr-3">3</span>
+                                Common Patterns and Their Domains
+                            </h4>
+                            <div class="overflow-x-auto">
+                                <table class="w-full border-collapse">
+                                    <thead>
+                                        <tr class="bg-purple-100">
+                                            <th class="border border-purple-300 px-4 py-2 text-left">Function Type</th>
+                                            <th class="border border-purple-300 px-4 py-2 text-left">Example</th>
+                                            <th class="border border-purple-300 px-4 py-2 text-left">Domain</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="hover:bg-purple-50">
+                                            <td class="border border-purple-200 px-4 py-2">Simple Reciprocal</td>
+                                            <td class="border border-purple-200 px-4 py-2 font-mono">f(x) = 1/x</td>
+                                            <td class="border border-purple-200 px-4 py-2">x ≠ 0</td>
+                                        </tr>
+                                        <tr class="hover:bg-purple-50">
+                                            <td class="border border-purple-200 px-4 py-2">Shifted Reciprocal</td>
+                                            <td class="border border-purple-200 px-4 py-2 font-mono">f(x) = 1/(x-2)</td>
+                                            <td class="border border-purple-200 px-4 py-2">x ≠ 2</td>
+                                        </tr>
+                                        <tr class="hover:bg-purple-50">
+                                            <td class="border border-purple-200 px-4 py-2">Quadratic Denominator</td>
+                                            <td class="border border-purple-200 px-4 py-2 font-mono">f(x) = 1/(x²-4)</td>
+                                            <td class="border border-purple-200 px-4 py-2">x ≠ ±2</td>
+                                        </tr>
+                                        <tr class="hover:bg-purple-50">
+                                            <td class="border border-purple-200 px-4 py-2">Linear over Linear</td>
+                                            <td class="border border-purple-200 px-4 py-2 font-mono">f(x) = (x+1)/(x-3)</td>
+                                            <td class="border border-purple-200 px-4 py-2">x ≠ 3</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 shadow-md">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <span class="bg-purple-500 text-white rounded-full w-8 h-8 inline-flex items-center justify-center text-sm font-bold mr-3">4</span>
+                                Tips and Tricks
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                                    <h5 class="font-semibold text-green-800 mb-2">✓ Always Factor First</h5>
+                                    <p class="text-green-700 text-sm">If the denominator is a polynomial, factor it completely before setting it equal to zero.</p>
+                                </div>
+                                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                                    <h5 class="font-semibold text-blue-800 mb-2">✓ Check All Factors</h5>
+                                    <p class="text-blue-700 text-sm">When you factor, make sure to check each factor separately. Each factor gives you a restriction.</p>
+                                </div>
+                                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
+                                    <h5 class="font-semibold text-yellow-800 mb-2">✓ Use Interval Notation</h5>
+                                    <p class="text-yellow-700 text-sm">Interval notation is cleaner and more professional than writing "all real numbers except..."</p>
+                                </div>
+                                <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                                    <h5 class="font-semibold text-red-800 mb-2">⚠ Watch for Holes</h5>
+                                    <p class="text-red-700 text-sm">Sometimes factors cancel out, creating "holes" instead of vertical asymptotes. Always check!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Examples -->
+                <div id="lesson1-example" class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-lightbulb text-green-500 mr-3"></i>More Worked Examples
+                    </h3>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-lg p-6 shadow-md">
+                            <h4 class="text-lg font-semibold text-gray-800 mb-4">
+                                <span class="bg-green-500 text-white rounded-full w-6 h-6 inline-flex items-center justify-center text-xs font-bold mr-2">1</span>
+                                Example 1: Simple Domain
+                            </h4>
+                            <p class="text-gray-700 mb-4 font-mono text-lg bg-gray-50 p-3 rounded">
+                                Find the domain of f(x) = 1/(x-3)
+                            </p>
+                            <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-5 border-l-4 border-green-500">
+                                <p class="text-gray-800 mb-3 font-semibold">📝 Step-by-Step Solution:</p>
+                                <ol class="list-decimal list-inside space-y-2 text-gray-700 text-sm">
+                                    <li><strong>Identify the denominator:</strong> The denominator is (x - 3)</li>
+                                    <li><strong>Set denominator equal to zero:</strong> x - 3 = 0</li>
+                                    <li><strong>Solve for x:</strong> x = 3</li>
+                                    <li><strong>Exclude from domain:</strong> Since x = 3 makes the denominator zero, we exclude it</li>
+                                    <li><strong>Final answer:</strong> Domain is all real numbers except x = 3</li>
+                                </ol>
+                                <div class="mt-4 pt-4 border-t border-green-300">
+                                    <p class="text-gray-800 font-semibold mb-1">✅ Domain:</p>
+                                    <p class="text-gray-700 font-mono">(-∞, 3) ∪ (3, ∞)</p>
+                                    <p class="text-gray-600 text-xs mt-2">This means: all numbers less than 3, combined with all numbers greater than 3</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 shadow-md">
+                            <h4 class="text-lg font-semibold text-gray-800 mb-4">
+                                <span class="bg-green-500 text-white rounded-full w-6 h-6 inline-flex items-center justify-center text-xs font-bold mr-2">2</span>
+                                Example 2: Multiple Restrictions
+                            </h4>
+                            <p class="text-gray-700 mb-4 font-mono text-lg bg-gray-50 p-3 rounded">
                                 Find the domain of f(x) = (x+2)/(x²-9)
                             </p>
-                            <div class="bg-gray-50 rounded-lg p-4">
-                                <p class="text-gray-700 mb-2"><strong>Solution:</strong></p>
-                                <p class="text-gray-700 mb-2">Set the denominator equal to zero: x² - 9 = 0</p>
-                                <p class="text-gray-700 mb-2">Factor: (x + 3)(x - 3) = 0</p>
-                                <p class="text-gray-700 mb-2">Solve: x = -3 or x = 3</p>
-                                <p class="text-gray-700"><strong>Domain:</strong> All real numbers except x = -3 and x = 3</p>
-                                <p class="text-gray-600 text-sm mt-2">Domain: (-∞, -3) ∪ (-3, 3) ∪ (3, ∞)</p>
+                            <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-5 border-l-4 border-green-500">
+                                <p class="text-gray-800 mb-3 font-semibold">📝 Step-by-Step Solution:</p>
+                                <ol class="list-decimal list-inside space-y-2 text-gray-700 text-sm">
+                                    <li><strong>Identify the denominator:</strong> The denominator is (x² - 9)</li>
+                                    <li><strong>Set denominator equal to zero:</strong> x² - 9 = 0</li>
+                                    <li><strong>Factor the quadratic:</strong> (x + 3)(x - 3) = 0 (difference of squares)</li>
+                                    <li><strong>Apply zero product property:</strong> Either (x + 3) = 0 or (x - 3) = 0</li>
+                                    <li><strong>Solve both equations:</strong> x = -3 or x = 3</li>
+                                    <li><strong>Exclude both values:</strong> Domain excludes x = -3 and x = 3</li>
+                                    <li><strong>Final answer:</strong> Domain is all real numbers except x = -3 and x = 3</li>
+                                </ol>
+                                <div class="mt-4 pt-4 border-t border-green-300">
+                                    <p class="text-gray-800 font-semibold mb-1">✅ Domain:</p>
+                                    <p class="text-gray-700 font-mono">(-∞, -3) ∪ (-3, 3) ∪ (3, ∞)</p>
+                                    <p class="text-gray-600 text-xs mt-2">This creates three intervals: numbers less than -3, between -3 and 3, and greater than 3</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 shadow-md">
+                            <h4 class="text-lg font-semibold text-gray-800 mb-4">
+                                <span class="bg-green-500 text-white rounded-full w-6 h-6 inline-flex items-center justify-center text-xs font-bold mr-2">3</span>
+                                Example 3: Factoring Required
+                            </h4>
+                            <p class="text-gray-700 mb-4 font-mono text-lg bg-gray-50 p-3 rounded">
+                                Find the domain of f(x) = (x+1)/(x²-5x+6)
+                            </p>
+                            <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-5 border-l-4 border-green-500">
+                                <p class="text-gray-800 mb-3 font-semibold">📝 Step-by-Step Solution:</p>
+                                <ol class="list-decimal list-inside space-y-2 text-gray-700 text-sm">
+                                    <li><strong>Identify the denominator:</strong> The denominator is (x² - 5x + 6)</li>
+                                    <li><strong>Set denominator equal to zero:</strong> x² - 5x + 6 = 0</li>
+                                    <li><strong>Factor the quadratic:</strong> Find two numbers that multiply to 6 and add to -5</li>
+                                    <li><strong>Factored form:</strong> (x - 2)(x - 3) = 0</li>
+                                    <li><strong>Solve:</strong> x = 2 or x = 3</li>
+                                    <li><strong>Exclude both values:</strong> Domain excludes x = 2 and x = 3</li>
+                                </ol>
+                                <div class="mt-4 pt-4 border-t border-green-300">
+                                    <p class="text-gray-800 font-semibold mb-1">✅ Domain:</p>
+                                    <p class="text-gray-700 font-mono">(-∞, 2) ∪ (2, 3) ∪ (3, ∞)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 shadow-md">
+                            <h4 class="text-lg font-semibold text-gray-800 mb-4">
+                                <span class="bg-green-500 text-white rounded-full w-6 h-6 inline-flex items-center justify-center text-xs font-bold mr-2">4</span>
+                                Example 4: Perfect Square Denominator
+                            </h4>
+                            <p class="text-gray-700 mb-4 font-mono text-lg bg-gray-50 p-3 rounded">
+                                Find the domain of f(x) = (2x+1)/(x²-4x+4)
+                            </p>
+                            <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-5 border-l-4 border-green-500">
+                                <p class="text-gray-800 mb-3 font-semibold">📝 Step-by-Step Solution:</p>
+                                <ol class="list-decimal list-inside space-y-2 text-gray-700 text-sm">
+                                    <li><strong>Identify the denominator:</strong> The denominator is (x² - 4x + 4)</li>
+                                    <li><strong>Recognize the pattern:</strong> This is a perfect square trinomial!</li>
+                                    <li><strong>Factor:</strong> (x - 2)² = 0</li>
+                                    <li><strong>Solve:</strong> x - 2 = 0, so x = 2</li>
+                                    <li><strong>Note:</strong> Even though it's squared, we only exclude x = 2 once</li>
+                                </ol>
+                                <div class="mt-4 pt-4 border-t border-green-300">
+                                    <p class="text-gray-800 font-semibold mb-1">✅ Domain:</p>
+                                    <p class="text-gray-700 font-mono">(-∞, 2) ∪ (2, ∞)</p>
+                                    <p class="text-gray-600 text-xs mt-2">💡 Tip: Perfect squares still give only one restriction, not two!</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- References -->
-                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
+                <div id="lesson1-reference" class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
                     <h3 class="text-xl font-bold text-gray-800 mb-4">
                         <i class="fas fa-book text-blue-500 mr-2"></i>References & Additional Resources
                     </h3>
@@ -321,49 +690,83 @@
                 </div>
 
                 <!-- Enhanced Virtual Aid: Interactive Domain Analyzer -->
-                <div class="virtual-aid rounded-2xl p-8 mb-8">
-                    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
-                        <i class="fas fa-cogs text-primary mr-3"></i>Interactive Domain Analyzer
-                    </h3>
+                <div class="virtual-aid rounded-2xl p-8 mb-8 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 border-2 border-blue-200 shadow-xl">
+                    <div class="text-center mb-6">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mb-4 shadow-lg">
+                            <i class="fas fa-cogs text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-3xl font-bold text-gray-800 mb-2">
+                            🎯 Interactive Domain Analyzer
+                        </h3>
+                        <p class="text-gray-600">Click any function below to see detailed domain analysis with step-by-step solutions!</p>
+                    </div>
                     
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <!-- Example Selection Section -->
                         <div class="space-y-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-4">Choose a Function to Analyze:</label>
+                                <label class="block text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">
+                                    <i class="fas fa-mouse-pointer mr-2 text-primary"></i>Choose a Function to Analyze:
+                                </label>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    <button onclick="drrfSetDomainExample('1/x')" class="example-button bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-4 text-left transition-all duration-300">
-                                        <div class="font-mono text-lg text-blue-800 mb-1">f(x) = 1/x</div>
-                                        <div class="text-sm text-blue-600">Simple reciprocal</div>
+                                    <button onclick="drrfSetDomainExample('1/x')" class="example-button group bg-gradient-to-br from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 border-2 border-blue-300 hover:border-blue-500 rounded-xl p-4 text-left transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <div class="font-mono text-lg text-blue-900 font-bold group-hover:text-blue-950">f(x) = 1/x</div>
+                                            <i class="fas fa-arrow-right text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                        </div>
+                                        <div class="text-sm text-blue-700 font-medium">Simple reciprocal</div>
+                                        <div class="text-xs text-blue-600 mt-1">Basic example</div>
                                     </button>
-                                    <button onclick="drrfSetDomainExample('1/(x-2)')" class="example-button bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg p-4 text-left transition-all duration-300">
-                                        <div class="font-mono text-lg text-green-800 mb-1">f(x) = 1/(x-2)</div>
-                                        <div class="text-sm text-green-600">Shifted reciprocal</div>
+                                    <button onclick="drrfSetDomainExample('1/(x-2)')" class="example-button group bg-gradient-to-br from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 border-2 border-green-300 hover:border-green-500 rounded-xl p-4 text-left transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <div class="font-mono text-lg text-green-900 font-bold group-hover:text-green-950">f(x) = 1/(x-2)</div>
+                                            <i class="fas fa-arrow-right text-green-500 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                        </div>
+                                        <div class="text-sm text-green-700 font-medium">Shifted reciprocal</div>
+                                        <div class="text-xs text-green-600 mt-1">Right shift</div>
                                     </button>
-                                    <button onclick="drrfSetDomainExample('1/(x+1)')" class="example-button bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg p-4 text-left transition-all duration-300">
-                                        <div class="font-mono text-lg text-purple-800 mb-1">f(x) = 1/(x+1)</div>
-                                        <div class="text-sm text-purple-600">Left-shifted reciprocal</div>
+                                    <button onclick="drrfSetDomainExample('1/(x+1)')" class="example-button group bg-gradient-to-br from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 border-2 border-purple-300 hover:border-purple-500 rounded-xl p-4 text-left transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <div class="font-mono text-lg text-purple-900 font-bold group-hover:text-purple-950">f(x) = 1/(x+1)</div>
+                                            <i class="fas fa-arrow-right text-purple-500 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                        </div>
+                                        <div class="text-sm text-purple-700 font-medium">Left-shifted reciprocal</div>
+                                        <div class="text-xs text-purple-600 mt-1">Left shift</div>
                                     </button>
-                                    <button onclick="drrfSetDomainExample('(x+2)/(x²-9)')" class="example-button bg-orange-50 hover:bg-orange-100 border border-orange-200 rounded-lg p-4 text-left transition-all duration-300">
-                                        <div class="font-mono text-lg text-orange-800 mb-1">f(x) = (x+2)/(x²-9)</div>
-                                        <div class="text-sm text-orange-600">Multiple restrictions</div>
+                                    <button onclick="drrfSetDomainExample('(x+2)/(x²-9)')" class="example-button group bg-gradient-to-br from-orange-50 to-orange-100 hover:from-orange-100 hover:to-orange-200 border-2 border-orange-300 hover:border-orange-500 rounded-xl p-4 text-left transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <div class="font-mono text-lg text-orange-900 font-bold group-hover:text-orange-950">f(x) = (x+2)/(x²-9)</div>
+                                            <i class="fas fa-arrow-right text-orange-500 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                        </div>
+                                        <div class="text-sm text-orange-700 font-medium">Multiple restrictions</div>
+                                        <div class="text-xs text-orange-600 mt-1">Two exclusions</div>
                                     </button>
-                                    <button onclick="drrfSetDomainExample('(x²-1)/(x+2)')" class="example-button bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg p-4 text-left transition-all duration-300">
-                                        <div class="font-mono text-lg text-red-800 mb-1">f(x) = (x²-1)/(x+2)</div>
-                                        <div class="text-sm text-red-600">Quadratic over linear</div>
+                                    <button onclick="drrfSetDomainExample('(x²-1)/(x+2)')" class="example-button group bg-gradient-to-br from-red-50 to-red-100 hover:from-red-100 hover:to-red-200 border-2 border-red-300 hover:border-red-500 rounded-xl p-4 text-left transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <div class="font-mono text-lg text-red-900 font-bold group-hover:text-red-950">f(x) = (x²-1)/(x+2)</div>
+                                            <i class="fas fa-arrow-right text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                        </div>
+                                        <div class="text-sm text-red-700 font-medium">Quadratic over linear</div>
+                                        <div class="text-xs text-red-600 mt-1">Higher degree numerator</div>
                                     </button>
-                                    <button onclick="drrfSetDomainExample('(2x+3)/(x²-4)')" class="example-button bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg p-4 text-left transition-all duration-300">
-                                        <div class="font-mono text-lg text-indigo-800 mb-1">f(x) = (2x+3)/(x²-4)</div>
-                                        <div class="text-sm text-indigo-600">Linear over quadratic</div>
+                                    <button onclick="drrfSetDomainExample('(2x+3)/(x²-4)')" class="example-button group bg-gradient-to-br from-indigo-50 to-indigo-100 hover:from-indigo-100 hover:to-indigo-200 border-2 border-indigo-300 hover:border-indigo-500 rounded-xl p-4 text-left transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <div class="font-mono text-lg text-indigo-900 font-bold group-hover:text-indigo-950">f(x) = (2x+3)/(x²-4)</div>
+                                            <i class="fas fa-arrow-right text-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                        </div>
+                                        <div class="text-sm text-indigo-700 font-medium">Linear over quadratic</div>
+                                        <div class="text-xs text-indigo-600 mt-1">Higher degree denominator</div>
                                     </button>
                                 </div>
                             </div>
-                            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                            <div class="bg-gradient-to-r from-yellow-50 to-amber-50 border-2 border-yellow-300 rounded-xl p-5 shadow-md">
                                 <div class="flex items-start">
-                                    <i class="fas fa-lightbulb text-yellow-600 mr-3 mt-1"></i>
+                                    <div class="bg-yellow-400 rounded-full p-2 mr-4 flex-shrink-0">
+                                        <i class="fas fa-lightbulb text-yellow-900"></i>
+                                    </div>
                                     <div>
-                                        <h4 class="font-semibold text-yellow-800 mb-2">💡 Learning Tip:</h4>
-                                        <p class="text-yellow-700 text-sm">Click any function above to see its domain analysis. Notice how different denominators create different domain restrictions!</p>
+                                        <h4 class="font-bold text-yellow-900 mb-2 text-lg">💡 Pro Tip:</h4>
+                                        <p class="text-yellow-800 text-sm leading-relaxed">Click any function above to see instant domain analysis! Watch how different denominators create unique domain restrictions. Try clicking multiple functions to compare patterns!</p>
                                     </div>
                                 </div>
                             </div>
@@ -371,24 +774,62 @@
                         
                         <!-- Results Section -->
                         <div class="space-y-4">
-                            <div id="domainFunctionDisplay" class="bg-white rounded-lg p-4 shadow-md">
-                                <h4 class="font-semibold text-gray-800 mb-2">Selected Function:</h4>
-                                <div class="text-lg font-mono text-primary">Click a function above to analyze</div>
+                            <div id="domainFunctionDisplay" class="bg-gradient-to-r from-blue-100 to-indigo-100 rounded-xl p-5 shadow-lg border-2 border-blue-300 transform transition-all duration-300 hover:scale-105">
+                                <div class="flex items-center mb-3">
+                                    <div class="bg-blue-500 rounded-full p-2 mr-3">
+                                        <i class="fas fa-function text-white text-sm"></i>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800 text-lg">Selected Function:</h4>
+                                </div>
+                                <div class="text-xl font-mono text-blue-900 font-bold bg-white rounded-lg p-3 text-center">Click a function above to analyze</div>
                             </div>
-                            <div id="domainRestrictions" class="bg-white rounded-lg p-4 shadow-md">
-                                <h4 class="font-semibold text-gray-800 mb-2">Domain Restrictions:</h4>
-                                <div class="text-gray-700">Select a function to see its restrictions</div>
+                            <div id="domainRestrictions" class="bg-gradient-to-r from-red-100 to-pink-100 rounded-xl p-5 shadow-lg border-2 border-red-300 transform transition-all duration-300 hover:scale-105">
+                                <div class="flex items-center mb-3">
+                                    <div class="bg-red-500 rounded-full p-2 mr-3">
+                                        <i class="fas fa-exclamation-triangle text-white text-sm"></i>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800 text-lg">Domain Restrictions:</h4>
+                                </div>
+                                <div class="text-gray-800 bg-white rounded-lg p-3 font-semibold">Select a function to see its restrictions</div>
                             </div>
-                            <div id="domainNotation" class="bg-white rounded-lg p-4 shadow-md">
-                                <h4 class="font-semibold text-gray-800 mb-2">Domain in Interval Notation:</h4>
-                                <div class="text-gray-700">Select a function to see interval notation</div>
+                            <div id="domainNotation" class="bg-gradient-to-r from-green-100 to-emerald-100 rounded-xl p-5 shadow-lg border-2 border-green-300 transform transition-all duration-300 hover:scale-105">
+                                <div class="flex items-center mb-3">
+                                    <div class="bg-green-500 rounded-full p-2 mr-3">
+                                        <i class="fas fa-brackets-curly text-white text-sm"></i>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800 text-lg">Domain in Interval Notation:</h4>
+                                </div>
+                                <div class="text-gray-800 font-mono bg-white rounded-lg p-3 text-center font-bold">Select a function to see interval notation</div>
                             </div>
-                            <div id="domainExplanation" class="bg-white rounded-lg p-4 shadow-md">
-                                <h4 class="font-semibold text-gray-800 mb-2">Step-by-Step Explanation:</h4>
-                                <div class="text-gray-700">Select a function to see detailed steps</div>
+                            <div id="domainExplanation" class="bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl p-5 shadow-lg border-2 border-purple-300 transform transition-all duration-300 hover:scale-105">
+                                <div class="flex items-center mb-3">
+                                    <div class="bg-purple-500 rounded-full p-2 mr-3">
+                                        <i class="fas fa-list-ol text-white text-sm"></i>
+                                    </div>
+                                    <h4 class="font-bold text-gray-800 text-lg">Step-by-Step Explanation:</h4>
+                                </div>
+                                <div class="text-gray-800 bg-white rounded-lg p-3">Select a function to see detailed steps</div>
                             </div>
                         </div>
                     </div>
+                </div>
+                
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between items-center mt-8 pt-6 border-t border-gray-200">
+                    <button onclick="drrfNavigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        <i class="fas fa-chevron-left mr-2"></i>Previous Topic
+                    </button>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-center">
+                            <div class="text-lg font-semibold text-primary"><span id="drrfCurrentLessonNum">1</span> of 4</div>
+                        </div>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div id="drrfLessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 25%"></div>
+                        </div>
+                    </div>
+                    <button onclick="drrfNavigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        Next Topic<i class="fas fa-chevron-right ml-2"></i>
+                    </button>
                 </div>
             </div>
         </section>
@@ -400,14 +841,33 @@
                     <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-chart-bar text-3xl"></i>
                     </div>
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 2: Understanding Range</h2>
-                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Topic 2: Understanding Range</h2>
+                    <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-4">
                         Learn what range means for rational functions, how to determine the set of possible output values, and the relationship between range and horizontal asymptotes.
                     </p>
+                    <!-- Timer Display -->
+                    <div class="flex justify-end">
+                        <div class="flex-shrink-0 ml-6 hidden md:flex">
+                            <div class="relative w-20 h-20">
+                                <svg class="transform -rotate-90 w-20 h-20">
+                                    <circle cx="40" cy="40" r="34" stroke="#e5e7eb" stroke-width="6" fill="none" class="timer-bg"></circle>
+                                    <circle cx="40" cy="40" r="34" stroke="#667eea" stroke-width="6" fill="none" 
+                                            class="timer-progress" 
+                                            stroke-dasharray="213.63" 
+                                            stroke-dashoffset="213.63"
+                                            stroke-linecap="round"></circle>
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span class="lesson-timer-display text-lg font-bold text-gray-800">00:00</span>
+                                    <span class="text-xs text-gray-500 mt-0.5">Study Time</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- Learning Objectives -->
-                <div class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
+                <div id="lesson2-objective" class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
                     <h3 class="text-xl font-semibold text-gray-800 mb-4">
                         <i class="fas fa-target mr-2"></i>Learning Objectives (MELC: M11GM-Ib-2)
                     </h3>
@@ -516,11 +976,113 @@
                     </div>
                 </div>
 
-                <!-- Enhanced Virtual Aid: Interactive Range Analyzer -->
-                <div class="virtual-aid rounded-2xl p-8 mb-8">
-                    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
-                        <i class="fas fa-chart-line text-primary mr-3"></i>Interactive Range Analyzer
+                <!-- Concept Deep Dive -->
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-8 mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-graduation-cap text-purple-500 mr-3"></i>Concept Deep Dive: Understanding Range
                     </h3>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-lg p-6 shadow-md">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <span class="bg-purple-500 text-white rounded-full w-8 h-8 inline-flex items-center justify-center text-sm font-bold mr-3">1</span>
+                                The Challenge: Range is More Complex
+                            </h4>
+                            <p class="text-gray-700 mb-3 leading-relaxed">
+                                Unlike domain (which focuses on input restrictions), range focuses on <strong>output possibilities</strong>. The range tells us what y-values the function can actually produce. This is trickier because we need to understand the function's behavior.
+                            </p>
+                            <div class="bg-purple-50 border-l-4 border-purple-500 p-4 rounded">
+                                <p class="text-gray-700 text-sm">
+                                    <strong>Key Insight:</strong> Horizontal asymptotes are your best friend when finding range! They show you the boundaries that the function approaches but may never cross.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 shadow-md">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <span class="bg-purple-500 text-white rounded-full w-8 h-8 inline-flex items-center justify-center text-sm font-bold mr-3">2</span>
+                                Horizontal Asymptote Rules
+                            </h4>
+                            <div class="overflow-x-auto">
+                                <table class="w-full border-collapse">
+                                    <thead>
+                                        <tr class="bg-purple-100">
+                                            <th class="border border-purple-300 px-4 py-2 text-left">Degree Comparison</th>
+                                            <th class="border border-purple-300 px-4 py-2 text-left">Horizontal Asymptote</th>
+                                            <th class="border border-purple-300 px-4 py-2 text-left">Range Impact</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="hover:bg-purple-50">
+                                            <td class="border border-purple-200 px-4 py-2">deg(num) &lt; deg(den)</td>
+                                            <td class="border border-purple-200 px-4 py-2 font-mono">y = 0</td>
+                                            <td class="border border-purple-200 px-4 py-2">Range may exclude 0</td>
+                                        </tr>
+                                        <tr class="hover:bg-purple-50">
+                                            <td class="border border-purple-200 px-4 py-2">deg(num) = deg(den)</td>
+                                            <td class="border border-purple-200 px-4 py-2 font-mono">y = a/b</td>
+                                            <td class="border border-purple-200 px-4 py-2">Range excludes asymptote value</td>
+                                        </tr>
+                                        <tr class="hover:bg-purple-50">
+                                            <td class="border border-purple-200 px-4 py-2">deg(num) &gt; deg(den)</td>
+                                            <td class="border border-purple-200 px-4 py-2 font-mono">None</td>
+                                            <td class="border border-purple-200 px-4 py-2">Range is all real numbers</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 shadow-md">
+                            <h4 class="text-xl font-semibold text-gray-800 mb-4">
+                                <span class="bg-purple-500 text-white rounded-full w-8 h-8 inline-flex items-center justify-center text-sm font-bold mr-3">3</span>
+                                Step-by-Step Process for Finding Range
+                            </h4>
+                            <div class="space-y-3">
+                                <div class="flex items-start">
+                                    <span class="bg-blue-100 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-3 mt-1 flex-shrink-0">A</span>
+                                    <div>
+                                        <strong class="text-gray-800">Find Horizontal Asymptote:</strong>
+                                        <p class="text-gray-700 text-sm mt-1">Compare degrees of numerator and denominator. If equal, divide leading coefficients.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-blue-100 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-3 mt-1 flex-shrink-0">B</span>
+                                    <div>
+                                        <strong class="text-gray-800">Check if Asymptote is Attainable:</strong>
+                                        <p class="text-gray-700 text-sm mt-1">Solve f(x) = asymptote. If no solution exists, exclude that value from range.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-blue-100 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-3 mt-1 flex-shrink-0">C</span>
+                                    <div>
+                                        <strong class="text-gray-800">Analyze Function Behavior:</strong>
+                                        <p class="text-gray-700 text-sm mt-1">Consider end behavior and any local extrema that might restrict the range.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-blue-100 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-3 mt-1 flex-shrink-0">D</span>
+                                    <div>
+                                        <strong class="text-gray-800">Express in Interval Notation:</strong>
+                                        <p class="text-gray-700 text-sm mt-1">Write your answer using proper interval notation, excluding any unattainable values.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Virtual Aid: Interactive Range Analyzer -->
+                <div id="lesson2-example" class="virtual-aid rounded-2xl p-8 mb-8 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 border-2 border-green-200 shadow-xl">
+                    <div class="text-center mb-6">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-500 to-teal-500 rounded-full mb-4 shadow-lg">
+                            <i class="fas fa-chart-line text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-3xl font-bold text-gray-800 mb-2">
+                            📊 Interactive Range Analyzer
+                        </h3>
+                        <p class="text-gray-600">Explore how horizontal asymptotes determine the range of rational functions!</p>
+                    </div>
                     
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <!-- Example Selection Section -->
@@ -590,6 +1152,41 @@
                         </div>
                     </div>
                 </div>
+                
+                <!-- References -->
+                <div id="lesson2-reference" class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-book text-blue-500 mr-2"></i>References & Additional Resources
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-center">
+                            <i class="fas fa-external-link-alt text-blue-500 mr-3"></i>
+                            <a href="#" class="hover:text-blue-600 transition-colors">DepEd MELCs General Mathematics Grade 11</a>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-external-link-alt text-blue-500 mr-3"></i>
+                            <a href="#" class="hover:text-blue-600 transition-colors">Range and Horizontal Asymptotes - Khan Academy</a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between items-center mt-8 pt-6 border-t border-gray-200">
+                    <button onclick="drrfNavigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-chevron-left mr-2"></i>Previous Topic
+                    </button>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-center">
+                            <div class="text-lg font-semibold text-primary"><span id="drrfCurrentLessonNum">2</span> of 4</div>
+                        </div>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div id="drrfLessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 50%"></div>
+                        </div>
+                    </div>
+                    <button onclick="drrfNavigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        Next Topic<i class="fas fa-chevron-right ml-2"></i>
+                    </button>
+                </div>
             </div>
         </section>
 
@@ -600,14 +1197,33 @@
                     <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-calculator text-3xl"></i>
                     </div>
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 3: Finding Domain & Range</h2>
-                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Topic 3: Finding Domain & Range</h2>
+                    <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-4">
                         Learn systematic methods for finding both domain and range of rational functions, including step-by-step procedures and common techniques.
                     </p>
+                    <!-- Timer Display -->
+                    <div class="flex justify-end">
+                        <div class="flex-shrink-0 ml-6 hidden md:flex">
+                            <div class="relative w-20 h-20">
+                                <svg class="transform -rotate-90 w-20 h-20">
+                                    <circle cx="40" cy="40" r="34" stroke="#e5e7eb" stroke-width="6" fill="none" class="timer-bg"></circle>
+                                    <circle cx="40" cy="40" r="34" stroke="#667eea" stroke-width="6" fill="none" 
+                                            class="timer-progress" 
+                                            stroke-dasharray="213.63" 
+                                            stroke-dashoffset="213.63"
+                                            stroke-linecap="round"></circle>
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span class="lesson-timer-display text-lg font-bold text-gray-800">00:00</span>
+                                    <span class="text-xs text-gray-500 mt-0.5">Study Time</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- Learning Objectives -->
-                <div class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
+                <div id="lesson3-objective" class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
                     <h3 class="text-xl font-semibold text-gray-800 mb-4">
                         <i class="fas fa-target mr-2"></i>Learning Objectives (MELC: M11GM-Ib-3)
                     </h3>
@@ -693,10 +1309,16 @@
                 </div>
 
                 <!-- Enhanced Virtual Aid: Interactive Domain & Range Calculator -->
-                <div class="virtual-aid rounded-2xl p-8 mb-8">
-                    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
-                        <i class="fas fa-calculator text-primary mr-3"></i>Interactive Domain & Range Calculator
-                    </h3>
+                <div id="lesson3-example" class="virtual-aid rounded-2xl p-8 mb-8 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 border-2 border-indigo-200 shadow-xl">
+                    <div class="text-center mb-6">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-indigo-500 to-pink-500 rounded-full mb-4 shadow-lg">
+                            <i class="fas fa-calculator text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-3xl font-bold text-gray-800 mb-2">
+                            🧮 Interactive Domain & Range Calculator
+                        </h3>
+                        <p class="text-gray-600">Get complete analysis of both domain and range with detailed step-by-step solutions!</p>
+                    </div>
                     
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <!-- Example Selection Section -->
@@ -762,6 +1384,37 @@
                         </div>
                     </div>
                 </div>
+                
+                <!-- References -->
+                <div id="lesson3-reference" class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-book text-blue-500 mr-2"></i>References & Additional Resources
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-center">
+                            <i class="fas fa-external-link-alt text-blue-500 mr-3"></i>
+                            <a href="#" class="hover:text-blue-600 transition-colors">Domain and Range Calculator - Desmos</a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between items-center mt-8 pt-6 border-t border-gray-200">
+                    <button onclick="drrfNavigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-chevron-left mr-2"></i>Previous Topic
+                    </button>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-center">
+                            <div class="text-lg font-semibold text-primary"><span id="drrfCurrentLessonNum">3</span> of 4</div>
+                        </div>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div id="drrfLessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <button onclick="drrfNavigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        Next Topic<i class="fas fa-chevron-right ml-2"></i>
+                    </button>
+                </div>
             </div>
         </section>
 
@@ -772,14 +1425,33 @@
                     <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-globe text-3xl"></i>
                     </div>
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 4: Applications & Problem Solving</h2>
-                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Topic 4: Applications & Problem Solving</h2>
+                    <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-4">
                         Apply domain and range concepts to solve real-world problems in physics, economics, engineering, and other fields.
                     </p>
+                    <!-- Timer Display -->
+                    <div class="flex justify-end">
+                        <div class="flex-shrink-0 ml-6 hidden md:flex">
+                            <div class="relative w-20 h-20">
+                                <svg class="transform -rotate-90 w-20 h-20">
+                                    <circle cx="40" cy="40" r="34" stroke="#e5e7eb" stroke-width="6" fill="none" class="timer-bg"></circle>
+                                    <circle cx="40" cy="40" r="34" stroke="#667eea" stroke-width="6" fill="none" 
+                                            class="timer-progress" 
+                                            stroke-dasharray="213.63" 
+                                            stroke-dashoffset="213.63"
+                                            stroke-linecap="round"></circle>
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span class="lesson-timer-display text-lg font-bold text-gray-800">00:00</span>
+                                    <span class="text-xs text-gray-500 mt-0.5">Study Time</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- Learning Objectives -->
-                <div class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
+                <div id="lesson4-objective" class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
                     <h3 class="text-xl font-semibold text-gray-800 mb-4">
                         <i class="fas fa-target mr-2"></i>Learning Objectives (MELC: M11GM-Ib-4)
                     </h3>
@@ -889,7 +1561,7 @@
                 </div>
 
                 <!-- Enhanced Virtual Aid: Application Problem Solver -->
-                <div class="virtual-aid rounded-2xl p-8 mb-8">
+                <div id="lesson4-example" class="virtual-aid rounded-2xl p-8 mb-8">
                     <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
                         <i class="fas fa-calculator text-primary mr-3"></i>Application Problem Solver
                     </h3>
@@ -938,24 +1610,72 @@
                         </div>
                     </div>
                 </div>
+                
+                <!-- References -->
+                <div id="lesson4-reference" class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-book text-blue-500 mr-2"></i>References & Additional Resources
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-center">
+                            <i class="fas fa-external-link-alt text-blue-500 mr-3"></i>
+                            <a href="#" class="hover:text-blue-600 transition-colors">Real-World Applications of Rational Functions</a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between items-center mt-8 pt-6 border-t border-gray-200">
+                    <button onclick="drrfNavigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-chevron-left mr-2"></i>Previous Topic
+                    </button>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-center">
+                            <div class="text-lg font-semibold text-primary"><span id="drrfCurrentLessonNum">4</span> of 4</div>
+                        </div>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div id="drrfLessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <button onclick="drrfNavigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        Next Topic<i class="fas fa-chevron-right ml-2"></i>
+                    </button>
+                </div>
+                
+                <!-- Topic 4 Quiz Button -->
+                <div class="text-center mb-8" id="topic4QuizButton" style="display: none;">
+                    <button onclick="drrfShowTopic4Quiz()" 
+                            class="bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                        <i class="fas fa-question-circle mr-2"></i>
+                        Take Topic 4 Quiz
+                    </button>
+                </div>
+
+                <!-- Performance Analysis Section (only shows after all quizzes are passed) -->
+                <div id="performanceAnalysisSection" class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8 max-w-7xl mx-auto" style="display: none;">
+                    <div class="text-center mb-6">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">
+                            <i class="fas fa-chart-line text-blue-500 mr-2"></i>Performance Analysis
+                        </h3>
+                        <p class="text-gray-700 mb-6">
+                            Congratulations on completing all topics! Get detailed insights into your performance across all quizzes.
+                        </p>
+                        <button id="analyzeBtn" onclick="drrfAnalyzePerformance()" 
+                                class="bg-primary hover:bg-secondary text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105">
+                            <i class="fas fa-chart-line mr-2"></i>
+                            Analyze My Performance
+                        </button>
+                    </div>
+                    <div id="analysisResult" class="hidden">
+                        <!-- Performance analysis results will be displayed here -->
+                    </div>
+                </div>
             </div>
         </section>
         </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center">
-                <div class="flex items-center justify-center space-x-2 mb-4">
-                    <img src="../css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-8 w-8">
-                    <span class="text-2xl font-bold">MathEase</span>
-                </div>
-                <p class="text-gray-400 text-sm">Empowering Grade 11 STEM students to master General Mathematics through interactive learning and personalized progress tracking.</p>
-                <p class="text-gray-500 text-xs mt-4">© 2024 MathEase. All rights reserved.</p>
             </div>
         </div>
-    </footer>
+    </main>
 
     <script src="domain-range-rational-functions.js"></script>
 </body>

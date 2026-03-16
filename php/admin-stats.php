@@ -19,12 +19,29 @@ try {
     $stmt->execute();
     $hasApprovalStatus = $stmt->rowCount() > 0;
     
+    // Check if email_verified column exists
+    $stmt = $pdo->prepare("SHOW COLUMNS FROM teachers LIKE 'email_verified'");
+    $stmt->execute();
+    $hasEmailVerified = $stmt->rowCount() > 0;
+    
     $statusColumn = $hasApprovalStatus ? 'approval_status' : 'status';
     
-    // Pending teachers count
-    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM teachers WHERE {$statusColumn} = 'pending'");
+    // Pending teachers count - ALL pending teachers (regardless of email verification)
+    // Admin should see all pending teachers for account verification
+    $whereClause = "{$statusColumn} = 'pending'";
+    
+    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM teachers WHERE {$whereClause}");
     $stmt->execute();
     $stats['pending_teachers'] = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
+    
+    // Also get count of verified pending teachers for reference
+    if ($hasEmailVerified) {
+        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM teachers WHERE {$whereClause} AND email_verified = 1");
+        $stmt->execute();
+        $stats['pending_verified_teachers'] = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
+    } else {
+        $stats['pending_verified_teachers'] = 0;
+    }
     
     // Approved teachers count
     $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM teachers WHERE {$statusColumn} = 'approved'");

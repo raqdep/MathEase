@@ -141,17 +141,23 @@
                     </div>
 
                     <!-- Profile Menu -->
-                    <div class="relative group">
-                        <button class="flex items-center space-x-2 text-slate-700 hover:text-slate-900 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-50 transition-all duration-200">
-                            <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-full flex items-center justify-center">
-                                <i class="fas fa-user text-white text-xs"></i>
+                    <div class="relative group" id="profileDropdownContainer">
+                        <button onclick="toggleProfileDropdown()" class="flex items-center space-x-2 text-slate-700 hover:text-slate-900 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-50 transition-all duration-200">
+                            <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-full flex items-center justify-center overflow-hidden" id="profileIconContainer">
+                                <img id="profileIconImage" src="" alt="Profile" class="w-full h-full object-cover hidden">
+                                <i class="fas fa-user text-white text-xs" id="profileIconPlaceholder"></i>
                             </div>
                             <span id="userName">Student</span>
-                            <i class="fas fa-chevron-down text-xs"></i>
+                            <i class="fas fa-chevron-down text-xs transition-transform duration-200" id="profileDropdownIcon"></i>
                         </button>
-                        <div class="absolute right-0 mt-2 w-48 bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-200/60 py-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                        <div id="profileDropdown" class="absolute right-0 mt-2 w-56 bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-200/60 py-2 z-50 hidden">
+                            <a href="profile.html" class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                                <i class="fas fa-user-circle mr-3 text-indigo-500"></i>
+                                Profile
+                            </a>
+                            <div class="border-t border-slate-200 my-1"></div>
                             <a href="#" onclick="confirmLogout(event)" class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors" id="logoutLink">
-                                <i class="fas fa-sign-out-alt mr-3 text-slate-400"></i>
+                                <i class="fas fa-sign-out-alt mr-3 text-red-500"></i>
                                 Logout
                             </a>
                         </div>
@@ -923,6 +929,9 @@
                 if (userNameEl && user.first_name) {
                     userNameEl.textContent = `${user.first_name} ${user.last_name || ''}`.trim();
                 }
+                
+                // Load profile picture
+                await loadProfilePicture();
                 
                 // Show welcome message for students
                 if (user.role === 'student') {
@@ -2404,66 +2413,108 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', initQuizzesPage);
-
-        async function initQuizzesPage() {
-            try {
-                const res = await fetch('php/quiz-management.php?action=get_quiz_settings', { credentials: 'include' });
-                const data = await res.json();
-
-                // Handle Functions quiz card (Quiz 1)
-                setupQuizCard('functions', 'quiz/functions-quiz.html', data && data.settings ? data.settings.functions : null);
-                // You can extend to other quizzes similarly if needed
-            } catch (e) {
-                console.error('Failed to load quiz settings:', e);
-                // Fallback: still enable navigation
-                setupQuizCard('functions', 'quiz/functions-quiz.html', null);
-            }
-        }
-
-        function setupQuizCard(quizType, href, settings) {
-            const card = document.querySelector(`.quiz-card[data-quiz-type="${quizType}"]`);
-            if (!card) return;
-
-            const btn = card.querySelector('button');
-            const status = card.querySelector('.quiz-status');
-            const deadlineEl = card.querySelector('.quiz-deadline');
-
-            let isDeadlinePassed = false;
-            let deadlineStr = '';
-            if (settings && settings.deadline) {
-                const deadline = new Date(settings.deadline);
-                const now = new Date();
-                isDeadlinePassed = now > deadline;
-                deadlineStr = `${deadline.toLocaleDateString()} ${deadline.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-            }
-
-            if (deadlineEl) {
-                deadlineEl.innerHTML = settings && settings.deadline
-                    ? `<div class="text-sm"><span class="font-semibold">Deadline:</span> <span class="${isDeadlinePassed ? 'text-red-600 font-semibold' : 'text-slate-600'}">${deadlineStr}</span></div>`
-                    : '<div class="text-sm text-slate-500">Deadline: Not set</div>';
-            }
-
-            // Enable card interaction
-            card.style.opacity = '1';
-            card.classList.remove('cursor-not-allowed');
-
-            if (btn) {
-                btn.classList.remove('bg-orange-500', 'hover:bg-orange-600');
-                // Set label and style based on deadline
-                if (isDeadlinePassed) {
-                    if (status) status.textContent = 'Review Available';
-                    btn.textContent = 'Review Answers';
-                    btn.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+        // Profile dropdown toggle
+        function toggleProfileDropdown() {
+            const dropdown = document.getElementById('profileDropdown');
+            const icon = document.getElementById('profileDropdownIcon');
+            
+            if (dropdown) {
+                const isHidden = dropdown.classList.contains('hidden');
+                if (isHidden) {
+                    dropdown.classList.remove('hidden');
+                    if (icon) icon.style.transform = 'rotate(180deg)';
                 } else {
-                    if (status) status.textContent = 'Available';
-                    btn.textContent = 'Start Quiz';
-                    btn.classList.add('bg-orange-500', 'hover:bg-orange-600');
+                    dropdown.classList.add('hidden');
+                    if (icon) icon.style.transform = 'rotate(0deg)';
                 }
-
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    window.location.href = href;
-                });
             }
         }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const container = document.getElementById('profileDropdownContainer');
+            const dropdown = document.getElementById('profileDropdown');
+
+            if (container && dropdown && !container.contains(event.target)) {
+                dropdown.classList.add('hidden');
+                const icon = document.getElementById('profileDropdownIcon');
+                if (icon) icon.style.transform = 'rotate(0deg)';
+            }
+        });
+
+        // Load profile picture
+        async function loadProfilePicture() {
+            try {
+                const response = await fetch('php/user.php', {
+                    credentials: 'include',
+                    cache: 'no-store'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.user) {
+                        const userId = data.user.id;
+                        
+                        // Get profile data including profile picture
+                        const profileResponse = await fetch(`php/get-profile.php?user_id=${userId}`, {
+                            credentials: 'include'
+                        });
+                        
+                        if (profileResponse.ok) {
+                            const profileData = await profileResponse.json();
+                            if (profileData.success && profileData.user) {
+                                const profilePicture = profileData.user.profile_picture;
+                                const profileIconImage = document.getElementById('profileIconImage');
+                                const profileIconPlaceholder = document.getElementById('profileIconPlaceholder');
+                                const profileIconContainer = document.getElementById('profileIconContainer');
+                                
+                                if (profilePicture && profilePicture.trim() !== '') {
+                                    // Show image, hide placeholder
+                                    if (profileIconImage) {
+                                        profileIconImage.src = profilePicture + '?t=' + Date.now();
+                                        profileIconImage.classList.remove('hidden');
+                                    }
+                                    if (profileIconPlaceholder) {
+                                        profileIconPlaceholder.classList.add('hidden');
+                                    }
+                                    // Remove gradient background when image is shown
+                                    if (profileIconContainer) {
+                                        profileIconContainer.classList.remove('bg-gradient-to-br', 'from-indigo-500', 'to-violet-600');
+                                        profileIconContainer.classList.add('bg-slate-200');
+                                    }
+                                } else {
+                                    // Show placeholder, hide image
+                                    if (profileIconImage) {
+                                        profileIconImage.classList.add('hidden');
+                                    }
+                                    if (profileIconPlaceholder) {
+                                        profileIconPlaceholder.classList.remove('hidden');
+                                    }
+                                    // Add gradient background when no image
+                                    if (profileIconContainer) {
+                                        profileIconContainer.classList.add('bg-gradient-to-br', 'from-indigo-500', 'to-violet-600');
+                                        profileIconContainer.classList.remove('bg-slate-200');
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile picture:', error);
+            }
+        }
+
+        // Listen for profile picture updates from profile page
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'mathease-profile-updated') {
+                console.log('Profile picture updated, refreshing...');
+                loadProfilePicture();
+            }
+        });
+
+        // Also check for profile updates periodically
+        setInterval(loadProfilePicture, 5000); // Check every 5 seconds
+    </script>
+</body>
+</html>

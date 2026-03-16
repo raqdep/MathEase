@@ -1,4 +1,27 @@
 <?php
+/**
+ * Quiz Management System for /quiz folder quizzes
+ * 
+ * IMPORTANT SEPARATION FROM TOPIC QUIZZES:
+ * - This file manages quizzes in /quiz folder (functions-quiz.html, evaluating-functions-quiz.html, etc.)
+ * - Topic quizzes in /topics folder use store-quiz-data.php (completely separate system)
+ * 
+ * SEPARATION MECHANISM:
+ * - /quiz folder quizzes: Use quiz_type like 'functions', 'evaluating-functions', 'operations-on-functions'
+ * - Topic quizzes: Use quiz_type like 'functions_topic_1', 'solving_real_life_problems_lesson_1'
+ * - Topic quiz types contain '_topic_' or '_lesson_' patterns
+ * - ALL queries in this file EXCLUDE topic quiz types using:
+ *   * quiz_type NOT LIKE '%_topic_%'
+ *   * quiz_type NOT LIKE '%_lesson_%'
+ *   * quiz_type NOT LIKE '%topic%'
+ *   * quiz_type NOT LIKE '%lesson%'
+ * 
+ * - Topic quizzes: Complete immediately, NO 'in_progress' status
+ * - /quiz folder quizzes: Use 'in_progress' status, managed here
+ * 
+ * This ensures COMPLETE SEPARATION - topic quizzes and /quiz folder quizzes never interfere with each other
+ */
+
 session_start();
 require_once 'config.php';
 
@@ -24,11 +47,16 @@ class QuizManager {
     // Check for existing quiz attempt
     public function checkExistingAttempt($studentId, $quizType) {
         try {
-            // First check for in-progress attempts
+            // First check for in-progress attempts of the specific quiz type
+            // IMPORTANT: Only check /quiz folder quiz types, exclude topic quiz types
             $stmt = $this->pdo->prepare("
-                SELECT id, completion_time, status, started_at
+                SELECT id, completion_time, status, started_at, quiz_type
                 FROM quiz_attempts 
-                WHERE student_id = ? AND quiz_type = ? AND status = 'in_progress'
+                WHERE student_id = ? 
+                AND quiz_type = ? 
+                AND status = 'in_progress'
+                AND quiz_type NOT LIKE '%_topic_%'
+                AND quiz_type NOT LIKE '%_lesson_%'
                 ORDER BY started_at DESC 
                 LIMIT 1
             ");
@@ -40,18 +68,57 @@ class QuizManager {
                     'success' => true,
                     'attempt' => [
                         'attempt_id' => $attempt['id'],
-                        'completion_time' => $attempt['completion_time'],
+                        'completion_time' => $attempt['completion_time'] ?? 0,
                         'status' => $attempt['status'],
-                        'started_at' => $attempt['started_at']
+                        'started_at' => $attempt['started_at'],
+                        'quiz_type' => $attempt['quiz_type']
                     ]
                 ];
             }
             
-            // If no in-progress attempt, check if there are any completed attempts that haven't been reset
-            $completedStmt = $this->pdo->prepare("
-                SELECT id, completion_time, status, started_at
+            // If no in-progress attempt for this quiz type, check for ANY in-progress attempt
+            // IMPORTANT: Exclude topic quiz types - they use different system
+            $anyInProgressStmt = $this->pdo->prepare("
+                SELECT id, completion_time, status, started_at, quiz_type
                 FROM quiz_attempts 
-                WHERE student_id = ? AND quiz_type = ? AND status = 'completed'
+                WHERE student_id = ? 
+                AND status = 'in_progress'
+                AND quiz_type NOT LIKE '%_topic_%'
+                AND quiz_type NOT LIKE '%_lesson_%'
+                AND quiz_type NOT LIKE '%topic%'
+                AND quiz_type NOT LIKE '%lesson%'
+                ORDER BY started_at DESC 
+                LIMIT 1
+            ");
+            $anyInProgressStmt->execute([$studentId]);
+            $anyInProgress = $anyInProgressStmt->fetch();
+            
+            if ($anyInProgress) {
+                error_log("Found in-progress attempt for different quiz type - ID: " . $anyInProgress['id'] . ", Quiz Type: " . $anyInProgress['quiz_type']);
+                // Return it so frontend can handle it (maybe auto-resume or show option to clear)
+                return [
+                    'success' => true,
+                    'attempt' => [
+                        'attempt_id' => $anyInProgress['id'],
+                        'completion_time' => $anyInProgress['completion_time'] ?? 0,
+                        'status' => $anyInProgress['status'],
+                        'started_at' => $anyInProgress['started_at'],
+                        'quiz_type' => $anyInProgress['quiz_type']
+                    ],
+                    'different_quiz_type' => true // Flag to indicate this is a different quiz
+                ];
+            }
+            
+            // If no in-progress attempt, check if there are any completed attempts that haven't been reset
+            // IMPORTANT: Only check /quiz folder quiz types, exclude topic quiz types
+            $completedStmt = $this->pdo->prepare("
+                SELECT id, completion_time, status, started_at, quiz_type
+                FROM quiz_attempts 
+                WHERE student_id = ? 
+                AND quiz_type = ? 
+                AND status = 'completed'
+                AND quiz_type NOT LIKE '%_topic_%'
+                AND quiz_type NOT LIKE '%_lesson_%'
                 ORDER BY completed_at DESC 
                 LIMIT 1
             ");
@@ -64,9 +131,10 @@ class QuizManager {
                     'success' => true,
                     'attempt' => [
                         'attempt_id' => $completedAttempt['id'],
-                        'completion_time' => $completedAttempt['completion_time'],
+                        'completion_time' => $completedAttempt['completion_time'] ?? 0,
                         'status' => $completedAttempt['status'],
-                        'started_at' => $completedAttempt['started_at']
+                        'started_at' => $completedAttempt['started_at'],
+                        'quiz_type' => $completedAttempt['quiz_type']
                     ]
                 ];
             }
@@ -227,9 +295,17 @@ class QuizManager {
             }
             
             // Check if there's already an in-progress attempt
+            // IMPORTANT: Exclude topic quiz types (those with _topic_ or _lesson_ in quiz_type)
+            // Topic quizzes use store-quiz-data.php and don't have 'in_progress' status
+            // Only check for /quiz folder quiz types (simple names like 'functions', 'evaluating-functions')
             $existingStmt = $this->pdo->prepare("
                 SELECT id, quiz_type FROM quiz_attempts 
-                WHERE student_id = ? AND status = 'in_progress'
+                WHERE student_id = ? 
+                AND status = 'in_progress'
+                AND quiz_type NOT LIKE '%_topic_%'
+                AND quiz_type NOT LIKE '%_lesson_%'
+                AND quiz_type NOT LIKE '%topic%'
+                AND quiz_type NOT LIKE '%lesson%'
             ");
             $existingStmt->execute([$studentId]);
             $existing = $existingStmt->fetch();
@@ -240,13 +316,17 @@ class QuizManager {
                 if ($existing['quiz_type'] === $quizType) {
                     return [
                         'success' => false,
-                        'message' => 'You already have a quiz attempt in progress. Please complete it first.'
+                        'message' => 'You already have a quiz attempt in progress. Please complete it first.',
+                        'attempt_id' => $existing['id'], // Include attempt_id so frontend can resume
+                        'existing_quiz_type' => $existing['quiz_type']
                     ];
                 } else {
                     error_log("Different quiz type in progress - Existing: " . $existing['quiz_type'] . ", Requested: $quizType");
                     return [
                         'success' => false,
-                        'message' => 'You have a different quiz in progress. Please complete it first.'
+                        'message' => 'You have a different quiz in progress. Please complete it first.',
+                        'attempt_id' => $existing['id'], // Include attempt_id so frontend can check/resume
+                        'existing_quiz_type' => $existing['quiz_type']
                     ];
                 }
             }
@@ -432,8 +512,9 @@ class QuizManager {
                 error_log("Final rational-functions score: $score, Correct: $correctAnswers, Incorrect: $incorrectAnswers, Total: $totalQuestions");
                 
             } else if ($quizType === 'functions') {
-                // Functions Quiz: 15 points (10 multiple choice + 1 problem solving worth 5 points)
-                $totalQuestions = 15;
+                // Functions Quiz: 11 questions (10 multiple choice + 1 problem solving)
+                // Total points: 15 (10 MC * 1 point + 1 PS * 5 points)
+                $totalQuestions = 11; // Number of questions
                 
                 // Process multiple choice answers (questions 1-10)
                 for ($i = 1; $i <= 10; $i++) {
@@ -544,6 +625,9 @@ class QuizManager {
                 $this->storeProblemSolvingAnswers($attemptId, $answers, $psScore);
             }
             
+            // For functions quiz, store number of questions (11) in total_questions field
+            $questionsToStore = ($quizType === 'functions') ? 11 : $totalQuestions;
+            
             // Update quiz attempt with explicit status
             $stmt = $this->pdo->prepare("
                 UPDATE quiz_attempts 
@@ -551,7 +635,7 @@ class QuizManager {
                     completion_time = ?, completed_at = CURRENT_TIMESTAMP, status = 'completed'
                 WHERE id = ?
             ");
-            $stmt->execute([$score, $correctAnswers, $incorrectAnswers, $totalQuestions, $completionTime, $attemptId]);
+            $stmt->execute([$score, $correctAnswers, $incorrectAnswers, $questionsToStore, $completionTime, $attemptId]);
             
             // Verify the status was set correctly
             $verifyStmt = $this->pdo->prepare("SELECT status FROM quiz_attempts WHERE id = ?");
@@ -575,10 +659,14 @@ class QuizManager {
             // Generate detailed results
             $detailedResults = $this->generateDetailedResults($answers, $score, $correctAnswers, $incorrectAnswers, $quizType);
             
+            // For functions quiz, total_questions is number of questions (11), total_points is total points (15)
+            $totalPoints = ($quizType === 'functions') ? 15 : $totalQuestions;
+            
             return [
                 'success' => true,
                 'score' => $score,
-                'total_questions' => $totalQuestions,
+                'total_questions' => ($quizType === 'functions') ? 11 : $totalQuestions, // Number of questions
+                'total_points' => $totalPoints, // Total points for percentage calculation
                 'correct_answers' => $correctAnswers,
                 'incorrect_answers' => $incorrectAnswers,
                 'completion_time' => $completionTime,
@@ -1655,11 +1743,16 @@ class QuizManager {
                 $params = [$attemptId, $studentId];
             } else {
                 // Original logic for old attempts
+                // IMPORTANT: Exclude topic quiz types - they use different system
                 $sql = "
                     UPDATE quiz_attempts 
                     SET status = 'abandoned', completed_at = CURRENT_TIMESTAMP
                     WHERE status = 'in_progress' 
                     AND started_at < DATE_SUB(NOW(), INTERVAL 2 HOUR)
+                    AND quiz_type NOT LIKE '%_topic_%'
+                    AND quiz_type NOT LIKE '%_lesson_%'
+                    AND quiz_type NOT LIKE '%topic%'
+                    AND quiz_type NOT LIKE '%lesson%'
                 ";
                 
                 $params = [];
@@ -1768,8 +1861,64 @@ class QuizManager {
                     WHERE student_id = ? AND quiz_type = ? AND status IN ('completed', 'in_progress')
                 ");
                 $checkStmt->execute([$studentId, $quizType]);
-                $existingAttempts = $checkStmt->fetchAll();
+                $existingAttempts = $checkStmt->fetchAll(PDO::FETCH_ASSOC);
                 error_log("Found " . count($existingAttempts) . " attempts to reset for student $studentId, quiz $quizType");
+                
+                // Get attempt IDs before reset for badge removal
+                $attemptIds = array_column($existingAttempts, 'id');
+                
+                // Map quiz types to badge names
+                $quizBadgeMap = [
+                    'functions' => ['Functions Master', 'Functions Expert', 'Functions Achiever'],
+                    'functions_topic_1' => ['Functions Master', 'Functions Expert', 'Functions Achiever'],
+                    'evaluating-functions' => ['Evaluating Functions Champion', 'Evaluating Functions Expert'],
+                    'operations-on-functions' => ['Operations on Functions Champion', 'Operations on Functions Master', 'Operations on Functions Expert'],
+                    'real-life-problems' => ['Real-Life Problems Champion', 'Real-Life Problems Master', 'Real-Life Problems Solver'],
+                    'domain-range-rational-functions' => ['Domain & Range Master'],
+                    'domain-range-inverse-functions' => ['Domain & Range Master'],
+                    'rational-functions' => ['Rational Functions Expert']
+                ];
+                
+                // Get badge names for this quiz type
+                $badgeNamesToRemove = $quizBadgeMap[$quizType] ?? [];
+                
+                // Remove badges associated with these attempts
+                $totalBadgesRemoved = 0;
+                if (!empty($attemptIds) || !empty($badgeNamesToRemove)) {
+                    // Method 1: Remove badges by quiz_attempt_id (if column exists)
+                    if (!empty($attemptIds)) {
+                        // Check if quiz_attempt_id column exists
+                        $columnsQuery = "SHOW COLUMNS FROM student_badges LIKE 'quiz_attempt_id'";
+                        $columnExists = $this->pdo->query($columnsQuery)->rowCount() > 0;
+                        
+                        if ($columnExists) {
+                            $placeholders = implode(',', array_fill(0, count($attemptIds), '?'));
+                            $removeBadgesStmt = $this->pdo->prepare("
+                                DELETE sb FROM student_badges sb
+                                WHERE sb.student_id = ? AND sb.quiz_attempt_id IN ($placeholders)
+                            ");
+                            $removeBadgesStmt->execute(array_merge([$studentId], $attemptIds));
+                            $badgesRemoved = $removeBadgesStmt->rowCount();
+                            $totalBadgesRemoved += $badgesRemoved;
+                            error_log("Removed $badgesRemoved badges by quiz_attempt_id for student $studentId");
+                        }
+                    }
+                    
+                    // Method 2: Remove badges by badge name (fallback or additional cleanup)
+                    // This ensures badges are removed even if quiz_attempt_id is not set
+                    if (!empty($badgeNamesToRemove)) {
+                        $placeholders = implode(',', array_fill(0, count($badgeNamesToRemove), '?'));
+                        $removeBadgesByNameStmt = $this->pdo->prepare("
+                            DELETE sb FROM student_badges sb
+                            INNER JOIN badges b ON sb.badge_id = b.id
+                            WHERE sb.student_id = ? AND b.name IN ($placeholders)
+                        ");
+                        $removeBadgesByNameStmt->execute(array_merge([$studentId], $badgeNamesToRemove));
+                        $badgesRemovedByName = $removeBadgesByNameStmt->rowCount();
+                        $totalBadgesRemoved += $badgesRemovedByName;
+                        error_log("Removed $badgesRemovedByName badges by badge name for student $studentId, quiz $quizType");
+                    }
+                }
                 
                 // Mark all existing attempts as 'reset'
                 $stmt = $this->pdo->prepare("
@@ -1793,11 +1942,16 @@ class QuizManager {
                 
                 $this->pdo->commit();
                 
-                error_log("Quiz reset completed successfully for student $studentId, quiz $quizType");
+                error_log("Quiz reset completed successfully for student $studentId, quiz $quizType. Removed $totalBadgesRemoved badges.");
+                $message = 'Quiz attempt reset successfully. Student can now retake the quiz.';
+                if ($totalBadgesRemoved > 0) {
+                    $message .= " Removed $totalBadgesRemoved badge(s) associated with this quiz.";
+                }
                 return [
                     'success' => true,
-                    'message' => 'Quiz attempt reset successfully. Student can now retake the quiz.',
-                    'reset_count' => $resetCount
+                    'message' => $message,
+                    'reset_count' => $resetCount,
+                    'badges_removed' => $totalBadgesRemoved
                 ];
                 
             } catch (Exception $e) {
@@ -1899,7 +2053,8 @@ class QuizManager {
         $score = 0;
         
         // Problem solving question (5 points) - maximum profit
-        if (isset($answers['ps-answer']) && abs(intval($answers['ps-answer']) - 450) <= 50) {
+        // Correct answer is 300 (not 450)
+        if (isset($answers['ps-answer']) && abs(intval($answers['ps-answer']) - 300) <= 50) {
             $score += 5;
         }
         
@@ -2506,6 +2661,56 @@ try {
             $attemptId = $_POST['attempt_id'] ?? null;
             $result = $quizManager->markAbandonedAttempts($studentId, $attemptId);
             echo json_encode($result);
+            break;
+            
+        case 'clear_stuck_attempt':
+            // Allow students to clear their own stuck in-progress attempts
+            $studentId = $isStudent ? $_SESSION['user_id'] : null;
+            $attemptId = $_POST['attempt_id'] ?? null;
+            $quizType = $_POST['quiz_type'] ?? null;
+            
+            if (!$studentId) {
+                echo json_encode(['success' => false, 'message' => 'Student authentication required']);
+                break;
+            }
+            
+            try {
+                if ($attemptId) {
+                    // Clear specific attempt (verify it belongs to the student)
+                    $verifyStmt = $quizManager->pdo->prepare("
+                        SELECT id FROM quiz_attempts 
+                        WHERE id = ? AND student_id = ? AND status = 'in_progress'
+                    ");
+                    $verifyStmt->execute([$attemptId, $studentId]);
+                    if ($verifyStmt->fetch()) {
+                        $clearStmt = $quizManager->pdo->prepare("
+                            UPDATE quiz_attempts 
+                            SET status = 'abandoned', completed_at = CURRENT_TIMESTAMP
+                            WHERE id = ? AND student_id = ?
+                        ");
+                        $clearStmt->execute([$attemptId, $studentId]);
+                        echo json_encode(['success' => true, 'message' => 'Stuck attempt cleared']);
+                    } else {
+                        echo json_encode(['success' => false, 'message' => 'Attempt not found or does not belong to you']);
+                    }
+                } else if ($quizType) {
+                    // Clear all in-progress attempts for this quiz type
+                    $clearStmt = $quizManager->pdo->prepare("
+                        UPDATE quiz_attempts 
+                        SET status = 'abandoned', completed_at = CURRENT_TIMESTAMP
+                        WHERE student_id = ? AND quiz_type = ? AND status = 'in_progress'
+                    ");
+                    $clearStmt->execute([$studentId, $quizType]);
+                    echo json_encode(['success' => true, 'message' => 'Stuck attempts cleared', 'cleared_count' => $clearStmt->rowCount()]);
+                } else {
+                    // Clear all old stuck attempts (older than 2 hours) for this student
+                    $result = $quizManager->markAbandonedAttempts($studentId);
+                    echo json_encode($result);
+                }
+            } catch (Exception $e) {
+                error_log("Error clearing stuck attempt: " . $e->getMessage());
+                echo json_encode(['success' => false, 'message' => 'Failed to clear stuck attempt']);
+            }
             break;
             
         case 'get_quiz_attempt':

@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Dashboard - MathEase</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -95,13 +98,13 @@
     <!-- Navigation -->
     <nav class="bg-white/80 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
+            <div class="dashboard-nav-inner flex justify-between items-center h-16 gap-3 min-h-[56px]">
                 <!-- Logo -->
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-xl flex items-center justify-center">
-                        <img src="css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-6 w-6">
+                <div class="dashboard-nav-brand flex items-center gap-2 min-w-0 flex-1">
+                    <div class="dashboard-nav-logo-icon w-10 h-10 flex-shrink-0 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-xl flex items-center justify-center">
+                        <img src="css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-6 w-6 object-contain">
                     </div>
-                    <span class="text-xl font-bold text-slate-800">MathEase</span>
+                    <span class="text-xl font-bold text-slate-800 truncate">MathEase</span>
                 </div>
                 
                 <!-- Desktop Navigation -->
@@ -113,15 +116,15 @@
                     <a href="dashboard.html#progress" id="progressNavLink" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Progress</a>
                 </div>
                 
-                <!-- User Menu -->
-                <div class="flex items-center space-x-4">
+                <!-- User Menu - Hidden on Mobile, Visible on Desktop -->
+                <div class="hidden md:flex items-center space-x-4">
                     <!-- Notifications -->
                     <div class="relative group">
-                        <button onclick="toggleNotifications()" id="notificationButton" class="relative p-2 text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition-all duration-200">
+                        <button onclick="toggleNotifications()" id="notificationButton" class="relative p-2 text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition-all duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center">
                             <i class="fas fa-bell text-lg"></i>
                             <span id="notificationBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
                         </button>
-                        <div id="notificationsDropdown" class="absolute right-0 mt-2 w-80 bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-200/60 py-2 z-50 opacity-0 invisible transition-all duration-200">
+                        <div id="notificationsDropdown" class="notifications-dropdown absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-200/60 py-2 z-50 opacity-0 invisible transition-all duration-200">
                             <div class="px-4 py-2 border-b border-slate-200/60">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center space-x-2">
@@ -140,31 +143,109 @@
                         </div>
                     </div>
                     
-                    <div class="relative group">
-                        <button class="flex items-center space-x-2 text-slate-700 hover:text-slate-900 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-50 transition-all duration-200">
-                            <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-full flex items-center justify-center">
-                                <i class="fas fa-user text-white text-xs"></i>
+                    <!-- Profile Dropdown -->
+                    <div class="relative group" id="profileDropdownContainer">
+                        <button onclick="toggleProfileDropdown()" class="profile-button flex items-center space-x-2 text-slate-700 hover:text-slate-900 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-50 transition-all duration-200 min-h-[44px]">
+                            <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0" id="profileIconContainer">
+                                <img id="profileIconImage" src="" alt="Profile" class="w-full h-full object-cover hidden">
+                                <i class="fas fa-user text-white text-xs" id="profileIconPlaceholder"></i>
                             </div>
                             <span id="userName">Student</span>
-                            <i class="fas fa-chevron-down text-xs"></i>
+                            <i class="fas fa-chevron-down text-xs transition-transform duration-200" id="profileDropdownIcon"></i>
                         </button>
-                        <div class="absolute right-0 mt-2 w-48 bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-200/60 py-2 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                        <div id="profileDropdown" class="profile-dropdown absolute right-0 mt-2 w-56 max-w-[calc(100vw-2rem)] bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-200/60 py-2 z-50 hidden">
+                            <a href="profile.html" class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                                <i class="fas fa-user-circle mr-3 text-indigo-500"></i>
+                                Profile
+                            </a>
+                            <div class="border-t border-slate-200 my-1"></div>
                             <a href="#" onclick="confirmLogout(event)" class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors" id="logoutLink">
-                                <i class="fas fa-sign-out-alt mr-3 text-slate-400"></i>
+                                <i class="fas fa-sign-out-alt mr-3 text-red-500"></i>
                                 Logout
                             </a>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Mobile menu button -->
-                <div class="md:hidden">
-                    <button type="button" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 p-2 rounded-lg transition-all duration-200">
-                        <i class="fas fa-bars text-lg"></i>
+                <!-- Mobile menu button - Hamburger -->
+                <div class="dashboard-nav-hamburger md:hidden flex-shrink-0">
+                    <button type="button" id="mobileMenuButton" onclick="toggleMobileMenu()" class="hamburger p-2 rounded-lg transition-all duration-200" aria-label="Toggle menu">
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                        <span class="bar"></span>
                     </button>
                 </div>
             </div>
         </div>
+    </nav>
+    
+    <!-- Mobile Menu Backdrop -->
+    <div id="mobileMenuBackdrop" class="mobile-menu-backdrop"></div>
+    
+    <!-- Mobile Navigation Sidebar -->
+    <div id="mobileMenu" class="mobile-nav-menu md:hidden">
+        <div class="mobile-nav-header">
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                    <img src="css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-6 w-6">
+                </div>
+                <span class="text-xl font-bold text-white">MathEase</span>
+            </div>
+        </div>
+        
+        <!-- Profile Section in Sidebar -->
+        <div class="mobile-nav-profile">
+            <div class="flex items-center space-x-3 px-4 py-3">
+                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0 border-2 border-white/30" id="mobileProfileIconContainer">
+                    <img id="mobileProfileIconImage" src="" alt="Profile" class="w-full h-full object-cover hidden">
+                    <i class="fas fa-user text-white text-base" id="mobileProfileIconPlaceholder"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="text-white font-semibold text-sm truncate" id="mobileUserName">Student</div>
+                    <div class="text-white/70 text-xs truncate" id="mobileUserEmail">Loading...</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mobile-nav-content">
+            <a href="dashboard.html" class="mobile-nav-item active" data-mobile-nav>
+                <i class="fas fa-home"></i>
+                <span class="mobile-nav-label">Dashboard</span>
+            </a>
+            <a href="#learning-path" id="topicsNavLinkMobile" class="mobile-nav-item" data-mobile-nav>
+                <i class="fas fa-book"></i>
+                <span class="mobile-nav-label">Topics</span>
+            </a>
+            <a href="quizzes.html" id="quizzesNavLinkMobile" class="mobile-nav-item" data-mobile-nav>
+                <i class="fas fa-question-circle"></i>
+                <span class="mobile-nav-label">Quizzes</span>
+            </a>
+            <a href="achievements.html" id="achievementsNavLinkMobile" class="mobile-nav-item" data-mobile-nav>
+                <i class="fas fa-medal"></i>
+                <span class="mobile-nav-label">Achievements</span>
+            </a>
+            <a href="dashboard.html#progress" id="progressNavLinkMobile" class="mobile-nav-item" data-mobile-nav>
+                <i class="fas fa-chart-line"></i>
+                <span class="mobile-nav-label">Progress</span>
+            </a>
+            <div class="mobile-nav-divider"></div>
+            <div class="mobile-nav-footer">
+                <a href="#" class="mobile-nav-item" id="mobileNotificationLink" data-mobile-nav data-mobile-nav-action="notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="mobile-nav-label">Notifications</span>
+                    <span id="mobileNotificationBadge" class="mobile-nav-badge hidden">0</span>
+                </a>
+                <a href="profile.html" class="mobile-nav-item" data-mobile-nav>
+                    <i class="fas fa-user-circle"></i>
+                    <span class="mobile-nav-label">Profile</span>
+                </a>
+                <a href="#" class="mobile-nav-item mobile-nav-item-danger" data-mobile-nav data-mobile-nav-action="logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="mobile-nav-label">Logout</span>
+                </a>
+            </div>
+        </div>
+    </div>
     </nav>
 
     <!-- Teacher Lesson Management Section (Hidden by default) -->
@@ -490,7 +571,7 @@
                                 </div>
                                 <span class="text-xl font-bold text-slate-700">Course Progress</span>
                             </div>
-                            <span id="courseProgressText" class="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">0 of 12 Lessons Completed</span>
+                            <span id="courseProgressText" class="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">0 of 12 Topics Completed</span>
                         </div>
                         <div class="relative">
                             <div class="w-full bg-slate-200/80 rounded-full h-6 mb-4 shadow-inner">
@@ -516,8 +597,56 @@
                                 <h2 class="text-5xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent mb-3">1st Quarter</h2>
                                 <p class="text-xl text-slate-600 font-medium">Functions and Rational Functions</p>
                                 <div class="flex items-center space-x-4 mt-3">
-                                    <span class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">4 Lessons</span>
-                                    <span class="bg-purple-100 text-purple-800 px-4 py-2 rounded-full text-sm font-medium">17 Topics</span>
+                                    <span class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">10 Topics</span>
+                                    <span class="bg-purple-100 text-purple-800 px-4 py-2 rounded-full text-sm font-medium">41 Lessons</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 1st Quarter Progress -->
+                        <div class="mb-8">
+                            <div class="bg-white border-2 border-blue-200 rounded-3xl p-8 hover:shadow-lg transition-all duration-300">
+                                <div class="flex items-center justify-between mb-6">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center">
+                                            <i class="fas fa-chart-line text-blue-600 text-xl"></i>
+                                        </div>
+                                        <h3 class="text-2xl font-bold text-slate-800">1st Quarter Progress</h3>
+                                    </div>
+                                    <div class="text-right">
+                                        <span id="firstQuarterProgressText" class="text-4xl font-bold text-blue-600">0%</span>
+                                        <p class="text-sm text-slate-500">Complete</p>
+                                    </div>
+                                </div>
+                                <div class="mb-6">
+                                    <div class="w-full bg-slate-200 rounded-full h-6 mb-4">
+                                        <div class="bg-blue-500 h-6 rounded-full transition-all duration-1000 shadow-sm flex items-center justify-end pr-2" id="firstQuarterProgress" style="width: 0%">
+                                            <span class="text-white text-xs font-medium" id="firstQuarterProgressLabel">0%</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between text-sm text-slate-600">
+                                        <span>0%</span>
+                                        <span>25%</span>
+                                        <span>50%</span>
+                                        <span>75%</span>
+                                        <span>100%</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="text-sm text-slate-600">
+                                        <i class="fas fa-info-circle mr-2 text-blue-500"></i>
+                                        Complete 1st Quarter topics to increase your progress
+                                    </div>
+                                    <div class="flex items-center space-x-4 text-sm">
+                                        <div class="flex items-center space-x-2">
+                                            <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                                            <span class="text-slate-600">Completed</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <div class="w-3 h-3 bg-slate-300 rounded-full"></div>
+                                            <span class="text-slate-600">Remaining</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -538,11 +667,15 @@
                                         </p>
                                     </div>
                                     
-                                    <!-- Right side: Button -->
+                                    <!-- Right side: Button and Student Icons -->
                                     <div class="flex flex-col items-end space-y-4 ml-8">
                                         <button class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg text-sm font-medium transition-colors">
                                             Start Learning
                                         </button>
+                                        <!-- Student Profile Icons -->
+                                        <div class="flex items-center space-x-2 mt-2" data-topic="functions" data-student-icons>
+                                            <!-- Student avatars will be loaded here -->
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -634,11 +767,13 @@
                                     </p>
                                 </div>
                                 
-                                <!-- Right side: Button -->
+                                <!-- Right side: Button and Student Icons -->
                                 <div class="flex flex-col items-end space-y-4 ml-8">
                                     <button class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg text-sm font-medium transition-colors">
                                         Start Learning
                                     </button>
+                                    <!-- Student Profile Icons -->
+                                    <div class="flex items-center space-x-2 mt-2" data-student-icons></div>
                                 </div>
                             </div>
                         </div>
@@ -658,11 +793,13 @@
                                     </p>
                                 </div>
                                 
-                                <!-- Right side: Button -->
+                                <!-- Right side: Button and Student Icons -->
                                 <div class="flex flex-col items-end space-y-4 ml-8">
                                     <button class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg text-sm font-medium transition-colors">
                                         Start Learning
                                     </button>
+                                    <!-- Student Profile Icons -->
+                                    <div class="flex items-center space-x-2 mt-2" data-student-icons></div>
                                 </div>
                             </div>
                         </div>
@@ -682,11 +819,13 @@
                                     </p>
                                 </div>
                                 
-                                <!-- Right side: Button -->
+                                <!-- Right side: Button and Student Icons -->
                                 <div class="flex flex-col items-end space-y-4 ml-8">
                                     <button class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg text-sm font-medium transition-colors">
                                         Start Learning
                                     </button>
+                                    <!-- Student Profile Icons -->
+                                    <div class="flex items-center space-x-2 mt-2" data-student-icons></div>
                                 </div>
                             </div>
                         </div>
@@ -706,11 +845,13 @@
                                     </p>
                                 </div>
                                 
-                                <!-- Right side: Button -->
+                                <!-- Right side: Button and Student Icons -->
                                 <div class="flex flex-col items-end space-y-4 ml-8">
                                     <button class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg text-sm font-medium transition-colors">
                                         Start Learning
                                     </button>
+                                    <!-- Student Profile Icons -->
+                                    <div class="flex items-center space-x-2 mt-2" data-student-icons></div>
                                 </div>
                             </div>
                         </div>
@@ -730,11 +871,13 @@
                                     </p>
                                 </div>
                                 
-                                <!-- Right side: Button -->
+                                <!-- Right side: Button and Student Icons -->
                                 <div class="flex flex-col items-end space-y-4 ml-8">
                                     <button class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg text-sm font-medium transition-colors">
                                         Start Learning
                                     </button>
+                                    <!-- Student Profile Icons -->
+                                    <div class="flex items-center space-x-2 mt-2" data-student-icons></div>
                                 </div>
                             </div>
                         </div>
@@ -754,11 +897,13 @@
                                     </p>
                                 </div>
                                 
-                                <!-- Right side: Button -->
+                                <!-- Right side: Button and Student Icons -->
                                 <div class="flex flex-col items-end space-y-4 ml-8">
                                     <button class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg text-sm font-medium transition-colors">
                                         Start Learning
                                     </button>
+                                    <!-- Student Profile Icons -->
+                                    <div class="flex items-center space-x-2 mt-2" data-student-icons></div>
                                 </div>
                             </div>
                         </div>
@@ -833,7 +978,7 @@
                                     <div class="flex-1 pr-8">
                                         <div class="flex items-center space-x-4 mb-4">
                                         <span class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-medium">Lesson 11</span>
-                                        <span class="bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium">5 Topics</span>
+                                        <span class="bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium">4 Topics</span>
                                         </div>
                                         <h3 class="text-2xl font-bold text-gray-900 mb-4">Simple Interest</h3>
                                         <p class="text-gray-600 text-sm leading-relaxed max-w-2xl">
@@ -925,6 +1070,100 @@
                 </div>
                     
                 </div>
+                
+                <!-- Teacher-Created Lessons Section -->
+                <div id="teacher-lessons-section" class="mt-16 hidden">
+                    <div class="flex items-center mb-8">
+                        <div class="w-16 h-16 bg-gradient-to-br from-violet-500 via-purple-500 to-fuchsia-500 rounded-2xl flex items-center justify-center shadow-lg mr-6">
+                            <i class="fas fa-chalkboard-teacher text-2xl text-white"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-4xl font-bold bg-gradient-to-r from-violet-600 via-purple-600 to-fuchsia-600 bg-clip-text text-transparent mb-2">Teacher Lessons</h2>
+                            <p class="text-lg text-slate-600">Lessons created by your teacher</p>
+                        </div>
+                    </div>
+                    
+                    <div id="teacherLessonsContainer" class="space-y-6">
+                        <!-- Teacher lessons will be loaded here -->
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="fas fa-spinner fa-spin text-3xl mb-2"></i>
+                            <p>Loading teacher lessons...</p>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+
+    <!-- Student List Modal -->
+    <div id="studentListModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden overflow-y-auto">
+        <div class="min-h-screen px-4 py-8 flex items-center justify-center">
+            <div class="max-w-md w-full bg-white rounded-2xl shadow-2xl">
+                <!-- Modal Header -->
+                <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-2xl flex items-center justify-between z-10">
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-900" id="studentModalTitle">Students</h3>
+                        <p class="text-sm text-gray-600" id="studentModalSubtitle">Classmates who accessed this lesson</p>
+                    </div>
+                    <button onclick="closeStudentListModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <div class="relative">
+                        <input type="text" id="studentSearchInput" placeholder="Search students..." 
+                               class="w-full px-4 py-2 border-2 border-yellow-300 rounded-lg focus:outline-none focus:border-yellow-400 transition-colors">
+                        <button onclick="clearStudentSearch()" id="clearSearchBtn" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-orange-500 hover:text-orange-600 hidden">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Students List -->
+                <div class="max-h-96 overflow-y-auto" id="studentListContent">
+                    <!-- Students will be loaded here -->
+                </div>
+                
+                <!-- Modal Footer -->
+                <div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 rounded-b-2xl">
+                    <a href="#" id="viewAllStudentsLink" onclick="viewAllStudents(event)" class="text-blue-600 hover:text-blue-800 font-medium text-sm">
+                        View All
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Teacher Lesson Viewer Modal -->
+    <div id="teacherLessonModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden overflow-y-auto">
+        <div class="min-h-screen px-4 py-8">
+            <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-2xl">
+                <!-- Modal Header -->
+                <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-2xl flex items-center justify-between z-10">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-900" id="modalLessonTitle">Lesson Title</h3>
+                        <p class="text-sm text-gray-600" id="modalLessonTopic">Topic</p>
+                    </div>
+                    <button onclick="closeTeacherLessonModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <!-- Modal Content -->
+                <div class="p-6">
+                    <div id="modalLessonContent" class="prose max-w-none">
+                        <!-- Lesson content will be loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Modal Footer -->
+                <div class="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 rounded-b-2xl flex items-center justify-end">
+                    <button onclick="closeTeacherLessonModal()" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                        Close
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1154,6 +1393,7 @@
                 updateTopicLockStatus();
                 updateNotificationButtonState(); // Update notification button state
                 updateNavigationState(); // Update navigation state
+                loadTeacherLessons(); // Load teacher-created lessons
                 // Student avatar loading disabled - avatars removed from UI
                 // loadTopicStudentData();
             };
@@ -1250,6 +1490,7 @@
             }
 
             updateNotificationBadge() {
+                // Update desktop notification badge
                 const badge = document.getElementById('notificationBadge');
                 if (badge) {
                     if (this.unreadCount > 0) {
@@ -1257,6 +1498,17 @@
                         badge.classList.remove('hidden');
                     } else {
                         badge.classList.add('hidden');
+                    }
+                }
+                
+                // Update mobile sidebar notification badge
+                const mobileBadge = document.getElementById('mobileNotificationBadge');
+                if (mobileBadge) {
+                    if (this.unreadCount > 0) {
+                        mobileBadge.textContent = this.unreadCount > 99 ? '99+' : this.unreadCount;
+                        mobileBadge.classList.remove('hidden');
+                    } else {
+                        mobileBadge.classList.add('hidden');
                     }
                 }
             }
@@ -2033,43 +2285,391 @@
                 }, 100);
             });
             
-            // Student avatar loading disabled - avatars removed from UI
-            // setTimeout(() => { loadTopicStudentData(); }, 2000);
+            // Load student profile icons for each topic
+            setTimeout(() => { loadTopicStudentData(); }, 2000);
         });
 
-        // Function to load real student data for each topic - REMOVED
-        // Student avatars have been removed from the UI
+        // Function to load student profile icons for each topic
         async function loadTopicStudentData() {
-            // This function is no longer needed as student avatars have been removed
-            console.log('Student avatar loading disabled - avatars removed from UI');
+            const topics = [
+                'functions', 'evaluating-functions', 'operations-on-functions', 'solving-real-life-problems',
+                'rational-functions', 'solving-rational-equations-inequalities', 'representations-of-rational-functions',
+                'domain-range-rational-functions', 'one-to-one-functions', 'domain-range-inverse-functions',
+                'simple-interest', 'compound-interest', 'simple-and-compound-values', 'solving-interest-problems'
+            ];
+            
+            // Load student data for each topic
+            topics.forEach(topic => {
+                loadStudentsForTopic(topic);
+            });
         }
 
-        // Function to load students for a specific topic - REMOVED
-        // Student avatars have been removed from the UI
-        async function loadStudentsForTopic(topicId, topicName) {
-            // This function is no longer needed as student avatars have been removed
-            console.log(`Student avatar loading disabled for ${topicName} - avatars removed from UI`);
+        // Function to load students for a specific topic
+        async function loadStudentsForTopic(topic) {
+            try {
+                const response = await fetch(`php/get-topic-students.php?topic=${topic}`, {
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    console.error(`Failed to load students for ${topic}:`, response.status);
+                    return;
+                }
+                
+                const data = await response.json();
+                
+                if (data.success && data.students) {
+                    displayStudentsForTopic(topic, data.students, data.total_count || 0);
+                }
+            } catch (error) {
+                console.error(`Error loading students for ${topic}:`, error);
+            }
         }
 
-        // Function to display real student data - REMOVED
-        // Student avatars have been removed from the UI
-        function displayStudentsForTopic(topicId, students) {
-            // This function is no longer needed as student avatars have been removed
-            console.log(`Student avatar display disabled for ${topicId} - avatars removed from UI`);
+        // Function to display student profile icons
+        function displayStudentsForTopic(topic, students, totalCount) {
+            // Find the topic card by onclick attribute
+            const topicCard = document.querySelector(`[onclick*="topics/${topic}.html"]`);
+            if (!topicCard) {
+                console.log(`Topic card not found for: ${topic}`);
+                return;
+            }
+            
+            // Store all students data for this topic (for modal)
+            topicStudentsData[topic] = {
+                students: students,
+                totalCount: totalCount
+            };
+            
+            // Find or create the student icons container
+            let iconsContainer = topicCard.querySelector('[data-student-icons]');
+            if (!iconsContainer) {
+                // Find the button container
+                const buttonContainer = topicCard.querySelector('.flex.flex-col.items-end.space-y-4.ml-8');
+                if (buttonContainer) {
+                    iconsContainer = document.createElement('div');
+                    iconsContainer.className = 'flex items-center space-x-2 mt-2';
+                    iconsContainer.setAttribute('data-topic', topic);
+                    iconsContainer.setAttribute('data-student-icons', '');
+                    buttonContainer.appendChild(iconsContainer);
+                } else {
+                    console.log(`Button container not found for topic: ${topic}`);
+                    return;
+                }
+            }
+            
+            displayStudentsInContainer(iconsContainer, students, totalCount, topic);
         }
 
-        // Manual function to refresh student data (for debugging) - REMOVED
-        // Student avatars have been removed from the UI
+        // Store student data for each topic
+        const topicStudentsData = {};
+
+        // Helper function to display students in a container
+        function displayStudentsInContainer(container, students, totalCount, topic) {
+            if (!container) return;
+            
+            // Clear existing content
+            container.innerHTML = '';
+            
+            if (!students || students.length === 0) {
+                return;
+            }
+            
+            // Make container clickable
+            container.style.cursor = 'pointer';
+            container.onclick = function(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                if (topic) {
+                    openStudentListModal(topic);
+                }
+            };
+            
+            // Show up to 3 profile icons
+            const maxIcons = 3;
+            const studentsToShow = students.slice(0, maxIcons);
+            const remainingCount = totalCount > maxIcons ? totalCount - maxIcons : 0;
+            
+            studentsToShow.forEach((student, index) => {
+                const avatar = document.createElement('div');
+                avatar.className = 'w-8 h-8 rounded-full overflow-hidden border-2 border-white shadow-sm flex-shrink-0 cursor-pointer hover:scale-110 transition-transform';
+                avatar.style.marginLeft = index > 0 ? '-8px' : '0';
+                avatar.style.zIndex = maxIcons - index;
+                avatar.title = `${student.first_name} ${student.last_name}`;
+                
+                if (student.profile_picture && student.profile_picture.trim() !== '') {
+                    const img = document.createElement('img');
+                    img.src = student.profile_picture + '?t=' + Date.now();
+                    img.alt = `${student.first_name} ${student.last_name}`;
+                    img.className = 'w-full h-full object-cover';
+                    img.onerror = function() {
+                        // Fallback to default icon if image fails to load
+                        this.style.display = 'none';
+                        avatar.innerHTML = `<div class="w-full h-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-xs font-semibold">${student.first_name.charAt(0)}${student.last_name.charAt(0)}</div>`;
+                    };
+                    avatar.appendChild(img);
+                } else {
+                    // Default icon with initials
+                    const initials = `${student.first_name.charAt(0)}${student.last_name.charAt(0)}`.toUpperCase();
+                    avatar.innerHTML = `<div class="w-full h-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-xs font-semibold">${initials}</div>`;
+                }
+                
+                container.appendChild(avatar);
+            });
+            
+            // Add count badge if there are more students
+            if (remainingCount > 0) {
+                const countBadge = document.createElement('div');
+                countBadge.className = 'w-8 h-8 rounded-full bg-slate-200 border-2 border-white shadow-sm flex items-center justify-center text-xs font-semibold text-slate-700 flex-shrink-0 cursor-pointer hover:scale-110 transition-transform';
+                countBadge.style.marginLeft = '-8px';
+                countBadge.style.zIndex = '0';
+                countBadge.textContent = `+${remainingCount}`;
+                countBadge.title = `${remainingCount} more students`;
+                container.appendChild(countBadge);
+            }
+        }
+
+        // Open student list modal
+        async function openStudentListModal(topic) {
+            const modal = document.getElementById('studentListModal');
+            const modalTitle = document.getElementById('studentModalTitle');
+            const modalSubtitle = document.getElementById('studentModalSubtitle');
+            const studentListContent = document.getElementById('studentListContent');
+            const viewAllLink = document.getElementById('viewAllStudentsLink');
+            
+            if (!modal || !studentListContent) return;
+            
+            // Get topic name
+            const topicNameMap = {
+                'functions': 'Functions',
+                'evaluating-functions': 'Evaluating Functions',
+                'operations-on-functions': 'Operations on Functions',
+                'solving-real-life-problems': 'Solving Real-Life Problems',
+                'rational-functions': 'Rational Functions',
+                'solving-rational-equations-inequalities': 'Solving Rational Equations and Inequalities',
+                'representations-of-rational-functions': 'Representations of Rational Functions',
+                'domain-range-rational-functions': 'Domain and Range of Rational Functions',
+                'one-to-one-functions': 'One-to-One Functions',
+                'domain-range-inverse-functions': 'Domain and Range of Inverse Functions',
+                'simple-interest': 'Simple Interest',
+                'compound-interest': 'Compound Interest',
+                'simple-and-compound-values': 'Interest, Maturity, Future, and Present Values',
+                'solving-interest-problems': 'Solving Problems: Simple and Compound Interest'
+            };
+            
+            const topicName = topicNameMap[topic] || topic;
+            
+            // Update modal title
+            if (modalTitle) modalTitle.textContent = topicName;
+            if (modalSubtitle) modalSubtitle.textContent = 'Classmates who accessed this lesson';
+            
+            // Show loading state
+            studentListContent.innerHTML = '<div class="px-6 py-8 text-center text-gray-500"><i class="fas fa-spinner fa-spin text-2xl mb-2"></i><p>Loading students...</p></div>';
+            modal.classList.remove('hidden');
+            
+            // Get students data - try from cache first, then fetch if needed
+            let studentsData = topicStudentsData[topic];
+            
+            // If no cached data or want to refresh, fetch from server
+            if (!studentsData || studentsData.students.length === 0) {
+                try {
+                    const response = await fetch(`php/get-topic-students.php?topic=${topic}`, {
+                        credentials: 'include'
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success && data.students) {
+                            studentsData = {
+                                students: data.students,
+                                totalCount: data.total_count || data.students.length,
+                                class_id: data.class_id,
+                                class_name: data.class_name
+                            };
+                            topicStudentsData[topic] = studentsData;
+                            
+                            // Update subtitle with class name if available
+                            if (data.class_name && modalSubtitle) {
+                                modalSubtitle.textContent = `Classmates from ${data.class_name} who accessed this lesson`;
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error(`Error loading students for ${topic}:`, error);
+                }
+            } else if (studentsData.class_name && modalSubtitle) {
+                // Update subtitle with cached class name
+                modalSubtitle.textContent = `Classmates from ${studentsData.class_name} who accessed this lesson`;
+            }
+            
+            if (!studentsData || !studentsData.students || studentsData.students.length === 0) {
+                studentListContent.innerHTML = '<div class="px-6 py-8 text-center text-gray-500"><p>No students found</p></div>';
+                return;
+            }
+            
+            // Store current topic for search/filter
+            modal.setAttribute('data-current-topic', topic);
+            
+            // Display students
+            displayStudentList(studentsData.students, studentsData.totalCount);
+            
+            // Update view all link
+            if (viewAllLink) {
+                viewAllLink.setAttribute('data-topic', topic);
+            }
+        }
+
+        // Display student list in modal
+        function displayStudentList(students, totalCount) {
+            const studentListContent = document.getElementById('studentListContent');
+            if (!studentListContent) return;
+            
+            if (!students || students.length === 0) {
+                studentListContent.innerHTML = '<div class="px-6 py-8 text-center text-gray-500"><p>No students found</p></div>';
+                return;
+            }
+            
+            // Show all students (not just first 3)
+            let html = '';
+            students.forEach((student, index) => {
+                const initials = `${student.first_name.charAt(0)}${student.last_name.charAt(0)}`.toUpperCase();
+                const fullName = `${student.first_name} ${student.last_name}`;
+                
+                html += `
+                    <div class="px-6 py-3 hover:bg-gray-50 transition-colors flex items-center space-x-3 student-item" data-name="${fullName.toLowerCase()}">
+                        <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                            ${student.profile_picture && student.profile_picture.trim() !== '' 
+                                ? `<img src="${student.profile_picture}?t=${Date.now()}" alt="${fullName}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                   <div class="w-full h-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-sm font-semibold hidden">${initials}</div>`
+                                : `<div class="w-full h-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-sm font-semibold">${initials}</div>`
+                            }
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-gray-900 truncate">${fullName}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            // Add total count display
+            if (totalCount > 0) {
+                html += `
+                    <div class="px-6 py-3 hover:bg-gray-50 transition-colors flex items-center space-x-3 border-t border-gray-200">
+                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-users text-blue-600"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-gray-900">${totalCount} ${totalCount === 1 ? 'student' : 'students'}</p>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            studentListContent.innerHTML = html;
+        }
+
+        // Close student list modal
+        function closeStudentListModal() {
+            const modal = document.getElementById('studentListModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                // Clear search
+                const searchInput = document.getElementById('studentSearchInput');
+                if (searchInput) {
+                    searchInput.value = '';
+                }
+                clearStudentSearch();
+            }
+        }
+
+        // Clear student search
+        function clearStudentSearch() {
+            const searchInput = document.getElementById('studentSearchInput');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            const modal = document.getElementById('studentListModal');
+            
+            if (searchInput) {
+                searchInput.value = '';
+                filterStudentList('');
+            }
+            
+            if (clearBtn) {
+                clearBtn.classList.add('hidden');
+            }
+        }
+
+        // Filter student list
+        function filterStudentList(searchTerm) {
+            const studentItems = document.querySelectorAll('.student-item');
+            const term = searchTerm.toLowerCase().trim();
+            
+            studentItems.forEach(item => {
+                const name = item.getAttribute('data-name') || '';
+                if (name.includes(term)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // View all students (can be expanded later)
+        function viewAllStudents(event) {
+            event.preventDefault();
+            const link = event.target.closest('a');
+            const topic = link ? link.getAttribute('data-topic') : null;
+            
+            // For now, just show all students in the modal
+            // Can be expanded to show a full page view
+            console.log('View all students for topic:', topic);
+        }
+
+        // Setup search input listener
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('studentSearchInput');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    const value = e.target.value;
+                    filterStudentList(value);
+                    
+                    if (clearBtn) {
+                        if (value.trim() !== '') {
+                            clearBtn.classList.remove('hidden');
+                        } else {
+                            clearBtn.classList.add('hidden');
+                        }
+                    }
+                });
+            }
+            
+            // Close modal when clicking outside
+            const modal = document.getElementById('studentListModal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        closeStudentListModal();
+                    }
+                });
+            }
+            
+            // Close modal on ESC key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const modal = document.getElementById('studentListModal');
+                    if (modal && !modal.classList.contains('hidden')) {
+                        closeStudentListModal();
+                    }
+                }
+            });
+        });
+
+        // Manual function to refresh student data (for debugging)
         window.refreshStudentData = function() {
-            console.log('Student data refresh disabled - avatars removed from UI');
+            console.log('Refreshing student data...');
+            loadTopicStudentData();
         };
-
-        // Function to display generic students as fallback - REMOVED
-        // Student avatars have been removed from the UI
-        function displayGenericStudents(topicId) {
-            // This function is no longer needed as student avatars have been removed
-            console.log(`Generic student display disabled for ${topicId} - avatars removed from UI`);
-        }
     </script>
     
     <script>
@@ -2249,6 +2849,7 @@
                     updateProgressDisplay(data);
                     updateTopicCards(data.topics);
                     updateUserStats(data.user_stats);
+                    updateFirstQuarterProgress(data);
                     updateSecondQuarterProgress(data);
                     this.updateLastSyncIndicator();
                 } catch (error) {
@@ -2408,13 +3009,13 @@
                 courseProgressBar.style.transition = 'width 1.5s ease-out';
                 courseProgressBar.style.width = courseProgress + '%';
                 
-                // Update text with animation
-                const currentLessons = data.completed_topics || 0;
-                const totalLessons = data.total_topics || 10;
+                // Update text with animation - use actual topic counts
+                const completedTopics = data.completed_topics || 0;
+                const totalTopics = data.total_topics || 14; // 10 (1st Quarter) + 4 (2nd Quarter)
                 
                 // Animate the text change
                 let currentText = courseProgressText.textContent;
-                const newText = `${currentLessons} of ${totalLessons} Lessons Completed`;
+                const newText = `${completedTopics} of ${totalTopics} Topics Completed`;
                 
                 if (currentText !== newText) {
                     courseProgressText.style.opacity = '0.5';
@@ -2427,6 +3028,10 @@
             
             // Update additional progress indicators
             updateProgressIndicators(data);
+            
+            // Update quarter progress
+            updateFirstQuarterProgress(data);
+            updateSecondQuarterProgress(data);
         }
 
         // Update additional progress indicators
@@ -2508,6 +3113,14 @@
                         topicCard = document.querySelector('[onclick*="topics/one-to-one-functions.html"]');
                     } else if (topic === 'domain-range-inverse-functions') {
                         topicCard = document.querySelector('[onclick*="topics/domain-range-inverse-functions.html"]');
+                    } else if (topic === 'simple-interest') {
+                        topicCard = document.querySelector('[onclick*="topics/simple-interest.html"]');
+                    } else if (topic === 'compound-interest') {
+                        topicCard = document.querySelector('[onclick*="topics/compound-interest.html"]');
+                    } else if (topic === 'simple-and-compound-values') {
+                        topicCard = document.querySelector('[onclick*="topics/simple-and-compound-values.html"]');
+                    } else if (topic === 'solving-interest-problems') {
+                        topicCard = document.querySelector('[onclick*="topics/solving-interest-problems.html"]');
                     }
                 }
 
@@ -2732,6 +3345,76 @@
             }
         }
 
+        // Update 1st Quarter progress
+        function updateFirstQuarterProgress(data) {
+            const firstQuarterProgress = document.getElementById('firstQuarterProgress');
+            const firstQuarterProgressText = document.getElementById('firstQuarterProgressText');
+            const firstQuarterProgressLabel = document.getElementById('firstQuarterProgressLabel');
+            
+            if (firstQuarterProgress && firstQuarterProgressText) {
+                // Define 1st Quarter topics and their lesson counts
+                const firstQuarterTopics = {
+                    'functions': 4,
+                    'evaluating-functions': 4,
+                    'operations-on-functions': 5,
+                    'solving-real-life-problems': 4,
+                    'rational-functions': 4,
+                    'solving-rational-equations-inequalities': 4,
+                    'representations-of-rational-functions': 4,
+                    'domain-range-rational-functions': 4,
+                    'one-to-one-functions': 4,
+                    'domain-range-inverse-functions': 4
+                };
+                
+                let completedFirstQuarterLessons = 0;
+                let totalFirstQuarterLessons = 0;
+                let completedFirstQuarterTopics = 0;
+                
+                if (data.topics) {
+                    Object.keys(firstQuarterTopics).forEach(topic => {
+                        const totalLessons = firstQuarterTopics[topic];
+                        totalFirstQuarterLessons += totalLessons;
+                        
+                        if (data.topics[topic]) {
+                            const topicData = data.topics[topic];
+                            if (topicData.completed) {
+                                completedFirstQuarterTopics++;
+                                completedFirstQuarterLessons += totalLessons;
+                            } else {
+                                completedFirstQuarterLessons += topicData.lessons_completed || 0;
+                            }
+                        }
+                    });
+                }
+                
+                const firstQuarterProgressPercentage = totalFirstQuarterLessons > 0 
+                    ? Math.round((completedFirstQuarterLessons / totalFirstQuarterLessons) * 100) 
+                    : 0;
+                
+                // Animate progress bar
+                firstQuarterProgress.style.transition = 'width 1.5s ease-out';
+                firstQuarterProgress.style.width = firstQuarterProgressPercentage + '%';
+                firstQuarterProgressText.textContent = firstQuarterProgressPercentage + '%';
+                
+                if (firstQuarterProgressLabel) {
+                    firstQuarterProgressLabel.textContent = firstQuarterProgressPercentage + '%';
+                }
+                
+                // Update progress bar color based on percentage
+                if (firstQuarterProgressPercentage >= 80) {
+                    firstQuarterProgress.className = 'bg-green-500 h-6 rounded-full transition-all duration-1000 shadow-sm flex items-center justify-end pr-2';
+                } else if (firstQuarterProgressPercentage >= 60) {
+                    firstQuarterProgress.className = 'bg-blue-500 h-6 rounded-full transition-all duration-1000 shadow-sm flex items-center justify-end pr-2';
+                } else if (firstQuarterProgressPercentage >= 40) {
+                    firstQuarterProgress.className = 'bg-yellow-500 h-6 rounded-full transition-all duration-1000 shadow-sm flex items-center justify-end pr-2';
+                } else {
+                    firstQuarterProgress.className = 'bg-blue-500 h-6 rounded-full transition-all duration-1000 shadow-sm flex items-center justify-end pr-2';
+                }
+                
+                console.log(`1st Quarter progress: ${firstQuarterProgressPercentage}% (${completedFirstQuarterLessons}/${totalFirstQuarterLessons} lessons completed, ${completedFirstQuarterTopics}/10 topics completed)`);
+            }
+        }
+
         // Update 2nd Quarter progress
         function updateSecondQuarterProgress(data) {
             const secondQuarterProgress = document.getElementById('secondQuarterProgress');
@@ -2739,21 +3422,41 @@
             const secondQuarterProgressLabel = document.getElementById('secondQuarterProgressLabel');
             
             if (secondQuarterProgress && secondQuarterProgressText) {
-                // Calculate 2nd Quarter progress (lessons 11-14)
-                const secondQuarterLessons = ['simple-interest', 'compound-interest', 'simple-and-compound-values', 'solving-interest-problems'];
+                // Define 2nd Quarter topics and their lesson counts (must match get-progress.php)
+                const secondQuarterTopics = {
+                    'simple-interest': 4,
+                    'compound-interest': 5,
+                    'simple-and-compound-values': 5,
+                    'solving-interest-problems': 5
+                };
+                
                 let completedSecondQuarterLessons = 0;
+                let totalSecondQuarterLessons = 0;
+                let completedSecondQuarterTopics = 0;
                 
                 if (data.topics) {
-                    secondQuarterLessons.forEach(lesson => {
-                        if (data.topics[lesson] && data.topics[lesson].completed) {
-                            completedSecondQuarterLessons++;
+                    Object.keys(secondQuarterTopics).forEach(topic => {
+                        const totalLessons = secondQuarterTopics[topic];
+                        totalSecondQuarterLessons += totalLessons;
+                        
+                        if (data.topics[topic]) {
+                            const topicData = data.topics[topic];
+                            if (topicData.completed) {
+                                completedSecondQuarterTopics++;
+                                completedSecondQuarterLessons += totalLessons;
+                            } else {
+                                completedSecondQuarterLessons += topicData.lessons_completed || 0;
+                            }
                         }
                     });
                 }
                 
-                const secondQuarterProgressPercentage = Math.round((completedSecondQuarterLessons / secondQuarterLessons.length) * 100);
+                const secondQuarterProgressPercentage = totalSecondQuarterLessons > 0 
+                    ? Math.round((completedSecondQuarterLessons / totalSecondQuarterLessons) * 100) 
+                    : 0;
                 
                 // Animate progress bar
+                secondQuarterProgress.style.transition = 'width 1.5s ease-out';
                 secondQuarterProgress.style.width = secondQuarterProgressPercentage + '%';
                 secondQuarterProgressText.textContent = secondQuarterProgressPercentage + '%';
                 
@@ -2772,7 +3475,7 @@
                     secondQuarterProgress.className = 'bg-green-500 h-6 rounded-full transition-all duration-1000 shadow-sm flex items-center justify-end pr-2';
                 }
                 
-                console.log(`2nd Quarter progress: ${secondQuarterProgressPercentage}% (${completedSecondQuarterLessons}/${secondQuarterLessons.length} lessons completed)`);
+                console.log(`2nd Quarter progress: ${secondQuarterProgressPercentage}% (${completedSecondQuarterLessons}/${totalSecondQuarterLessons} lessons completed, ${completedSecondQuarterTopics}/4 topics completed)`);
             }
         }
 
@@ -3108,9 +3811,16 @@
 
             async refreshProgress() {
                 try {
-                    await progressManager.loadProgressData(true);
+                    const progressData = await progressManager.loadProgressData(true);
                     await loadAchievementsCount();
                     await loadClassInformation();
+                    await loadTeacherLessons(); // Refresh teacher lessons too
+                    
+                    // Update quarter progress after loading data
+                    if (progressData) {
+                        updateFirstQuarterProgress(progressData);
+                        updateSecondQuarterProgress(progressData);
+                    }
                     
                     // Validate achievements count accuracy
                     await validateAchievementsCount();
@@ -3135,6 +3845,316 @@
         // Initialize real-time updater
         const realTimeUpdater = new RealTimeProgressUpdater();
 
+        // ==========================================
+        // TEACHER-CREATED LESSONS FOR STUDENTS
+        // ==========================================
+        
+        async function loadTeacherLessons() {
+            try {
+                console.log('📚 Loading teacher lessons...');
+                const response = await fetch('php/get-student-teacher-lessons.php', {
+                    credentials: 'include',
+                    cache: 'no-store'
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('❌ HTTP error loading teacher lessons:', response.status, errorText);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('📚 Teacher lessons response:', result);
+                
+                const container = document.getElementById('teacherLessonsContainer');
+                const section = document.getElementById('teacher-lessons-section');
+                
+                if (!section) {
+                    console.error('❌ Teacher lessons section element not found');
+                    return;
+                }
+                
+                if (result.success && result.lessons && result.lessons.length > 0) {
+                    console.log(`✅ Found ${result.lessons.length} teacher lesson(s)`);
+                    // Show section
+                    section.classList.remove('hidden');
+                    
+                    // Display lessons
+                    if (container) {
+                        container.innerHTML = result.lessons.map((lesson, index) => {
+                            const createdDate = new Date(lesson.created_at).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric'
+                            });
+                            
+                            return `
+                                <div class="group bg-gradient-to-r from-violet-50 to-purple-50 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-violet-200">
+                                    <div class="flex items-start justify-between">
+                                        <div class="flex-1 pr-8">
+                                            <div class="flex items-center space-x-4 mb-4">
+                                                <span class="bg-violet-100 text-violet-800 px-4 py-2 rounded-full text-sm font-medium">
+                                                    <i class="fas fa-chalkboard-teacher mr-2"></i>Teacher Lesson
+                                                </span>
+                                                <span class="bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-sm font-medium">${(lesson.topic || 'General').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>
+                                            </div>
+                                            <h3 class="text-2xl font-bold text-gray-900 mb-4">${(lesson.title || 'Untitled Lesson').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</h3>
+                                            <p class="text-gray-600 text-sm mb-2">
+                                                Created by your teacher on ${createdDate}
+                                            </p>
+                                        </div>
+                                        
+                                        <div class="flex flex-col items-end space-y-4 ml-8">
+                                            <button onclick="openTeacherLesson(${lesson.id})" 
+                                                    class="bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white px-8 py-3 rounded-lg text-sm font-medium transition-colors shadow-lg hover:shadow-xl">
+                                                <i class="fas fa-book-open mr-2"></i>
+                                                View Lesson
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+                    }
+                } else {
+                    console.log('ℹ️ No teacher lessons found or student not enrolled');
+                    // Hide section if no lessons
+                    section.classList.add('hidden');
+                    if (container) {
+                        container.innerHTML = `
+                            <div class="text-center py-8 text-gray-500">
+                                <i class="fas fa-book-open text-3xl mb-2"></i>
+                                <p>No teacher lessons available yet</p>
+                            </div>
+                        `;
+                    }
+                }
+            } catch (error) {
+                console.error('❌ Error loading teacher lessons:', error);
+                const section = document.getElementById('teacher-lessons-section');
+                const container = document.getElementById('teacherLessonsContainer');
+                if (section) section.classList.add('hidden');
+                if (container) {
+                    container.innerHTML = `
+                        <div class="text-center py-8 text-red-500">
+                            <i class="fas fa-exclamation-triangle text-3xl mb-2"></i>
+                            <p>Error loading teacher lessons</p>
+                        </div>
+                    `;
+                }
+            }
+        }
+        
+        async function openTeacherLesson(lessonId) {
+            try {
+                const modal = document.getElementById('teacherLessonModal');
+                const modalTitle = document.getElementById('modalLessonTitle');
+                const modalTopic = document.getElementById('modalLessonTopic');
+                const modalContent = document.getElementById('modalLessonContent');
+                
+                if (!modal) return;
+                
+                // Show modal with loading state
+                modal.classList.remove('hidden');
+                modalContent.innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                        <p class="text-gray-600">Loading lesson...</p>
+                    </div>
+                `;
+                
+                // Fetch lesson content
+                const response = await fetch(`php/get-teacher-lesson-content.php?lesson_id=${lessonId}`, {
+                    credentials: 'include',
+                    cache: 'no-store'
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success && result.lesson) {
+                    // Update modal
+                    if (modalTitle) modalTitle.textContent = result.lesson.title;
+                    if (modalTopic) modalTopic.textContent = result.lesson.topic;
+                    if (modalContent) {
+                        // Display the HTML content
+                        modalContent.innerHTML = result.lesson.html_content;
+                        
+                        // Scroll to top
+                        modalContent.scrollTop = 0;
+                    }
+                } else {
+                    throw new Error(result.message || 'Failed to load lesson');
+                }
+            } catch (error) {
+                console.error('Error opening teacher lesson:', error);
+                const modalContent = document.getElementById('modalLessonContent');
+                if (modalContent) {
+                    modalContent.innerHTML = `
+                        <div class="text-center py-12">
+                            <i class="fas fa-exclamation-triangle text-red-500 text-4xl mb-4"></i>
+                            <p class="text-red-600 font-semibold">Error loading lesson</p>
+                            <p class="text-gray-600 mt-2">${error.message}</p>
+                        </div>
+                    `;
+                }
+                
+                Swal.fire({
+                    title: 'Error',
+                    text: error.message || 'Failed to load lesson content.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        }
+        
+        function closeTeacherLessonModal() {
+            const modal = document.getElementById('teacherLessonModal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
+        
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('teacherLessonModal');
+            if (modal && event.target === modal) {
+                closeTeacherLessonModal();
+            }
+        });
+        
+        // Close modal with ESC key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modal = document.getElementById('teacherLessonModal');
+                if (modal && !modal.classList.contains('hidden')) {
+                    closeTeacherLessonModal();
+                }
+            }
+        });
+
+        // Profile dropdown toggle
+        function toggleProfileDropdown() {
+            const dropdown = document.getElementById('profileDropdown');
+            const icon = document.getElementById('profileDropdownIcon');
+            
+            if (dropdown) {
+                const isHidden = dropdown.classList.contains('hidden');
+                if (isHidden) {
+                    dropdown.classList.remove('hidden');
+                    if (icon) icon.style.transform = 'rotate(180deg)';
+                } else {
+                    dropdown.classList.add('hidden');
+                    if (icon) icon.style.transform = 'rotate(0deg)';
+                }
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const container = document.getElementById('profileDropdownContainer');
+            const dropdown = document.getElementById('profileDropdown');
+            
+            if (container && dropdown && !container.contains(event.target)) {
+                dropdown.classList.add('hidden');
+                const icon = document.getElementById('profileDropdownIcon');
+                if (icon) icon.style.transform = 'rotate(0deg)';
+            }
+        });
+
+        // Load and display profile picture from database (user.php returns profile_picture from users table)
+        async function loadProfilePicture() {
+            try {
+                const response = await fetch('php/user.php', {
+                    credentials: 'include',
+                    cache: 'no-store'
+                });
+                
+                if (!response.ok) return;
+                const data = await response.json();
+                if (!data.success || !data.user) return;
+                
+                const user = data.user;
+                const userId = user.id;
+                const userName = (user.first_name + ' ' + (user.last_name || '')).trim();
+                const userEmail = user.email || '';
+                // Profile picture from DB: uploads/profiles/filename
+                const profilePicture = user.profile_picture && user.profile_picture.trim() !== '' ? user.profile_picture : null;
+                
+                // Update user name in header
+                const userNameElement = document.getElementById('userName');
+                if (userNameElement) userNameElement.textContent = userName;
+                const mobileUserName = document.getElementById('mobileUserName');
+                const mobileUserEmail = document.getElementById('mobileUserEmail');
+                if (mobileUserName) mobileUserName.textContent = userName;
+                if (mobileUserEmail) mobileUserEmail.textContent = userEmail || 'Student';
+                
+                const profileIconImage = document.getElementById('profileIconImage');
+                const profileIconPlaceholder = document.getElementById('profileIconPlaceholder');
+                const profileIconContainer = document.getElementById('profileIconContainer');
+                const mobileProfileIconImage = document.getElementById('mobileProfileIconImage');
+                const mobileProfileIconPlaceholder = document.getElementById('mobileProfileIconPlaceholder');
+                const mobileProfileIconContainer = document.getElementById('mobileProfileIconContainer');
+                
+                const q = '?t=' + Date.now();
+                if (profilePicture) {
+                    if (profileIconImage) {
+                        profileIconImage.src = profilePicture + q;
+                        profileIconImage.classList.remove('hidden');
+                    }
+                    if (profileIconPlaceholder) profileIconPlaceholder.classList.add('hidden');
+                    if (profileIconContainer) {
+                        profileIconContainer.classList.remove('bg-gradient-to-br', 'from-indigo-500', 'to-violet-600');
+                        profileIconContainer.classList.add('bg-slate-200');
+                    }
+                    if (mobileProfileIconImage) {
+                        mobileProfileIconImage.src = profilePicture + q;
+                        mobileProfileIconImage.classList.remove('hidden');
+                    }
+                    if (mobileProfileIconPlaceholder) mobileProfileIconPlaceholder.classList.add('hidden');
+                    if (mobileProfileIconContainer) {
+                        mobileProfileIconContainer.classList.remove('bg-white/20');
+                        mobileProfileIconContainer.classList.add('bg-white/10');
+                    }
+                } else {
+                    if (profileIconImage) profileIconImage.classList.add('hidden');
+                    if (profileIconPlaceholder) profileIconPlaceholder.classList.remove('hidden');
+                    if (profileIconContainer) {
+                        profileIconContainer.classList.add('bg-gradient-to-br', 'from-indigo-500', 'to-violet-600');
+                        profileIconContainer.classList.remove('bg-slate-200');
+                    }
+                    if (mobileProfileIconImage) mobileProfileIconImage.classList.add('hidden');
+                    if (mobileProfileIconPlaceholder) mobileProfileIconPlaceholder.classList.remove('hidden');
+                    if (mobileProfileIconContainer) {
+                        mobileProfileIconContainer.classList.add('bg-white/20');
+                        mobileProfileIconContainer.classList.remove('bg-white/10');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile picture:', error);
+            }
+        }
+
+        // Listen for profile picture updates from profile page
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'mathease-profile-updated') {
+                console.log('Profile picture updated, refreshing...');
+                loadProfilePicture();
+            }
+            
+            // Listen for badge updates from quiz pages
+            if (e.key === 'mathease-badges-updated') {
+                console.log('Badges updated, refreshing count...');
+                loadAchievementsCount();
+            }
+        });
+
+        // Also check for profile updates periodically
+        setInterval(loadProfilePicture, 5000); // Check every 5 seconds
+
         // Add smooth scrolling and animations
         document.addEventListener('DOMContentLoaded', async function() {
             console.log('Dashboard loaded, starting progress data load...');
@@ -3142,6 +4162,9 @@
             // Check session status first
             const currentUserId = await checkSessionStatus();
             console.log('Current user ID from session check:', currentUserId);
+            
+            // Load profile picture
+            await loadProfilePicture();
             
             // Load real progress data
             await loadProgressData();
@@ -3152,8 +4175,11 @@
             // Load class information
             await loadClassInformation();
             
-            // Student avatar loading disabled - avatars removed from UI
-            // setTimeout(() => { loadTopicStudentData(); }, 1000);
+            // Load teacher-created lessons
+            await loadTeacherLessons();
+            
+            // Load student profile icons for each topic
+            setTimeout(() => { loadTopicStudentData(); }, 1000);
             
             // Start real-time updates
             realTimeUpdater.start();
@@ -3532,6 +4558,1029 @@
                 .welcome-character-container { bottom: 15px; right: 15px; }
             }
             
+            /* ==========================================
+               COMPREHENSIVE MOBILE RESPONSIVE STYLES
+               ========================================== */
+            
+            /* Hamburger Menu Button */
+            .hamburger {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+                width: 44px;
+                height: 44px;
+                background: transparent;
+                border: none;
+                cursor: pointer;
+                padding: 8px;
+                z-index: 1001;
+                transition: all 0.3s ease;
+            }
+            
+            .hamburger .bar {
+                width: 25px;
+                height: 3px;
+                background-color: #475569;
+                border-radius: 3px;
+                transition: all 0.3s ease;
+                transform-origin: center;
+            }
+            
+            .hamburger:hover .bar {
+                background-color: #1e293b;
+            }
+            
+            .hamburger.active .bar:nth-child(1) {
+                transform: translateY(9px) rotate(45deg);
+                background-color: white;
+            }
+            
+            .hamburger.active .bar:nth-child(2) {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            
+            .hamburger.active .bar:nth-child(3) {
+                transform: translateY(-9px) rotate(-45deg);
+                background-color: white;
+            }
+            
+            /* Mobile Menu Backdrop */
+            .mobile-menu-backdrop {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(0, 0, 0, 0.5);
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.3s ease, visibility 0.3s ease;
+                z-index: 998;
+                pointer-events: none;
+                backdrop-filter: blur(2px);
+            }
+            
+            .mobile-menu-backdrop.active {
+                opacity: 1;
+                visibility: visible;
+                pointer-events: all;
+            }
+            
+            /* Mobile Navigation Sidebar */
+            .mobile-nav-menu {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 280px;
+                max-width: min(85vw, 320px);
+                height: 100vh;
+                height: 100dvh;
+                max-height: -webkit-fill-available;
+                background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+                box-shadow: -5px 0 25px rgba(0,0,0,0.3);
+                transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 999;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+                padding-bottom: env(safe-area-inset-bottom, 0);
+            }
+            
+            .mobile-nav-menu.active {
+                right: 0;
+            }
+            
+            .mobile-nav-header {
+                flex-shrink: 0;
+                padding: calc(56px + 1rem) 1.25rem 1rem 1.25rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            }
+            
+            .mobile-nav-header .flex {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                min-width: 0;
+            }
+            
+            .mobile-nav-header .w-10.h-10 {
+                flex-shrink: 0;
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+            
+            .mobile-nav-header .w-10.h-10 img {
+                width: 1.25rem;
+                height: 1.25rem;
+            }
+            
+            .mobile-nav-header span {
+                font-size: 1.125rem;
+                font-weight: 700;
+                color: white;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            
+            /* Profile Section in Mobile Sidebar */
+            .mobile-nav-profile {
+                flex-shrink: 0;
+                padding: 1rem 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+                background: rgba(255, 255, 255, 0.05);
+            }
+            
+            .mobile-nav-profile .flex {
+                padding: 0 1.25rem;
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                min-width: 0;
+            }
+            
+            #mobileProfileIconContainer {
+                width: 48px;
+                height: 48px;
+                min-width: 48px;
+                min-height: 48px;
+                flex-shrink: 0;
+            }
+            
+            #mobileProfileIconImage {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            
+            #mobileProfileIconPlaceholder {
+                font-size: 1.25rem;
+            }
+            
+            .mobile-nav-profile .flex-1 {
+                min-width: 0;
+            }
+            
+            #mobileUserName {
+                font-size: 0.9375rem;
+                font-weight: 600;
+                color: white;
+                margin-bottom: 0.125rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            
+            #mobileUserEmail {
+                font-size: 0.8125rem;
+                color: rgba(255, 255, 255, 0.75);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            
+            .mobile-nav-content {
+                flex: 1;
+                min-height: 0;
+                overflow-y: auto;
+                overflow-x: hidden;
+                -webkit-overflow-scrolling: touch;
+                padding: 1rem 0;
+            }
+            
+            .mobile-nav-item {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                padding: 0.875rem 1.25rem;
+                color: white;
+                text-decoration: none;
+                font-size: 0.9375rem;
+                font-weight: 500;
+                transition: background 0.2s ease, border-color 0.2s ease, padding 0.2s ease;
+                border-left: 3px solid transparent;
+                min-height: 48px;
+                box-sizing: border-box;
+            }
+            
+            .mobile-nav-item i {
+                width: 1.25rem;
+                flex-shrink: 0;
+                text-align: center;
+                font-size: 1rem;
+            }
+            
+            .mobile-nav-label {
+                flex: 1;
+                min-width: 0;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            
+            .mobile-nav-badge {
+                flex-shrink: 0;
+                margin-left: auto;
+                min-width: 1.25rem;
+                height: 1.25rem;
+                padding: 0 0.35rem;
+                font-size: 0.6875rem;
+                font-weight: 600;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                background: #ef4444;
+                color: white;
+                border-radius: 9999px;
+            }
+            
+            .mobile-nav-item:hover,
+            .mobile-nav-item.active {
+                background: rgba(255, 255, 255, 0.15);
+                border-left-color: white;
+                padding-left: 1.5rem;
+            }
+            
+            .mobile-nav-item-danger {
+                color: #fecaca;
+            }
+            
+            .mobile-nav-item-danger:hover {
+                background: rgba(254, 202, 202, 0.2);
+                border-left-color: #fecaca;
+            }
+            
+            /* Footer group: Notification, Profile, Logout */
+            .mobile-nav-footer {
+                flex-shrink: 0;
+                padding-top: 0.25rem;
+            }
+            
+            .mobile-nav-footer .mobile-nav-item {
+                margin: 0;
+            }
+            
+            .mobile-nav-divider {
+                flex-shrink: 0;
+                height: 1px;
+                background: rgba(255, 255, 255, 0.2);
+                margin: 0.5rem 1.25rem;
+            }
+            
+            /* Prevent body scroll when menu is open */
+            body.menu-open {
+                overflow: hidden;
+                position: fixed;
+                width: 100%;
+            }
+            
+            /* Mobile Navigation */
+            @media (max-width: 768px) {
+                /* Nav bar: clean layout, no overflow */
+                nav {
+                    padding: 0 0.75rem;
+                }
+                
+                nav .max-w-7xl {
+                    padding-left: 0.5rem;
+                    padding-right: 0.5rem;
+                }
+                
+                .dashboard-nav-inner {
+                    gap: 0.5rem;
+                    min-height: 56px;
+                }
+                
+                .dashboard-nav-brand {
+                    min-width: 0;
+                }
+                
+                .dashboard-nav-brand .dashboard-nav-logo-icon {
+                    width: 2.5rem;
+                    height: 2.5rem;
+                    min-width: 2.5rem;
+                    min-height: 2.5rem;
+                }
+                
+                .dashboard-nav-brand .dashboard-nav-logo-icon img {
+                    width: 1.25rem;
+                    height: 1.25rem;
+                }
+                
+                .dashboard-nav-brand span {
+                    font-size: 1.1rem;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+                
+                .dashboard-nav-hamburger {
+                    flex-shrink: 0;
+                }
+                
+                /* Hide desktop navigation on mobile */
+                .hidden.md\\:flex {
+                    display: none !important;
+                }
+                
+                /* Show hamburger on mobile */
+                .md\\:hidden {
+                    display: flex !important;
+                }
+                
+                /* User menu adjustments - Mobile (for when shown) */
+                nav .flex.items-center.space-x-2 {
+                    gap: 0.25rem;
+                }
+                
+                nav .flex.items-center.space-x-4 {
+                    gap: 0.5rem;
+                }
+                
+                /* Profile button mobile */
+                .profile-button {
+                    padding: 0.5rem !important;
+                    min-width: 44px;
+                    min-height: 44px;
+                }
+                
+                .profile-button #userName {
+                    display: none !important;
+                }
+                
+                .profile-button #profileDropdownIcon {
+                    display: none !important;
+                }
+                
+                /* Profile dropdown mobile - better positioning */
+                .profile-dropdown {
+                    position: fixed !important;
+                    right: 0.75rem !important;
+                    left: auto !important;
+                    width: calc(100vw - 1.5rem) !important;
+                    max-width: 280px !important;
+                    margin-top: 0.5rem !important;
+                }
+                
+                /* Notifications button mobile */
+                #notificationButton {
+                    min-width: 44px;
+                    min-height: 44px;
+                    padding: 0.5rem !important;
+                }
+                
+                /* Notifications dropdown mobile - better positioning */
+                .notifications-dropdown {
+                    position: fixed !important;
+                    right: 0.75rem !important;
+                    left: auto !important;
+                    width: calc(100vw - 1.5rem) !important;
+                    max-width: 320px !important;
+                    margin-top: 0.5rem !important;
+                }
+                
+                /* Hamburger button mobile */
+                .hamburger {
+                    min-width: 44px;
+                    min-height: 44px;
+                    padding: 0.5rem;
+                    flex-shrink: 0;
+                }
+                
+                /* Dashboard Header (gradient section) Mobile - tidy layout */
+                .bg-gradient-to-br.from-indigo-600 {
+                    padding: 1.5rem 1rem !important;
+                }
+                
+                .bg-gradient-to-br.from-indigo-600 .max-w-7xl {
+                    padding-left: 1rem !important;
+                    padding-right: 1rem !important;
+                    padding-top: 1.5rem !important;
+                    padding-bottom: 1.5rem !important;
+                }
+                
+                .bg-gradient-to-br.from-indigo-600 .hero-content {
+                    margin-bottom: 0;
+                }
+                
+                .bg-gradient-to-br.from-indigo-600 .hero-content .mb-8 {
+                    margin-bottom: 1.5rem !important;
+                }
+                
+                .text-5xl.lg\\:text-6xl {
+                    font-size: 1.75rem !important;
+                    line-height: 1.3;
+                }
+                
+                .text-lg.lg\\:text-xl {
+                    font-size: 0.95rem !important;
+                }
+                
+                /* Hero buttons mobile */
+                .hero-content .flex.flex-col.sm\\:flex-row {
+                    flex-direction: column;
+                    width: 100%;
+                    gap: 0.75rem;
+                }
+                
+                .hero-content .flex.flex-col.sm\\:flex-row button,
+                .hero-content .flex.flex-col.sm\\:flex-row a {
+                    width: 100%;
+                    margin-bottom: 0;
+                    justify-content: center;
+                }
+                
+                /* Hero cards mobile: image first, then Lessons + Achievements side by side */
+                .hero-cards .grid {
+                    grid-template-columns: 1fr !important;
+                    gap: 1rem;
+                    display: flex;
+                    flex-direction: column;
+                }
+                
+                .hero-cards .grid > .flex.items-center.justify-start {
+                    order: 1;
+                    width: 100%;
+                    justify-content: center;
+                    padding-bottom: 0.5rem;
+                }
+                
+                .hero-cards .grid > .space-y-4 {
+                    order: 2;
+                    display: grid !important;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 0.75rem;
+                    margin: 0;
+                }
+                
+                .hero-cards .welcome-character-container {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 100%;
+                }
+                
+                .hero-cards .welcome-character {
+                    max-width: 140px;
+                    width: 100%;
+                    height: auto;
+                    object-fit: contain;
+                }
+                
+                /* Lessons & Achievements cards - compact, equal layout */
+                .hero-cards .bg-white\\/10.backdrop-blur-md {
+                    padding: 1rem !important;
+                    margin: 0 !important;
+                }
+                
+                .hero-cards .bg-white\\/10.backdrop-blur-md .flex.items-center.justify-between {
+                    flex-direction: column;
+                    align-items: center;
+                    text-align: center;
+                    gap: 0.5rem;
+                    margin-bottom: 0.5rem !important;
+                }
+                
+                .hero-cards .bg-white\\/10.backdrop-blur-md .text-right {
+                    text-align: center !important;
+                }
+                
+                .hero-cards .w-14.h-14 {
+                    width: 2.5rem;
+                    height: 2.5rem;
+                }
+                
+                .hero-cards .bg-white\\/10.backdrop-blur-md .text-2xl {
+                    font-size: 1.25rem !important;
+                }
+                
+                .hero-cards .bg-white\\/10.backdrop-blur-md .text-white\\/80 {
+                    font-size: 0.6875rem;
+                    text-align: center;
+                    line-height: 1.3;
+                }
+                
+                /* Sections mobile */
+                section,
+                .max-w-7xl {
+                    padding-left: 1rem !important;
+                    padding-right: 1rem !important;
+                }
+                
+                .py-20 {
+                    padding-top: 2rem !important;
+                    padding-bottom: 2rem !important;
+                }
+                
+                .py-12 {
+                    padding-top: 1.5rem !important;
+                    padding-bottom: 1.5rem !important;
+                }
+                
+                /* Typography mobile */
+                .text-4xl {
+                    font-size: 2rem !important;
+                }
+                
+                .text-3xl {
+                    font-size: 1.75rem !important;
+                }
+                
+                .text-2xl {
+                    font-size: 1.5rem !important;
+                }
+                
+                .text-xl {
+                    font-size: 1.125rem !important;
+                }
+                
+                h2 {
+                    font-size: 1.75rem !important;
+                }
+                
+                h3 {
+                    font-size: 1.5rem !important;
+                }
+                
+                /* Progress section mobile */
+                .p-10 {
+                    padding: 1.5rem !important;
+                }
+                
+                .mb-10 {
+                    margin-bottom: 1.5rem !important;
+                }
+                
+                .mb-12 {
+                    margin-bottom: 2rem !important;
+                }
+                
+                /* Progress bars mobile */
+                .h-8 {
+                    height: 1.5rem;
+                }
+                
+                .text-5xl {
+                    font-size: 2.5rem !important;
+                }
+                
+                /* Topic cards mobile */
+                .rounded-2xl.p-8 {
+                    padding: 1.25rem !important;
+                }
+                
+                .flex.items-start.justify-between {
+                    flex-direction: column;
+                    gap: 1rem;
+                }
+                
+                .flex-1.pr-8 {
+                    padding-right: 0 !important;
+                    width: 100%;
+                }
+                
+                .flex.flex-col.items-end.space-y-4.ml-8 {
+                    margin-left: 0 !important;
+                    width: 100%;
+                    align-items: stretch !important;
+                }
+                
+                .flex.flex-col.items-end.space-y-4.ml-8 button {
+                    width: 100%;
+                }
+                
+                /* Badges mobile */
+                .flex.items-center.space-x-4 {
+                    flex-wrap: wrap;
+                    gap: 0.5rem;
+                }
+                
+                .px-4.py-2 {
+                    padding: 0.5rem 0.75rem !important;
+                    font-size: 0.75rem !important;
+                }
+                
+                /* Class info banner mobile */
+                .flex.items-center.justify-between {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 1rem;
+                }
+                
+                .text-right {
+                    text-align: left !important;
+                    width: 100%;
+                }
+                
+                /* Enrollment gate mobile */
+                .p-8 {
+                    padding: 1.25rem !important;
+                }
+                
+                .flex.items-start.justify-between {
+                    flex-direction: column;
+                    gap: 1rem;
+                }
+                
+                /* Footer mobile */
+                footer .grid {
+                    grid-template-columns: 1fr !important;
+                    gap: 2rem;
+                }
+                
+                /* Teacher lesson management mobile */
+                #teacherLessonManagement .flex.items-center.justify-between {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 1rem;
+                }
+                
+                #teacherLessonManagement .max-w-md {
+                    max-width: 100%;
+                }
+                
+                /* Modal mobile */
+                #notificationsModal .max-w-4xl {
+                    margin: 0.5rem;
+                    max-width: calc(100% - 1rem);
+                }
+                
+                #teacherLessonModal .max-w-6xl {
+                    margin: 0.5rem;
+                    max-width: calc(100% - 1rem);
+                }
+                
+                /* Table mobile */
+                .overflow-x-auto {
+                    -webkit-overflow-scrolling: touch;
+                }
+                
+                /* Prevent horizontal scroll */
+                html, body {
+                    overflow-x: hidden;
+                    width: 100%;
+                    position: relative;
+                }
+            }
+            
+            @media (max-width: 480px) {
+                /* Extra small mobile */
+                .text-5xl.lg\\:text-6xl {
+                    font-size: 1.75rem !important;
+                }
+                
+                .text-lg.lg\\:text-xl {
+                    font-size: 0.95rem !important;
+                }
+                
+                .text-4xl {
+                    font-size: 1.75rem !important;
+                }
+                
+                .text-3xl {
+                    font-size: 1.5rem !important;
+                }
+                
+                .text-2xl {
+                    font-size: 1.25rem !important;
+                }
+                
+                .text-xl {
+                    font-size: 1rem !important;
+                }
+                
+                .p-10 {
+                    padding: 1rem !important;
+                }
+                
+                .p-8 {
+                    padding: 1rem !important;
+                }
+                
+                .p-6 {
+                    padding: 0.75rem !important;
+                }
+                
+                .mb-10 {
+                    margin-bottom: 1rem !important;
+                }
+                
+                .mb-12 {
+                    margin-bottom: 1.5rem !important;
+                }
+                
+                .mb-8 {
+                    margin-bottom: 1rem !important;
+                }
+                
+                .mb-6 {
+                    margin-bottom: 0.75rem !important;
+                }
+                
+                .mb-4 {
+                    margin-bottom: 0.5rem !important;
+                }
+                
+                /* Smaller icons */
+                .w-16.h-16 {
+                    width: 3rem;
+                    height: 3rem;
+                }
+                
+                .w-14.h-14 {
+                    width: 2.5rem;
+                    height: 2.5rem;
+                }
+                
+                .w-12.h-12 {
+                    width: 2rem;
+                    height: 2rem;
+                }
+                
+                .w-10.h-10 {
+                    width: 1.75rem;
+                    height: 1.75rem;
+                }
+                
+                .w-8.h-8 {
+                    width: 1.5rem;
+                    height: 1.5rem;
+                }
+                
+                /* Buttons mobile */
+                .px-8.py-4 {
+                    padding: 0.75rem 1rem !important;
+                }
+                
+                .px-8.py-3 {
+                    padding: 0.625rem 1rem !important;
+                }
+                
+                .px-6.py-3 {
+                    padding: 0.5rem 0.75rem !important;
+                }
+                
+                .px-4.py-2 {
+                    padding: 0.5rem 0.75rem !important;
+                }
+                
+                /* Progress text mobile */
+                .text-5xl {
+                    font-size: 2rem !important;
+                }
+                
+                .text-4xl {
+                    font-size: 1.75rem !important;
+                }
+                
+                /* Welcome character extra small */
+                .welcome-character {
+                    width: 100px !important;
+                }
+                
+                /* Cards extra small */
+                .rounded-3xl {
+                    border-radius: 1rem !important;
+                }
+                
+                .rounded-2xl {
+                    border-radius: 0.75rem !important;
+                }
+                
+                /* Grid gaps mobile */
+                .gap-8 {
+                    gap: 1rem !important;
+                }
+                
+                .gap-6 {
+                    gap: 0.75rem !important;
+                }
+                
+                .gap-4 {
+                    gap: 0.5rem !important;
+                }
+                
+                /* Space mobile */
+                .space-y-8 > * + * {
+                    margin-top: 1rem !important;
+                }
+                
+                .space-y-6 > * + * {
+                    margin-top: 0.75rem !important;
+                }
+                
+                .space-y-4 > * + * {
+                    margin-top: 0.5rem !important;
+                }
+                
+                /* Topic card buttons mobile */
+                button.bg-orange-500,
+                button.bg-green-500,
+                button.bg-yellow-500 {
+                    font-size: 0.875rem !important;
+                    padding: 0.625rem 1rem !important;
+                }
+            }
+            
+            /* Touch-friendly improvements */
+            @media (hover: none) and (pointer: coarse) {
+                button,
+                a,
+                .nav-link,
+                [onclick] {
+                    min-height: 44px;
+                    min-width: 44px;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    -webkit-tap-highlight-color: rgba(99, 102, 241, 0.3);
+                }
+                
+                /* Prevent text selection on buttons */
+                button,
+                [onclick] {
+                    -webkit-user-select: none;
+                    user-select: none;
+                }
+                
+                /* Better touch targets */
+                .p-2 {
+                    padding: 0.75rem !important;
+                }
+                
+                .px-3 {
+                    padding-left: 0.875rem !important;
+                    padding-right: 0.875rem !important;
+                }
+                
+                .py-2 {
+                    padding-top: 0.625rem !important;
+                    padding-bottom: 0.625rem !important;
+                }
+            }
+            
+            /* Landscape mobile optimization */
+            @media (max-width: 768px) and (orientation: landscape) {
+                .py-20 {
+                    padding-top: 1.5rem !important;
+                    padding-bottom: 1.5rem !important;
+                }
+                
+                .hero-content h1 {
+                    font-size: 1.75rem !important;
+                }
+                
+                .hero-content p {
+                    font-size: 0.95rem !important;
+                    margin-bottom: 1rem !important;
+                }
+                
+                .welcome-character {
+                    width: 120px !important;
+                }
+            }
+            
+            /* Improve scrolling on mobile */
+            @media (max-width: 768px) {
+                * {
+                    -webkit-overflow-scrolling: touch;
+                }
+                
+                body {
+                    -webkit-font-smoothing: antialiased;
+                    -moz-osx-font-smoothing: grayscale;
+                }
+                
+                /* Better scrollbar on mobile */
+                ::-webkit-scrollbar {
+                    width: 4px;
+                    height: 4px;
+                }
+                
+                ::-webkit-scrollbar-track {
+                    background: #f1f5f9;
+                }
+                
+                ::-webkit-scrollbar-thumb {
+                    background: #cbd5e1;
+                    border-radius: 2px;
+                }
+            }
+            
+            /* Mobile menu functionality */
+            @media (max-width: 768px) {
+                /* Hide desktop nav */
+                .hidden.md\\:flex {
+                    display: none !important;
+                }
+                
+                /* Show mobile menu button */
+                .md\\:hidden {
+                    display: flex !important;
+                }
+                
+                /* Sticky nav adjustment for mobile */
+                nav.sticky {
+                    position: sticky;
+                    top: 0;
+                    z-index: 50;
+                }
+            }
+            
+            /* Desktop: Hide mobile menu and backdrop */
+            @media (min-width: 769px) {
+                .hamburger {
+                    display: none !important;
+                }
+                
+                .mobile-nav-menu {
+                    display: none !important;
+                }
+                
+                .mobile-menu-backdrop {
+                    display: none !important;
+                }
+                
+                body.menu-open {
+                    overflow: auto !important;
+                    position: static !important;
+                    width: auto !important;
+                }
+                
+                /* Desktop: Restore full profile button */
+                .profile-button #userName {
+                    display: inline !important;
+                }
+                
+                .profile-button #profileDropdownIcon {
+                    display: inline !important;
+                }
+                
+                /* Desktop: Restore dropdown positioning */
+                .profile-dropdown {
+                    position: absolute !important;
+                    width: 14rem !important;
+                    max-width: 14rem !important;
+                }
+                
+                .notifications-dropdown {
+                    position: absolute !important;
+                    width: 20rem !important;
+                    max-width: 20rem !important;
+                }
+            }
+            
+            /* Extra small mobile devices */
+            @media (max-width: 480px) {
+                nav {
+                    padding: 0 0.5rem;
+                }
+                
+                nav .max-w-7xl {
+                    padding-left: 0.5rem;
+                    padding-right: 0.5rem;
+                }
+                
+                .dashboard-nav-brand .dashboard-nav-logo-icon {
+                    width: 2.25rem;
+                    height: 2.25rem;
+                    min-width: 2.25rem;
+                    min-height: 2.25rem;
+                }
+                
+                .dashboard-nav-brand .dashboard-nav-logo-icon img {
+                    width: 1.125rem;
+                    height: 1.125rem;
+                }
+                
+                .dashboard-nav-brand span {
+                    font-size: 1rem;
+                }
+                
+                /* Smaller touch targets on very small screens */
+                .hamburger {
+                    min-width: 44px;
+                    min-height: 44px;
+                    padding: 0.5rem;
+                }
+                
+                /* Smaller dropdowns */
+                .profile-dropdown,
+                .notifications-dropdown {
+                    width: calc(100vw - 1rem) !important;
+                    right: 0.5rem !important;
+                }
+                
+                .hero-cards .welcome-character {
+                    max-width: 120px;
+                }
+                
+                .hero-cards .grid > .space-y-4 {
+                    grid-template-columns: 1fr !important;
+                }
+            }
+            
             /* Hero Layout Improvements */
             .hero-content {
                 position: relative;
@@ -3583,6 +5632,104 @@
                     grid-template-columns: 1fr;
                     gap: 2rem;
                 }
+            }
+            
+            /* Teacher Lesson Modal Styles */
+            #teacherLessonModal {
+                animation: fadeIn 0.3s ease-out;
+            }
+            
+            #teacherLessonModal .bg-white {
+                animation: slideUp 0.3s ease-out;
+            }
+            
+            #modalLessonContent {
+                max-height: calc(100vh - 200px);
+                overflow-y: auto;
+            }
+            
+            #modalLessonContent::-webkit-scrollbar {
+                width: 8px;
+            }
+            
+            #modalLessonContent::-webkit-scrollbar-track {
+                background: #f1f5f9;
+                border-radius: 4px;
+            }
+            
+            #modalLessonContent::-webkit-scrollbar-thumb {
+                background: #cbd5e1;
+                border-radius: 4px;
+            }
+            
+            #modalLessonContent::-webkit-scrollbar-thumb:hover {
+                background: #94a3b8;
+            }
+            
+            /* Ensure lesson content is properly styled */
+            #modalLessonContent h1,
+            #modalLessonContent h2,
+            #modalLessonContent h3,
+            #modalLessonContent h4 {
+                font-weight: bold;
+                margin-top: 1.5rem;
+                margin-bottom: 1rem;
+            }
+            
+            #modalLessonContent p {
+                margin-bottom: 1rem;
+                line-height: 1.6;
+            }
+            
+            #modalLessonContent ul,
+            #modalLessonContent ol {
+                margin-left: 1.5rem;
+                margin-bottom: 1rem;
+            }
+            
+            #modalLessonContent li {
+                margin-bottom: 0.5rem;
+            }
+            
+            #modalLessonContent code {
+                background-color: #f3f4f6;
+                padding: 0.2rem 0.4rem;
+                border-radius: 0.25rem;
+                font-family: monospace;
+            }
+            
+            #modalLessonContent pre {
+                background-color: #1f2937;
+                color: #f9fafb;
+                padding: 1rem;
+                border-radius: 0.5rem;
+                overflow-x: auto;
+                margin-bottom: 1rem;
+            }
+            
+            #modalLessonContent img {
+                max-width: 100%;
+                height: auto;
+                border-radius: 0.5rem;
+                margin: 1rem 0;
+            }
+            
+            #modalLessonContent table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 1rem 0;
+            }
+            
+            #modalLessonContent table th,
+            #modalLessonContent table td {
+                border: 1px solid #e5e7eb;
+                padding: 0.5rem;
+                text-align: left;
+            }
+            
+            #modalLessonContent table th {
+                background-color: #f9fafb;
+                font-weight: bold;
             }
         `;
         document.head.appendChild(style);
@@ -3787,6 +5934,144 @@
                 window.location.href = 'php/smart-logout.php?type=student';
             }
         }
+        
+        // Mobile Menu Functions - Sidebar Style
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const hamburger = document.getElementById('mobileMenuButton');
+            const backdrop = document.getElementById('mobileMenuBackdrop');
+            const body = document.body;
+            
+            if (mobileMenu && hamburger) {
+                const isActive = mobileMenu.classList.contains('active');
+                
+                if (isActive) {
+                    // Close menu
+                    mobileMenu.classList.remove('active');
+                    hamburger.classList.remove('active');
+                    if (backdrop) backdrop.classList.remove('active');
+                    body.classList.remove('menu-open');
+                } else {
+                    // Open menu
+                    mobileMenu.classList.add('active');
+                    hamburger.classList.add('active');
+                    if (backdrop) backdrop.classList.add('active');
+                    body.classList.add('menu-open');
+                }
+            }
+        }
+        
+        function closeMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const hamburger = document.getElementById('mobileMenuButton');
+            const backdrop = document.getElementById('mobileMenuBackdrop');
+            const body = document.body;
+            
+            if (mobileMenu && hamburger) {
+                mobileMenu.classList.remove('active');
+                hamburger.classList.remove('active');
+                if (backdrop) backdrop.classList.remove('active');
+                body.classList.remove('menu-open');
+            }
+        }
+        
+        // Close mobile menu when clicking on backdrop
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const hamburger = document.getElementById('mobileMenuButton');
+            const backdrop = document.getElementById('mobileMenuBackdrop');
+            
+            if (backdrop && event.target === backdrop) {
+                closeMobileMenu();
+            }
+            
+            // Close when clicking outside menu (but not on hamburger)
+            if (mobileMenu && hamburger) {
+                if (!mobileMenu.contains(event.target) && !hamburger.contains(event.target)) {
+                    if (mobileMenu.classList.contains('active')) {
+                        closeMobileMenu();
+                    }
+                }
+            }
+        });
+        
+        // Close mobile menu on Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const mobileMenu = document.getElementById('mobileMenu');
+                if (mobileMenu && mobileMenu.classList.contains('active')) {
+                    closeMobileMenu();
+                }
+            }
+        });
+        
+        // Close mobile menu when window is resized to desktop size
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                closeMobileMenu();
+            }
+        });
+        
+        // Single handler for all mobile sidebar links: layout + navigation
+        document.getElementById('mobileMenu') && document.getElementById('mobileMenu').addEventListener('click', function(e) {
+            const link = e.target.closest('a[data-mobile-nav]');
+            if (!link) return;
+            if (link.style.pointerEvents === 'none' || link.classList.contains('pointer-events-none')) return;
+            
+            const href = (link.getAttribute('href') || '').trim();
+            const action = link.getAttribute('data-mobile-nav-action');
+            const isDashboard = window.location.pathname.indexOf('dashboard') !== -1;
+            
+            if (action === 'notifications') {
+                e.preventDefault();
+                closeMobileMenu();
+                toggleNotifications();
+                return;
+            }
+            if (action === 'logout') {
+                e.preventDefault();
+                closeMobileMenu();
+                confirmLogout(e);
+                return;
+            }
+            if (href === '#' || href === '#!') {
+                e.preventDefault();
+                return;
+            }
+            if (href.startsWith('#') && href.length > 1) {
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    closeMobileMenu();
+                    setTimeout(function() {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        try { history.pushState(null, '', href); } catch (_) {}
+                    }, 350);
+                }
+                return;
+            }
+            if (href.indexOf('dashboard.html#progress') !== -1 && isDashboard) {
+                e.preventDefault();
+                const target = document.getElementById('progress');
+                if (target) {
+                    closeMobileMenu();
+                    setTimeout(function() {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        try { history.pushState(null, '', '#progress'); } catch (_) {}
+                    }, 350);
+                } else {
+                    closeMobileMenu();
+                    setTimeout(function() { window.location.href = href; }, 100);
+                }
+                return;
+            }
+            if (href === 'dashboard.html' && isDashboard) {
+                e.preventDefault();
+                closeMobileMenu();
+                return;
+            }
+            closeMobileMenu();
+        });
     </script>
 </body>
 </html>

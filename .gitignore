@@ -1,0 +1,38 @@
+# Environment variables
+.env
+
+# Logs
+*.log
+error_log
+php_error_log
+
+# Email queue files
+email_queue.json
+emails/
+email_log.txt
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Backup files
+*.bak
+*.backup
+config_backup.php
+
+# Profile uploads (keep directory structure but ignore uploaded files)
+uploads/profiles/*
+!uploads/profiles/.gitkeep

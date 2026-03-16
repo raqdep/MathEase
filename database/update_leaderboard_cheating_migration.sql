@@ -2,7 +2,6 @@
 -- This migration updates the quiz_leaderboard view to include cheating_reason field
 -- so that cheating incidents are visible in the leaderboard
 
-USE mathease;
 
 -- Drop the existing quiz_leaderboard view
 DROP VIEW IF EXISTS quiz_leaderboard;

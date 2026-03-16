@@ -20,8 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Debug: Log all POST data
         error_log("All POST data: " . print_r($_POST, true));
         
-        // Validate required fields
-        $required_fields = ['firstName', 'lastName', 'email', 'lrn', 'gradeLevel', 'strand', 'password', 'confirmPassword'];
+        // Validate required fields (LRN removed - now optional)
+        $required_fields = ['firstName', 'lastName', 'email', 'gradeLevel', 'strand', 'password', 'confirmPassword'];
         $missing_fields = [];
         
         foreach ($required_fields as $field) {
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $firstName = sanitize_input($_POST['firstName']);
         $lastName = sanitize_input($_POST['lastName']);
         $email = sanitize_input($_POST['email']);
-        $lrn = sanitize_input($_POST['lrn']);
+        $lrn = isset($_POST['lrn']) && !empty(trim($_POST['lrn'])) ? sanitize_input($_POST['lrn']) : null; // Optional LRN
         $gradeLevel = sanitize_input($_POST['gradeLevel']);
         $strand = sanitize_input($_POST['strand']);
         $password = $_POST['password'];
@@ -85,21 +85,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         
-        // Validate LRN format (12 digits)
-        if (!preg_match('/^\d{12}$/', $lrn)) {
-            throw new Exception("LRN must be exactly 12 digits");
+        // Validate LRN format if provided (optional field)
+        if ($lrn !== null && !empty(trim($lrn))) {
+            if (!preg_match('/^\d{12}$/', $lrn)) {
+                throw new Exception("LRN must be exactly 12 digits if provided");
+            }
+            
+            // Check if LRN already exists
+            $stmt = $pdo->prepare("SELECT id FROM users WHERE student_id = ?");
+            $stmt->execute([$lrn]);
+            if ($stmt->rowCount() > 0) {
+                throw new Exception("LRN already registered");
+            }
         }
         
-        // Check if LRN already exists
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE student_id = ?");
-        $stmt->execute([$lrn]);
-        if ($stmt->rowCount() > 0) {
-            throw new Exception("LRN already registered");
-        }
-        
-        // Validate password
+        // Validate password (8–30 chars, lowercase, uppercase, number, special)
         if (strlen($password) < 8) {
             throw new Exception("Password must be at least 8 characters long");
+        }
+        if (strlen($password) > 30) {
+            throw new Exception("Password must be at most 30 characters");
+        }
+        if (!preg_match('/[a-z]/', $password)) {
+            throw new Exception("Password must contain at least one lowercase letter");
+        }
+        if (!preg_match('/[A-Z]/', $password)) {
+            throw new Exception("Password must contain at least one uppercase letter");
+        }
+        if (!preg_match('/[0-9]/', $password)) {
+            throw new Exception("Password must contain at least one number");
+        }
+        if (!preg_match('/[^a-zA-Z0-9]/', $password)) {
+            throw new Exception("Password must contain at least one special character");
         }
         
         if ($password !== $confirmPassword) {
@@ -113,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $verificationToken = generate_token();
         $linkExpires = date('Y-m-d H:i:s', strtotime('+24 hours'));
         
-        // Insert user into database with verification fields
+        // Insert user into database with verification fields (LRN is now optional)
         $stmt = $pdo->prepare("
             INSERT INTO users (first_name, last_name, email, student_id, grade_level, strand, password, newsletter_subscribed, email_verified, verification_link_token, verification_link_expires, created_at) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, NOW())
@@ -123,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $firstName,
             $lastName,
             $email,
-            $lrn,
+            $lrn, // Can be NULL if not provided
             $gradeLevel,
             $strand,
             $hashedPassword,

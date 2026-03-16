@@ -180,4 +180,31 @@ function send_email_content($socket, $from_email, $to, $subject, $htmlBody) {
         return false;
     }
 }
+
+/**
+ * Save email to file for manual sending (fallback)
+ */
+function save_email_to_file($to, $subject, $htmlBody) {
+    $from_email = MAIL_FROM;
+    $from_name = MAIL_FROM_NAME;
+    
+    $email_content = "To: {$to}\n";
+    $email_content .= "From: {$from_name} <{$from_email}>\n";
+    $email_content .= "Subject: {$subject}\n";
+    $email_content .= "MIME-Version: 1.0\n";
+    $email_content .= "Content-Type: text/html; charset=UTF-8\n";
+    $email_content .= "X-Mailer: MathEase Verification System\n\n";
+    $email_content .= $htmlBody . "\n";
+    $email_content .= "---\n";
+    
+    $filename = "emails/email_" . date('Y-m-d_H-i-s') . "_" . substr(md5($to), 0, 8) . ".txt";
+    $filepath = __DIR__ . "/" . $filename;
+    
+    $email_dir = __DIR__ . "/emails";
+    if (!is_dir($email_dir)) {
+        mkdir($email_dir, 0755, true);
+    }
+    
+    return file_put_contents($filepath, $email_content) !== false;
+}
 ?>

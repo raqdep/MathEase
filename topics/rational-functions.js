@@ -9,6 +9,228 @@ let currentFunction = {
     horizontalAsymptote: 'y = 1'
 };
 
+// Timer variables for each lesson
+let lessonTimers = {
+    1: { startTime: null, elapsed: 0, interval: null },
+    2: { startTime: null, elapsed: 0, interval: null },
+    3: { startTime: null, elapsed: 0, interval: null },
+    4: { startTime: null, elapsed: 0, interval: null }
+};
+
+// Sidebar Navigation Functions
+function canAccessTopic(lessonNum) {
+    if (lessonNum <= 1) return true;
+    for (let i = 1; i < lessonNum; i++) {
+        if (!rfCompletedLessons.has(i)) return false;
+    }
+    return true;
+}
+
+function showTopicLockedMessage(lessonNum) {
+    const prev = lessonNum - 1;
+    Swal.fire({
+        icon: 'info',
+        title: 'Complete Previous Topic First',
+        html: `You need to <strong>pass the 5 questions</strong> for Topic ${prev} before you can open Topic ${lessonNum}.<br><br>Stay on Topic ${prev}, finish the lesson, then take the quiz and get at least <strong>3/5 correct</strong> (60%) to unlock Topic ${lessonNum}.`,
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#667eea'
+    });
+}
+
+function setSidebarActive(lessonNum, section) {
+    document.querySelectorAll('.lesson-topic-header').forEach(h => h.classList.remove('active'));
+    document.querySelectorAll('.lesson-subitem').forEach(s => s.classList.remove('active'));
+    const topic = document.getElementById('sidebar-topic-' + lessonNum);
+    if (topic) {
+        topic.querySelector('.lesson-topic-header').classList.add('active');
+        const dot = topic.querySelector('.lesson-topic-dot');
+        if (dot) {
+            dot.classList.remove('completed');
+            if (rfCompletedLessons.has(lessonNum)) dot.classList.add('completed');
+        }
+    }
+    const sub = document.querySelector(`.lesson-subitem[data-lesson="${lessonNum}"][data-section="${section}"]`);
+    if (sub) sub.classList.add('active');
+}
+
+function updateSidebarProgress() {
+    document.querySelectorAll('.lesson-topic').forEach(topic => {
+        const n = parseInt(topic.dataset.lesson, 10);
+        const accessible = canAccessTopic(n);
+        const complete = rfCompletedLessons.has(n);
+        topic.classList.toggle('locked', !accessible && !complete);
+        const span = topic.querySelector('.topic-status-text');
+        if (span) {
+            if (complete) {
+                span.textContent = 'Complete';
+                span.className = 'lesson-topic-status complete';
+            } else if (!accessible) {
+                span.textContent = '—';
+                span.className = 'lesson-topic-status locked';
+            } else {
+                // Leave empty for accessible but incomplete topics (like functions.html)
+                span.textContent = '';
+                span.className = '';
+            }
+        }
+        const dot = topic.querySelector('.lesson-topic-dot');
+        if (dot) {
+            if (complete) dot.classList.add('completed');
+            else dot.classList.remove('completed');
+        }
+    });
+}
+
+// Timer Functions
+function startLessonTimer(lessonNum) {
+    if (lessonTimers[lessonNum].interval) return; // Already running
+    
+    if (!lessonTimers[lessonNum].startTime) {
+        lessonTimers[lessonNum].startTime = Date.now() - lessonTimers[lessonNum].elapsed;
+    }
+    
+    lessonTimers[lessonNum].interval = setInterval(() => {
+        const elapsed = Date.now() - lessonTimers[lessonNum].startTime;
+        lessonTimers[lessonNum].elapsed = elapsed;
+        updateTimerDisplay(lessonNum, elapsed);
+    }, 1000);
+}
+
+function stopLessonTimer(lessonNum) {
+    if (lessonTimers[lessonNum].interval) {
+        clearInterval(lessonTimers[lessonNum].interval);
+        lessonTimers[lessonNum].interval = null;
+    }
+}
+
+function updateTimerDisplay(lessonNum, elapsedMs) {
+    const timerEl = document.getElementById(`lesson${lessonNum}-timer`);
+    if (!timerEl) return;
+    
+    const totalSeconds = Math.floor(elapsedMs / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    
+    // Format as MM:SS for circular timer display
+    timerEl.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    
+    // Update circular progress
+    const progressCircle = timerEl.closest('.relative')?.querySelector('.timer-progress');
+    if (progressCircle) {
+        const circumference = 2 * Math.PI * 34; // radius = 34
+        const maxTime = 3600; // 1 hour in seconds
+        const progress = Math.min(totalSeconds / maxTime, 1);
+        const offset = circumference * (1 - progress);
+        progressCircle.style.strokeDashoffset = offset;
+    }
+}
+
+// User Dropdown Functions
+function toggleUserDropdown() {
+    const dropdown = document.getElementById('userDropdownMenu');
+    if (dropdown) {
+        dropdown.classList.toggle('hidden');
+    }
+}
+
+function toggleMobileMenu() {
+    const menu = document.getElementById('mobileMenu');
+    if (menu) {
+        menu.classList.toggle('hidden');
+    }
+}
+
+// Load and display profile picture
+async function loadProfilePicture(userId) {
+    try {
+        const profileResponse = await fetch(`../php/get-profile.php?user_id=${userId}`, {
+            credentials: 'include'
+        });
+        
+        if (profileResponse.ok) {
+            const profileData = await profileResponse.json();
+            if (profileData.success && profileData.user && profileData.user.profile_picture) {
+                const profilePicPath = `../${profileData.user.profile_picture}`;
+                
+                // Update profile image in dropdown button
+                const profileImg = document.getElementById('userProfileImage');
+                const profileIcon = document.getElementById('userProfileIcon');
+                if (profileImg && profileIcon) {
+                    profileImg.src = profilePicPath;
+                    profileImg.onload = function() {
+                        profileImg.classList.remove('hidden');
+                        profileIcon.style.display = 'none';
+                    };
+                    profileImg.onerror = function() {
+                        profileImg.classList.add('hidden');
+                        profileIcon.style.display = 'block';
+                    };
+                }
+                
+                // Update profile image in dropdown menu
+                const profileImgDropdown = document.getElementById('userProfileImageDropdown');
+                const profileIconDropdown = document.getElementById('userProfileIconDropdown');
+                if (profileImgDropdown && profileIconDropdown) {
+                    profileImgDropdown.src = profilePicPath;
+                    profileImgDropdown.onload = function() {
+                        profileImgDropdown.classList.remove('hidden');
+                        profileIconDropdown.style.display = 'none';
+                    };
+                    profileImgDropdown.onerror = function() {
+                        profileImgDropdown.classList.add('hidden');
+                        profileIconDropdown.style.display = 'block';
+                    };
+                }
+                
+                // Update profile image in mobile menu
+                const profileImgMobile = document.getElementById('userProfileImageMobile');
+                const profileIconMobile = document.getElementById('userProfileIconMobile');
+                if (profileImgMobile && profileIconMobile) {
+                    profileImgMobile.src = profilePicPath;
+                    profileImgMobile.onload = function() {
+                        profileImgMobile.classList.remove('hidden');
+                        profileIconMobile.style.display = 'none';
+                    };
+                    profileImgMobile.onerror = function() {
+                        profileImgMobile.classList.add('hidden');
+                        profileIconMobile.style.display = 'block';
+                    };
+                }
+            }
+        }
+    } catch (e) {
+        console.error('Error loading profile picture:', e);
+    }
+}
+
+// Logout with confirmation
+function confirmLogout() {
+    Swal.fire({
+        title: 'Logout?',
+        text: 'Are you sure you want to logout?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Yes, Logout',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true,
+        customClass: {
+            popup: 'rounded-2xl',
+            title: 'text-slate-800',
+            content: 'text-slate-600'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const dropdownMenu = document.getElementById('userDropdownMenu');
+            const mobileMenu = document.getElementById('mobileMenu');
+            if (dropdownMenu) dropdownMenu.classList.add('hidden');
+            if (mobileMenu) mobileMenu.classList.add('hidden');
+            window.location.href = '../php/logout.php';
+        }
+    });
+}
+
 // Success and Error Notification Functions
 function showSuccess(message) {
     // Create a temporary success notification
@@ -59,94 +281,311 @@ let rfCurrentLesson = 1;
 let rfCompletedLessons = new Set();
 const rfTotalLessons = 4;
 
+// Quiz Arrays - 5 questions per lesson
+const rfLesson1Quiz = [
+    {
+        question: "What is a rational function?",
+        options: [
+            "A function that can be expressed as the ratio of two polynomials",
+            "A function that only works with integers",
+            "A function with no restrictions",
+            "A function that always returns zero"
+        ],
+        correct: 0
+    },
+    {
+        question: "What is the domain restriction for f(x) = 1/(x - 2)?",
+        options: [
+            "x ≠ 0",
+            "x ≠ 2",
+            "x ≠ -2",
+            "No restrictions"
+        ],
+        correct: 1
+    },
+    {
+        question: "For the function f(x) = (x + 1)/(x - 2), what is the vertical asymptote?",
+        options: [
+            "x = -1",
+            "x = 2",
+            "x = 0",
+            "No vertical asymptote"
+        ],
+        correct: 1
+    },
+    {
+        question: "What happens when the denominator of a rational function equals zero?",
+        options: [
+            "The function equals zero",
+            "The function is undefined (vertical asymptote)",
+            "The function equals one",
+            "The function becomes linear"
+        ],
+        correct: 1
+    },
+    {
+        question: "In the function f(x) = (x² - 1)/(x - 1), what is the domain?",
+        options: [
+            "All real numbers",
+            "x ≠ 1",
+            "x ≠ -1",
+            "x ≠ 1 and x ≠ -1"
+        ],
+        correct: 1
+    }
+];
+
+const rfLesson2Quiz = [
+    {
+        question: "How do you find vertical asymptotes of a rational function?",
+        options: [
+            "Set numerator equal to zero",
+            "Set denominator equal to zero",
+            "Set the function equal to zero",
+            "Find where the function equals one"
+        ],
+        correct: 1
+    },
+    {
+        question: "If the degree of the numerator is less than the degree of the denominator, what is the horizontal asymptote?",
+        options: [
+            "y = 1",
+            "y = 0",
+            "No horizontal asymptote",
+            "y = ratio of leading coefficients"
+        ],
+        correct: 1
+    },
+    {
+        question: "For f(x) = (2x + 1)/(x - 3), what is the horizontal asymptote?",
+        options: [
+            "y = 0",
+            "y = 2",
+            "y = 3",
+            "No horizontal asymptote"
+        ],
+        correct: 1
+    },
+    {
+        question: "What are the x-intercepts of a rational function?",
+        options: [
+            "Where denominator equals zero",
+            "Where numerator equals zero (and denominator doesn't)",
+            "Where the function equals one",
+            "Where the function is undefined"
+        ],
+        correct: 1
+    },
+    {
+        question: "In graphing rational functions, what should you find first?",
+        options: [
+            "Intercepts",
+            "Domain restrictions and asymptotes",
+            "Range",
+            "Derivative"
+        ],
+        correct: 1
+    }
+];
+
+const rfLesson3Quiz = [
+    {
+        question: "What is the first step in solving a rational equation?",
+        options: [
+            "Solve immediately",
+            "Find the LCD (Least Common Denominator)",
+            "Factor the numerator",
+            "Graph the function"
+        ],
+        correct: 1
+    },
+    {
+        question: "What are extraneous solutions?",
+        options: [
+            "Solutions that work perfectly",
+            "Solutions that appear valid but don't satisfy the original equation",
+            "Solutions that are always correct",
+            "Solutions that are complex numbers"
+        ],
+        correct: 1
+    },
+    {
+        question: "Why must you check solutions in rational equations?",
+        options: [
+            "To make the problem longer",
+            "To verify they don't make any denominator zero",
+            "To find more solutions",
+            "It's not necessary"
+        ],
+        correct: 1
+    },
+    {
+        question: "When solving 1/x + 1/(x+2) = 5/12, what is the LCD?",
+        options: [
+            "x",
+            "x + 2",
+            "x(x + 2)",
+            "12"
+        ],
+        correct: 2
+    },
+    {
+        question: "After clearing fractions in a rational equation, what type of equation do you typically get?",
+        options: [
+            "Another rational equation",
+            "A polynomial equation",
+            "A trigonometric equation",
+            "A logarithmic equation"
+        ],
+        correct: 1
+    }
+];
+
+const rfLesson4Quiz = [
+    {
+        question: "What are critical points in solving rational inequalities?",
+        options: [
+            "Only zeros of the numerator",
+            "Zeros of numerator and denominator",
+            "Only zeros of the denominator",
+            "Points where the function equals one"
+        ],
+        correct: 1
+    },
+    {
+        question: "How do you solve a rational inequality?",
+        options: [
+            "Multiply both sides by the denominator",
+            "Use sign analysis with critical points",
+            "Set it equal to zero",
+            "Graph it only"
+        ],
+        correct: 1
+    },
+    {
+        question: "In the inequality (x - 1)/(x + 2) ≥ 0, what are the critical points?",
+        options: [
+            "x = 1 only",
+            "x = -2 only",
+            "x = 1 and x = -2",
+            "No critical points"
+        ],
+        correct: 2
+    },
+    {
+        question: "What does the solution (-∞, -2) ∪ [1, ∞) mean?",
+        options: [
+            "All numbers between -2 and 1",
+            "All numbers less than -2 or greater than or equal to 1",
+            "Only -2 and 1",
+            "No solution"
+        ],
+        correct: 1
+    },
+    {
+        question: "When testing intervals in sign analysis, what are you checking?",
+        options: [
+            "If the function is positive or negative",
+            "If the function is increasing or decreasing",
+            "If the function is continuous",
+            "If the function is differentiable"
+        ],
+        correct: 0
+    }
+];
+
 function rfInjectLessonControls() {
-    const sections = document.querySelectorAll('.lesson-section');
-    sections.forEach((section, index) => {
-        const lessonNum = index + 1;
-        // Skip if controls already exist
-        if (section.querySelector('[data-rf-controls]')) return;
-
-        const controlsWrapper = document.createElement('div');
-        controlsWrapper.setAttribute('data-rf-controls', 'true');
-        controlsWrapper.innerHTML = `
-            <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8">
-                <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">
-                    <i class="fas fa-check-circle text-emerald-500 mr-2"></i>Complete This Lesson
-                </h3>
-                <p class="text-gray-600 text-center mb-6">Mark this lesson as completed to track your progress and unlock the next lesson.</p>
-                <div class="text-center">
-                    <button onclick="rfCompleteLesson(${lessonNum})" class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold" data-rf-complete-btn="${lessonNum}">
-                        <i class="fas fa-check mr-2"></i>Mark as Complete
-                    </button>
-                </div>
-            </div>
-
-            <div class="flex justify-between items-center mb-8">
-                <button onclick="rfNavigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" data-rf-prev>
-                    <i class="fas fa-chevron-left mr-2"></i>Previous Lesson
-                </button>
-                <div class="flex items-center space-x-4">
-                    <div class="text-center">
-                        <div class="text-lg font-semibold text-primary"><span id="rfCurrentLessonNum">${rfCurrentLesson}</span> of ${rfTotalLessons}</div>
-                    </div>
-                    <div class="w-32 bg-gray-200 rounded-full h-2">
-                        <div id="rfLessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: ${(rfCurrentLesson / rfTotalLessons) * 100}%"></div>
-                    </div>
-                </div>
-                <button onclick="rfNavigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed" data-rf-next>
-                    Next Lesson<i class="fas fa-chevron-right ml-2"></i>
-                </button>
-            </div>
-        `;
-
-        section.appendChild(controlsWrapper);
-    });
-
+    // Navigation controls are now handled by sidebar
+    // This function is kept for compatibility but navigation is via sidebar
     rfUpdateNavigationButtons();
-    rfUpdateCompletionButtonsUI();
 }
 
 function rfNavigateLesson(direction) {
-    const newLesson = rfCurrentLesson + direction;
-    if (newLesson >= 1 && newLesson <= rfTotalLessons) {
-        rfShowLesson(newLesson, true);
+    const target = rfCurrentLesson + direction;
+    
+    // If trying to go to next lesson, show quiz first (unless already completed)
+    if (direction === 1) {
+        // Moving forward - check if current lesson is completed
+        if (rfCurrentLesson === 1 && !rfCompletedLessons.has(1)) {
+            rfShowLesson1Quiz();
+            return;
+        }
+        if (rfCurrentLesson === 2 && !rfCompletedLessons.has(2)) {
+            rfRunLessonQuiz(rfLesson2Quiz, 2, () => setTimeout(() => rfShowLesson(3, true), 300));
+            return;
+        }
+        if (rfCurrentLesson === 3 && !rfCompletedLessons.has(3)) {
+            rfRunLessonQuiz(rfLesson3Quiz, 3, () => setTimeout(() => rfShowLesson(4, true), 300));
+            return;
+        }
+        if (rfCurrentLesson === 4 && !rfCompletedLessons.has(4)) {
+            rfRunLessonQuiz(rfLesson4Quiz, 4, () => {
+                setTimeout(() => {
+                    if (rfCompletedLessons.size === rfTotalLessons) {
+                        rfShowTopicCompletionOption();
+                    }
+                }, 500);
+            });
+            return;
+        }
+    }
+    
+    // If moving backward or lesson is already completed, navigate directly
+    if (target >= 1 && target <= rfTotalLessons) {
+        rfShowLesson(target, true);
     }
 }
 
 function rfShowLesson(lessonNum, scrollToTop = false) {
-    const lessonNavBtns = document.querySelectorAll('.lesson-nav-btn');
-    const lessonSections = document.querySelectorAll('.lesson-section');
-
+    // Stop timer for previous lesson
+    if (rfCurrentLesson !== lessonNum && rfCurrentLesson >= 1 && rfCurrentLesson <= 4) {
+        stopLessonTimer(rfCurrentLesson);
+    }
+    
     rfCurrentLesson = lessonNum;
-
-    // Update nav buttons visual state
-    lessonNavBtns.forEach(b => {
-        b.classList.remove('border-primary', 'bg-primary');
-        b.classList.add('border-transparent');
-        const icon = b.querySelector('.w-16');
-        if (icon) {
-            icon.classList.remove('bg-primary', 'text-white');
-            icon.classList.add('bg-gray-300', 'text-gray-600');
+    
+    // Update sidebar - expand current topic, collapse others
+    document.querySelectorAll('.lesson-topic').forEach(t => {
+        const n = parseInt(t.dataset.lesson, 10);
+        if (n === lessonNum) {
+            t.classList.add('expanded');
+            t.querySelector('.lesson-topic-header')?.setAttribute('aria-expanded', 'true');
+        } else {
+            t.classList.remove('expanded');
+            t.querySelector('.lesson-topic-header')?.setAttribute('aria-expanded', 'false');
         }
     });
-    const currentBtn = document.querySelector(`.lesson-nav-btn[data-lesson="${lessonNum}"]`);
-    if (currentBtn) {
-        currentBtn.classList.add('border-primary', 'bg-primary');
-        currentBtn.classList.remove('border-transparent');
-        const icon = currentBtn.querySelector('.w-16');
-        if (icon) {
-            icon.classList.add('bg-primary', 'text-white');
-            icon.classList.remove('bg-gray-300', 'text-gray-600');
-        }
-    }
 
     // Show selected lesson
+    const lessonSections = document.querySelectorAll('.lesson-section');
     lessonSections.forEach(section => section.classList.remove('active'));
     const target = document.getElementById(`lesson${lessonNum}`);
     if (target) target.classList.add('active');
 
-    rfUpdateNavigationButtons();
+    // Set sidebar active to objective by default
+    setSidebarActive(lessonNum, 'objective');
+    updateSidebarProgress();
+
+    // Start timer for current lesson
+    startLessonTimer(lessonNum);
+    
+    // Initialize timer display
+    if (lessonTimers[lessonNum].elapsed > 0) {
+        updateTimerDisplay(lessonNum, lessonTimers[lessonNum].elapsed);
+    }
+
+    // Show/hide Topic 4 quiz button
+    const topic4QuizButton = document.getElementById('topic4QuizButton');
+    if (topic4QuizButton) {
+        if (lessonNum === 4 && !rfCompletedLessons.has(4)) {
+            topic4QuizButton.style.display = 'block';
+        } else {
+            topic4QuizButton.style.display = 'none';
+        }
+    }
+
     rfUpdateProgressIndicators();
+    rfUpdateNavigationButtons();
     rfUpdateLessonCompletionStatus();
 
     if (scrollToTop) {
@@ -156,32 +595,31 @@ function rfShowLesson(lessonNum, scrollToTop = false) {
 }
 
 function rfUpdateNavigationButtons() {
-    const prev = document.querySelector('[data-rf-prev]');
-    const next = document.querySelector('[data-rf-next]');
-    if (prev) prev.disabled = rfCurrentLesson === 1;
-    if (next) next.disabled = rfCurrentLesson === rfTotalLessons;
+    const disablePrev = rfCurrentLesson <= 1;
+    const disableNext = rfCurrentLesson >= rfTotalLessons;
+    document.querySelectorAll('#prevLessonBtn').forEach(btn => {
+        if (btn) btn.disabled = disablePrev;
+    });
+    document.querySelectorAll('#nextLessonBtn').forEach(btn => {
+        if (btn) btn.disabled = disableNext;
+    });
 }
 
 function rfUpdateProgressIndicators() {
-    const numEl = document.getElementById('rfCurrentLessonNum');
-    const bar = document.getElementById('rfLessonProgressBar');
-    if (numEl) numEl.textContent = String(rfCurrentLesson);
-    if (bar) bar.style.width = `${(rfCurrentLesson / rfTotalLessons) * 100}%`;
+    // Update all in-lesson progress labels/bars
+    document.querySelectorAll('#currentLessonNum').forEach(el => {
+        if (el) el.textContent = rfCurrentLesson;
+    });
+    document.querySelectorAll('#lessonProgressBar').forEach(bar => {
+        if (bar) {
+            const progress = (rfCurrentLesson / rfTotalLessons) * 100;
+            bar.style.width = progress + '%';
+        }
+    });
 }
 
 function rfUpdateLessonCompletionStatus() {
-    const lessonNavBtns = document.querySelectorAll('.lesson-nav-btn');
-    lessonNavBtns.forEach(btn => {
-        const ln = parseInt(btn.dataset.lesson);
-        const icon = btn.querySelector('.w-16');
-        if (!icon) return;
-        if (rfCompletedLessons.has(ln)) {
-            icon.classList.remove('bg-gray-300', 'text-gray-600', 'bg-primary', 'text-white');
-            icon.classList.add('bg-green-500', 'text-white');
-            icon.innerHTML = '<i class="fas fa-check text-lg"></i>';
-            rfSetCompleteButtonState(ln, { completed: true, loading: false });
-        }
-    });
+    updateSidebarProgress();
     
     // Check if all lessons are completed and show topic completion option
     if (rfCompletedLessons.size === rfTotalLessons) {
@@ -189,39 +627,7 @@ function rfUpdateLessonCompletionStatus() {
     }
 }
 
-function rfGetCompleteButtonForLesson(lessonNum) {
-    const section = document.getElementById(`lesson${lessonNum}`);
-    if (!section) return null;
-    return section.querySelector(`[data-rf-complete-btn="${lessonNum}"]`);
-}
-
-function rfSetCompleteButtonState(lessonNum, { completed = false, loading = false } = {}) {
-    const btn = rfGetCompleteButtonForLesson(lessonNum);
-    if (!btn) return;
-
-    if (loading) {
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving...';
-        return;
-    }
-
-    if (completed) {
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-check mr-2"></i>Completed';
-        btn.classList.remove('bg-emerald-500', 'hover:bg-emerald-600');
-        btn.classList.add('bg-emerald-600');
-    } else {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-check mr-2"></i>Mark as Complete';
-        btn.classList.add('bg-emerald-500', 'hover:bg-emerald-600');
-    }
-}
-
-function rfUpdateCompletionButtonsUI() {
-    for (let i = 1; i <= rfTotalLessons; i++) {
-        rfSetCompleteButtonState(i, { completed: rfCompletedLessons.has(i) });
-    }
-}
+// Completion button functions removed - using quiz system instead
 
 async function rfCompleteLesson(lessonNum) {
     console.log('Attempting to complete lesson:', lessonNum);
@@ -229,14 +635,8 @@ async function rfCompleteLesson(lessonNum) {
     try {
         // Guard: prevent duplicate completion submissions
         if (rfCompletedLessons.has(lessonNum)) {
-            showSuccess(`Lesson ${lessonNum} is already completed.`);
-            // Ensure UI reflects completed state
-            rfSetCompleteButtonState(lessonNum, { completed: true, loading: false });
             return;
         }
-
-        // Set loading state on the specific button
-        rfSetCompleteButtonState(lessonNum, { completed: false, loading: true });
 
         const requestData = {
             topic: 'Rational Functions',
@@ -256,7 +656,6 @@ async function rfCompleteLesson(lessonNum) {
         });
 
         console.log('Response status:', response.status);
-        console.log('Response headers:', response.headers);
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -273,40 +672,6 @@ async function rfCompleteLesson(lessonNum) {
         } catch (parseError) {
             console.error('Invalid JSON response:', text);
             console.error('Parse error:', parseError);
-            
-            // Show detailed error message
-            Swal.fire({
-                title: 'Server Error',
-                html: `
-                    <div class="text-left">
-                        <p class="mb-2">The server returned an invalid response.</p>
-                        <p class="mb-2"><strong>Possible causes:</strong></p>
-                        <ul class="list-disc list-inside mb-4 text-sm">
-                            <li>Database tables are missing</li>
-                            <li>PHP error occurred</li>
-                            <li>Server configuration issue</li>
-                        </ul>
-                        <p class="mb-2"><strong>Raw response:</strong></p>
-                        <pre class="bg-gray-100 p-2 rounded text-xs overflow-auto max-h-32">${text.substring(0, 500)}</pre>
-                        <p class="mt-2 text-sm">
-                            <a href="../fix-complete-button.html" class="text-blue-500 underline">
-                                Click here to fix this issue
-                            </a>
-                        </p>
-                    </div>
-                `,
-                icon: 'error',
-                confirmButtonText: 'OK',
-                confirmButtonColor: '#ef4444',
-                background: '#ffffff',
-                customClass: {
-                    popup: 'rounded-2xl',
-                    title: 'text-slate-800',
-                    content: 'text-slate-600'
-                }
-            });
-            // Revert loading state on error
-            rfSetCompleteButtonState(lessonNum, { completed: rfCompletedLessons.has(lessonNum), loading: false });
             return;
         }
         
@@ -316,76 +681,21 @@ async function rfCompleteLesson(lessonNum) {
             // Add to completed lessons
             rfCompletedLessons.add(lessonNum);
             
-            // Show completion status
-            rfShowCompletionStatus();
-            
             // Update lesson navigation
-            rfUpdateLessonNavigation();
-            
-            // Lock the button as completed
-            rfSetCompleteButtonState(lessonNum, { completed: true, loading: false });
+            rfUpdateLessonCompletionStatus();
+            updateSidebarProgress();
             
             // Check if all lessons are completed
             if (rfCompletedLessons.size === rfTotalLessons) {
                 // Show topic completion option
                 rfShowTopicCompletionOption();
             }
-            
-            // Show success message
-            Swal.fire({
-                title: 'Lesson Completed!',
-                text: `Great job completing Lesson ${lessonNum}!`,
-                icon: 'success',
-                confirmButtonText: 'Continue Learning',
-                confirmButtonColor: '#10b981',
-                background: '#ffffff',
-                customClass: {
-                    popup: 'rounded-2xl',
-                    title: 'text-slate-800',
-                    content: 'text-slate-600'
-                }
-            });
         } else {
             console.error('Server returned error:', data);
             throw new Error(data.message || 'Failed to complete lesson');
         }
     } catch (error) {
         console.error('Error completing lesson:', error);
-        
-        // Revert loading state on error
-        rfSetCompleteButtonState(lessonNum, { completed: rfCompletedLessons.has(lessonNum), loading: false });
-        
-        // Show detailed error message
-        Swal.fire({
-            title: 'Error Completing Lesson',
-            html: `
-                <div class="text-left">
-                    <p class="mb-2"><strong>Error:</strong> ${error.message}</p>
-                    <p class="mb-2"><strong>Lesson:</strong> ${lessonNum}</p>
-                    <p class="mb-4">Please try the following:</p>
-                    <ol class="list-decimal list-inside mb-4 text-sm space-y-1">
-                        <li>Make sure you're logged in</li>
-                        <li>Check your internet connection</li>
-                        <li>Try refreshing the page</li>
-                        <li>Contact support if the problem persists</li>
-                    </ol>
-                    <p class="text-sm">
-                        <a href="../fix-complete-button.html" class="text-blue-500 underline">
-                            Click here to run diagnostic tools
-                        </a>
-                    </p>
-                </div>
-            `,
-            icon: 'error',
-            confirmButtonText: 'OK',
-            confirmButtonColor: '#ef4444',
-            background: '#ffffff',
-            customClass: {
-                popup: 'rounded-2xl',
-                title: 'text-slate-800',
-                content: 'text-slate-600'
-            }
-        });
     }
 }
 
@@ -434,7 +744,14 @@ async function rfLoadCompletedLessons() {
             console.log('Successfully loaded completed lessons:', data.completed_lessons);
             rfCompletedLessons = new Set(data.completed_lessons);
             rfUpdateLessonCompletionStatus();
-            rfUpdateCompletionButtonsUI();
+            updateSidebarProgress();
+            // Hide Topic 4 quiz button if Topic 4 is already completed
+            if (rfCompletedLessons.has(4)) {
+                const quizButton = document.getElementById('topic4QuizButton');
+                if (quizButton) {
+                    quizButton.style.display = 'none';
+                }
+            }
         } else if (!data.success) {
             console.warn('Failed to load completed lessons:', data.message);
             // Don't show error to user, just log it
@@ -446,33 +763,783 @@ async function rfLoadCompletedLessons() {
     }
 }
 
-// Show completion status
-function rfShowCompletionStatus() {
-    const statusDiv = document.getElementById('lessonCompletionStatus');
-    if (statusDiv) {
-        statusDiv.classList.remove('hidden');
-        setTimeout(() => {
-            statusDiv.classList.add('hidden');
-        }, 3000);
+// Navigation functions removed - using sidebar navigation instead
+
+// Shuffle array using Fisher-Yates algorithm
+function rfShuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
+// Shuffle quiz questions and options
+function rfShuffleQuiz(quizArray) {
+    // Shuffle questions
+    const shuffledQuestions = rfShuffleArray(quizArray);
+    
+    // Shuffle options for each question and update correct answer index
+    return shuffledQuestions.map(quiz => {
+        const originalOptions = [...quiz.options];
+        const originalCorrect = quiz.correct;
+        
+        // Create array of indices and shuffle them
+        const indices = originalOptions.map((_, i) => i);
+        const shuffledIndices = rfShuffleArray(indices);
+        
+        // Map original correct index to new shuffled index
+        const newCorrectIndex = shuffledIndices.indexOf(originalCorrect);
+        
+        // Create new options array with shuffled order
+        const shuffledOptions = shuffledIndices.map(idx => originalOptions[idx]);
+        
+        return {
+            ...quiz,
+            options: shuffledOptions,
+            correct: newCorrectIndex
+        };
+    });
+}
+
+/**
+ * Generate explanation for quiz answer (used in results)
+ */
+function rfGenerateExplanation(quiz, selectedAnswer) {
+    if (!quiz || !quiz.options) return '';
+    const isCorrect = selectedAnswer === quiz.correct;
+    const correctAnswer = quiz.options[quiz.correct];
+    const selectedAnswerText = quiz.options[selectedAnswer];
+    const question = (quiz.question || '').toLowerCase();
+    if (quiz.explanation) return quiz.explanation;
+    let explanation = '';
+    if (isCorrect) {
+        explanation = `✓ Correct! "${correctAnswer}" is the right answer.\n\n`;
+    } else {
+        explanation = `✗ Incorrect. You selected "${selectedAnswerText}", but the correct answer is "${correctAnswer}".\n\n`;
+    }
+    if (question.includes('rational function')) {
+        explanation += 'HOW TO SOLVE:\nA rational function is a function expressed as the ratio of two polynomials. The denominator cannot be zero, which creates domain restrictions.';
+    } else if (question.includes('domain') || question.includes('restriction')) {
+        explanation += 'HOW TO SOLVE:\nTo find domain restrictions, set the denominator equal to zero and solve. Those values are excluded from the domain.';
+    } else if (question.includes('asymptote')) {
+        explanation += 'HOW TO SOLVE:\nVertical asymptotes occur where the denominator equals zero. Horizontal asymptotes depend on the degrees of numerator and denominator.';
+    } else if (question.includes('equation') || question.includes('solve')) {
+        explanation += 'HOW TO SOLVE:\n1. Find the LCD (Least Common Denominator)\n2. Clear fractions by multiplying both sides by LCD\n3. Solve the resulting polynomial equation\n4. Check for extraneous solutions';
+    } else if (question.includes('inequality')) {
+        explanation += 'HOW TO SOLVE:\n1. Find critical points (where numerator = 0 and denominator = 0)\n2. Create number line with critical points\n3. Test intervals to determine sign\n4. Identify solution intervals';
+    } else {
+        explanation += 'HOW TO SOLVE:\n1. Read the question carefully\n2. Identify what concept is being tested\n3. Apply the relevant rules or formulas\n4. Check your answer makes sense';
+    }
+    return explanation;
+}
+
+// Quiz Functions
+function rfRunLessonQuiz(quizArray, lessonNum, onPassed) {
+    // Track quiz start time
+    window.quizStartTime = Date.now();
+    
+    // Shuffle quiz questions and options
+    const shuffledQuiz = rfShuffleQuiz(quizArray);
+    
+    let currentQuestion = 0;
+    let score = 0;
+    let userAnswers = [];
+
+    Swal.fire({
+        title: `📚 Topic ${lessonNum} Quiz`,
+        html: `
+            <div class="text-left space-y-4">
+                <div class="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg p-5 border-l-4 border-primary">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
+                        <i class="fas fa-info-circle text-primary mr-2"></i>
+                        Quiz Instructions
+                    </h3>
+                    <p class="text-gray-700 mb-2">
+                        You will answer <strong>5 questions</strong> for Topic ${lessonNum}.
+                    </p>
+                    <p class="text-sm text-gray-600 mb-2">
+                        <strong>Passing:</strong> at least <strong>3/5</strong> correct (60%).
+                    </p>
+                    <div class="mt-3 pt-3 border-t border-primary/20">
+                        <p class="text-sm font-semibold text-gray-700 mb-2">What to expect:</p>
+                        <ul class="text-sm text-gray-600 space-y-1 list-disc list-inside">
+                            <li>Questions are randomized for each attempt</li>
+                            <li>Answer options are shuffled</li>
+                            <li>You cannot go back to previous questions</li>
+                            <li>Review your answers at the end</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border-l-4 border-green-500">
+                    <p class="text-sm text-gray-700">
+                        <i class="fas fa-lightbulb text-green-500 mr-2"></i>
+                        <strong>Tip:</strong> Take your time and read each question carefully. You can try again if needed.
+                    </p>
+                </div>
+            </div>
+        `,
+        icon: 'info',
+        confirmButtonText: 'Start Quiz',
+        confirmButtonColor: '#667eea',
+        cancelButtonText: 'Cancel',
+        showCancelButton: true,
+        cancelButtonColor: '#ef4444',
+        allowOutsideClick: false,
+        width: '650px',
+        customClass: {
+            popup: 'rounded-2xl',
+            title: 'text-slate-800',
+            htmlContainer: 'text-left'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.quizStartTime = Date.now(); // Start timer when user actually starts questions
+            displayQuestion();
+        } else {
+            rfShowLesson(lessonNum, true);
+        }
+    });
+
+    function displayQuestion() {
+        if (currentQuestion >= shuffledQuiz.length) {
+            showQuizResults();
+            return;
+        }
+        const quiz = shuffledQuiz[currentQuestion];
+        const progressPercentage = ((currentQuestion + 1) / shuffledQuiz.length) * 100;
+        
+        const optionsHtml = quiz.options.map((option, index) =>
+            `<button type="button" class="quiz-option w-full text-left px-5 py-4 mb-3 bg-white border-2 border-gray-300 rounded-lg hover:border-primary hover:bg-gradient-to-r hover:from-primary/10 hover:to-secondary/10 hover:shadow-md transition-all duration-200 font-medium text-gray-800 transform hover:scale-[1.02]" data-answer="${index}">
+                <span class="flex items-center">
+                    <span class="w-8 h-8 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center mr-3 font-semibold text-gray-700 border border-gray-300">${String.fromCharCode(65 + index)}</span>
+                    <span>${option}</span>
+                </span>
+            </button>`
+        ).join('');
+
+        Swal.fire({
+            title: `<div class="flex items-center justify-center w-full">
+                <span class="text-center">Question ${currentQuestion + 1} of ${shuffledQuiz.length}</span>
+            </div>`,
+            html: `
+                <div class="text-left">
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-gray-200 rounded-full h-2 mb-6">
+                        <div class="bg-gradient-to-r from-primary to-secondary h-2 rounded-full transition-all duration-300" style="width: ${progressPercentage}%"></div>
+                    </div>
+                    
+                    <p class="text-xl font-semibold mb-6 text-gray-900">${quiz.question}</p>
+                    <div class="space-y-3">${optionsHtml}</div>
+                </div>
+            `,
+            showConfirmButton: false,
+            showCancelButton: true,
+            cancelButtonText: 'Cancel Quiz',
+            cancelButtonColor: '#ef4444',
+            allowOutsideClick: false,
+            width: '750px',
+            customClass: {
+                popup: 'rounded-2xl shadow-2xl',
+                title: 'text-primary text-2xl font-bold mb-4 text-center',
+                htmlContainer: 'text-left',
+                cancelButton: 'px-6 py-3 rounded-lg font-semibold'
+            },
+            didOpen: () => {
+                const questionIndex = currentQuestion;
+                const currentQuiz = shuffledQuiz[questionIndex];
+                const container = document.querySelector('.swal2-popup .swal2-html-container') || document.querySelector('.swal2-html-container');
+                if (!container) return;
+                container.addEventListener('click', function optionClick(e) {
+                    const btn = e.target.closest('.quiz-option');
+                    if (!btn || btn.disabled) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const selectedAnswer = parseInt(btn.dataset.answer, 10);
+                    if (isNaN(selectedAnswer) || selectedAnswer < 0 || !currentQuiz.options || selectedAnswer >= currentQuiz.options.length) return;
+                    let explanation = '';
+                    try {
+                        explanation = rfGenerateExplanation(currentQuiz, selectedAnswer);
+                    } catch (err) {
+                        explanation = selectedAnswer === currentQuiz.correct ? 'Correct.' : 'Incorrect.';
+                    }
+                    userAnswers[questionIndex] = {
+                        question: currentQuiz.question,
+                        options: currentQuiz.options,
+                        selected: selectedAnswer,
+                        selectedText: currentQuiz.options[selectedAnswer],
+                        correct: currentQuiz.correct,
+                        correctText: currentQuiz.options[currentQuiz.correct],
+                        isCorrect: selectedAnswer === currentQuiz.correct,
+                        explanation: explanation
+                    };
+                    if (selectedAnswer === currentQuiz.correct) score++;
+                    container.querySelectorAll('.quiz-option').forEach(b => { b.disabled = true; });
+                    container.removeEventListener('click', optionClick);
+                    setTimeout(() => {
+                        Swal.close();
+                        currentQuestion++;
+                        setTimeout(displayQuestion, 80);
+                    }, 400);
+                });
+            }
+        });
+    }
+
+    function showQuizResults() {
+        const percentage = Math.round((score / shuffledQuiz.length) * 100);
+        const passed = score >= 3;
+        
+        // Verify that all answers were collected
+        const missingAnswers = [];
+        for (let i = 0; i < shuffledQuiz.length; i++) {
+            if (!userAnswers[i] || typeof userAnswers[i] !== 'object') {
+                missingAnswers.push(i + 1);
+            }
+        }
+        
+        if (missingAnswers.length > 0) {
+            console.error('Missing answers for questions:', missingAnswers);
+            // Try to fill in missing answers with default values
+            for (let i = 0; i < shuffledQuiz.length; i++) {
+                if (!userAnswers[i]) {
+                    const quiz = shuffledQuiz[i];
+                    userAnswers[i] = {
+                        question: quiz.question,
+                        options: quiz.options,
+                        selected: -1,
+                        selectedText: 'Not answered',
+                        correct: quiz.correct,
+                        correctText: quiz.options[quiz.correct],
+                        isCorrect: false
+                    };
+                }
+            }
+        }
+        
+        // Log all answers for debugging
+        console.log('Quiz Results - All Answers:', {
+            lessonNum: lessonNum,
+            score: score,
+            totalQuestions: shuffledQuiz.length,
+            answersCount: userAnswers.length,
+            answers: userAnswers
+        });
+
+        Swal.fire({
+            title: passed ? '🎉 Congratulations!' : '📚 Keep Learning!',
+            html: `
+                <div class="text-center">
+                    <div class="mb-6">
+                        <div class="inline-flex items-center justify-center w-24 h-24 rounded-full ${passed ? 'bg-green-100' : 'bg-red-100'} mb-4">
+                            <span class="text-4xl">${passed ? '✓' : '✗'}</span>
+                        </div>
+                        <p class="text-3xl font-bold mb-2 ${passed ? 'text-green-600' : 'text-red-600'}">
+                            Score: ${score}/${shuffledQuiz.length}
+                        </p>
+                        <p class="text-xl font-semibold ${passed ? 'text-green-600' : 'text-red-600'}">
+                            ${percentage}%
+                        </p>
+                    </div>
+                    ${passed
+                        ? `<p class="text-lg text-gray-700 mb-4">Great job! Topic ${lessonNum} is now completed.</p>`
+                        : `<p class="text-lg text-gray-700 mb-4">You need at least 60% (3/5). Review Topic ${lessonNum} and try again.</p>`
+                    }
+                </div>
+            `,
+            icon: passed ? 'success' : 'error',
+            confirmButtonText: passed ? 'Continue' : `Review Topic ${lessonNum}`,
+            confirmButtonColor: passed ? '#10b981' : '#667eea',
+            allowOutsideClick: false,
+            width: '600px',
+            customClass: {
+                popup: 'rounded-2xl',
+                title: 'text-slate-800',
+                htmlContainer: 'text-center'
+            }
+        }).then(async (result) => {
+            if (result.isConfirmed && passed) {
+                try {
+                    // Store quiz data before completing lesson
+                    console.log(`Storing quiz data for lesson ${lessonNum}, score: ${score}/${shuffledQuiz.length}`);
+                    const quizResult = await rfStoreQuizData(lessonNum, score, shuffledQuiz.length, userAnswers);
+                    console.log('Quiz data stored:', quizResult);
+                    
+                    // Small delay to ensure quiz data is saved
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                    
+                    // Now complete the lesson (this will save final study time)
+                    await rfCompleteLesson(lessonNum);
+                    
+                    // If this is Topic 4, check if all topics are completed and show completion section
+                    if (lessonNum === 4) {
+                        // Hide quiz button after completing Topic 4
+                        const quizButton = document.getElementById('topic4QuizButton');
+                        if (quizButton) {
+                            quizButton.style.display = 'none';
+                        }
+                        // Small delay to ensure completion is saved
+                        setTimeout(() => {
+                            // Check if all lessons are completed
+                            if (rfCompletedLessons.size === rfTotalLessons) {
+                                // Only show performance analysis after ALL quizzes are completed
+                                showPerformanceAnalysisSection();
+                                rfShowTopicCompletionOption();
+                            }
+                        }, 500);
+                    }
+                } catch (e) {
+                    console.error('Error storing quiz data:', e);
+                    // even if saving fails, continue UI flow
+                }
+                if (typeof onPassed === 'function') onPassed();
+            } else {
+                // Store quiz data even if failed
+                try {
+                    await rfStoreQuizData(lessonNum, score, shuffledQuiz.length, userAnswers);
+                    // Performance analysis will only show after all quizzes are completed
+                } catch (e) {
+                    console.error('Error storing quiz data:', e);
+                }
+                rfShowLesson(lessonNum, true);
+            }
+        });
     }
 }
 
-// Update lesson navigation with completion status
-function rfUpdateLessonNavigation() {
-    const lessonNavBtns = document.querySelectorAll('.lesson-nav-btn');
+// Show Lesson 1 Quiz
+function rfShowLesson1Quiz() {
+    if (rfCompletedLessons.has(1)) { // already passed, skip quiz
+        rfShowLesson(2, true);
+        return;
+    }
     
-    lessonNavBtns.forEach(btn => {
-        const lessonNum = parseInt(btn.dataset.lesson);
-        const icon = btn.querySelector('.w-16');
-        
-        if (rfCompletedLessons.has(lessonNum)) {
-            icon.classList.remove('bg-gray-300', 'text-gray-600', 'bg-primary', 'text-white');
-            icon.classList.add('bg-green-500', 'text-white');
+    // Track quiz start time
+    window.quizStartTime = Date.now();
+    
+    // Shuffle quiz questions and options
+    const shuffledQuiz = rfShuffleQuiz(rfLesson1Quiz);
+    
+    let currentQuestion = 0;
+    let score = 0;
+    let userAnswers = [];
+
+    // Show questions purpose explanation FIRST as a separate popup
+    Swal.fire({
+        title: '📚 Topic 1 Quiz',
+        html: `
+            <div class="text-left space-y-4">
+                <div class="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg p-5 border-l-4 border-primary">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
+                        <i class="fas fa-info-circle text-primary mr-2"></i>
+                        Quiz Instructions
+                    </h3>
+                    <p class="text-gray-700 mb-2">
+                        You will answer <strong>5 questions</strong> for Topic 1.
+                    </p>
+                    <p class="text-sm text-gray-600 mb-2">
+                        <strong>Passing:</strong> at least <strong>3/5</strong> correct (60%).
+                    </p>
+                    <div class="mt-3 pt-3 border-t border-primary/20">
+                        <p class="text-sm font-semibold text-gray-700 mb-2">What to expect:</p>
+                        <ul class="text-sm text-gray-600 space-y-1 list-disc list-inside">
+                            <li>Questions are randomized for each attempt</li>
+                            <li>Answer options are shuffled</li>
+                            <li>You cannot go back to previous questions</li>
+                            <li>Review your answers at the end</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg p-5 border-l-4 border-yellow-500">
+                    <h4 class="text-lg font-bold text-gray-800 mb-2">
+                        <i class="fas fa-trophy text-yellow-500 mr-2"></i>Quiz Requirements
+                    </h4>
+                    <div class="space-y-2 text-sm text-gray-700">
+                        <p><strong>Total Questions:</strong> 5 questions about Topic 1</p>
+                        <p><strong>Passing Score:</strong> At least 3 out of 5 correct answers (60%)</p>
+                        <p><strong>What Happens:</strong></p>
+                        <ul class="list-disc list-inside ml-4 space-y-1">
+                            <li>If you pass → You can proceed to Topic 2</li>
+                            <li>If you fail → You'll need to review Topic 1 and try again</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border-l-4 border-green-500">
+                    <p class="text-sm text-gray-700">
+                        <i class="fas fa-lightbulb text-green-500 mr-2"></i>
+                        <strong>Tip:</strong> Take your time and read each question carefully. These questions help ensure you have a solid foundation before moving forward!
+                    </p>
+                </div>
+            </div>
+        `,
+        icon: 'info',
+        confirmButtonText: 'Start Quiz',
+        confirmButtonColor: '#667eea',
+        cancelButtonText: 'Cancel',
+        showCancelButton: true,
+        cancelButtonColor: '#ef4444',
+        allowOutsideClick: false,
+        width: '650px',
+        customClass: {
+            popup: 'rounded-2xl',
+            title: 'text-slate-800',
+            htmlContainer: 'text-left'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.quizStartTime = Date.now(); // Start timer when user actually starts questions
+            displayQuestion();
         } else {
-            icon.classList.remove('bg-green-500', 'text-white', 'bg-primary', 'text-white');
-            icon.classList.add('bg-gray-300', 'text-gray-600');
+            rfShowLesson(1, true);
         }
     });
+
+    function displayQuestion() {
+        if (currentQuestion >= shuffledQuiz.length) {
+            showQuizResults();
+            return;
+        }
+
+        const quiz = shuffledQuiz[currentQuestion];
+        const progressPercentage = ((currentQuestion + 1) / shuffledQuiz.length) * 100;
+        
+        const optionsHtml = quiz.options.map((option, index) => 
+            `<button type="button" class="quiz-option w-full text-left px-5 py-4 mb-3 bg-white border-2 border-gray-300 rounded-lg hover:border-primary hover:bg-gradient-to-r hover:from-primary/10 hover:to-secondary/10 hover:shadow-md transition-all duration-200 font-medium text-gray-800 transform hover:scale-[1.02]" data-answer="${index}">
+                <span class="flex items-center">
+                    <span class="w-8 h-8 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center mr-3 font-semibold text-gray-700 border border-gray-300">${String.fromCharCode(65 + index)}</span>
+                    <span>${option}</span>
+                </span>
+            </button>`
+        ).join('');
+
+        Swal.fire({
+            title: `<div class="flex items-center justify-center w-full">
+                <span class="text-center">Question ${currentQuestion + 1} of ${shuffledQuiz.length}</span>
+            </div>`,
+            html: `
+                <div class="text-left">
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-gray-200 rounded-full h-2 mb-6">
+                        <div class="bg-gradient-to-r from-primary to-secondary h-2 rounded-full transition-all duration-300" style="width: ${progressPercentage}%"></div>
+                    </div>
+                    
+                    <p class="text-xl font-semibold mb-6 text-gray-900">${quiz.question}</p>
+                    <div class="space-y-3">
+                        ${optionsHtml}
+                    </div>
+                </div>
+            `,
+            showConfirmButton: false,
+            showCancelButton: true,
+            cancelButtonText: 'Cancel Quiz',
+            cancelButtonColor: '#ef4444',
+            allowOutsideClick: false,
+            width: '750px',
+            customClass: {
+                popup: 'rounded-2xl shadow-2xl',
+                title: 'text-primary text-2xl font-bold mb-4 text-center',
+                htmlContainer: 'text-left',
+                cancelButton: 'px-6 py-3 rounded-lg font-semibold'
+            },
+            didOpen: () => {
+                const questionIndex = currentQuestion;
+                const currentQuiz = shuffledQuiz[questionIndex];
+                const container = document.querySelector('.swal2-popup .swal2-html-container') || document.querySelector('.swal2-html-container');
+                if (!container) return;
+                container.addEventListener('click', function optionClick(e) {
+                    const btn = e.target.closest('.quiz-option');
+                    if (!btn || btn.disabled) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const selectedAnswer = parseInt(btn.dataset.answer, 10);
+                    if (isNaN(selectedAnswer) || selectedAnswer < 0 || !currentQuiz.options || selectedAnswer >= currentQuiz.options.length) return;
+                    let explanation = '';
+                    try {
+                        explanation = rfGenerateExplanation(currentQuiz, selectedAnswer);
+                    } catch (err) {
+                        explanation = selectedAnswer === currentQuiz.correct ? 'Correct.' : 'Incorrect.';
+                    }
+                    userAnswers[questionIndex] = {
+                        question: currentQuiz.question,
+                        options: currentQuiz.options,
+                        selected: selectedAnswer,
+                        selectedText: currentQuiz.options[selectedAnswer],
+                        correct: currentQuiz.correct,
+                        correctText: currentQuiz.options[currentQuiz.correct],
+                        isCorrect: selectedAnswer === currentQuiz.correct,
+                        explanation: explanation
+                    };
+                    if (selectedAnswer === currentQuiz.correct) score++;
+                    container.querySelectorAll('.quiz-option').forEach(b => { b.disabled = true; });
+                    container.removeEventListener('click', optionClick);
+                    setTimeout(() => {
+                        Swal.close();
+                        currentQuestion++;
+                        setTimeout(displayQuestion, 80);
+                    }, 400);
+                });
+            }
+        });
+    }
+
+    function showQuizResults() {
+        const percentage = Math.round((score / shuffledQuiz.length) * 100);
+        const passed = score >= 3; // Need at least 3 out of 5 to pass
+        
+        // Verify that all answers were collected
+        const missingAnswers = [];
+        for (let i = 0; i < shuffledQuiz.length; i++) {
+            if (!userAnswers[i] || typeof userAnswers[i] !== 'object') {
+                missingAnswers.push(i + 1);
+            }
+        }
+        
+        if (missingAnswers.length > 0) {
+            console.error('Missing answers for questions:', missingAnswers);
+            // Try to fill in missing answers with default values
+            for (let i = 0; i < shuffledQuiz.length; i++) {
+                if (!userAnswers[i]) {
+                    const quiz = shuffledQuiz[i];
+                    userAnswers[i] = {
+                        question: quiz.question,
+                        options: quiz.options,
+                        selected: -1,
+                        selectedText: 'Not answered',
+                        correct: quiz.correct,
+                        correctText: quiz.options[quiz.correct],
+                        isCorrect: false
+                    };
+                }
+            }
+        }
+        
+        // Log all answers for debugging
+        console.log('Lesson 1 Quiz Results - All Answers:', {
+            score: score,
+            totalQuestions: shuffledQuiz.length,
+            answersCount: userAnswers.length,
+            answers: userAnswers
+        });
+
+        Swal.fire({
+            title: passed ? '🎉 Congratulations!' : '📚 Keep Learning!',
+            html: `
+                <div class="text-center">
+                    <div class="mb-6">
+                        <div class="inline-flex items-center justify-center w-24 h-24 rounded-full ${passed ? 'bg-green-100' : 'bg-red-100'} mb-4">
+                            <span class="text-4xl">${passed ? '✓' : '✗'}</span>
+                        </div>
+                        <p class="text-3xl font-bold mb-2 ${passed ? 'text-green-600' : 'text-red-600'}">
+                            Score: ${score}/${shuffledQuiz.length}
+                        </p>
+                        <p class="text-xl font-semibold ${passed ? 'text-green-600' : 'text-red-600'}">
+                            ${percentage}%
+                        </p>
+                    </div>
+                    ${passed ? 
+                        '<p class="text-lg text-gray-700 mb-4">Great job! You understand the topic. You can now proceed to Topic 2.</p>' :
+                        '<p class="text-lg text-gray-700 mb-4">You need to score at least 60% (3/5) to proceed. Please review Topic 1 and try again!</p>'
+                    }
+                </div>
+            `,
+            icon: passed ? 'success' : 'error',
+            confirmButtonText: passed ? 'Continue to Topic 2' : 'Review Topic 1',
+            confirmButtonColor: passed ? '#10b981' : '#667eea',
+            allowOutsideClick: false,
+            width: '600px',
+            customClass: {
+                popup: 'rounded-2xl',
+                title: 'text-slate-800',
+                htmlContainer: 'text-center'
+            }
+        }).then(async (result) => {
+            if (result.isConfirmed && passed) {
+                // Mark lesson as complete and proceed to next lesson
+                try {
+                    // Store quiz data before completing lesson
+                    await rfStoreQuizData(1, score, shuffledQuiz.length, userAnswers);
+                    await rfCompleteLesson(1);
+                    // Performance analysis will only show after all quizzes are completed
+                    // Small delay to ensure completion is saved
+                    setTimeout(() => {
+                        rfShowLesson(2, true);
+                    }, 500);
+                } catch (error) {
+                    console.error('Error completing lesson:', error);
+                    // Still proceed to next lesson even if save fails
+                    rfShowLesson(2, true);
+                }
+            } else if (!passed) {
+                // Store quiz data even if failed
+                try {
+                    await rfStoreQuizData(1, score, shuffledQuiz.length, userAnswers);
+                    // Performance analysis will only show after all quizzes are completed
+                } catch (e) {
+                    console.error('Error storing quiz data:', e);
+                }
+                // Stay on Lesson 1
+                rfShowLesson(1, true);
+            }
+        });
+    }
+}
+
+// Show Topic 4 Quiz
+function rfShowTopic4Quiz() {
+    if (rfCompletedLessons.has(4)) {
+        // Already passed, show completion section
+        rfShowTopicCompletionOption();
+        return;
+    }
+    rfRunLessonQuiz(rfLesson4Quiz, 4, async () => {
+        // After passing Topic 4 quiz
+        try {
+            await rfCompleteLesson(4);
+            // Small delay to ensure completion is saved
+            setTimeout(() => {
+                // Check if all lessons are completed and show completion section
+                if (rfCompletedLessons.size === rfTotalLessons) {
+                    rfShowTopicCompletionOption();
+                }
+                // Hide quiz button and show completion section
+                const quizButton = document.getElementById('topic4QuizButton');
+                if (quizButton) {
+                    quizButton.style.display = 'none';
+                }
+            }, 500);
+        } catch (error) {
+            console.error('Error completing Topic 4:', error);
+        }
+    });
+}
+
+// Store quiz data to database
+/**
+ * Store Quiz Data to Database
+ * 
+ * DATABASE TABLE: quiz_attempts
+ * PHP ENDPOINT: ../php/store-quiz-data.php
+ * 
+ * IMPORTANT SEPARATION:
+ * - This file (topics/rational-functions.js) uses quiz_type format: rational_functions_topic_1, rational_functions_topic_2, etc.
+ * - Quiz files in /quiz folder use different quiz_type values
+ * - Both use the same quiz_attempts table but with DIFFERENT quiz_type values, so NO CONFLICT
+ * 
+ * - Uses session-based authentication (credentials: 'include')
+ * - Quiz type format: rational_functions_topic_1, rational_functions_topic_2, etc.
+ * - Student ID: Automatically retrieved from PHP session ($_SESSION['user_id'])
+ * 
+ * @param {number} lessonNum - Topic number (1-4)
+ * @param {number} score - Number of correct answers
+ * @param {number} totalQuestions - Total number of questions
+ * @param {Array} userAnswers - Array of answer objects with question, options, selected, correct, etc.
+ */
+async function rfStoreQuizData(lessonNum, score, totalQuestions, userAnswers) {
+    try {
+        // Validate and clean userAnswers array
+        // Ensure all questions are accounted for (up to totalQuestions)
+        const cleanedAnswers = [];
+        for (let i = 0; i < totalQuestions; i++) {
+            if (userAnswers[i] && typeof userAnswers[i] === 'object') {
+                // Ensure all required fields are present
+                const answer = {
+                    question: userAnswers[i].question || `Question ${i + 1}`,
+                    options: userAnswers[i].options || [],
+                    selected: userAnswers[i].selected !== undefined ? userAnswers[i].selected : -1,
+                    selectedText: userAnswers[i].selectedText || (userAnswers[i].options && userAnswers[i].options[userAnswers[i].selected] ? userAnswers[i].options[userAnswers[i].selected] : 'N/A'),
+                    correct: userAnswers[i].correct !== undefined ? userAnswers[i].correct : -1,
+                    correctText: userAnswers[i].correctText || (userAnswers[i].options && userAnswers[i].options[userAnswers[i].correct] ? userAnswers[i].options[userAnswers[i].correct] : 'N/A'),
+                    isCorrect: userAnswers[i].isCorrect !== undefined ? userAnswers[i].isCorrect : false,
+                    explanation: userAnswers[i].explanation || '' // Include explanation if available
+                };
+                cleanedAnswers.push(answer);
+            } else {
+                // Missing answer - create placeholder
+                console.warn(`Missing answer for question ${i + 1}`);
+                cleanedAnswers.push({
+                    question: `Question ${i + 1}`,
+                    options: [],
+                    selected: -1,
+                    selectedText: 'Not answered',
+                    correct: -1,
+                    correctText: 'N/A',
+                    isCorrect: false
+                });
+            }
+        }
+        
+        // Log for debugging
+        console.log(`Storing quiz data for Topic ${lessonNum}:`, {
+            quiz_type: `rational_functions_topic_${lessonNum}`,
+            topic: 'rational-functions',
+            score: score,
+            totalQuestions: totalQuestions,
+            answersCount: cleanedAnswers.length,
+            answers: cleanedAnswers
+        });
+        
+        // Calculate time taken for quiz (if available)
+        const quizStartTime = window.quizStartTime || Date.now();
+        const timeTaken = Math.floor((Date.now() - quizStartTime) / 1000); // in seconds
+        
+        // IMPORTANT: This endpoint uses $_SESSION['user_id'] as student_id
+        // Quiz type format: rational_functions_topic_1, rational_functions_topic_2, etc.
+        const response = await fetch('../php/store-quiz-data.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                topic: 'rational-functions', // Topic name - used for filtering
+                lesson: lessonNum, // Lesson number (1-4)
+                quiz_type: `rational_functions_topic_${lessonNum}`,
+                score: score,
+                total_questions: totalQuestions,
+                answers: cleanedAnswers, // Detailed answers
+                time_taken_seconds: timeTaken
+            }),
+            credentials: 'include' // Sends session cookie so PHP can get $_SESSION['user_id']
+        });
+
+        if (!response.ok) {
+            // Try to get error message from response
+            let errorMessage = `HTTP error! status: ${response.status}`;
+            try {
+                const errorText = await response.text();
+                const errorData = JSON.parse(errorText);
+                errorMessage = errorData.message || errorMessage;
+            } catch (e) {
+                // Not JSON, use status text
+            }
+            throw new Error(errorMessage);
+        }
+
+        const text = await response.text();
+        let data;
+        
+        try {
+            data = JSON.parse(text);
+        } catch (parseError) {
+            console.error('Invalid JSON response:', text);
+            throw new Error('Server returned invalid response. Please check if database tables exist.');
+        }
+        
+        if (!data.success) {
+            console.warn('Quiz data storage warning:', data.message);
+            // Don't throw error, just log warning - quiz completion should still work
+        } else {
+            console.log('Quiz data stored successfully:', data);
+        }
+        
+        return data;
+    } catch (error) {
+        console.error('Error storing quiz data:', error);
+        // Don't throw error - allow quiz completion to continue even if storage fails
+        return { success: false, message: error.message };
+    }
 }
 
 // Show topic completion option when all lessons are completed
@@ -700,29 +1767,22 @@ window.rfShowLesson = rfShowLesson;
 window.rfCompleteTopic = rfCompleteTopic;
 window.rfGoToNextTopic = rfGoToNextTopic;
 window.rfReviewTopic = rfReviewTopic;
-// Lesson Navigation
-document.addEventListener('DOMContentLoaded', function() {
-    try {
-        rfInjectLessonControls();
-
-        // Rewire lesson nav buttons to use our showLesson (capture and stop)
-        const lessonNavBtns = document.querySelectorAll('.lesson-nav-btn');
-        lessonNavBtns.forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.stopImmediatePropagation();
-                const lessonNum = parseInt(this.dataset.lesson);
-                rfShowLesson(lessonNum, true);
-            }, true);
-        });
-
-        // Initial state
-        rfShowLesson(1, false);
-        rfUpdateNavigationButtons();
-        rfLoadCompletedLessons();
-    } catch (_) {
-        // Non-fatal if structure differs
-    }
-});
+window.rfShowLesson1Quiz = rfShowLesson1Quiz;
+window.rfShowTopic4Quiz = rfShowTopic4Quiz;
+window.rfRunLessonQuiz = rfRunLessonQuiz;
+window.rfStoreQuizData = rfStoreQuizData;
+window.analyzePerformance = analyzePerformance;
+window.displayPerformanceAnalysis = displayPerformanceAnalysis;
+window.showPerformanceAnalysisSection = showPerformanceAnalysisSection;
+window.getTopicNameForAnalysis = getTopicNameForAnalysis;
+window.toggleUserDropdown = toggleUserDropdown;
+window.toggleMobileMenu = toggleMobileMenu;
+window.confirmLogout = confirmLogout;
+window.loadProfilePicture = loadProfilePicture;
+window.setSidebarActive = setSidebarActive;
+window.updateSidebarProgress = updateSidebarProgress;
+window.canAccessTopic = canAccessTopic;
+window.showTopicLockedMessage = showTopicLockedMessage;
 
 // Initialize all interactive calculators
 function initializeCalculators() {
@@ -746,17 +1806,17 @@ function analyzeRationalFunction() {
     
     if (!numerator || !denominator) return;
     
-    // Parse the functions (simplified parsing for demo)
+    // Parse the functions
     const analysis = analyzeRationalFunctionMath(numerator, denominator);
     
     // Update results with animation
     animateResultUpdate('domainResult', analysis.domain);
     animateResultUpdate('verticalAsymptote', analysis.verticalAsymptote);
     animateResultUpdate('horizontalAsymptote', analysis.horizontalAsymptote);
-    animateResultUpdate('xIntercept', analysis.xIntercept);
-    animateResultUpdate('yIntercept', analysis.yIntercept);
+    animateResultUpdate('xIntercept', analysis.xIntercept || 'None');
+    animateResultUpdate('yIntercept', analysis.yIntercept || 'Undefined');
     
-    // Draw the graph (generic)
+    // Draw the graph
     drawRationalFunctionGraph(numerator, denominator);
     
     // Show visual feedback
@@ -1015,16 +2075,28 @@ function loadExample() {
 }
 
 function parseDomainAnalysis(functionStr) {
-    // Simplified parsing for demo
-    let restrictions = 'x ≠ 2, x ≠ -2';
-    let domain = '(-∞, -2) ∪ (-2, 2) ∪ (2, ∞)';
+    // Parse the function to find denominator
+    const { num, den } = splitFunction(functionStr);
+    const denRoots = getDenominatorRoots(den);
     
-    if (functionStr.includes('x² - 4')) {
-        restrictions = 'x ≠ 2, x ≠ -2';
-        domain = '(-∞, -2) ∪ (-2, 2) ∪ (2, ∞)';
-    } else if (functionStr.includes('x - 2')) {
-        restrictions = 'x ≠ 2';
-        domain = '(-∞, 2) ∪ (2, ∞)';
+    let restrictions = 'None';
+    let domain = 'All real numbers';
+    
+    if (denRoots.length > 0) {
+        if (denRoots.length === 1) {
+            restrictions = `x ≠ ${formatNumber(denRoots[0])}`;
+            domain = `(-∞, ${formatNumber(denRoots[0])}) ∪ (${formatNumber(denRoots[0])}, ∞)`;
+        } else {
+            restrictions = denRoots.map(r => `x ≠ ${formatNumber(r)}`).join(', ');
+            const sortedRoots = [...denRoots].sort((a, b) => a - b);
+            const intervals = [];
+            intervals.push(`(-∞, ${formatNumber(sortedRoots[0])})`);
+            for (let i = 0; i < sortedRoots.length - 1; i++) {
+                intervals.push(`(${formatNumber(sortedRoots[i])}, ${formatNumber(sortedRoots[i + 1])})`);
+            }
+            intervals.push(`(${formatNumber(sortedRoots[sortedRoots.length - 1])}, ∞)`);
+            domain = intervals.join(' ∪ ');
+        }
     }
     
     return { restrictions, domain };
@@ -1166,38 +2238,63 @@ function animateGraph() {
 }
 
 function analyzeRationalFunctionMath(numerator, denominator) {
-    // Simplified analysis for demo purposes
+    // Parse denominator to find vertical asymptotes
     let domain = 'All real numbers';
     let verticalAsymptote = 'None';
     let horizontalAsymptote = 'y = 0';
+    let xIntercept = 'None';
+    let yIntercept = 'Undefined';
     
-    // Basic analysis based on common patterns
-    if (denominator.includes('x')) {
-        if (denominator.includes('x - 2')) {
-            domain = 'x ≠ 2';
-            verticalAsymptote = 'x = 2';
-        } else if (denominator.includes('x + 3')) {
-            domain = 'x ≠ -3';
-            verticalAsymptote = 'x = -3';
+    // Find vertical asymptote (denominator = 0)
+    const denRoots = getDenominatorRoots(denominator);
+    if (denRoots.length > 0) {
+        if (denRoots.length === 1) {
+            domain = `x ≠ ${formatNumber(denRoots[0])}`;
+            verticalAsymptote = `x = ${formatNumber(denRoots[0])}`;
+        } else {
+            domain = `x ≠ ${denRoots.map(r => formatNumber(r)).join(', x ≠ ')}`;
+            verticalAsymptote = denRoots.map(r => `x = ${formatNumber(r)}`).join(', ');
         }
     }
     
     // Determine horizontal asymptote based on degrees
-    const numDegree = getPolynomialDegree(numerator);
-    const denDegree = getPolynomialDegree(denominator);
+    const numDegree = getPolynomialDegree(normalizeExpr(numerator));
+    const denDegree = getPolynomialDegree(normalizeExpr(denominator));
     
     if (numDegree < denDegree) {
         horizontalAsymptote = 'y = 0';
     } else if (numDegree === denDegree) {
-        horizontalAsymptote = 'y = 1';
+        const numLead = getLeadingCoefficient(numerator, numDegree);
+        const denLead = getLeadingCoefficient(denominator, denDegree);
+        if (denLead !== 0) {
+            horizontalAsymptote = `y = ${formatNumber(numLead / denLead)}`;
+        } else {
+            horizontalAsymptote = 'y = 0';
+        }
     } else {
         horizontalAsymptote = 'None (oblique asymptote)';
+    }
+    
+    // Find x-intercepts (numerator = 0, but not denominator)
+    const numRoots = getNumeratorRoots(numerator);
+    const validXIntercepts = numRoots.filter(r => !isCloseToAny(r, denRoots, 1e-6));
+    if (validXIntercepts.length > 0) {
+        xIntercept = validXIntercepts.map(r => `x = ${formatNumber(r)}`).join(', ');
+    }
+    
+    // Find y-intercept (f(0))
+    const expr = `(${normalizeExpr(numerator)})/(${normalizeExpr(denominator)})`;
+    const y0 = safeEvalExpr(expr, 0);
+    if (y0 !== null && isFinite(y0)) {
+        yIntercept = `y = ${formatNumber(y0)}`;
     }
     
     return {
         domain,
         verticalAsymptote,
-        horizontalAsymptote
+        horizontalAsymptote,
+        xIntercept,
+        yIntercept
     };
 }
 
@@ -1859,15 +2956,47 @@ document.addEventListener('DOMContentLoaded', async function() {
         const data = await res.json();
         if (!data.success) { window.location.href = '../login.html'; return; }
         const u = data.user || {};
-        const gradeOk = !u.grade_level || String(u.grade_level) === '11';
-        const strandOk = !u.strand || String(u.strand).toUpperCase() === 'STEM';
+        const isTeacher = data.user_type === 'teacher';
+        const gradeOk = isTeacher || !u.grade_level || String(u.grade_level) === '11';
+        const strandOk = isTeacher || !u.strand || String(u.strand).toUpperCase() === 'STEM';
         if (!gradeOk || !strandOk) { window.location.href = '../dashboard.html'; return; }
         
-        // Update user name
-        const userNameEl = document.getElementById('userName');
-        if (userNameEl && u.first_name) {
-            userNameEl.textContent = `${u.first_name} ${u.last_name || ''}`.trim();
+        if (isTeacher) {
+            document.querySelectorAll('a[href="../dashboard.html"]').forEach(function(a) {
+                a.href = '../teacher-dashboard.html';
+                if (a.textContent.includes('Dashboard')) a.textContent = a.textContent.replace('Dashboard', 'Teacher Dashboard').trim();
+            });
+            fetch('../php/teacher-lesson-progress.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'action=record_view&topic_slug=rational-functions&topic_name=Rational Functions, Equations and Inequalities',
+                credentials: 'include'
+            }).catch(function() {});
         }
+        
+        // Update user name in all locations
+        const userNameEl = document.getElementById('userName');
+        const userNameDropdown = document.getElementById('userNameDropdown');
+        const userNameMobile = document.getElementById('userNameMobile');
+        const userNameText = `${u.first_name} ${u.last_name || ''}`.trim();
+        
+        if (userNameEl && u.first_name) {
+            userNameEl.textContent = userNameText;
+        }
+        if (userNameDropdown && u.first_name) {
+            userNameDropdown.textContent = userNameText;
+        }
+        if (userNameMobile && u.first_name) {
+            userNameMobile.textContent = userNameText;
+        }
+        
+        // Load and display profile picture
+        if (u.id) {
+            loadProfilePicture(u.id);
+        }
+        
+        // Initialize sidebar navigation
+        initializeSidebarNavigation();
         
         // Initialize calculators after auth check
         setTimeout(() => {
@@ -1877,6 +3006,157 @@ document.addEventListener('DOMContentLoaded', async function() {
         window.location.href = '../login.html';
     }
 });
+
+// Initialize Sidebar Navigation
+function initializeSidebarNavigation() {
+    // Sidebar: topic expand/collapse
+    document.querySelectorAll('.lesson-topic-header').forEach(header => {
+        header.addEventListener('click', function(e) {
+            if (e.target.closest('.lesson-subitem')) return;
+            const topic = this.closest('.lesson-topic');
+            const lessonNum = parseInt(topic.dataset.lesson, 10);
+            if (topic.classList.contains('locked') || !canAccessTopic(lessonNum)) {
+                showTopicLockedMessage(lessonNum);
+                return;
+            }
+            topic.classList.toggle('expanded');
+            this.setAttribute('aria-expanded', topic.classList.contains('expanded'));
+            if (topic.classList.contains('expanded')) {
+                rfShowLesson(lessonNum);
+                setSidebarActive(lessonNum, 'objective');
+            }
+        });
+    });
+    
+    // Sidebar: subitem click -> show lesson and scroll to section
+    document.querySelectorAll('.lesson-subitem').forEach(sub => {
+        sub.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const lessonNum = parseInt(this.dataset.lesson, 10);
+            if (!canAccessTopic(lessonNum)) {
+                showTopicLockedMessage(lessonNum);
+                return;
+            }
+            const section = this.dataset.section;
+            const sectionId = this.dataset.sectionId;
+            rfShowLesson(lessonNum);
+            setSidebarActive(lessonNum, section);
+            const topic = document.getElementById('sidebar-topic-' + lessonNum);
+            if (topic && !topic.classList.contains('expanded')) {
+                topic.classList.add('expanded');
+                topic.querySelector('.lesson-topic-header').setAttribute('aria-expanded', 'true');
+            }
+            if (sectionId) {
+                setTimeout(() => {
+                    const el = document.getElementById(sectionId);
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
+            if (window.innerWidth < 1024) document.getElementById('lessonSidebar')?.classList.remove('open');
+        });
+    });
+    
+    // Mobile sidebar toggle
+    document.getElementById('sidebarToggle')?.addEventListener('click', function() {
+        const sidebar = document.getElementById('lessonSidebar');
+        if (sidebar) {
+            sidebar.classList.toggle('open');
+            // Prevent body scroll when sidebar is open on mobile
+            if (window.innerWidth < 1024) {
+                if (sidebar.classList.contains('open')) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            }
+        }
+    });
+    
+    // Close sidebar when clicking outside on mobile
+    document.querySelector('.lesson-sidebar')?.addEventListener('click', function(e) {
+        if (e.target === this && window.innerWidth < 1024) {
+            this.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+    });
+    
+    // Close sidebar when clicking on backdrop overlay
+    const sidebarOverlay = document.createElement('div');
+    sidebarOverlay.className = 'fixed inset-0 bg-black/50 z-30 lg:hidden hidden';
+    sidebarOverlay.id = 'sidebarOverlay';
+    document.body.appendChild(sidebarOverlay);
+    
+    sidebarOverlay.addEventListener('click', function() {
+        const sidebar = document.getElementById('lessonSidebar');
+        if (sidebar) {
+            sidebar.classList.remove('open');
+            document.body.style.overflow = '';
+            this.classList.add('hidden');
+        }
+    });
+    
+    // Show/hide overlay when sidebar opens/closes
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                const sidebar = document.getElementById('lessonSidebar');
+                if (sidebar && window.innerWidth < 1024) {
+                    if (sidebar.classList.contains('open')) {
+                        sidebarOverlay.classList.remove('hidden');
+                    } else {
+                        sidebarOverlay.classList.add('hidden');
+                    }
+                }
+            }
+        });
+    });
+    
+    const sidebar = document.getElementById('lessonSidebar');
+    if (sidebar) {
+        observer.observe(sidebar, { attributes: true });
+    }
+    
+    // Handle window resize
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+            const sidebar = document.getElementById('lessonSidebar');
+            if (window.innerWidth >= 1024) {
+                if (sidebar) sidebar.classList.remove('open');
+                sidebarOverlay.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }, 250);
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('userDropdown');
+        const dropdownMenu = document.getElementById('userDropdownMenu');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileMenuBtn = event.target.closest('[onclick="toggleMobileMenu()"]');
+        
+        if (dropdown && dropdownMenu) {
+            if (!dropdown.contains(event.target) && !dropdownMenu.classList.contains('hidden')) {
+                dropdownMenu.classList.add('hidden');
+            }
+        }
+        
+        if (mobileMenu && !mobileMenuBtn && !mobileMenu.contains(event.target) && !mobileMenu.classList.contains('hidden')) {
+            mobileMenu.classList.add('hidden');
+        }
+    });
+    
+    // Initial state
+    rfShowLesson(1, false);
+    rfUpdateNavigationButtons();
+    rfLoadCompletedLessons();
+    updateSidebarProgress();
+    
+    // Update progress indicators on load
+    rfUpdateProgressIndicators();
+}
 
 // Enhanced Virtual Aid Functions for Lessons 2, 3, and 4
 
@@ -2119,6 +3399,271 @@ function validateSolutions() {
 
 function animateNumberLine() {
     showVisualFeedback('Number line animation started!');
+}
+
+// ==========================================
+// PERFORMANCE ANALYSIS
+// ==========================================
+
+/**
+ * Analyze quiz performance using custom AI
+ */
+async function analyzePerformance() {
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const resultSection = document.getElementById('analysisResult');
+    
+    // Show loading state
+    if (analyzeBtn) {
+        analyzeBtn.disabled = true;
+        analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Analyzing...';
+    }
+    
+    try {
+        const response = await fetch(`../php/analyze-quiz-performance.php?topic=rational-functions`, {
+            method: 'GET',
+            credentials: 'include'
+        });
+        
+        // Get response text first to see what we got
+        const responseText = await response.text();
+        console.log('Raw response:', responseText.substring(0, 500));
+        
+        if (!response.ok) {
+            // Try to parse error message
+            let errorMessage = `Server error: ${response.status} ${response.statusText}`;
+            try {
+                const errorData = JSON.parse(responseText);
+                errorMessage = errorData.message || errorMessage;
+                if (errorData.debug) {
+                    errorMessage += '\n\nDebug: ' + errorData.debug;
+                }
+            } catch (e) {
+                // Not JSON, use raw text
+                errorMessage = responseText.substring(0, 200);
+            }
+            throw new Error(errorMessage);
+        }
+        
+        const result = JSON.parse(responseText);
+        
+        if (result.success && result.analysis) {
+            displayPerformanceAnalysis(result.analysis);
+            
+            Swal.fire({
+                title: 'Analysis Complete!',
+                text: 'Your performance analysis has been completed.',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        } else {
+            throw new Error(result.message || 'Failed to analyze performance');
+        }
+        
+    } catch (error) {
+        console.error('Performance Analysis Error:', error);
+        
+        Swal.fire({
+            title: 'Analysis Error',
+            html: `
+                <div class="text-left">
+                    <p class="text-gray-700 mb-3"><strong>Error:</strong> ${error.message}</p>
+                    <p class="text-sm text-gray-600 mb-3">Unable to analyze your performance right now. Please try again later.</p>
+                    <p class="text-sm text-gray-600 mb-3">Make sure you have completed at least one quiz before analyzing.</p>
+                </div>
+            `,
+            icon: 'error',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#667eea'
+        });
+    } finally {
+        // Reset button
+        if (analyzeBtn) {
+            analyzeBtn.disabled = false;
+            analyzeBtn.innerHTML = '<i class="fas fa-chart-bar mr-2"></i>Analyze My Performance';
+        }
+    }
+}
+
+/**
+ * Display performance analysis results
+ */
+function displayPerformanceAnalysis(analysis) {
+    const resultSection = document.getElementById('analysisResult');
+    if (!resultSection) return;
+    
+    const overallAverage = analysis.overallAverage || 0;
+    const totalQuizzes = analysis.totalQuizzes || 0;
+    const strengths = analysis.strengths || [];
+    const weaknesses = analysis.weaknesses || [];
+    const correctAnswers = analysis.correctAnswers || [];
+    const incorrectAnswers = analysis.incorrectAnswers || [];
+    const recommendations = analysis.recommendations || [];
+    const topicPerformance = analysis.topicPerformance || {};
+    
+    // Build HTML
+    let html = `
+        <div class="space-y-6">
+            <!-- Overall Performance -->
+            <div class="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-6 border-l-4 border-indigo-500">
+                <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-trophy text-indigo-500 mr-2"></i>
+                    Overall Performance
+                </h4>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-white rounded-lg p-4 text-center">
+                        <div class="text-3xl font-bold text-blue-600">${overallAverage}%</div>
+                        <div class="text-sm text-gray-600 mt-1">Average Score</div>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 text-center">
+                        <div class="text-3xl font-bold text-green-600">${correctAnswers.length}</div>
+                        <div class="text-sm text-gray-600 mt-1">Correct</div>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 text-center">
+                        <div class="text-3xl font-bold text-red-600">${incorrectAnswers.length}</div>
+                        <div class="text-sm text-gray-600 mt-1">Incorrect</div>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 text-center">
+                        <div class="text-3xl font-bold text-purple-600">${totalQuizzes}</div>
+                        <div class="text-sm text-gray-600 mt-1">Quizzes Taken</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Topic Performance -->
+            <div class="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
+                <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-chart-bar text-blue-500 mr-2"></i>
+                    Performance per Topic
+                </h4>
+                <div class="space-y-4">
+    `;
+    
+    // Display each topic performance
+    for (let topicNum = 1; topicNum <= 4; topicNum++) {
+        if (topicPerformance[topicNum]) {
+            const perf = topicPerformance[topicNum];
+            const percentage = perf.total > 0 ? Math.round((perf.correct / perf.total) * 100) : 0;
+            const topicName = getTopicNameForAnalysis(topicNum);
+            const colorClass = percentage >= 80 ? 'text-green-600' : percentage >= 60 ? 'text-yellow-600' : 'text-red-600';
+            const borderClass = percentage >= 80 ? 'border-green-500' : percentage >= 60 ? 'border-yellow-500' : 'border-red-500';
+            
+            html += `
+                <div class="border-l-4 ${borderClass} bg-gray-50 rounded p-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <h5 class="font-semibold text-gray-800">${topicName}</h5>
+                        <span class="text-2xl font-bold ${colorClass}">${percentage}%</span>
+                    </div>
+                    <div class="text-sm text-gray-600 mb-2">
+                        Correct: ${perf.correct} | Incorrect: ${perf.incorrect} | Total: ${perf.total}
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-primary h-2 rounded-full transition-all" style="width: ${percentage}%"></div>
+                    </div>
+                </div>
+            `;
+        }
+    }
+    
+    html += `
+                </div>
+            </div>
+            
+            <!-- Strengths -->
+            <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border-l-4 border-green-500">
+                <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                    Your Strengths
+                </h4>
+                ${strengths.length > 0 ? `
+                    <ul class="space-y-2">
+                        ${strengths.map(strength => `
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2">✓</span>
+                                <span class="text-gray-700">${typeof strength === 'object' && strength.message ? strength.message : strength}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                ` : '<p class="text-gray-600">No strengths recorded yet. Take a quiz to see your strengths.</p>'}
+            </div>
+            
+            <!-- Weaknesses -->
+            <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl p-6 border-l-4 border-red-500">
+                <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>
+                    Areas to Improve
+                </h4>
+                ${weaknesses.length > 0 ? `
+                    <ul class="space-y-2">
+                        ${weaknesses.map(weakness => `
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2">⚠</span>
+                                <span class="text-gray-700">${typeof weakness === 'object' && weakness.message ? weakness.message : weakness}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                ` : '<p class="text-gray-600">No weaknesses recorded. Keep up the great work!</p>'}
+            </div>
+            
+            <!-- Recommendations -->
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border-l-4 border-blue-500">
+                <h4 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-lightbulb text-blue-500 mr-2"></i>
+                    Recommendations
+                </h4>
+                ${recommendations.length > 0 ? `
+                    <ul class="space-y-2">
+                        ${recommendations.map(rec => `
+                            <li class="flex items-start">
+                                <span class="text-blue-500 mr-2">💡</span>
+                                <span class="text-gray-700">${typeof rec === 'object' && rec.message ? rec.message : rec}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                ` : '<p class="text-gray-600">Complete more quizzes to get personalized recommendations.</p>'}
+            </div>
+        </div>
+    `;
+    
+    resultSection.innerHTML = html;
+    resultSection.classList.remove('hidden');
+}
+
+/**
+ * Get topic name for analysis display
+ */
+function getTopicNameForAnalysis(topicNum) {
+    const topicNames = {
+        1: 'Topic 1: Rational Functions',
+        2: 'Topic 2: Graphs & Asymptotes',
+        3: 'Topic 3: Rational Equations',
+        4: 'Topic 4: Rational Inequalities'
+    };
+    return topicNames[topicNum] || `Topic ${topicNum}`;
+}
+
+/**
+ * Show performance analysis section (only when all quizzes are completed)
+ */
+function showPerformanceAnalysisSection() {
+    // Check if all 4 topics are completed
+    const totalLessons = 4;
+    if (rfCompletedLessons.size !== totalLessons) {
+        console.log('Performance analysis will only show after completing all quizzes. Current completed:', rfCompletedLessons.size, '/', totalLessons);
+        return;
+    }
+    
+    const analysisDiv = document.getElementById('performanceAnalysisSection');
+    if (analysisDiv) {
+        analysisDiv.style.display = 'block';
+        // Scroll to analysis section smoothly
+        setTimeout(() => {
+            analysisDiv.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }, 300);
+    }
 }
 
 // Export functions for global access

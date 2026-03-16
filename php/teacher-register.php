@@ -1,13 +1,15 @@
 <?php
 require_once 'config.php';
+// Include Gmail verification function
+require_once __DIR__ . '/../gmail-fixed-test.php';
 
 // Handle teacher registration form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $response = array();
     
     try {
-        // Validate required fields
-        $required_fields = ['firstName', 'lastName', 'email', 'teacherId', 'department', 'subject', 'password', 'confirmPassword'];
+        // Validate required fields (teacherId removed - now optional)
+        $required_fields = ['firstName', 'lastName', 'email', 'department', 'subject', 'password', 'confirmPassword'];
         $missing_fields = [];
         
         foreach ($required_fields as $field) {
@@ -24,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $firstName = sanitize_input($_POST['firstName']);
         $lastName = sanitize_input($_POST['lastName']);
         $email = sanitize_input($_POST['email']);
-        $teacherId = sanitize_input($_POST['teacherId']);
+        $teacherId = isset($_POST['teacherId']) && !empty(trim($_POST['teacherId'])) ? sanitize_input($_POST['teacherId']) : null; // Optional Teacher ID
         $department = sanitize_input($_POST['department']);
         $subject = sanitize_input($_POST['subject']);
         $password = $_POST['password'];
@@ -42,16 +44,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception("Email already registered");
         }
         
-        // Check if teacher ID already exists
-        $stmt = $pdo->prepare("SELECT id FROM teachers WHERE teacher_id = ?");
-        $stmt->execute([$teacherId]);
-        if ($stmt->rowCount() > 0) {
-            throw new Exception("Teacher ID already registered");
+        // Check if teacher ID already exists (only if provided)
+        if ($teacherId !== null && !empty(trim($teacherId))) {
+            $stmt = $pdo->prepare("SELECT id FROM teachers WHERE teacher_id = ?");
+            $stmt->execute([$teacherId]);
+            if ($stmt->rowCount() > 0) {
+                throw new Exception("Teacher ID already registered");
+            }
         }
         
-        // Validate password
+        // Validate password (8–30 chars, lowercase, uppercase, number, special)
         if (strlen($password) < 8) {
             throw new Exception("Password must be at least 8 characters long");
+        }
+        if (strlen($password) > 30) {
+            throw new Exception("Password must be at most 30 characters");
+        }
+        if (!preg_match('/[a-z]/', $password)) {
+            throw new Exception("Password must contain at least one lowercase letter");
+        }
+        if (!preg_match('/[A-Z]/', $password)) {
+            throw new Exception("Password must contain at least one uppercase letter");
+        }
+        if (!preg_match('/[0-9]/', $password)) {
+            throw new Exception("Password must contain at least one number");
+        }
+        if (!preg_match('/[^a-zA-Z0-9]/', $password)) {
+            throw new Exception("Password must contain at least one special character");
         }
         
         if ($password !== $confirmPassword) {
@@ -61,40 +80,167 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Hash password
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         
+        // Generate email verification token
+        $verification_token = bin2hex(random_bytes(32));
+        
+        // Check if approval_status column exists
+        $stmt = $pdo->prepare("SHOW COLUMNS FROM teachers LIKE 'approval_status'");
+        $stmt->execute();
+        $hasApprovalStatus = $stmt->rowCount() > 0;
+        
+        // Check if email_verified column exists
+        $stmt = $pdo->prepare("SHOW COLUMNS FROM teachers LIKE 'email_verified'");
+        $stmt->execute();
+        $hasEmailVerified = $stmt->rowCount() > 0;
+        
+        // Check if verification_token column exists
+        $stmt = $pdo->prepare("SHOW COLUMNS FROM teachers LIKE 'verification_token'");
+        $stmt->execute();
+        $hasVerificationToken = $stmt->rowCount() > 0;
+        
+        // Build INSERT query based on available columns (teacher_id is now optional)
+        $columns = ['first_name', 'last_name', 'email', 'department', 'subject', 'password', 'created_at'];
+        $values = [$firstName, $lastName, $email, $department, $subject, $hashedPassword, 'NOW()'];
+        $placeholders = ['?', '?', '?', '?', '?', '?', 'NOW()'];
+        
+        // Add teacher_id only if provided
+        if ($teacherId !== null && !empty(trim($teacherId))) {
+            $columns[] = 'teacher_id';
+            $values[] = $teacherId;
+            $placeholders[] = '?';
+        }
+        
+        if ($hasApprovalStatus) {
+            $columns[] = 'approval_status';
+            $values[] = 'pending';
+            $placeholders[] = '?';
+        }
+        
+        if ($hasEmailVerified) {
+            $columns[] = 'email_verified';
+            $values[] = 0;
+            $placeholders[] = '?';
+        }
+        
+        if ($hasVerificationToken) {
+            $columns[] = 'verification_token';
+            $values[] = $verification_token;
+            $placeholders[] = '?';
+        }
+        
+        $columnsStr = implode(', ', $columns);
+        $placeholdersStr = implode(', ', $placeholders);
+        
         // Insert teacher into database
         $stmt = $pdo->prepare("
-            INSERT INTO teachers (first_name, last_name, email, teacher_id, department, subject, password, created_at) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+            INSERT INTO teachers ({$columnsStr}) 
+            VALUES ({$placeholdersStr})
         ");
         
-        $stmt->execute([
-            $firstName,
-            $lastName,
-            $email,
-            $teacherId,
-            $department,
-            $subject,
-            $hashedPassword
-        ]);
+        // Prepare values for execution (remove NOW() from array)
+        $executeValues = [];
+        foreach ($values as $val) {
+            if ($val !== 'NOW()') {
+                $executeValues[] = $val;
+            }
+        }
         
-        $teacherId = $pdo->lastInsertId();
+        $stmt->execute($executeValues);
         
-        // Create teacher profile record
-        $stmt = $pdo->prepare("
-            INSERT INTO teacher_profiles (teacher_id, total_students, active_assignments, created_at) 
-            VALUES (?, 0, 0, NOW())
-        ");
-        $stmt->execute([$teacherId]);
+        $teacherDbId = $pdo->lastInsertId();
+        
+        // Create teacher profile record if table exists
+        try {
+            $stmt = $pdo->prepare("
+                INSERT INTO teacher_profiles (teacher_id, total_students, active_assignments, created_at) 
+                VALUES (?, 0, 0, NOW())
+            ");
+            $stmt->execute([$teacherDbId]);
+        } catch (Exception $e) {
+            // Table might not exist, that's okay
+            error_log("Teacher profile table not found: " . $e->getMessage());
+        }
+        
+        // Send verification email
+        // Construct verification URL - teacher-verify-email.php is in the php directory
+        $base_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . 
+                   '://' . $_SERVER['HTTP_HOST'];
+        $script_path = dirname($_SERVER['PHP_SELF']); // Gets /MathEase/php
+        $verification_url = $base_url . $script_path . '/teacher-verify-email.php?token=' . $verification_token;
+        
+        $email_subject = "Verify Your MathEase Teacher Account";
+        $email_body = "
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset='UTF-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+                .content { background: #ffffff; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+                .button { display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; font-weight: bold; }
+                .button:hover { background: #5568d3; }
+                .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
+                .info-box { background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 6px; padding: 15px; margin: 20px 0; }
+                .warning-box { background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 6px; padding: 15px; margin: 20px 0; }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='header'>
+                    <h1 style='margin: 0;'>MathEase Teacher Portal</h1>
+                </div>
+                <div class='content'>
+                    <h2 style='color: #667eea; margin-top: 0;'>Email Verification Required</h2>
+                    <p>Hello " . htmlspecialchars($firstName) . " " . htmlspecialchars($lastName) . ",</p>
+                    <p>Thank you for registering as a teacher on MathEase! Please verify your email address to continue.</p>
+                    <p>Click the button below to verify your email:</p>
+                    <div style='text-align: center; margin: 30px 0;'>
+                        <a href='{$verification_url}' class='button'>Verify Email Address</a>
+                    </div>
+                    <p>Or copy and paste this link into your browser:</p>
+                    <p style='word-break: break-all; color: #667eea; background: #f8f9fa; padding: 10px; border-radius: 5px;'>{$verification_url}</p>
+                    <div class='info-box'>
+                        <p style='margin: 0; color: #2d5a2d; font-weight: 500;'><strong>✓ Next Steps:</strong> After verifying your email, your account will be sent to the admin for approval. You will receive another email once your account is approved.</p>
+                    </div>
+                    <div class='warning-box'>
+                        <p style='margin: 0; color: #856404; font-weight: 500;'><strong>⏰ Important:</strong> This verification link will expire in 24 hours for security reasons.</p>
+                    </div>
+                    <p style='color: #666; font-size: 14px; margin-top: 30px;'>If you did not register for MathEase, please ignore this email.</p>
+                </div>
+                <div class='footer'>
+                    <p>&copy; " . date('Y') . " MathEase. All rights reserved.</p>
+                    <p style='font-size: 11px; color: #999;'>This is an automated message. Please do not reply to this email.</p>
+                </div>
+            </div>
+        </body>
+        </html>";
+        
+        // Use dedicated Gmail SMTP for verification emails
+        $email_sent = send_gmail_verification_fixed($email, $email_subject, $email_body);
+        
+        // If Gmail fails, save to file as backup
+        if (!$email_sent) {
+            $file_result = save_email_to_file($email, $email_subject, $email_body);
+            error_log("Gmail SMTP failed for teacher {$email}, saved to file: " . ($file_result ? 'Yes' : 'No'));
+            // Still consider it successful if saved to file
+            $email_sent = $file_result;
+        } else {
+            error_log("Teacher verification email sent successfully via Gmail to: {$email}");
+        }
         
         // Set success response
         $response = array(
             'success' => true,
-            'message' => 'Teacher registration successful! Welcome to MathEase.',
-            'teacher_id' => $teacherId
+            'message' => 'Registration successful! Please check your email to verify your account. After verification, your account will be sent to admin for approval.',
+            'teacher_id' => $teacherDbId,
+            'email_sent' => $email_sent
         );
         
         // Log successful registration
-        error_log("New teacher registered: $email (ID: $teacherId)");
+        error_log("New teacher registered: $email (ID: $teacherDbId) - Verification email " . ($email_sent ? "sent" : "failed"));
         
     } catch (Exception $e) {
         $response = array(

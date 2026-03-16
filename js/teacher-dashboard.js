@@ -108,7 +108,10 @@ class TeacherDashboardManager {
 
             this.classManagementData = {
                 classes: classesData.success ? classesData.classes || [] : [],
-                pendingEnrollments: pendingData.success ? pendingData.enrollments || [] : []
+                pendingEnrollments: pendingData.success ? pendingData.enrollments || [] : [],
+                total_unique_students: classesData.success ? (classesData.total_unique_students || 0) : 0,
+                total_pending_enrollments: classesData.success ? (classesData.total_pending_enrollments || 0) : 0,
+                total_classes: classesData.success ? (classesData.total_classes || 0) : 0
             };
         } catch (error) {
             console.error('Error loading class management data:', error);
@@ -141,12 +144,20 @@ class TeacherDashboardManager {
     updateProgressStats() {
         // Update main stats
         if (this.classManagementData) {
-            const enrolledStudents = this.classManagementData.classes.reduce((total, classItem) => {
-                return total + (classItem.approved_students || 0);
-            }, 0);
+            // Use total_unique_students from backend if available, otherwise calculate
+            const enrolledStudents = this.classManagementData.total_unique_students !== undefined 
+                ? this.classManagementData.total_unique_students 
+                : this.classManagementData.classes.reduce((total, classItem) => {
+                    return total + (classItem.approved_students || 0);
+                }, 0);
             
-            const pendingRequests = this.classManagementData.pendingEnrollments.length;
-            const activeClasses = this.classManagementData.classes.length;
+            const pendingRequests = this.classManagementData.total_pending_enrollments !== undefined
+                ? this.classManagementData.total_pending_enrollments
+                : this.classManagementData.pendingEnrollments.length;
+            
+            const activeClasses = this.classManagementData.total_classes !== undefined
+                ? this.classManagementData.total_classes
+                : this.classManagementData.classes.length;
 
             const enrolledStudentsEl = document.getElementById('enrolledStudents');
             const pendingRequestsEl = document.getElementById('pendingRequests');
@@ -159,12 +170,20 @@ class TeacherDashboardManager {
 
         // Update sidebar stats
         if (this.classManagementData) {
-            const enrolledStudents = this.classManagementData.classes.reduce((total, classItem) => {
-                return total + (classItem.approved_students || 0);
-            }, 0);
+            // Use total_unique_students from backend if available, otherwise calculate
+            const enrolledStudents = this.classManagementData.total_unique_students !== undefined 
+                ? this.classManagementData.total_unique_students 
+                : this.classManagementData.classes.reduce((total, classItem) => {
+                    return total + (classItem.approved_students || 0);
+                }, 0);
             
-            const pendingRequests = this.classManagementData.pendingEnrollments.length;
-            const activeClasses = this.classManagementData.classes.length;
+            const pendingRequests = this.classManagementData.total_pending_enrollments !== undefined
+                ? this.classManagementData.total_pending_enrollments
+                : this.classManagementData.pendingEnrollments.length;
+            
+            const activeClasses = this.classManagementData.total_classes !== undefined
+                ? this.classManagementData.total_classes
+                : this.classManagementData.classes.length;
 
             const enrolledStudentsEl = document.getElementById('sidebarEnrolledStudents');
             const pendingRequestsEl = document.getElementById('sidebarPendingRequests');

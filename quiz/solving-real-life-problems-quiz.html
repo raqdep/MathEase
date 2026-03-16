@@ -24,74 +24,645 @@
         }
     </script>
     <style>
+        /* Light purple background */
+        body {
+            background: #f5f3ff;
+            min-height: 100vh;
+        }
+        
         .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
+        
+        /* Question card styling */
         .question-card {
-            transition: all 0.3s ease;
-        }
-        .question-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.15);
-        }
-        .option-selected {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-color: #667eea;
-            transform: scale(1.02);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-        }
-        .option-correct {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            border-color: #10b981;
-        }
-        .option-incorrect {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-            border-color: #ef4444;
-        }
-        .option-review {
-            pointer-events: none;
-            opacity: 0.8;
-        }
-        .review-mode .option {
-            pointer-events: none;
-        }
-        .review-mode .option input {
-            pointer-events: none;
-        }
-        .review-mode .option input[type="number"] {
-            pointer-events: none;
-        }
-        .progress-bar {
-            transition: width 0.3s ease;
-        }
-        .question-card {
-            animation: slideInUp 0.6s ease-out;
-        }
-        .option {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.15);
             position: relative;
             overflow: hidden;
+            transition: all 0.3s ease;
+            animation: slideInUp 0.6s ease-out;
         }
-        .option::before {
+        
+        .question-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(196, 181, 253, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(221, 214, 254, 0.3) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .question-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(139, 92, 246, 0.2);
+        }
+        
+        /* Progress bar styling */
+        .quiz-progress-bar {
+            height: 6px;
+            background: #e5e7eb;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 0 auto;
+            max-width: 100%;
+        }
+        
+        .quiz-progress-fill {
+            height: 100%;
+            background: #8b5cf6;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        
+        /* Circular timer styling */
+        .circular-timer {
+            position: relative;
+            width: 60px;
+            height: 60px;
+        }
+        
+        .circular-timer svg {
+            transform: rotate(-90deg);
+        }
+        
+        .circular-timer .timer-bg {
+            stroke: #e5e7eb;
+            fill: none;
+        }
+        
+        .circular-timer .timer-progress {
+            stroke: #8b5cf6;
+            fill: none;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+        
+        .timer-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        /* Ensure sticky header stays on top */
+        #progressTimerHeader {
+            position: sticky;
+            top: 64px; /* Below nav (h-16 = 64px) */
+            z-index: 45; /* Below nav (z-50) but above content */
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Adjust position when review banner is visible */
+        #reviewModeBanner:not(.hidden) ~ #progressTimerHeader {
+            top: 128px; /* Below nav + review banner */
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 640px) {
+            #progressTimerHeader {
+                top: 64px;
+                padding-top: 0.75rem;
+                padding-bottom: 0.75rem;
+            }
+            
+            #reviewModeBanner ~ #progressTimerHeader {
+                top: 128px;
+            }
+            
+            nav {
+                position: sticky;
+                top: 0;
+                z-index: 50;
+            }
+        }
+        
+        /* Timer color changes based on remaining time */
+        .timer-text.warning {
+            color: #ef4444 !important;
+        }
+        
+        .timer-text.urgent {
+            color: #dc2626 !important;
+        }
+        
+        .timer-progress.warning {
+            stroke: #f59e0b !important;
+        }
+        
+        .timer-progress.urgent {
+            stroke: #ef4444 !important;
+        }
+        
+        /* Quiz option styling for modern design */
+        .quiz-option {
+            position: relative;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+            background: white;
+            text-align: left;
+            margin-bottom: 1rem;
+        }
+        
+        .quiz-option:hover {
+            border-color: #a78bfa;
+            background: #faf5ff;
+            transform: translateX(4px);
+        }
+        
+        .option-label {
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            background: #f3e8ff;
+            color: #7c3aed;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        
+        .quiz-option.selected {
+            background: #f3e8ff;
+            border: 2px solid #8b5cf6;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+        }
+        
+        .quiz-option.selected .option-label {
+            background: #8b5cf6;
+            color: white;
+        }
+        
+        /* Review mode styling */
+        .option-correct {
+            background: #d1fae5 !important;
+            border: 2px solid #10b981 !important;
+        }
+        
+        .option-correct .option-label {
+            background: #10b981 !important;
+            color: white !important;
+        }
+        
+        .option-incorrect {
+            background: #fee2e2 !important;
+            border: 2px solid #ef4444 !important;
+        }
+        
+        .option-incorrect .option-label {
+            background: #ef4444 !important;
+            color: white !important;
+        }
+        
+        .review-mode .option,
+        .review-mode .quiz-option {
+            pointer-events: none;
+        }
+        
+        .review-mode .option input,
+        .review-mode .quiz-option input {
+            pointer-events: none;
+        }
+        
+        .review-mode textarea {
+            pointer-events: none;
+        }
+
+        /* Enhanced background with animated gradient */
+        body {
+            background: linear-gradient(135deg, #f5f3ff 0%, #e9d5ff 50%, #f5f3ff 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(167, 139, 250, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Enhanced quiz option styling */
+        .quiz-option {
+            position: relative;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid #e5e7eb;
+            background: white;
+            text-align: left;
+            margin-bottom: 1rem;
+            -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
+            touch-action: manipulation;
+            user-select: none;
+            pointer-events: auto;
+            overflow: hidden;
+            animation: optionFadeIn 0.4s ease-out backwards;
+        }
+        
+        .quiz-option:nth-child(1) { animation-delay: 0.1s; }
+        .quiz-option:nth-child(2) { animation-delay: 0.2s; }
+        .quiz-option:nth-child(3) { animation-delay: 0.3s; }
+        .quiz-option:nth-child(4) { animation-delay: 0.4s; }
+        
+        @keyframes optionFadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .quiz-option::before {
             content: '';
             position: absolute;
             top: 0;
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.1), transparent);
+            transition: left 0.5s ease;
         }
-        .option:hover::before {
+        
+        .quiz-option:hover {
+            border-color: #a78bfa;
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+            transform: translateX(8px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.2);
+        }
+        
+        .quiz-option:hover::before {
             left: 100%;
         }
-        .option:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        
+        .quiz-option:active {
+            transform: translateX(4px) scale(0.98);
+            background: #f3e8ff;
+            transition: all 0.1s ease;
         }
+
+        .option-label {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+            color: #7c3aed;
+            border-radius: 50%;
+            flex-shrink: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.15);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .quiz-option:hover .option-label {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+        
+        .quiz-option.selected {
+            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+            border: 3px solid #8b5cf6;
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3), 0 0 0 4px rgba(139, 92, 246, 0.1);
+            transform: translateX(8px) scale(1.02);
+            animation: optionSelect 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes optionSelect {
+            0% { 
+                transform: translateX(0) scale(1);
+                box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+            }
+            50% { 
+                transform: translateX(8px) scale(1.05);
+                box-shadow: 0 12px 35px rgba(139, 92, 246, 0.4);
+            }
+            100% { 
+                transform: translateX(8px) scale(1.02);
+                box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3), 0 0 0 4px rgba(139, 92, 246, 0.1);
+            }
+        }
+        
+        .quiz-option.selected .option-label {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            transform: scale(1.15) rotate(360deg);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.5);
+            animation: labelPulse 0.6s ease-out;
+        }
+        
+        @keyframes labelPulse {
+            0%, 100% { transform: scale(1.15); }
+            50% { transform: scale(1.3); }
+        }
+
+        /* Enhanced progress bar with gradient and animation */
+        .quiz-progress-bar {
+            height: 8px;
+            background: linear-gradient(90deg, #e5e7eb 0%, #f3e8ff 100%);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 0 auto;
+            max-width: 100%;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        .quiz-progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: progressShine 2s ease-in-out infinite;
+        }
+        
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .quiz-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #8b5cf6 0%, #7c3aed 50%, #667eea 100%);
+            background-size: 200% 100%;
+            border-radius: 10px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: progressGradient 3s ease infinite;
+        }
+        
+        @keyframes progressGradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .quiz-progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: progressGlow 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes progressGlow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* Enhanced Podium Styles */
+        .podium-1 {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+            width: 160px;
+            height: 180px;
+            border-radius: 16px 16px 0 0;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(59, 130, 246, 0.4), inset 0 -5px 15px rgba(29, 78, 216, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            overflow: visible; /* allow rank circle to be fully visible */
+        }
+        
+        .podium-1::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 30%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+            border-radius: 16px 16px 0 0;
+        }
+        
+        .podium-2 {
+            background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+            width: 140px;
+            height: 150px;
+            border-radius: 16px 16px 0 0;
+            position: relative;
+            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.4), inset 0 -5px 15px rgba(4, 120, 87, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            overflow: visible; /* allow rank circle to be fully visible */
+        }
+        
+        .podium-2::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 30%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+            border-radius: 16px 16px 0 0;
+        }
+        
+        .podium-3 {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
+            width: 140px;
+            height: 120px;
+            border-radius: 16px 16px 0 0;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4), inset 0 -5px 15px rgba(180, 83, 9, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            overflow: visible; /* allow rank circle to be fully visible */
+        }
+        
+        .podium-3::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 30%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+            border-radius: 16px 16px 0 0;
+        }
+        
+        .podium-avatar {
+            width: 80px;
+            height: 80px;
+            top: -40px;
+            border: 4px solid white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        }
+        
+        .podium-rank {
+            width: 64px;
+            height: 64px;
+            font-size: 24px;
+            top: -20px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+        }
+        
+        .podium-crown {
+            font-size: 40px;
+            top: -50px;
+            right: -10px;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        /* AI Modal Styles */
+        #aiModal {
+            backdrop-filter: blur(4px);
+        }
+        
+        #aiModal .bg-white {
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        #aiAnalysis h2 {
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        #aiAnalysis h3 {
+            color: #4b5563;
+        }
+        
+        #aiAnalysis p {
+            line-height: 1.7;
+        }
+
+        /* Pagination Styles */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: #f9fafb;
+            border-top: 2px solid #e5e7eb;
+        }
+        
+        .pagination-btn {
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            color: #374151;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .pagination-btn:hover:not(:disabled) {
+            background: #8b5cf6;
+            color: white;
+            border-color: #8b5cf6;
+        }
+        
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .pagination-page-numbers {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .pagination-page-number {
+            padding: 0.5rem 0.75rem;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            color: #374151;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 2.5rem;
+            text-align: center;
+        }
+        
+        .pagination-page-number:hover {
+            background: #f3e8ff;
+            border-color: #8b5cf6;
+        }
+        
+        .pagination-page-number.active {
+            background: #8b5cf6;
+            color: white;
+            border-color: #8b5cf6;
+        }
+        
+        .pagination-info {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-left: auto;
+        }
+        
         @keyframes slideInUp {
             from {
                 opacity: 0;
@@ -102,8 +673,110 @@
                 transform: translateY(0);
             }
         }
-        .virtual-aid {
+        
+        /* Prevent body scroll issues on mobile */
+        @media (max-width: 768px) {
+            body {
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            main {
+                padding-top: 0.5rem;
+            }
+            
+            input[type="number"], textarea {
+                font-size: 1.25rem;
+                padding: 0.75rem;
+                min-height: 48px;
+            }
+            
+            .quiz-option {
+                min-height: 80px;
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
+            }
+            
+            .quiz-option:active {
+                transform: translateY(-2px) scale(0.98);
+            }
+        }
+        
+        /* Leaderboard entry styles */
+        .leaderboard-entry {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e7eb;
+            transition: all 0.2s ease;
+        }
+        
+        .leaderboard-entry:hover {
+            background-color: #f9fafb;
+        }
+        
+        .leaderboard-entry:last-child {
+            border-bottom: none;
+        }
+        
+        .leaderboard-entry.you {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border-radius: 8px;
+            margin: 4px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+        
+        .leaderboard-rank {
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: 500;
+            min-width: 30px;
+        }
+        
+        .leaderboard-entry.you .leaderboard-rank {
+            color: white;
+        }
+        
+        .leaderboard-student {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            margin-left: 12px;
+        }
+        
+        .leaderboard-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+        
+        .leaderboard-name {
+            font-weight: 600;
+            color: #374151;
+            font-size: 14px;
+        }
+        
+        .leaderboard-entry.you .leaderboard-name {
+            color: white;
+        }
+        
+        .leaderboard-points {
+            font-weight: bold;
+            color: #3b82f6;
+            font-size: 16px;
+        }
+        
+        .leaderboard-entry.you .leaderboard-points {
+            color: white;
         }
         
         /* Anti-cheating styles */
@@ -111,7 +784,7 @@
             background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
             border-left: 4px solid #ef4444;
             border-radius: 8px;
-            margin-bottom: 8px;
+            margin: 4px 0;
             box-shadow: 0 2px 8px rgba(239, 68, 68, 0.1);
         }
         
@@ -404,58 +1077,61 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
-                    <a href="../index.html" class="flex items-center space-x-2">
+                    <a href="../dashboard.html" class="flex items-center space-x-2">
                         <img src="../css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-8 w-8">
                         <span class="text-xl font-bold text-primary">MathEase</span>
                     </a>
                 </div>
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="../dashboard.html" class="text-gray-700 hover:text-primary transition-colors">
-                        <i class="fas fa-home mr-2"></i>Dashboard
-                    </a>
-                    <a href="../topics.html" class="text-primary font-semibold">
-                        <i class="fas fa-book mr-2"></i>Topics
-                    </a>
+                <div class="flex items-center space-x-4">
                     <span class="text-gray-600">
                         <i class="fas fa-user mr-2"></i><span id="userName">Student</span>
                     </span>
-                    <a href="../php/logout.php" class="text-gray-700 hover:text-red-600 transition-colors">
-                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
-                    </a>
+                    <div class="relative" id="logoutDropdown">
+                        <button onclick="toggleLogoutDropdown()" class="text-gray-700 hover:text-red-600 transition-colors flex items-center">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div id="logoutDropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                            <a href="#" onclick="interceptLogout(event)" class="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Header -->
-    <header class="gradient-bg text-white py-12">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
-                <i class="fas fa-calculator mr-2"></i>
-                <span class="font-semibold">General Mathematics 11</span>
+    <!-- Review Mode Banner -->
+    <div id="reviewModeBanner" class="hidden bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 sm:py-4 sticky top-16 z-[55]">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-center space-x-2 sm:space-x-3">
+                <i class="fas fa-eye text-xl sm:text-2xl"></i>
+                <div class="text-center">
+                    <h2 class="text-lg sm:text-xl font-bold">Review Mode</h2>
+                    <p class="text-xs sm:text-sm text-orange-100">Quiz deadline has passed. You can review your answers but cannot submit.</p>
+                </div>
             </div>
-            <h1 class="text-3xl md:text-5xl font-bold mb-4">Solving Real-Life Problems Quiz</h1>
-            <p class="text-lg md:text-xl text-white/90 mb-6">
-                Test your understanding of applying functions to real-world scenarios
-            </p>
-            <div class="flex justify-center space-x-4">
-                <div class="bg-white/20 backdrop-blur-sm rounded-full px-6 py-2">
-                    <span class="font-semibold">10 Multiple Choice</span>
+        </div>
+    </div>
+
+    <!-- Quiz Header -->
+    <header class="gradient-bg text-white py-12">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
+                    <i class="fas fa-calculator mr-2"></i>
+                    <span class="font-semibold">Solving Real-Life Problems Quiz</span>
                 </div>
-                <div class="bg-white/20 backdrop-blur-sm rounded-full px-6 py-2">
-                    <span class="font-semibold">1 Problem Solving</span>
-                </div>
-                <div class="bg-white/20 backdrop-blur-sm rounded-full px-6 py-2">
-                    <span class="font-semibold">30 Minutes</span>
-                </div>
+                <h1 class="text-4xl md:text-5xl font-bold mb-4" id="quizTitle">Master Real-World Applications</h1>
             </div>
         </div>
     </header>
 
-    <!-- Quiz Instructions -->
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
-            <div class="text-center mb-6">
+    <!-- Tips Section -->
+    <div id="tipsContainer" class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <div class="text-center mb-8 relative">
                 <div class="w-32 h-32 mx-auto mb-6 flex items-center justify-center relative">
                     <img src="../Img/Character/tips_approved-removebg-preview.png" 
                          alt="Tips Approved Character" 
@@ -467,385 +1143,505 @@
                     <div class="absolute -bottom-2 -left-2 w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
                     <div class="absolute top-1/2 -right-4 w-3 h-3 bg-blue-400 rounded-full animate-bounce"></div>
                 </div>
-                <h2 class="text-2xl font-bold text-gray-800 mb-2">Quiz Instructions</h2>
-                <p class="text-gray-600">Read the instructions carefully before starting the quiz</p>
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Quiz Tips & Guidelines</h2>
+                <p class="text-lg text-gray-600">Read these tips before starting your Solving Real-Life Problems Quiz</p>
             </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div class="bg-blue-50 rounded-lg p-4">
-                    <h3 class="font-semibold text-blue-800 mb-2">
-                        <i class="fas fa-clock text-blue-500 mr-2"></i>Time Limit
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-clock text-blue-500 mr-3"></i>Time Management
                     </h3>
-                    <p class="text-blue-700 text-sm">You have 30 minutes to complete this quiz</p>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Take your time to read each question carefully</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Don't rush through the problem solving section</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Review your answers before submitting</span>
+                        </li>
+                    </ul>
                 </div>
-                <div class="bg-green-50 rounded-lg p-4">
-                    <h3 class="font-semibold text-green-800 mb-2">
-                        <i class="fas fa-check-circle text-green-500 mr-2"></i>Passing Score
+
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-calculator text-green-500 mr-3"></i>Real-World Applications
                     </h3>
-                    <p class="text-green-700 text-sm">You need 70% (8 out of 11 questions) to pass</p>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Think about real-world scenarios when solving problems</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Use the vertex formula for maximum/minimum problems</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Check your calculations carefully</span>
+                        </li>
+                    </ul>
                 </div>
-                <div class="bg-purple-50 rounded-lg p-4">
-                    <h3 class="font-semibold text-purple-800 mb-2">
-                        <i class="fas fa-question-circle text-purple-500 mr-2"></i>Question Types
+
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-question-circle text-purple-500 mr-3"></i>Multiple Choice
                     </h3>
-                    <p class="text-purple-700 text-sm">10 multiple choice + 1 problem solving</p>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Eliminate obviously wrong answers first</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Remember function notation and real-world context</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Think about domain and range restrictions</span>
+                        </li>
+                    </ul>
                 </div>
-                <div class="bg-orange-50 rounded-lg p-4">
-                    <h3 class="font-semibold text-orange-800 mb-2">
-                        <i class="fas fa-exclamation-triangle text-orange-500 mr-2"></i>Important
+
+                <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-exclamation-triangle text-yellow-500 mr-3"></i>Important Notes
                     </h3>
-                    <p class="text-orange-700 text-sm">You can only take this quiz once</p>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Quiz has 11 total questions (10 multiple choice + 1 problem solving)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Multiple choice: 1 point each, Problem solving: 5 points, 15 points total</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Timer starts when you click "Start Quiz"</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
-            
+
+            <!-- Badges Section -->
+            <div class="bg-gradient-to-r from-yellow-50 via-amber-50 to-orange-50 rounded-xl p-6 mb-8 border-l-4 border-yellow-500">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-trophy text-yellow-600 mr-3"></i>Earn Badges!
+                </h3>
+                <p class="text-gray-700 mb-4">Complete this quiz and earn special badges based on your performance!</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white rounded-lg p-4 border-2 border-purple-200 shadow-sm">
+                        <div class="flex items-center mb-3">
+                            <span class="text-3xl mr-3">🏆</span>
+                            <div>
+                                <h4 class="font-bold text-gray-800">Real-Life Problems Champion</h4>
+                                <span class="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded-full font-semibold">EPIC</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">Score 100% on this quiz</p>
+                        <p class="text-xs text-gray-500">Perfect score! Master real-life problem solving and earn this prestigious badge!</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 border-2 border-blue-200 shadow-sm">
+                        <div class="flex items-center mb-3">
+                            <span class="text-3xl mr-3">🌍</span>
+                            <div>
+                                <h4 class="font-bold text-gray-800">Real-Life Problems Expert</h4>
+                                <span class="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-semibold">RARE</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">Score 60% or higher on this quiz</p>
+                        <p class="text-xs text-gray-500">Show your expertise in solving real-world problems!</p>
+                    </div>
+                </div>
+                <div class="mt-4 bg-blue-50 rounded-lg p-3 border-l-4 border-blue-400">
+                    <p class="text-sm text-blue-800 flex items-start">
+                        <i class="fas fa-info-circle mr-2 mt-0.5"></i>
+                        <span>Badges are automatically awarded when you complete the quiz. Check your <a href="../achievements.html" class="font-semibold underline hover:text-blue-900">Achievements page</a> to see all your earned badges!</span>
+                    </p>
+                </div>
+            </div>
+
             <div class="text-center">
-                <button id="startQuizBtn" class="bg-primary text-white px-8 py-3 rounded-lg hover:bg-secondary transition-colors font-semibold text-lg">
-                    <i class="fas fa-play mr-2"></i>Start Quiz
+                <button onclick="startQuiz()" class="bg-gradient-to-r from-primary to-secondary text-white px-12 py-4 rounded-xl font-semibold text-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                    <i class="fas fa-play mr-3"></i>
+                    Start Quiz
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Progress Bar and Timer - Sticky -->
-    <div id="progressTimerContainer" class="bg-white shadow-md border-b border-gray-200 sticky top-0 z-40 hidden">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div class="flex items-center justify-between mb-3">
-                <div class="flex items-center space-x-6">
-                    <div class="flex items-center bg-indigo-50 rounded-lg px-3 py-2">
-                        <i class="fas fa-tasks text-indigo-600 mr-2"></i>
-                        <span class="text-sm font-medium text-gray-700">Progress:</span>
-                        <span class="text-sm font-bold text-indigo-600 ml-2" id="progressText">0/11</span>
+    <!-- Progress Bar and Timer - Always Sticky Header -->
+    <div class="bg-white shadow-lg border-b-2 border-purple-200 sticky top-16 z-[45] transition-all duration-300 hidden" id="progressTimerHeader">
+        <div class="max-w-5xl mx-auto px-3 sm:px-4 lg:px-8 py-3 sm:py-4">
+            <div class="flex flex-col sm:flex-row items-center justify-between mb-2 sm:mb-3 gap-2 sm:gap-0">
+                <!-- Left: Question Progress -->
+                <div class="flex items-center w-full sm:w-auto justify-between sm:justify-start">
+                    <div class="flex items-center">
+                        <span class="text-xs sm:text-sm text-gray-600 mr-2 font-medium">Question</span>
+                        <span class="text-xl sm:text-2xl font-bold text-gray-800" id="progressText">0/11</span>
                     </div>
-                    <div class="flex items-center bg-purple-50 rounded-lg px-3 py-2">
-                        <i class="fas fa-clock text-purple-600 mr-2"></i>
-                        <span class="text-sm font-medium text-gray-700">Time:</span>
-                        <span class="text-lg font-bold text-purple-600 ml-2" id="quizTimer">00:00</span>
+                    
+                    <!-- Mobile: Show timer inline on small screens -->
+                    <div class="flex items-center sm:hidden">
+                        <div class="circular-timer" style="width: 45px; height: 45px;">
+                            <svg width="45" height="45">
+                                <circle class="timer-bg" cx="22.5" cy="22.5" r="19" stroke-width="3"></circle>
+                                <circle class="timer-progress" cx="22.5" cy="22.5" r="19" stroke-width="3" 
+                                        stroke-dasharray="119.38" stroke-dashoffset="119.38" id="timerCircleMobile"></circle>
+                            </svg>
+                            <div class="timer-text text-xs" id="quizTimerMobile" style="font-size: 0.7rem;">00:00</div>
+                        </div>
                     </div>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg px-3 py-2 border border-green-200">
-                        <i class="fas fa-play-circle text-green-600 mr-2"></i>
-                        <span class="text-xs text-gray-600">Started at</span>
-                        <span class="text-sm font-semibold text-green-600 ml-1" id="startTime">--:--</span>
+                
+                <!-- Right: Circular Timer (Desktop) -->
+                <div class="hidden sm:flex items-center">
+                    <div class="circular-timer">
+                        <svg width="60" height="60">
+                            <circle class="timer-bg" cx="30" cy="30" r="26" stroke-width="4"></circle>
+                            <circle class="timer-progress" cx="30" cy="30" r="26" stroke-width="4" 
+                                    stroke-dasharray="163.36" stroke-dashoffset="163.36" id="timerCircle"></circle>
+                        </svg>
+                        <div class="timer-text" id="quizTimer">00:00</div>
                     </div>
                 </div>
             </div>
-            <div class="w-full bg-gray-200 rounded-full h-3 shadow-inner">
-                <div class="bg-gradient-to-r from-primary to-secondary h-3 rounded-full progress-bar transition-all duration-300" id="progressBar" style="width: 0%"></div>
+            <!-- Horizontal Progress Bar -->
+            <div class="quiz-progress-bar">
+                <div class="quiz-progress-fill" id="progressBar" style="width: 0%"></div>
             </div>
         </div>
     </div>
 
     <!-- Quiz Content -->
-    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div id="quizContainer" class="hidden">
             <!-- Question 1 -->
-            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="1">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-gray-800">Question 1 of 11</h3>
-                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
-                </div>
-                <div class="mb-6">
-                    <p class="text-lg text-gray-700 mb-4">
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="1">
+                <!-- Question Text in Light Purple Card -->
+                <div class="relative z-10 p-6 sm:p-8 mb-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
                         A taxi company charges ₱40 for the first kilometer and ₱15 for each additional kilometer. What function models the total fare f(x) for x kilometers?
-                    </p>
-                    <div class="space-y-3">
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q1" value="a" class="mr-3">
-                            <span>f(x) = 40 + 15x</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q1" value="b" class="mr-3">
-                            <span>f(x) = 40 + 15(x - 1)</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q1" value="c" class="mr-3">
-                            <span>f(x) = 40x + 15</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q1" value="d" class="mr-3">
-                            <span>f(x) = 15x + 40</span>
-                        </label>
-                    </div>
+                        <span class="text-pink-500 ml-2">?</span>
+                    </h2>
+                </div>
+                
+                <!-- Answer Options - Simple List -->
+                <div class="relative z-10 space-y-3">
+                    <label class="quiz-option">
+                        <input type="radio" name="q1" value="a" class="hidden">
+                        <div class="option-label">a</div>
+                        <span class="flex-1">f(x) = 40 + 15x</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q1" value="b" class="hidden">
+                        <div class="option-label">b</div>
+                        <span class="flex-1">f(x) = 40 + 15(x - 1)</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q1" value="c" class="hidden">
+                        <div class="option-label">c</div>
+                        <span class="flex-1">f(x) = 40x + 15</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q1" value="d" class="hidden">
+                        <div class="option-label">d</div>
+                        <span class="flex-1">f(x) = 15x + 40</span>
+                    </label>
                 </div>
             </div>
 
             <!-- Question 2 -->
-            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="2">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-gray-800">Question 2 of 11</h3>
-                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
-                </div>
-                <div class="mb-6">
-                    <p class="text-lg text-gray-700 mb-4">
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="2">
+                <div class="relative z-10 p-6 sm:p-8 mb-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
                         A mobile phone plan charges ₱500 monthly with ₱2 per minute for calls beyond the included 100 minutes. What is the function for the total cost C(x) where x is the total minutes used?
-                    </p>
-                    <div class="space-y-3">
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q2" value="a" class="mr-3">
-                            <span>C(x) = 500 + 2x</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q2" value="b" class="mr-3">
-                            <span>C(x) = 500 + 2(x - 100)</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q2" value="c" class="mr-3">
-                            <span>C(x) = 500x + 2</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q2" value="d" class="mr-3">
-                            <span>C(x) = 500 + 2(x + 100)</span>
-                        </label>
-                    </div>
+                        <span class="text-pink-500 ml-2">?</span>
+                    </h2>
+                </div>
+                <div class="relative z-10 space-y-3">
+                    <label class="quiz-option">
+                        <input type="radio" name="q2" value="a" class="hidden">
+                        <div class="option-label">a</div>
+                        <span class="flex-1">C(x) = 500 + 2x</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q2" value="b" class="hidden">
+                        <div class="option-label">b</div>
+                        <span class="flex-1">C(x) = 500 + 2(x - 100)</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q2" value="c" class="hidden">
+                        <div class="option-label">c</div>
+                        <span class="flex-1">C(x) = 500x + 2</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q2" value="d" class="hidden">
+                        <div class="option-label">d</div>
+                        <span class="flex-1">C(x) = 500 + 2(x + 100)</span>
+                    </label>
                 </div>
             </div>
 
             <!-- Question 3 -->
-            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="3">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-gray-800">Question 3 of 11</h3>
-                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
-                </div>
-                <div class="mb-6">
-                    <p class="text-lg text-gray-700 mb-4">
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="3">
+                <div class="relative z-10 p-6 sm:p-8 mb-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
                         An electricity company charges ₱8 per kWh for the first 100 kWh and ₱12 per kWh for consumption above 100 kWh. What type of function is this?
-                    </p>
-                    <div class="space-y-3">
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q3" value="a" class="mr-3">
-                            <span>Linear function</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q3" value="b" class="mr-3">
-                            <span>Quadratic function</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q3" value="c" class="mr-3">
-                            <span>Piecewise function</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q3" value="d" class="mr-3">
-                            <span>Exponential function</span>
-                        </label>
-                    </div>
+                        <span class="text-pink-500 ml-2">?</span>
+                    </h2>
+                </div>
+                <div class="relative z-10 space-y-3">
+                    <label class="quiz-option">
+                        <input type="radio" name="q3" value="a" class="hidden">
+                        <div class="option-label">a</div>
+                        <span class="flex-1">Linear function</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q3" value="b" class="hidden">
+                        <div class="option-label">b</div>
+                        <span class="flex-1">Quadratic function</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q3" value="c" class="hidden">
+                        <div class="option-label">c</div>
+                        <span class="flex-1">Piecewise function</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q3" value="d" class="hidden">
+                        <div class="option-label">d</div>
+                        <span class="flex-1">Exponential function</span>
+                    </label>
                 </div>
             </div>
 
             <!-- Question 4 -->
-            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="4">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-gray-800">Question 4 of 11</h3>
-                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
-                </div>
-                <div class="mb-6">
-                    <p class="text-lg text-gray-700 mb-4">
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="4">
+                <div class="relative z-10 p-6 sm:p-8 mb-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
                         A company's profit function is P(x) = 7,000x - 50,000, where x is the number of units sold. What does the break-even point represent?
-                    </p>
-                    <div class="space-y-3">
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q4" value="a" class="mr-3">
-                            <span>The point where profit is maximum</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q4" value="b" class="mr-3">
-                            <span>The point where revenue equals cost</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q4" value="c" class="mr-3">
-                            <span>The point where cost is minimum</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q4" value="d" class="mr-3">
-                            <span>The point where revenue is maximum</span>
-                        </label>
-                    </div>
+                        <span class="text-pink-500 ml-2">?</span>
+                    </h2>
+                </div>
+                <div class="relative z-10 space-y-3">
+                    <label class="quiz-option">
+                        <input type="radio" name="q4" value="a" class="hidden">
+                        <div class="option-label">a</div>
+                        <span class="flex-1">The point where profit is maximum</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q4" value="b" class="hidden">
+                        <div class="option-label">b</div>
+                        <span class="flex-1">The point where revenue equals cost</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q4" value="c" class="hidden">
+                        <div class="option-label">c</div>
+                        <span class="flex-1">The point where cost is minimum</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q4" value="d" class="hidden">
+                        <div class="option-label">d</div>
+                        <span class="flex-1">The point where revenue is maximum</span>
+                    </label>
                 </div>
             </div>
 
             <!-- Question 5 -->
-            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="5">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-gray-800">Question 5 of 11</h3>
-                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
-                </div>
-                <div class="mb-6">
-                    <p class="text-lg text-gray-700 mb-4">
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="5">
+                <div class="relative z-10 p-6 sm:p-8 mb-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
                         The temperature conversion from Celsius to Fahrenheit is given by F(C) = (9/5)C + 32. What is F(25)?
-                    </p>
-                    <div class="space-y-3">
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q5" value="a" class="mr-3">
-                            <span>77°F</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q5" value="b" class="mr-3">
-                            <span>45°F</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q5" value="c" class="mr-3">
-                            <span>57°F</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q5" value="d" class="mr-3">
-                            <span>32°F</span>
-                        </label>
-                    </div>
+                        <span class="text-pink-500 ml-2">?</span>
+                    </h2>
+                </div>
+                <div class="relative z-10 space-y-3">
+                    <label class="quiz-option">
+                        <input type="radio" name="q5" value="a" class="hidden">
+                        <div class="option-label">a</div>
+                        <span class="flex-1">77°F</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q5" value="b" class="hidden">
+                        <div class="option-label">b</div>
+                        <span class="flex-1">45°F</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q5" value="c" class="hidden">
+                        <div class="option-label">c</div>
+                        <span class="flex-1">57°F</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q5" value="d" class="hidden">
+                        <div class="option-label">d</div>
+                        <span class="flex-1">32°F</span>
+                    </label>
                 </div>
             </div>
 
             <!-- Question 6 -->
-            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="6">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-gray-800">Question 6 of 11</h3>
-                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
-                </div>
-                <div class="mb-6">
-                    <p class="text-lg text-gray-700 mb-4">
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="6">
+                <div class="relative z-10 p-6 sm:p-8 mb-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
                         A population grows according to P(t) = 100,000 × e^(0.02t), where t is time in years. What does the coefficient 0.02 represent?
-                    </p>
-                    <div class="space-y-3">
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q6" value="a" class="mr-3">
-                            <span>Initial population</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q6" value="b" class="mr-3">
-                            <span>Growth rate (2% per year)</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q6" value="c" class="mr-3">
-                            <span>Time period</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q6" value="d" class="mr-3">
-                            <span>Final population</span>
-                        </label>
-                    </div>
+                        <span class="text-pink-500 ml-2">?</span>
+                    </h2>
+                </div>
+                <div class="relative z-10 space-y-3">
+                    <label class="quiz-option">
+                        <input type="radio" name="q6" value="a" class="hidden">
+                        <div class="option-label">a</div>
+                        <span class="flex-1">Initial population</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q6" value="b" class="hidden">
+                        <div class="option-label">b</div>
+                        <span class="flex-1">Growth rate (2% per year)</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q6" value="c" class="hidden">
+                        <div class="option-label">c</div>
+                        <span class="flex-1">Time period</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q6" value="d" class="hidden">
+                        <div class="option-label">d</div>
+                        <span class="flex-1">Final population</span>
+                    </label>
                 </div>
             </div>
 
             <!-- Question 7 -->
-            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="7">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-gray-800">Question 7 of 11</h3>
-                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
-                </div>
-                <div class="mb-6">
-                    <p class="text-lg text-gray-700 mb-4">
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="7">
+                <div class="relative z-10 p-6 sm:p-8 mb-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
                         Newton's Law of Cooling is modeled by T(t) = Tₐ + (T₀ - Tₐ)e^(-kt). What does Tₐ represent?
-                    </p>
-                    <div class="space-y-3">
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q7" value="a" class="mr-3">
-                            <span>Initial temperature</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q7" value="b" class="mr-3">
-                            <span>Ambient temperature</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q7" value="c" class="mr-3">
-                            <span>Final temperature</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q7" value="d" class="mr-3">
-                            <span>Cooling constant</span>
-                        </label>
-                    </div>
+                        <span class="text-pink-500 ml-2">?</span>
+                    </h2>
+                </div>
+                <div class="relative z-10 space-y-3">
+                    <label class="quiz-option">
+                        <input type="radio" name="q7" value="a" class="hidden">
+                        <div class="option-label">a</div>
+                        <span class="flex-1">Initial temperature</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q7" value="b" class="hidden">
+                        <div class="option-label">b</div>
+                        <span class="flex-1">Ambient temperature</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q7" value="c" class="hidden">
+                        <div class="option-label">c</div>
+                        <span class="flex-1">Final temperature</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q7" value="d" class="hidden">
+                        <div class="option-label">d</div>
+                        <span class="flex-1">Cooling constant</span>
+                    </label>
                 </div>
             </div>
 
             <!-- Question 8 -->
-            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="8">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-gray-800">Question 8 of 11</h3>
-                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
-                </div>
-                <div class="mb-6">
-                    <p class="text-lg text-gray-700 mb-4">
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="8">
+                <div class="relative z-10 p-6 sm:p-8 mb-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
                         A projectile's height is modeled by h(t) = h₀ + v₀t - ½gt². What does the term -½gt² represent?
-                    </p>
-                    <div class="space-y-3">
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q8" value="a" class="mr-3">
-                            <span>Initial velocity effect</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q8" value="b" class="mr-3">
-                            <span>Initial height effect</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q8" value="c" class="mr-3">
-                            <span>Gravity effect (pulling down)</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q8" value="d" class="mr-3">
-                            <span>Air resistance effect</span>
-                        </label>
-                    </div>
+                        <span class="text-pink-500 ml-2">?</span>
+                    </h2>
+                </div>
+                <div class="relative z-10 space-y-3">
+                    <label class="quiz-option">
+                        <input type="radio" name="q8" value="a" class="hidden">
+                        <div class="option-label">a</div>
+                        <span class="flex-1">Initial velocity effect</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q8" value="b" class="hidden">
+                        <div class="option-label">b</div>
+                        <span class="flex-1">Initial height effect</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q8" value="c" class="hidden">
+                        <div class="option-label">c</div>
+                        <span class="flex-1">Gravity effect (pulling down)</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q8" value="d" class="hidden">
+                        <div class="option-label">d</div>
+                        <span class="flex-1">Air resistance effect</span>
+                    </label>
                 </div>
             </div>
 
             <!-- Question 9 -->
-            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="9">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-gray-800">Question 9 of 11</h3>
-                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
-                </div>
-                <div class="mb-6">
-                    <p class="text-lg text-gray-700 mb-4">
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="9">
+                <div class="relative z-10 p-6 sm:p-8 mb-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
                         A credit card charges 2% monthly interest on outstanding balances. If you have a balance of ₱10,000, what is the interest charge?
-                    </p>
-                    <div class="space-y-3">
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q9" value="a" class="mr-3">
-                            <span>₱200</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q9" value="b" class="mr-3">
-                            <span>₱20</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q9" value="c" class="mr-3">
-                            <span>₱2,000</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q9" value="d" class="mr-3">
-                            <span>₱2</span>
-                        </label>
-                    </div>
+                        <span class="text-pink-500 ml-2">?</span>
+                    </h2>
+                </div>
+                <div class="relative z-10 space-y-3">
+                    <label class="quiz-option">
+                        <input type="radio" name="q9" value="a" class="hidden">
+                        <div class="option-label">a</div>
+                        <span class="flex-1">₱200</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q9" value="b" class="hidden">
+                        <div class="option-label">b</div>
+                        <span class="flex-1">₱20</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q9" value="c" class="hidden">
+                        <div class="option-label">c</div>
+                        <span class="flex-1">₱2,000</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q9" value="d" class="hidden">
+                        <div class="option-label">d</div>
+                        <span class="flex-1">₱2</span>
+                    </label>
                 </div>
             </div>
 
             <!-- Question 10 -->
-            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="10">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-gray-800">Question 10 of 11</h3>
-                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
-                </div>
-                <div class="mb-6">
-                    <p class="text-lg text-gray-700 mb-4">
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="10">
+                <div class="relative z-10 p-6 sm:p-8 mb-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
                         A store offers bulk discounts: ₱100 per item for 1-10 items, ₱90 per item for 11-50 items, ₱80 per item for 50+ items. What type of function best describes this pricing?
-                    </p>
-                    <div class="space-y-3">
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q10" value="a" class="mr-3">
-                            <span>Linear function</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q10" value="b" class="mr-3">
-                            <span>Quadratic function</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q10" value="c" class="mr-3">
-                            <span>Piecewise function</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q10" value="d" class="mr-3">
-                            <span>Exponential function</span>
-                        </label>
-                    </div>
+                        <span class="text-pink-500 ml-2">?</span>
+                    </h2>
+                </div>
+                <div class="relative z-10 space-y-3">
+                    <label class="quiz-option">
+                        <input type="radio" name="q10" value="a" class="hidden">
+                        <div class="option-label">a</div>
+                        <span class="flex-1">Linear function</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q10" value="b" class="hidden">
+                        <div class="option-label">b</div>
+                        <span class="flex-1">Quadratic function</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q10" value="c" class="hidden">
+                        <div class="option-label">c</div>
+                        <span class="flex-1">Piecewise function</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q10" value="d" class="hidden">
+                        <div class="option-label">d</div>
+                        <span class="flex-1">Exponential function</span>
+                    </label>
                 </div>
             </div>
 
@@ -880,25 +1676,36 @@
                             <div class="flex items-start">
                                 <span class="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5">1</span>
                                 <div>
-                                    <strong>Find the vertex:</strong> For a quadratic function ax² + bx + c, the vertex is at x = -b/(2a)
+                                    <strong>Identify the vertex formula:</strong> For a quadratic function in the form P(x) = ax² + bx + c, the x-coordinate of the vertex (which gives maximum or minimum value) is found using x = -b/(2a)
                                 </div>
                             </div>
                             <div class="flex items-start">
                                 <span class="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5">2</span>
                                 <div>
-                                    <strong>Calculate x-coordinate:</strong> x = -100/(2×(-2)) = -100/(-4) = 25
+                                    <strong>Identify the coefficients:</strong> From P(x) = -2x² + 100x - 800, identify:
+                                    <ul class="list-disc list-inside mt-2 ml-4 space-y-1">
+                                        <li>a = -2</li>
+                                        <li>b = 100</li>
+                                        <li>c = -800</li>
+                                    </ul>
                                 </div>
                             </div>
                             <div class="flex items-start">
                                 <span class="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5">3</span>
                                 <div>
-                                    <strong>Substitute x = 25:</strong> P(25) = -2(25)² + 100(25) - 800
+                                    <strong>Calculate the x-coordinate of the vertex:</strong> Use the formula x = -b/(2a). Substitute the values of a and b, then simplify to find x.
                                 </div>
                             </div>
                             <div class="flex items-start">
                                 <span class="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5">4</span>
                                 <div>
-                                    <strong>Calculate:</strong> P(25) = -2(625) + 2500 - 800 = -1250 + 2500 - 800 = 450
+                                    <strong>Substitute x into the function:</strong> Once you have the x-value, substitute it into P(x) = -2x² + 100x - 800. Remember to follow the order of operations (PEMDAS).
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5">5</span>
+                                <div>
+                                    <strong>Calculate the maximum profit:</strong> Evaluate the expression step by step. First calculate x², then multiply by -2, then add 100x, and finally subtract 800.
                                 </div>
                             </div>
                         </div>
@@ -908,16 +1715,16 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-calculator text-primary mr-2"></i>Enter your answer (in thousands of pesos):
                         </label>
-                        <input type="number" id="ps-answer" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none text-lg" placeholder="Enter maximum profit (e.g., 450)">
+                        <input type="number" id="ps-answer" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none text-lg" placeholder="Enter maximum profit in thousands of pesos">
                         <p class="text-sm text-gray-500 mt-2">
-                            <i class="fas fa-info-circle mr-1"></i>Hint: The answer should be a positive number between 400-500
+                            <i class="fas fa-info-circle mr-1"></i>Tip: Remember that since this is a quadratic function with a negative leading coefficient (-2), it opens downward, so the vertex represents the maximum value.
                         </p>
                     </div>
                 </div>
             </div>
 
             <!-- Submit Button -->
-            <div class="text-center mb-8" id="submitButtonContainer">
+            <div class="text-center mb-8" id="submitButtonContainer" style="display: none;">
                 <button onclick="submitQuiz()" class="bg-gradient-to-r from-primary to-secondary text-white px-12 py-4 rounded-2xl font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105">
                     <i class="fas fa-check-circle mr-3"></i>
                     Submit Quiz
@@ -1017,8 +1824,35 @@
                     </div>
                 </div>
 
+                <!-- Review Your Answers Section -->
+                <div id="reviewAnswersSection" class="mt-8 mb-8">
+                    <div class="bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 rounded-xl p-6 mb-6 shadow-lg border-2 border-blue-200">
+                        <div class="text-center">
+                            <div class="inline-flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full p-4 mb-4 shadow-lg">
+                                <i class="fas fa-clipboard-check text-3xl"></i>
+                            </div>
+                            <h3 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-3">
+                                Review Your Answers
+                            </h3>
+                            <p class="text-gray-600 mb-2 text-lg">See which answers you got correct and incorrect</p>
+                            <p class="text-gray-500 text-sm">Click on explanations to learn more about each concept</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Quiz questions with answers will be displayed here -->
+                    <div id="quizReviewContainer" class="space-y-6">
+                        <!-- Questions will be dynamically inserted here -->
+                    </div>
+                </div>
+
                 <!-- Action Buttons -->
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button id="aiAssistantBtn" onclick="openAIModal()" class="group relative bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-robot text-xl"></i>
+                        </div>
+                        <span>AI Performance Analysis</span>
+                    </button>
                     <button onclick="showLeaderboard()" class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
                         <i class="fas fa-trophy mr-2"></i>
                         View Leaderboard
@@ -1031,6 +1865,122 @@
             </div>
         </div>
 
+        <!-- AI Assistant Modal -->
+        <div id="aiModal" class="hidden fixed inset-0 bg-black bg-opacity-60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+                <!-- Modal Header -->
+                <div class="bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 text-white p-6 flex items-center justify-between shadow-lg">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                            <i class="fas fa-robot text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold">AI Performance Analysis</h3>
+                            <p class="text-purple-100 text-sm mt-1">Detailed feedback from Cassy</p>
+                        </div>
+                    </div>
+                    <button onclick="closeAIModal()" class="text-white hover:text-gray-200 transition-colors p-2 hover:bg-white/10 rounded-full">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <!-- Modal Content -->
+                <div class="flex-1 overflow-y-auto p-6 bg-gradient-to-b from-gray-50 to-white">
+                    <div id="aiLoading" class="text-center py-16">
+                        <div class="inline-block animate-spin rounded-full h-16 w-16 border-4 border-purple-200 border-t-purple-600 mb-6"></div>
+                        <p class="text-gray-700 font-semibold text-lg">Cassy is analyzing your performance...</p>
+                        <p class="text-gray-500 text-sm mt-2">This will just take a moment!</p>
+                    </div>
+                    
+                    <div id="aiContent" class="hidden space-y-6">
+                        <!-- Performance Metrics Visualization -->
+                        <div class="bg-white rounded-xl p-6 shadow-md border border-gray-200">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                                <i class="fas fa-chart-bar text-purple-600 mr-3"></i>
+                                Performance Overview
+                            </h2>
+                            <div id="aiMetrics" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <!-- Metrics will be inserted here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Strengths & Weaknesses Visualization -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Strengths Card -->
+                            <div id="strengthsCard" class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border-2 border-green-300 shadow-lg">
+                                <div class="flex items-center mb-5">
+                                    <div class="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center mr-4 shadow-md">
+                                        <i class="fas fa-check-circle text-white text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xl font-bold text-green-800">Your Strengths</h3>
+                                        <p class="text-sm text-green-600">Areas where you excel</p>
+                                    </div>
+                                </div>
+                                <div id="strengthsList" class="space-y-3">
+                                    <!-- Strengths will be inserted here -->
+                                </div>
+                            </div>
+                            
+                            <!-- Weaknesses Card -->
+                            <div id="weaknessesCard" class="bg-gradient-to-br from-red-50 to-pink-50 rounded-xl p-6 border-2 border-red-300 shadow-lg">
+                                <div class="flex items-center mb-5">
+                                    <div class="w-14 h-14 bg-red-500 rounded-full flex items-center justify-center mr-4 shadow-md">
+                                        <i class="fas fa-exclamation-triangle text-white text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xl font-bold text-red-800">Areas to Improve</h3>
+                                        <p class="text-sm text-red-600">Focus areas for better performance</p>
+                                    </div>
+                                </div>
+                                <div id="weaknessesList" class="space-y-3">
+                                    <!-- Weaknesses will be inserted here -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- AI Analysis Text -->
+                        <div class="bg-white rounded-lg p-8 shadow-sm border border-gray-200">
+                            <div class="border-b border-gray-200 pb-4 mb-6">
+                                <h2 class="text-2xl font-semibold text-gray-900 flex items-center">
+                                    <i class="fas fa-chart-line text-indigo-600 mr-3 text-xl"></i>
+                                    Detailed Performance Analysis
+                                </h2>
+                                <p class="text-sm text-gray-500 mt-2 ml-9">Comprehensive evaluation of your quiz performance</p>
+                            </div>
+                            <div id="aiAnalysis" class="text-gray-700 leading-relaxed">
+                                <!-- AI analysis will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="aiError" class="hidden text-center py-16">
+                        <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-exclamation-triangle text-red-500 text-4xl"></i>
+                        </div>
+                        <p class="text-red-600 font-semibold text-lg mb-2">Failed to load AI analysis</p>
+                        <p class="text-gray-600 text-sm mb-6" id="aiErrorMessage"></p>
+                        <button onclick="loadAIAnalysis()" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-3 rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl">
+                            <i class="fas fa-redo mr-2"></i>Try Again
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Modal Footer -->
+                <div class="bg-gray-50 p-4 border-t border-gray-200 flex justify-end">
+                    <button onclick="closeAIModal()" class="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-8 py-3 rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all shadow-md hover:shadow-lg">
+                        <i class="fas fa-times mr-2"></i>Close
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating AI Assistant Button -->
+        <button id="floatingAIButton" onclick="openAIModal()" class="hidden fixed bottom-8 right-8 w-16 h-16 bg-gradient-to-br from-purple-600 via-indigo-600 to-purple-700 rounded-full shadow-2xl flex items-center justify-center text-white hover:scale-110 hover:shadow-purple-500/50 transition-all duration-300 z-50 animate-pulse hover:animate-none group">
+            <i class="fas fa-robot text-2xl group-hover:scale-110 transition-transform"></i>
+            <span class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-xs font-bold animate-ping">!</span>
+        </button>
+
         <!-- Leaderboard Container -->
         <div id="leaderboardContainer" class="hidden">
             <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
@@ -1040,7 +1990,6 @@
                     </div>
                     <h2 class="text-3xl font-bold text-gray-800 mb-2">Class Leaderboard</h2>
                     <p class="text-lg text-gray-600">Top performers in your class ranked by score and speed</p>
-                    <p class="text-sm text-gray-500 mt-2">Showing only students from your class and teacher</p>
                 </div>
 
                 <!-- Podium Section -->
@@ -1080,6 +2029,21 @@
                     <div class="bg-gray-50 rounded-b-xl overflow-hidden" id="detailedLeaderboard">
                         <!-- Detailed leaderboard entries will be populated by JavaScript -->
                     </div>
+                    <!-- Pagination Controls -->
+                    <div id="paginationContainer" class="pagination-container hidden">
+                        <button id="prevPageBtn" class="pagination-btn" onclick="changePage(-1)">
+                            <i class="fas fa-chevron-left mr-1"></i> Previous
+                        </button>
+                        <div class="pagination-page-numbers" id="pageNumbers">
+                            <!-- Page numbers will be populated by JavaScript -->
+                        </div>
+                        <button id="nextPageBtn" class="pagination-btn" onclick="changePage(1)">
+                            Next <i class="fas fa-chevron-right ml-1"></i>
+                        </button>
+                        <div class="pagination-info" id="paginationInfo">
+                            <!-- Pagination info will be populated by JavaScript -->
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Action Buttons -->
@@ -1108,12 +2072,94 @@
         // Timer variables
         let quizStartTime;
         let timerInterval;
-        let quizDuration = 0; // in seconds
+        let quizDuration = 0; // in seconds (elapsed time)
+        let timeRemaining = 0; // in seconds (countdown)
+        let timeLimitMinutes = 25; // Default time limit in minutes (from teacher settings)
         let currentAttemptId = null;
         let isReviewMode = false;
         let quizDeadline = null;
         let quizStarted = false; // Track if quiz has been started
+        let isQuizCompleted = false;
+        let userAnswers = {}; // Store user answers for review
+
+        // Leaderboard pagination variables
+        let currentLeaderboardData = [];
+        let currentPage = 1;
+        let itemsPerPage = 10;
         
+        // Logout dropdown functions
+        function toggleLogoutDropdown() {
+            const dropdown = document.getElementById('logoutDropdownMenu');
+            if (dropdown) {
+                dropdown.classList.toggle('hidden');
+            }
+        }
+        
+        // Intercept logout to warn if quiz is active
+        async function interceptLogout(event) {
+            event.preventDefault();
+            toggleLogoutDropdown();
+            
+            if (isQuizActive && currentAttemptId && !isQuizCompleted) {
+                const result = await Swal.fire({
+                    title: '⚠️ Warning: Active Quiz Detected',
+                    html: `
+                        <div class="text-center">
+                            <div class="w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                                <img src="../Img/Character/warning_example-removebg-preview.png" 
+                                     alt="Warning Character" 
+                                     class="w-full h-full object-contain warning-character"
+                                     style="filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));">
+                            </div>
+                            <p class="text-lg text-gray-700 mb-4">You have an active quiz in progress!</p>
+                            <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded mb-4 text-left">
+                                <p class="text-red-800 font-semibold mb-2">⚠️ Important:</p>
+                                <p class="text-red-700 text-sm">If you log out now, your quiz will be automatically submitted with a <strong>score of 0</strong>.</p>
+                            </div>
+                            <p class="text-gray-600 text-sm">Are you sure you want to log out?</p>
+                        </div>
+                    `,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, Logout (Score = 0)',
+                    cancelButtonText: 'Cancel',
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#6b7280',
+                    background: '#ffffff',
+                    customClass: {
+                        popup: 'rounded-2xl',
+                        title: 'text-slate-800',
+                        content: 'text-slate-600'
+                    }
+                });
+                
+                if (result.isConfirmed) {
+                    // Mark as cheating before logout
+                    hasLoggedOut = true;
+                    markAsCheating('logout_during_quiz').then(() => {
+                        // Proceed with logout
+                        window.location.href = '../php/logout.php';
+                    }).catch(() => {
+                        // Even if marking fails, proceed with logout
+                        window.location.href = '../php/logout.php';
+                    });
+                }
+                
+                return false;
+            }
+            // If quiz is not active, allow normal logout
+            window.location.href = '../php/logout.php';
+        }
+        
+        // Close logout dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('logoutDropdown');
+            const dropdownMenu = document.getElementById('logoutDropdownMenu');
+            if (dropdown && dropdownMenu && !dropdown.contains(event.target)) {
+                dropdownMenu.classList.add('hidden');
+            }
+        });
+
         // Anti-cheating variables
         let isQuizActive = false;
         let focusLostTime = null;
@@ -1130,6 +2176,7 @@
 
         // Quiz data with correct answers
         const quizData = {
+            questionOrder: [], // Store shuffled question order
             answers: {
                 q1: 'b', // f(x) = 40 + 15(x-1)
                 q2: 'b', // C(x) = 500 + 2(x-100)
@@ -1155,14 +2202,14 @@
             // Load user information
             loadUserInfo();
             
+            // Check quiz deadline and get time limit
+            checkQuizDeadline();
+            
             // Check if student has already completed this quiz
             checkQuizCompletion();
             
-            // Start quiz button
-            document.getElementById('startQuizBtn').addEventListener('click', startQuiz);
-            
             // Add event listeners to options
-            addOptionListeners();
+            setupEventListeners();
         });
 
         // Add event listeners to all options
@@ -1212,19 +2259,20 @@
                     return; // Error already handled in startQuizAttempt
                 }
                 
-                // Set quiz started flag
+                // Set quiz started flag and active
                 quizStarted = true;
+                isQuizActive = true;
                 
-                // Hide instructions container
-                const instructionsContainer = document.querySelector('.max-w-4xl.mx-auto.px-4.sm\\:px-6.lg\\:px-8.py-8');
-                if (instructionsContainer) {
-                    instructionsContainer.style.display = 'none';
+                // Hide tips container
+                const tipsContainer = document.getElementById('tipsContainer');
+                if (tipsContainer) {
+                    tipsContainer.classList.add('hidden');
                 }
                 
-                // Show progress timer container
-                const progressTimerContainer = document.getElementById('progressTimerContainer');
-                if (progressTimerContainer) {
-                    progressTimerContainer.classList.remove('hidden');
+                // Show progress timer header
+                const progressTimerHeader = document.getElementById('progressTimerHeader');
+                if (progressTimerHeader) {
+                    progressTimerHeader.classList.remove('hidden');
                 }
                 
                 // Show quiz container
@@ -1233,14 +2281,24 @@
                     quizContainer.classList.remove('hidden');
                 }
                 
+                // Show submit button
+                const submitButtonContainer = document.getElementById('submitButtonContainer');
+                if (submitButtonContainer) {
+                    submitButtonContainer.style.display = 'block';
+                }
+                
+                // Shuffle questions and answer options
+                shuffleQuestions();
+                shuffleAnswerOptions();
+                
                 // Start the timer
-            startTimer();
+                startTimer();
                 
                 // Initialize anti-cheating system
                 initializeAntiCheating();
                 
-                // Initialize quiz
-                initializeQuiz();
+                // Setup event listeners
+                setupEventListeners();
             } catch (error) {
                 console.error('Error starting quiz:', error);
                 Swal.fire({
@@ -1312,33 +2370,150 @@
             }
         }
 
-        // Start timer
+        // Start timer (countdown)
         function startTimer() {
-            quizStartTime = new Date();
-            const startTimeString = quizStartTime.toLocaleTimeString('en-US', { 
-                hour12: false, 
-                hour: '2-digit', 
-                minute: '2-digit'
-            });
-            document.getElementById('startTime').textContent = startTimeString;
+            // Prevent starting timer if quiz is not active or already completed
+            if (!isQuizActive || isQuizCompleted) {
+                console.log('⚠️ Cannot start timer - quiz is not active or completed');
+                return;
+            }
             
-            timerInterval = setInterval(updateTimer, 1000);
+            // Clear any existing timer first
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                console.log('🔄 Clearing existing timer before starting new one');
+            }
+            
+            // Ensure timeLimitMinutes is set (default to 25 if not set)
+            if (!timeLimitMinutes || timeLimitMinutes <= 0) {
+                timeLimitMinutes = 25;
+                console.log(`⚠️ timeLimitMinutes not set, using default: ${timeLimitMinutes} minutes`);
+            }
+            
+            // Check if we're resuming a quiz (timeRemaining already calculated)
+            const isResuming = timeRemaining > 0 && quizDuration > 0;
+            
+            if (!isResuming) {
+                // Starting fresh - initialize countdown timer
+                quizStartTime = new Date();
+                timeRemaining = timeLimitMinutes * 60; // Convert minutes to seconds
+                quizDuration = 0; // Reset elapsed time
+                console.log(`⏱️ Timer started: ${timeLimitMinutes} minutes (${timeRemaining} seconds)`);
+            } else {
+                // Resuming - use already calculated timeRemaining
+                const elapsedSeconds = (timeLimitMinutes * 60) - timeRemaining;
+                quizStartTime = new Date(Date.now() - (elapsedSeconds * 1000));
+                console.log(`⏱️ Timer resumed: ${timeRemaining} seconds remaining (${elapsedSeconds}s elapsed)`);
+            }
+            
+            // Ensure timeRemaining is valid
+            if (timeRemaining <= 0) {
+                console.log('⚠️ Time already expired, auto-submitting...');
+                setTimeout(() => autoSubmitQuiz(), 1000);
+                return;
+            }
+            
+            // Update display immediately
+            updateTimerDisplay();
+            
+            // Start countdown interval
+            timerInterval = setInterval(() => {
+                updateTimer();
+            }, 1000);
+            console.log('✅ Countdown timer started');
+        }
+
+        // Update timer (countdown)
+        function updateTimer() {
+            if (!isQuizActive || isQuizCompleted) {
+                return;
+            }
+            
+            // Decrement remaining time
+            timeRemaining--;
+            quizDuration++;
+            
+            // Update display
+            updateTimerDisplay();
+            
+            // Check if time is up
+            if (timeRemaining <= 0) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                console.log('⏰ Time is up! Auto-submitting quiz...');
+                autoSubmitQuiz();
+            }
         }
 
         // Update timer display
-        function updateTimer() {
-            const now = new Date();
-            const elapsed = Math.floor((now - quizStartTime) / 1000);
-            quizDuration = elapsed;
+        function updateTimerDisplay() {
+            if (timeRemaining === null || timeRemaining < 0) {
+                timeRemaining = 0;
+            }
             
-            const minutes = Math.floor(elapsed / 60);
-            const seconds = elapsed % 60;
-            
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
             const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            document.getElementById('quizTimer').textContent = timeString;
             
-            // Update progress
-            updateProgress();
+            // Update desktop timer
+            const timerText = document.getElementById('quizTimer');
+            const timerCircle = document.getElementById('timerCircle');
+            
+            // Update mobile timer
+            const timerTextMobile = document.getElementById('quizTimerMobile');
+            const timerCircleMobile = document.getElementById('timerCircleMobile');
+            
+            if (timerText) timerText.textContent = timeString;
+            if (timerTextMobile) timerTextMobile.textContent = timeString;
+            
+            // Calculate progress for circular timer
+            const maxTime = timeLimitMinutes * 60;
+            const elapsed = maxTime - timeRemaining;
+            const progress = Math.min((elapsed / maxTime) * 100, 100);
+            const circumference = 2 * Math.PI * 26; // radius = 26
+            const offset = circumference - (progress / 100) * circumference;
+            
+            // Update desktop circular progress
+            if (timerCircle) {
+                timerCircle.style.strokeDashoffset = offset;
+                // Change color based on remaining time
+                if (timeRemaining <= 60) {
+                    timerCircle.classList.add('urgent');
+                    timerText?.classList.add('urgent');
+                } else if (timeRemaining <= 300) {
+                    timerCircle.classList.add('warning');
+                    timerText?.classList.add('warning');
+                } else {
+                    timerCircle.classList.remove('warning', 'urgent');
+                    timerText?.classList.remove('warning', 'urgent');
+                }
+            }
+            
+            // Update mobile circular progress
+            if (timerCircleMobile) {
+                timerCircleMobile.style.strokeDashoffset = offset;
+                // Change color based on remaining time
+                if (timeRemaining <= 60) {
+                    timerCircleMobile.classList.add('urgent');
+                    timerTextMobile?.classList.add('urgent');
+                } else if (timeRemaining <= 300) {
+                    timerCircleMobile.classList.add('warning');
+                    timerTextMobile?.classList.add('warning');
+                } else {
+                    timerCircleMobile.classList.remove('warning', 'urgent');
+                    timerTextMobile?.classList.remove('warning', 'urgent');
+                }
+            }
+        }
+
+        // Stop timer
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                console.log('Timer stopped');
+            }
         }
 
         // Update progress bar and text
@@ -1353,11 +2528,14 @@
             }
             
             // Check problem solving question
-            const psAnswer = document.getElementById('ps-answer').value.trim();
-            if (psAnswer) answered++;
+            const psAnswer = document.getElementById('ps-answer');
+            if (psAnswer && psAnswer.value.trim()) answered++;
             
             // Update progress text
-            document.getElementById('progressText').textContent = `${answered}/11`;
+            const progressText = document.getElementById('progressText');
+            if (progressText) {
+                progressText.textContent = `${answered}/11`;
+            }
             
             // Update progress bar
             const progressPercentage = (answered / 11) * 100;
@@ -1367,33 +2545,155 @@
             }
         }
 
-        // Update timer display from saved time
-        function updateTimerDisplay() {
-            const minutes = Math.floor(quizDuration / 60);
-            const seconds = quizDuration % 60;
-            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            document.getElementById('quizTimer').textContent = timeString;
+        // Shuffle questions function
+        function shuffleQuestions() {
+            console.log('🔀 Shuffling questions...');
+            const quizContainer = document.getElementById('quizContainer');
+            if (!quizContainer) return;
+            
+            // Get all question cards (1-10, exclude problem solving 11)
+            const questions = Array.from(quizContainer.querySelectorAll('[data-question]'))
+                .filter(q => q.getAttribute('data-question') !== '11');
+            
+            // Shuffle using Fisher-Yates algorithm
+            for (let i = questions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [questions[i], questions[j]] = [questions[j], questions[i]];
+            }
+            
+            // Store the new order
+            quizData.questionOrder = questions.map(q => parseInt(q.getAttribute('data-question')));
+            console.log('✅ Question order:', quizData.questionOrder);
+            
+            // Reorder questions in DOM (but keep problem solving at the end)
+            const problemSolving = quizContainer.querySelector('[data-question="11"]');
+            const submitButton = document.getElementById('submitButtonContainer');
+            
+            // Remove all questions from container
+            questions.forEach(q => q.remove());
+            if (problemSolving) problemSolving.remove();
+            
+            // Add shuffled questions back
+            const fragment = document.createDocumentFragment();
+            questions.forEach(q => fragment.appendChild(q));
+            
+            // Insert before submit button if it exists and is a child of quizContainer
+            if (submitButton && quizContainer.contains(submitButton)) {
+                quizContainer.insertBefore(fragment, submitButton);
+            } else {
+                quizContainer.appendChild(fragment);
+            }
+            
+            // Add problem solving question back at the end
+            if (problemSolving) {
+                if (submitButton && quizContainer.contains(submitButton)) {
+                    quizContainer.insertBefore(problemSolving, submitButton);
+                } else {
+                    quizContainer.appendChild(problemSolving);
+                }
+            }
+            
+            console.log('✅ Questions shuffled successfully');
         }
 
-        // Stop timer
-        function stopTimer() {
-            if (timerInterval) {
-                clearInterval(timerInterval);
-                console.log('Timer stopped');
+        // Shuffle answer options within each question
+        function shuffleAnswerOptions() {
+            console.log('🔀 Shuffling answer options...');
+            const questions = document.querySelectorAll('[data-question]');
+            
+            questions.forEach(question => {
+                const options = Array.from(question.querySelectorAll('.quiz-option'));
                 
-                // Update timer display to show it's stopped
-                const timerElement = document.getElementById('quizTimer');
-                if (timerElement) {
-                    timerElement.textContent = 'STOPPED';
-                    timerElement.classList.add('text-red-500');
+                if (options.length === 0) return;
+                
+                // Shuffle options
+                for (let i = options.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [options[i], options[j]] = [options[j], options[i]];
                 }
+                
+                // Reorder in DOM
+                const optionsContainer = question.querySelector('.space-y-3');
+                if (optionsContainer) {
+                    options.forEach(option => {
+                        optionsContainer.appendChild(option);
+                    });
+                }
+            });
+            
+            console.log('✅ Answer options shuffled successfully');
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Add listeners to quiz options
+            const quizOptions = document.querySelectorAll('.quiz-option');
+            quizOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    if (!isReviewMode && !isQuizCompleted) {
+                        const radio = this.querySelector('input[type="radio"]');
+                        if (radio) {
+                            radio.checked = true;
+                            // Update visual state
+                            quizOptions.forEach(opt => {
+                                if (opt.querySelector('input[type="radio"]').name === radio.name) {
+                                    opt.classList.remove('selected');
+                                }
+                            });
+                            this.classList.add('selected');
+                            updateProgress();
+                        }
+                    }
+                });
+            });
+            
+            // Add listener to problem solving input
+            const psInput = document.getElementById('ps-answer');
+            if (psInput) {
+                psInput.addEventListener('input', function() {
+                    if (!isReviewMode && !isQuizCompleted) {
+                        updateProgress();
+                    }
+                });
             }
         }
 
-        // Initialize quiz
-        function initializeQuiz() {
-            // Add any initialization logic here
-            console.log('Quiz initialized');
+        // Check quiz deadline and get time limit
+        async function checkQuizDeadline() {
+            try {
+                const response = await fetch('../php/quiz-management.php?action=get_quiz_settings&quiz_type=real-life-problems', {
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        quizDeadline = result.deadline ? new Date(result.deadline) : null;
+                        timeLimitMinutes = result.time_limit || 25;
+                        
+                        // Check if deadline has passed
+                        if (quizDeadline && new Date() > quizDeadline) {
+                            isReviewMode = true;
+                            const reviewBanner = document.getElementById('reviewModeBanner');
+                            if (reviewBanner) {
+                                reviewBanner.classList.remove('hidden');
+                            }
+                            enableReviewMode();
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking quiz deadline:', error);
+            }
+        }
+
+        // Enable review mode
+        function enableReviewMode() {
+            isReviewMode = true;
+            const quizContainer = document.getElementById('quizContainer');
+            if (quizContainer) {
+                quizContainer.classList.add('review-mode');
+            }
         }
 
         // Submit quiz function with confirmation
@@ -1422,8 +2722,9 @@
                     }
                 }
                 
-                const psAnswer = document.getElementById('ps-answer').value.trim();
-                if (psAnswer) answered++;
+                const psAnswerInput = document.getElementById('ps-answer');
+                const psAnswerTrimmed = psAnswerInput ? psAnswerInput.value.trim() : '';
+                if (psAnswerTrimmed) answered++;
                 
                 // Show confirmation dialog
                 const result = await Swal.fire({
@@ -1482,32 +2783,66 @@
                     }
                 });
             
-                // Get student answers
-            const answers = getStudentAnswers();
+                // Collect all answers
+                const answers = {};
+                for (let i = 1; i <= 10; i++) {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    answers[`q${i}`] = selected ? selected.value : null;
+                    // Update userAnswers for review display
+                    userAnswers[`q${i}`] = selected ? selected.value : null;
+                }
                 
-                // Calculate score
-            const score = calculateScore(answers);
-                const totalPossiblePoints = 15; // 10 multiple choice (1pt each) + 1 problem solving (5pts)
-                const percentage = Math.round((score / totalPossiblePoints) * 100);
-            
-            // Save quiz attempt
-            const attemptId = await saveQuizAttempt(answers, score, percentage);
+                // Collect problem solving answer
+                const psAnswer = psAnswerInput ? psAnswerInput.value : '';
+                answers['ps-answer'] = psAnswer;
+                userAnswers['ps-answer'] = psAnswer;
+                
+                // Submit to database
+                const dbResult = await saveQuizResults(answers, quizDuration);
                 
                 // Close loading dialog
                 Swal.close();
-            
-            if (attemptId) {
-                    currentAttemptId = attemptId;
-                // Show results
-                showResults(score, percentage, answers);
-            } else {
+                
+                if (dbResult && dbResult.success) {
+                    // Stop anti-cheating system
+                    stopAntiCheating();
+                    
+                    // Mark quiz as completed
+                    isQuizCompleted = true;
+                    
+                    // Hide submit button
+                    const submitButtonContainer = document.getElementById('submitButtonContainer');
+                    if (submitButtonContainer) {
+                        submitButtonContainer.style.display = 'none';
+                    }
+                    
+                    // Use database results for display
+                    console.log('✅ Using database results for display');
+                    console.log('Database result:', dbResult);
+                    
+                    // Check and award badges
+                    if (!isReviewMode) {
+                        await checkAndAwardBadges(dbResult);
+                    }
+                    
+                    // Show results using database result (which will also display review section)
+                    showResults(dbResult);
+                } else {
+                    // Database submission failed - restart timer if quiz not completed
+                    if (!isQuizCompleted) {
+                        startTimer();
+                    }
+                    
+                    // Show error and don't proceed
+                    console.error('❌ Database submission failed, cannot proceed');
                     Swal.fire({
-                        title: 'Error',
-                        text: 'There was an error saving your quiz. Please try again.',
+                        title: 'Quiz Not Saved',
+                        text: 'Your quiz could not be saved to the database. Please contact your teacher or try again later.',
                         icon: 'error',
                         confirmButtonText: 'OK',
                         confirmButtonColor: '#667eea'
                     });
+                    return; // Don't show results if database save failed
                 }
             } catch (error) {
                 console.error('Error submitting quiz:', error);
@@ -1565,7 +2900,69 @@
             return score;
         }
 
-        // Save quiz attempt
+        // Save quiz results to database
+        async function saveQuizResults(answers, timeInSeconds) {
+            try {
+                console.log('Submitting quiz to database...');
+                console.log('Attempt ID:', currentAttemptId);
+                console.log('Completion Time:', timeInSeconds);
+                console.log('Answers:', answers);
+                
+                const formData = new FormData();
+                formData.append('action', 'submit_quiz');
+                formData.append('attempt_id', currentAttemptId);
+                formData.append('completion_time', timeInSeconds);
+                
+                // Add answers to form data
+                for (const [key, value] of Object.entries(answers)) {
+                    formData.append(`answers[${key}]`, value || '');
+                }
+                
+                console.log('Sending request to quiz-management.php...');
+                const response = await fetch('../php/quiz-management.php', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+                
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                console.log('Quiz submission result:', result);
+                
+                if (result.success) {
+                    console.log('✅ Quiz submitted successfully to database:', result);
+                    console.log('Score:', result.score, 'Total Questions:', result.total_questions);
+                    return result; // Return the result for the calling function
+                } else {
+                    console.error('❌ Failed to submit quiz to database:', result.message);
+                    Swal.fire({
+                        title: 'Submission Error',
+                        text: 'Failed to save your quiz to the database. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#667eea'
+                    });
+                    return null;
+                }
+            } catch (error) {
+                console.error('❌ Error submitting quiz to database:', error);
+                Swal.fire({
+                    title: 'Connection Error',
+                    text: 'Unable to connect to the server. Please check your internet connection and try again.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#667eea'
+                });
+                return null;
+            }
+        }
+
+        // Save quiz attempt (legacy function - kept for compatibility)
         async function saveQuizAttempt(answers, score, percentage) {
             try {
                 if (!currentAttemptId) {
@@ -1651,17 +3048,53 @@
         }
 
         // Show results
-        async function showResults(score, percentage, answers) {
+        // Show results using database result
+        async function showResults(result) {
             try {
+                // Stop the timer when showing results
+                stopTimer();
+                
                 // Show results
                 const quizContainer = document.getElementById('quizContainer');
                 const resultsContainer = document.getElementById('resultsContainer');
+                const submitButtonContainer = document.getElementById('submitButtonContainer');
                 
                 if (quizContainer) quizContainer.classList.add('hidden');
+                if (submitButtonContainer) submitButtonContainer.style.display = 'none';
                 if (resultsContainer) resultsContainer.classList.remove('hidden');
                 
-                const totalQuestions = 11; // 10 multiple choice + 1 problem solving question
-                const totalPoints = 15; // 10 multiple choice (1pt each) + 1 problem solving (5pts)
+                // Collect student answers for review display
+                const studentAnswers = {};
+                for (let i = 1; i <= 10; i++) {
+                    // Use userAnswers if available, otherwise try to get from DOM
+                    if (userAnswers[`q${i}`]) {
+                        studentAnswers[`q${i}`] = userAnswers[`q${i}`];
+                    } else {
+                        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                        studentAnswers[`q${i}`] = selected ? selected.value : '';
+                    }
+                }
+                
+                // Get problem solving answer
+                if (userAnswers['ps-answer']) {
+                    studentAnswers['ps-answer'] = userAnswers['ps-answer'];
+                } else {
+                    const psInput = document.getElementById('ps-answer');
+                    studentAnswers['ps-answer'] = psInput ? psInput.value.trim() : '';
+                }
+                
+                const totalQuestions = result.total_questions || 11; // Default to 11 (10 MC + 1 PS) if not provided
+                const percentage = Math.round((result.score / totalQuestions) * 100);
+                
+                // Calculate correct/incorrect answers if not provided
+                let correctCount = result.correct_answers;
+                let incorrectCount = result.incorrect_answers;
+                
+                if (correctCount === undefined || incorrectCount === undefined) {
+                    // Calculate from score
+                    correctCount = result.score;
+                    incorrectCount = totalQuestions - result.score;
+                }
                 
                 // Update score displays
                 const totalScoreEl = document.getElementById('totalScore');
@@ -1669,9 +3102,9 @@
                 const incorrectAnswersEl = document.getElementById('incorrectAnswers');
                 const completionTimeEl = document.getElementById('completionTime');
                 
-                if (totalScoreEl) totalScoreEl.textContent = `${score}/${totalPoints}`;
-                if (correctAnswersEl) correctAnswersEl.textContent = score;
-                if (incorrectAnswersEl) incorrectAnswersEl.textContent = totalPoints - score;
+                if (totalScoreEl) totalScoreEl.textContent = `${result.score}/${totalQuestions}`;
+                if (correctAnswersEl) correctAnswersEl.textContent = correctCount;
+                if (incorrectAnswersEl) incorrectAnswersEl.textContent = incorrectCount;
                 if (completionTimeEl) completionTimeEl.textContent = formatTime(quizDuration);
                 
                 // Update overall grade
@@ -1692,32 +3125,76 @@
                     }
                 }
 
-                // Get and display student's rank (with small delay to ensure database is updated)
-                setTimeout(async () => {
-                    await displayStudentRank();
-                    
-                    // If rank is still not found, try again after a longer delay
-                    setTimeout(async () => {
-                        const rankEl = document.getElementById('studentRank');
-                        if (rankEl && rankEl.textContent === '--') {
-                            console.log('Rank still not found, trying again...');
-                            await displayStudentRank();
-                        }
-                    }, 3000);
-                }, 1000);
+                // Get and display student's rank
+                await displayStudentRank();
 
                 // Update character based on performance
                 updateResultsCharacter(percentage);
 
-                // Check and award badges only if quiz is successfully completed
-                if (score > 0) {
-                    await checkAndAwardBadges({
-                        score: score,
-                        total_questions: totalPoints,
-                        percentage: percentage
+                // Analyze which specific questions were answered correctly/incorrectly
+                const questionAnalysis = [];
+                const questionConcepts = {
+                    1: { title: 'Taxi fare modeling', concept: 'Creating linear functions for real-world scenarios' },
+                    2: { title: 'Mobile phone plan modeling', concept: 'Understanding piecewise functions for billing' },
+                    3: { title: 'Electricity billing', concept: 'Identifying piecewise functions' },
+                    4: { title: 'Break-even analysis', concept: 'Finding intersection points of revenue and cost functions' },
+                    5: { title: 'Temperature conversion', concept: 'Applying linear functions for unit conversion' },
+                    6: { title: 'Population growth', concept: 'Understanding exponential growth models' },
+                    7: { title: 'Newton\'s Law of Cooling', concept: 'Applying exponential decay models' },
+                    8: { title: 'Projectile motion', concept: 'Understanding quadratic functions in physics' },
+                    9: { title: 'Interest calculation', concept: 'Applying percentage calculations' },
+                    10: { title: 'Real-world applications', concept: 'Connecting functions to practical problems' }
+                };
+                
+                for (let i = 1; i <= 10; i++) {
+                    const userAnswer = studentAnswers[`q${i}`];
+                    const correctAnswer = quizData.answers[`q${i}`];
+                    const isCorrect = userAnswer === correctAnswer;
+                    questionAnalysis.push({
+                        questionNumber: i,
+                        concept: questionConcepts[i].title,
+                        conceptDetail: questionConcepts[i].concept,
+                        studentAnswer: userAnswer || '',
+                        correctAnswer: correctAnswer,
+                        isCorrect: isCorrect
                     });
-                } else {
-                    console.log('Skipping badge check - score is 0');
+                }
+                
+                // Check problem solving
+                const psAnswer = studentAnswers['ps-answer'] || '';
+                const psCorrectAnswer = quizData.problemSolving.answer;
+                const isPsCorrect = psAnswer && parseInt(psAnswer.trim()) === psCorrectAnswer;
+                
+                // Calculate MC correct/incorrect
+                const mcCorrect = correctCount - (isPsCorrect ? 1 : 0);
+                const mcIncorrect = incorrectCount - (isPsCorrect ? 0 : 1);
+                
+                // Store quiz results for AI analysis with detailed question analysis
+                window.quizResultsForAI = {
+                    score: result.score || 0,
+                    totalQuestions: totalQuestions,
+                    totalPoints: 15,
+                    correct: correctCount,
+                    incorrect: incorrectCount,
+                    percentage: percentage,
+                    timeTaken: formatTime(quizDuration),
+                    mcCorrect: mcCorrect,
+                    mcIncorrect: mcIncorrect,
+                    psCorrect: isPsCorrect ? 1 : 0,
+                    psIncorrect: isPsCorrect ? 0 : 1,
+                    studentAnswers: studentAnswers,
+                    questionAnalysis: questionAnalysis,
+                    problemSolvingAnswer: psAnswer,
+                    problemSolvingCorrect: isPsCorrect
+                };
+
+                // Show quiz review with correct/incorrect answers and explanations
+                displayQuizReview(studentAnswers);
+
+                // Show floating AI button
+                const floatingAIButton = document.getElementById('floatingAIButton');
+                if (floatingAIButton) {
+                    floatingAIButton.classList.remove('hidden');
                 }
 
                 // Scroll to results
@@ -1752,6 +3229,509 @@
             const minutes = Math.floor(numSeconds / 60);
             const remainingSeconds = numSeconds % 60;
             return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        // ==================== AI ASSISTANT FUNCTIONS ====================
+        
+        // Open AI Modal
+        function openAIModal() {
+            const modal = document.getElementById('aiModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                loadAIAnalysis();
+            }
+        }
+        
+        // Close AI Modal
+        function closeAIModal() {
+            const modal = document.getElementById('aiModal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
+        
+        // Load AI Analysis
+        async function loadAIAnalysis() {
+            if (!window.quizResultsForAI) {
+                document.getElementById('aiError').classList.remove('hidden');
+                document.getElementById('aiLoading').classList.add('hidden');
+                document.getElementById('aiContent').classList.add('hidden');
+                document.getElementById('aiErrorMessage').textContent = 'Quiz results not available. Please submit the quiz first.';
+                return;
+            }
+            
+            // Show loading, hide content and error
+            document.getElementById('aiLoading').classList.remove('hidden');
+            document.getElementById('aiContent').classList.add('hidden');
+            document.getElementById('aiError').classList.add('hidden');
+            
+            try {
+                const response = await fetch('../php/quiz-ai-assistant.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(window.quizResultsForAI)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.analysis) {
+                    // Hide loading, show content
+                    document.getElementById('aiLoading').classList.add('hidden');
+                    document.getElementById('aiContent').classList.remove('hidden');
+                    
+                    // Display metrics visualization
+                    if (data.metrics) {
+                        displayAIMetrics(data.metrics);
+                    }
+                    
+                    // Extract and display strengths/weaknesses
+                    extractAndDisplayStrengthsWeaknesses(data.analysis);
+                    
+                    // Format and display the analysis
+                    const analysisDiv = document.getElementById('aiAnalysis');
+                    
+                    // Remove unwanted text patterns
+                    let cleanAnalysis = data.analysis
+                        // Remove "Meet with me" and similar scheduling text
+                        .replace(/Meet with me:.*?(?=\n|$)/gi, '')
+                        .replace(/Schedule a follow-up.*?(?=\n|$)/gi, '')
+                        .replace(/Schedule.*?session.*?(?=\n|$)/gi, '')
+                        .replace(/follow-up session.*?(?=\n|$)/gi, '')
+                        // Remove markdown headers (# and ##)
+                        .replace(/^#{1,6}\s+/gm, '')
+                        // Convert markdown bold (**text**) to styled bold
+                        .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-800">$1</strong>')
+                        // Convert markdown italic (*text*) to styled italic
+                        .replace(/\*(.*?)\*/g, '<em class="italic text-gray-600">$1</em>')
+                        // Remove markdown code blocks
+                        .replace(/```[\s\S]*?```/g, '')
+                        .replace(/`([^`]+)`/g, '<code class="bg-gray-100 px-2 py-1 rounded text-sm font-mono text-purple-600">$1</code>')
+                        // Remove extra asterisks
+                        .replace(/\*{3,}/g, '')
+                        // Clean up multiple newlines
+                        .replace(/\n{3,}/g, '\n\n')
+                        .trim();
+                    
+                    // Convert markdown-style headers to HTML sections with formal modern styling
+                    let formattedAnalysis = cleanAnalysis
+                        .replace(/MOTIVATION\n/gi, '</div><div class="mb-8 pb-6 border-b border-gray-200 last:border-b-0"><div class="flex items-start mb-4"><div class="flex-shrink-0 w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mr-4 mt-1"><i class="fas fa-heart text-indigo-600 text-sm"></i></div><div class="flex-1"><h3 class="text-lg font-semibold text-gray-900 mb-2">Motivation</h3></div></div><div class="ml-14 text-gray-700 leading-relaxed">')
+                        .replace(/STRENGTHS\n/gi, '</div><div class="mb-8 pb-6 border-b border-gray-200 last:border-b-0"><div class="flex items-start mb-4"><div class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-4 mt-1"><i class="fas fa-check-circle text-green-600 text-sm"></i></div><div class="flex-1"><h3 class="text-lg font-semibold text-gray-900 mb-2">Your Strengths</h3></div></div><div class="ml-14 text-gray-700 leading-relaxed">')
+                        .replace(/AREAS FOR IMPROVEMENT\n/gi, '</div><div class="mb-8 pb-6 border-b border-gray-200 last:border-b-0"><div class="flex items-start mb-4"><div class="flex-shrink-0 w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-4 mt-1"><i class="fas fa-exclamation-triangle text-red-600 text-sm"></i></div><div class="flex-1"><h3 class="text-lg font-semibold text-gray-900 mb-2">Areas to Improve</h3></div></div><div class="ml-14 text-gray-700 leading-relaxed">')
+                        .replace(/RECOMMENDATIONS\n/gi, '</div><div class="mb-8 pb-6 border-b border-gray-200 last:border-b-0"><div class="flex items-start mb-4"><div class="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-4 mt-1"><i class="fas fa-lightbulb text-blue-600 text-sm"></i></div><div class="flex-1"><h3 class="text-lg font-semibold text-gray-900 mb-2">How to Improve</h3></div></div><div class="ml-14 text-gray-700 leading-relaxed">')
+                        .replace(/NEXT STEPS\n/gi, '</div><div class="mb-8 pb-6 border-b border-gray-200 last:border-b-0"><div class="flex items-start mb-4"><div class="flex-shrink-0 w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mr-4 mt-1"><i class="fas fa-arrow-right text-amber-600 text-sm"></i></div><div class="flex-1"><h3 class="text-lg font-semibold text-gray-900 mb-2">Next Steps</h3></div></div><div class="ml-14 text-gray-700 leading-relaxed">')
+                        .replace(/PERFORMANCE ANALYSIS\n/gi, '</div><div class="mb-8 pb-6 border-b border-gray-200 last:border-b-0"><div class="flex items-start mb-4"><div class="flex-shrink-0 w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mr-4 mt-1"><i class="fas fa-chart-line text-indigo-600 text-sm"></i></div><div class="flex-1"><h3 class="text-lg font-semibold text-gray-900 mb-2">Performance Analysis</h3></div></div><div class="ml-14 text-gray-700 leading-relaxed">')
+                        // Convert bullet points with formal styling
+                        .replace(/^[-•]\s+(.*)$/gm, '<div class="flex items-start mb-3 pl-2"><span class="flex-shrink-0 w-1.5 h-1.5 bg-gray-400 rounded-full mt-2.5 mr-3"></span><span class="text-gray-700 flex-1">$1</span></div>')
+                        .replace(/^\d+\.\s+(.*)$/gm, '<div class="flex items-start mb-3"><span class="font-medium text-gray-600 mr-3 min-w-[1.5rem] text-sm">$&</span><span class="text-gray-700 flex-1">$1</span></div>')
+                        // Convert paragraphs with professional spacing
+                        .replace(/\n\n/g, '</div><div class="mt-5 text-gray-700 leading-relaxed">')
+                        .replace(/\n/g, '<br>');
+                    
+                    formattedAnalysis = '<div class="space-y-0">' + formattedAnalysis + '</div></div>';
+                    analysisDiv.innerHTML = formattedAnalysis;
+                } else {
+                    throw new Error(data.message || 'Failed to get AI analysis');
+                }
+            } catch (error) {
+                console.error('AI Analysis Error:', error);
+                document.getElementById('aiLoading').classList.add('hidden');
+                document.getElementById('aiError').classList.remove('hidden');
+                document.getElementById('aiErrorMessage').textContent = error.message || 'An error occurred while loading AI analysis.';
+            }
+        }
+        
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('aiModal');
+            if (modal && event.target === modal) {
+                closeAIModal();
+            }
+        });
+        
+        // Display AI Metrics Visualization
+        function displayAIMetrics(metrics) {
+            const metricsDiv = document.getElementById('aiMetrics');
+            if (!metricsDiv || !metrics) return;
+            
+            const percentage = metrics.percentage || 0;
+            const mcPercentage = metrics.mcPercentage || 0;
+            const psPercentage = metrics.psPercentage || 0;
+            const mcCorrect = metrics.mcCorrect || 0;
+            const psCorrect = metrics.psCorrect || 0;
+            
+            // Determine performance level and color for overall score
+            let overallColorClass, overallIcon, overallLevel, overallStatus;
+            if (percentage >= 90) {
+                overallColorClass = 'from-green-500 to-emerald-600';
+                overallIcon = 'fa-trophy';
+                overallLevel = 'Excellent';
+                overallStatus = 'Outstanding performance!';
+            } else if (percentage >= 80) {
+                overallColorClass = 'from-blue-500 to-indigo-600';
+                overallIcon = 'fa-star';
+                overallLevel = 'Very Good';
+                overallStatus = 'Great work! Keep it up!';
+            } else if (percentage >= 70) {
+                overallColorClass = 'from-yellow-500 to-orange-600';
+                overallIcon = 'fa-check-circle';
+                overallLevel = 'Good';
+                overallStatus = 'Good performance, but more practice needed';
+            } else if (percentage >= 60) {
+                overallColorClass = 'from-orange-500 to-red-500';
+                overallIcon = 'fa-exclamation-circle';
+                overallLevel = 'Needs Improvement';
+                overallStatus = 'Focus on studying these concepts';
+            } else {
+                overallColorClass = 'from-red-500 to-red-700';
+                overallIcon = 'fa-times-circle';
+                overallLevel = 'Weak';
+                overallStatus = 'Needs significant improvement - review fundamentals';
+            }
+            
+            // Determine MC performance
+            let mcColorClass, mcStatus;
+            if (mcPercentage >= 80) {
+                mcColorClass = 'from-blue-500 to-indigo-600';
+                mcStatus = 'Strong in Multiple Choice questions';
+            } else if (mcPercentage >= 60) {
+                mcColorClass = 'from-yellow-500 to-orange-500';
+                mcStatus = 'Moderate performance in Multiple Choice';
+            } else {
+                mcColorClass = 'from-red-500 to-pink-500';
+                mcStatus = 'Needs improvement in Multiple Choice';
+            }
+            
+            // Determine PS performance
+            let psColorClass, psStatus;
+            if (psPercentage >= 80) {
+                psColorClass = 'from-purple-500 to-pink-600';
+                psStatus = 'Strong in Problem Solving';
+            } else if (psPercentage >= 50) {
+                psColorClass = 'from-yellow-500 to-orange-500';
+                psStatus = 'Moderate performance in Problem Solving';
+            } else {
+                psColorClass = 'from-red-500 to-pink-500';
+                psStatus = 'Needs improvement in Problem Solving';
+            }
+            
+            metricsDiv.innerHTML = `
+                <div class="bg-gradient-to-br ${overallColorClass} rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-transform">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-sm font-semibold uppercase tracking-wide">Overall Performance</span>
+                        <i class="fas ${overallIcon} text-2xl"></i>
+                    </div>
+                    <div class="text-4xl font-bold mb-2">${percentage}%</div>
+                    <div class="w-full bg-white/20 rounded-full h-3 mb-2">
+                        <div class="bg-white rounded-full h-3 transition-all duration-1000 shadow-lg" style="width: ${percentage}%"></div>
+                    </div>
+                    <div class="text-sm font-semibold mb-1">${overallLevel}</div>
+                    <div class="text-xs opacity-90 italic">${overallStatus}</div>
+                </div>
+                
+                <div class="bg-gradient-to-br ${mcColorClass} rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-transform">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-sm font-semibold uppercase tracking-wide">Multiple Choice</span>
+                        <i class="fas fa-list-check text-2xl"></i>
+                    </div>
+                    <div class="text-4xl font-bold mb-2">${mcPercentage}%</div>
+                    <div class="w-full bg-white/20 rounded-full h-3 mb-2">
+                        <div class="bg-white rounded-full h-3 transition-all duration-1000 shadow-lg" style="width: ${mcPercentage}%"></div>
+                    </div>
+                    <div class="text-sm font-semibold mb-1">${mcCorrect}/10 Questions</div>
+                    <div class="text-xs opacity-90 italic">${mcStatus}</div>
+                </div>
+                
+                <div class="bg-gradient-to-br ${psColorClass} rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-transform">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-sm font-semibold uppercase tracking-wide">Problem Solving</span>
+                        <i class="fas fa-calculator text-2xl"></i>
+                    </div>
+                    <div class="text-4xl font-bold mb-2">${psPercentage}%</div>
+                    <div class="w-full bg-white/20 rounded-full h-3 mb-2">
+                        <div class="bg-white rounded-full h-3 transition-all duration-1000 shadow-lg" style="width: ${psPercentage}%"></div>
+                    </div>
+                    <div class="text-sm font-semibold mb-1">${psCorrect > 0 ? 'Correct' : 'Incorrect'}</div>
+                    <div class="text-xs opacity-90 italic">${psStatus}</div>
+                </div>
+            `;
+        }
+        
+        // Analyze specific questions to generate detailed strengths and weaknesses
+        function analyzeSpecificPerformance() {
+            if (!window.quizResultsForAI || !window.quizResultsForAI.questionAnalysis) {
+                return { strengths: [], weaknesses: [] };
+            }
+            
+            const questionAnalysis = window.quizResultsForAI.questionAnalysis;
+            const strengths = [];
+            const weaknesses = [];
+            
+            // Group correct answers by concept
+            const correctConcepts = [];
+            const incorrectConcepts = [];
+            
+            questionAnalysis.forEach(q => {
+                if (q.isCorrect) {
+                    correctConcepts.push(q.concept);
+                } else {
+                    incorrectConcepts.push({
+                        concept: q.concept,
+                        conceptDetail: q.conceptDetail,
+                        questionNumber: q.questionNumber
+                    });
+                }
+            });
+            
+            // Create unique strengths list
+            const uniqueStrengths = [...new Set(correctConcepts)];
+            uniqueStrengths.forEach(concept => {
+                strengths.push({
+                    concept: concept,
+                    detail: questionAnalysis.find(q => q.concept === concept && q.isCorrect)?.conceptDetail || ''
+                });
+            });
+            
+            // Create unique weaknesses list
+            const uniqueWeaknesses = [...new Set(incorrectConcepts.map(w => w.concept))];
+            uniqueWeaknesses.forEach(concept => {
+                const weakness = incorrectConcepts.find(w => w.concept === concept);
+                weaknesses.push({
+                    concept: concept,
+                    detail: weakness?.conceptDetail || '',
+                    questionNumber: weakness?.questionNumber
+                });
+            });
+            
+            return { strengths, weaknesses };
+        }
+        
+        // Extract and display strengths and weaknesses
+        function extractAndDisplayStrengthsWeaknesses(analysis) {
+            // First try to get detailed analysis from question-specific data
+            const specificAnalysis = analyzeSpecificPerformance();
+            
+            const strengthsList = document.getElementById('strengthsList');
+            const weaknessesList = document.getElementById('weaknessesList');
+            
+            if (specificAnalysis.strengths.length > 0) {
+                strengthsList.innerHTML = specificAnalysis.strengths.map(strength => `
+                    <div class="bg-white rounded-lg p-4 shadow-sm border border-green-200 hover:shadow-md transition-shadow">
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-3 mt-1"></i>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-green-800 mb-1">${strength.concept}</h4>
+                                <p class="text-sm text-green-700">${strength.detail}</p>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                strengthsList.innerHTML = '<p class="text-green-700 text-sm italic">No specific strengths identified. Keep practicing!</p>';
+            }
+            
+            if (specificAnalysis.weaknesses.length > 0) {
+                weaknessesList.innerHTML = specificAnalysis.weaknesses.map(weakness => `
+                    <div class="bg-white rounded-lg p-4 shadow-sm border border-red-200 hover:shadow-md transition-shadow">
+                        <div class="flex items-start">
+                            <i class="fas fa-exclamation-triangle text-red-500 mr-3 mt-1"></i>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-red-800 mb-1">${weakness.concept}</h4>
+                                <p class="text-sm text-red-700">${weakness.detail}</p>
+                                ${weakness.questionNumber ? `<p class="text-xs text-red-600 mt-1">Question ${weakness.questionNumber}</p>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                weaknessesList.innerHTML = '<p class="text-red-700 text-sm italic">Great job! No specific weaknesses identified.</p>';
+            }
+        }
+
+        // Display quiz review with correct/incorrect answers and explanations
+        function displayQuizReview(studentAnswers) {
+            const reviewContainer = document.getElementById('quizReviewContainer');
+            if (!reviewContainer) {
+                console.warn('quizReviewContainer not found');
+                return;
+            }
+
+            reviewContainer.innerHTML = '';
+
+            // Display multiple choice questions (1-10) - use original order or shuffled order
+            const questionOrder = quizData.questionOrder.length > 0 ? quizData.questionOrder : [1,2,3,4,5,6,7,8,9,10];
+            
+            questionOrder.forEach((questionNum, index) => {
+                const i = questionNum;
+                const questionCard = document.querySelector(`[data-question="${i}"]`);
+                if (!questionCard) return;
+
+                const correctAnswer = quizData.answers[`q${i}`];
+                const studentAnswer = studentAnswers[`q${i}`] || '';
+                const isCorrect = studentAnswer === correctAnswer;
+
+                // Clone the question card
+                const reviewCard = questionCard.cloneNode(true);
+                reviewCard.classList.add('review-question-card', 'mb-6');
+                
+                // Add visual border based on correctness
+                if (isCorrect) {
+                    reviewCard.classList.add('border-4', 'border-green-400');
+                } else {
+                    reviewCard.classList.add('border-4', 'border-red-400');
+                }
+                
+                // Remove any existing explanations from the clone
+                const existingExplanations = reviewCard.querySelectorAll('.explanation-added');
+                existingExplanations.forEach(exp => exp.remove());
+
+                // Mark correct and incorrect answers
+                const options = reviewCard.querySelectorAll('.quiz-option');
+                options.forEach(option => {
+                    const radio = option.querySelector('input[type="radio"]');
+                    if (!radio) return;
+                    
+                    const optionValue = radio.value;
+                    const isStudentAnswer = optionValue === studentAnswer;
+                    const isCorrectAnswer = optionValue === correctAnswer;
+                    
+                    // Remove selected class first
+                    option.classList.remove('selected');
+                    
+                    if (isCorrectAnswer) {
+                        option.classList.add('option-correct');
+                        // Add checkmark icon
+                        if (!option.querySelector('.correct-icon')) {
+                            const icon = document.createElement('i');
+                            icon.className = 'fas fa-check-circle correct-icon ml-2 text-green-600';
+                            option.querySelector('.flex-1')?.appendChild(icon);
+                        }
+                    } else if (isStudentAnswer && !isCorrect) {
+                        option.classList.add('option-incorrect');
+                        // Add X icon
+                        if (!option.querySelector('.incorrect-icon')) {
+                            const icon = document.createElement('i');
+                            icon.className = 'fas fa-times-circle incorrect-icon ml-2 text-red-600';
+                            option.querySelector('.flex-1')?.appendChild(icon);
+                        }
+                    }
+                });
+
+                // Add explanation
+                addQuestionExplanationToReview(reviewCard, i, isCorrect, studentAnswer, correctAnswer);
+
+                reviewContainer.appendChild(reviewCard);
+            });
+
+            // Display problem solving question
+            const psQuestionCard = document.querySelector('[data-question="11"]');
+            if (psQuestionCard) {
+                const psAnswer = studentAnswers['ps-answer'] || '';
+                const correctAnswer = quizData.problemSolving.answer;
+                const isCorrect = psAnswer.toString().trim() === correctAnswer.toString().trim();
+
+                const reviewCard = psQuestionCard.cloneNode(true);
+                reviewCard.classList.add('review-question-card', 'mb-6');
+                
+                if (isCorrect) {
+                    reviewCard.classList.add('border-4', 'border-green-400');
+                } else {
+                    reviewCard.classList.add('border-4', 'border-red-400');
+                }
+
+                // Mark the answer input
+                const psInput = reviewCard.querySelector('#ps-answer');
+                if (psInput) {
+                    psInput.value = psAnswer;
+                    psInput.disabled = true;
+                    
+                    // Add visual indicator
+                    const indicator = document.createElement('div');
+                    indicator.className = `mt-4 p-4 rounded-lg ${isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`;
+                    if (isCorrect) {
+                        indicator.innerHTML = '<i class="fas fa-check-circle text-green-500 mr-2"></i><span class="text-green-700 font-semibold">Correct Answer!</span>';
+                    } else {
+                        indicator.innerHTML = `
+                            <div class="mb-2">
+                                <i class="fas fa-times-circle text-red-500 mr-2"></i><span class="text-red-700 font-semibold">Your Answer: ${psAnswer || 'No answer'}</span>
+                            </div>
+                            <div class="text-sm text-gray-600">
+                                <strong>Correct Answer:</strong> ${correctAnswer}
+                            </div>
+                        `;
+                    }
+                    psInput.parentElement.appendChild(indicator);
+                }
+
+                // Add explanation
+                addProblemSolvingExplanationToReview(reviewCard, isCorrect);
+
+                reviewContainer.appendChild(reviewCard);
+            }
+        }
+
+        // Add explanation to review question card
+        function addQuestionExplanationToReview(reviewCard, questionNum, isCorrect, studentAnswer, correctAnswer) {
+            const explanations = {
+                q1: 'The function f(x) = 40 + 15(x - 1) accounts for the first kilometer costing ₱40, and each additional kilometer (x - 1) costing ₱15.',
+                q2: 'The function C(x) = 500 + 2(x - 100) includes the monthly fee of ₱500 and charges ₱2 per minute only for minutes beyond the included 100 minutes.',
+                q3: 'This is a piecewise function because it has different rates for different ranges of consumption (first 100 kWh vs. above 100 kWh).',
+                q4: 'The break-even point is where total revenue equals total cost, meaning profit is zero (P(x) = 0).',
+                q5: 'F(25) = (9/5)(25) + 32 = 45 + 32 = 77°F',
+                q6: 'In exponential growth models, the coefficient in the exponent represents the growth rate. Here, 0.02 means 2% annual growth.',
+                q7: 'Tₐ represents the ambient (surrounding) temperature that the object is cooling towards.',
+                q8: 'The term -½gt² represents the effect of gravity pulling the projectile downward, where g is the acceleration due to gravity.',
+                q9: '2% of ₱10,000 = 0.02 × 10,000 = ₱200',
+                q10: 'This pricing structure uses different rates for different quantity ranges, which is characteristic of a piecewise function.'
+            };
+
+            const explanation = explanations[`q${questionNum}`] || 'Review the concept and try similar problems to improve your understanding.';
+            
+            const explanationDiv = document.createElement('div');
+            explanationDiv.className = 'explanation-added mt-4 p-4 rounded-lg bg-blue-50 border-l-4 border-blue-500';
+            explanationDiv.innerHTML = `
+                <div class="flex items-start">
+                    <i class="fas fa-info-circle text-blue-500 mr-2 mt-1"></i>
+                    <div class="flex-1">
+                        <h4 class="font-semibold text-blue-800 mb-2">
+                            ${isCorrect ? '<i class="fas fa-check-circle text-green-500 mr-1"></i>Correct!' : '<i class="fas fa-times-circle text-red-500 mr-1"></i>Incorrect'}
+                        </h4>
+                        <p class="text-gray-700 mb-2">${explanation}</p>
+                        ${!isCorrect ? `<p class="text-sm text-gray-600"><strong>Your answer:</strong> ${studentAnswer || 'No answer'} | <strong>Correct answer:</strong> ${correctAnswer}</p>` : ''}
+                    </div>
+                </div>
+            `;
+            
+            reviewCard.appendChild(explanationDiv);
+        }
+
+        // Add explanation to problem solving question
+        function addProblemSolvingExplanationToReview(reviewCard, isCorrect) {
+            const explanationDiv = document.createElement('div');
+            explanationDiv.className = 'explanation-added mt-4 p-4 rounded-lg bg-blue-50 border-l-4 border-blue-500';
+            explanationDiv.innerHTML = `
+                <div class="flex items-start">
+                    <i class="fas fa-info-circle text-blue-500 mr-2 mt-1"></i>
+                    <div class="flex-1">
+                        <h4 class="font-semibold text-blue-800 mb-2">
+                            ${isCorrect ? '<i class="fas fa-check-circle text-green-500 mr-1"></i>Correct!' : '<i class="fas fa-times-circle text-red-500 mr-1"></i>Incorrect'}
+                        </h4>
+                        <p class="text-gray-700 mb-2">
+                            To find the maximum profit for a quadratic function P(x) = -2x² + 100x - 800, use the vertex formula: x = -b/(2a) = -100/(2×(-2)) = 25.
+                        </p>
+                        <p class="text-gray-700 mb-2">
+                            Then substitute x = 25 into the function: P(25) = -2(25)² + 100(25) - 800 = -1250 + 2500 - 800 = 450.
+                        </p>
+                        <p class="text-gray-700">
+                            Therefore, the maximum profit is <strong>450 thousand pesos</strong> when 25 units are sold.
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            reviewCard.appendChild(explanationDiv);
         }
 
         // Display student's rank
@@ -1888,6 +3868,12 @@
                     console.log('Leaderboard data received:', result.leaderboard);
                     updateLeaderboardStats(result.leaderboard);
                     createPodium(result.leaderboard.slice(0, 3));
+                    
+                    // Store leaderboard data and reset pagination
+                    currentLeaderboardData = result.leaderboard;
+                    currentPage = 1;
+                    
+                    // Create detailed leaderboard with pagination
                     createDetailedLeaderboard(result.leaderboard);
                 } else {
                     console.warn('Failed to load leaderboard:', result.message);
@@ -1987,7 +3973,7 @@
                         </div>
                         <div class="podium-info">
                             <div class="podium-name">${student.student_name || 'Unknown Student'}</div>
-                            <div class="podium-points">${student.score}/${student.total_questions || 15} points</div>
+                            <div class="podium-points">${student.score}/${student.total_questions || 11} points</div>
                             <div class="text-xs text-gray-500 mt-1">${formatTime(student.completion_time || student.time_taken)}</div>
                         </div>
                     `;
@@ -2011,7 +3997,7 @@
             });
         }
         
-        // Create detailed leaderboard list
+        // Create detailed leaderboard list with pagination
         function createDetailedLeaderboard(leaderboardData) {
             const detailedLeaderboard = document.getElementById('detailedLeaderboard');
             
@@ -2022,10 +4008,15 @@
                         <p class="text-sm">No participants yet</p>
                     </div>
                 `;
+                currentLeaderboardData = [];
+                updatePaginationControls();
                 return;
             }
             
             detailedLeaderboard.innerHTML = '';
+            
+            // Store leaderboard data
+            currentLeaderboardData = leaderboardData;
             
             // Separate cheating students from regular students
             const cheatingStudents = leaderboardData.filter(student => 
@@ -2035,87 +4026,183 @@
                 !student.cheating_reason || student.cheating_reason === null
             );
             
-            // Show top 5 regular students
-            const topFive = regularStudents.slice(0, 5);
+            // Calculate pagination
+            const totalPages = Math.ceil(regularStudents.length / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedRegularStudents = regularStudents.slice(startIndex, endIndex);
             
-            topFive.forEach((student, index) => {
-                const entry = createLeaderboardEntry(student, index + 1, false);
+            // Add paginated regular students
+            paginatedRegularStudents.forEach((student) => {
+                const isCurrentUser = student.is_current_user == 1;
+                const entry = createLeaderboardEntry(student, student.rank_position, isCurrentUser, false);
                 detailedLeaderboard.appendChild(entry);
             });
             
-            // Add cheating students section if there are any
+            // Add current user if not already in the regular students list and not on current page
+            const currentUser = leaderboardData.find(student => student.is_current_user == 1);
+            const currentUserInRegular = regularStudents.some(s => s.is_current_user == 1);
+            const currentUserOnCurrentPage = paginatedRegularStudents.some(s => s.is_current_user == 1);
+            const showCurrentUser = currentUser && currentUserInRegular && !currentUserOnCurrentPage;
+            
+            if (showCurrentUser) {
+                const currentUserEntry = createLeaderboardEntry(currentUser, currentUser.rank_position, true, false);
+                detailedLeaderboard.appendChild(currentUserEntry);
+            }
+            
+            // Add cheating students section if there are any (always show all cheating students)
             if (cheatingStudents.length > 0) {
                 // Add separator
                 const separator = document.createElement('div');
-                separator.className = 'border-t border-red-200 my-4';
-                detailedLeaderboard.appendChild(separator);
-                
-                // Add cheating section header
-                const cheatingHeader = document.createElement('div');
-                cheatingHeader.className = 'text-center py-2';
-                cheatingHeader.innerHTML = `
-                    <div class="flex items-center justify-center text-red-600 font-medium">
-                        <i class="fas fa-exclamation-triangle mr-2"></i>
-                        Students with Academic Integrity Violations
+                separator.className = 'bg-gray-100 px-6 py-3';
+                separator.innerHTML = `
+                    <div class="flex items-center justify-center">
+                        <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>
+                        <span class="text-red-600 font-semibold">Students with Cheating Incidents</span>
                     </div>
                 `;
-                detailedLeaderboard.appendChild(cheatingHeader);
+                detailedLeaderboard.appendChild(separator);
                 
-                // Add cheating students
-                cheatingStudents.forEach((student, index) => {
-                    const entry = createLeaderboardEntry(student, 0, true);
+                // Add all cheating students (use their actual rank_position)
+                cheatingStudents.forEach((student) => {
+                    const isCurrentUser = student.is_current_user == 1;
+                    const entry = createLeaderboardEntry(student, student.rank_position, isCurrentUser, true);
                     detailedLeaderboard.appendChild(entry);
                 });
             }
+            
+            // Update pagination controls
+            updatePaginationControls();
         }
         
         // Create individual leaderboard entry
-        function createLeaderboardEntry(student, rank, isCheating) {
-            console.log('Creating leaderboard entry for student:', student, 'rank:', rank, 'isCheating:', isCheating);
-            
+        function createLeaderboardEntry(student, rank, isCurrentUser = false, isCheating = false) {
             const entry = document.createElement('div');
-            const isCurrentStudent = student.is_current_user == 1 || student.is_current_user === true;
+            entry.className = `leaderboard-entry ${isCurrentUser ? 'you' : ''} ${isCheating ? 'cheating-entry' : ''}`;
             
-            // Ensure we have valid student data
-            const studentName = student.student_name || 'Unknown Student';
-            const initials = studentName.split(' ').map(n => n[0]).join('').toUpperCase();
-            const timeTaken = student.completion_time || student.time_taken || 0;
-            const score = student.score || 0;
-            const totalQuestions = student.total_questions || 15; // Total points, not questions
-            const quizDate = student.quiz_date || new Date().toISOString();
+            const initials = student.student_name.split(' ').map(n => n[0]).join('').toUpperCase();
             
-            if (isCheating) {
-                entry.className = `bg-red-50 border-l-4 border-red-400 p-4 ${isCurrentStudent ? 'ring-2 ring-red-300' : ''}`;
-            } else {
-                entry.className = `bg-white border-l-4 border-blue-400 p-4 ${isCurrentStudent ? 'ring-2 ring-blue-300' : ''}`;
-            }
+            // Check if this student was marked as cheating
+            const cheatingIndicator = isCheating ? 
+                `<div class="text-red-600 text-xs font-medium">Cheating Detected</div>` : '';
+            
+            // For cheating students, always show score as 0
+            const displayScore = isCheating ? 0 : (student.score || 0);
+            const totalQuestions = student.total_questions || 11; // Default to 11 if not provided
+            const scoreDisplay = isCheating ? `0/${totalQuestions}` : `${displayScore}/${totalQuestions}`;
             
             entry.innerHTML = `
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-4">
-                        <div class="flex items-center space-x-2">
-                            ${rank > 0 ? `<span class="text-lg font-bold ${isCheating ? 'text-red-600' : 'text-blue-600'}">#${rank}</span>` : ''}
-                            ${isCheating ? '<i class="fas fa-exclamation-triangle text-red-500"></i>' : ''}
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 ${isCheating ? 'bg-red-500' : 'bg-blue-500'} rounded-full flex items-center justify-center">
-                                <span class="text-white text-sm font-bold">${initials}</span>
-                            </div>
-                            <div>
-                                <div class="font-semibold ${isCheating ? 'text-red-600' : 'text-gray-800'}">${studentName}</div>
-                                <div class="text-sm text-gray-500">${formatTime(timeTaken)}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-lg font-bold ${isCheating ? 'text-red-600' : 'text-blue-600'}">${isCheating ? '0' : score}/${totalQuestions}</div>
-                        <div class="text-sm text-gray-500">${new Date(quizDate).toLocaleDateString()}</div>
-                        ${isCurrentStudent ? '<span class="ml-2 bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">You</span>' : ''}
+                <div class="leaderboard-rank">${rank}</div>
+                <div class="leaderboard-student">
+                    <div class="leaderboard-avatar ${isCheating ? 'bg-red-500' : ''}">${initials}</div>
+                    <div class="leaderboard-name">
+                        ${student.student_name}
+                        ${cheatingIndicator}
                     </div>
                 </div>
+                <div class="leaderboard-points ${isCheating ? 'text-red-500' : ''}">${scoreDisplay}</div>
             `;
             
             return entry;
+        }
+        
+        // Pagination functions
+        function changePage(direction) {
+            const totalPages = Math.ceil(currentLeaderboardData.filter(s => !s.cheating_reason || s.cheating_reason === null).length / itemsPerPage);
+            const newPage = currentPage + direction;
+            
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                createDetailedLeaderboard(currentLeaderboardData);
+            }
+        }
+        
+        function goToPage(page) {
+            const totalPages = Math.ceil(currentLeaderboardData.filter(s => !s.cheating_reason || s.cheating_reason === null).length / itemsPerPage);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                createDetailedLeaderboard(currentLeaderboardData);
+            }
+        }
+        
+        function updatePaginationControls() {
+            const paginationContainer = document.getElementById('paginationContainer');
+            if (!paginationContainer) return;
+            
+            const regularStudents = currentLeaderboardData.filter(s => !s.cheating_reason || s.cheating_reason === null);
+            const totalPages = Math.ceil(regularStudents.length / itemsPerPage);
+            
+            if (totalPages <= 1) {
+                paginationContainer.classList.add('hidden');
+                return;
+            }
+            
+            paginationContainer.classList.remove('hidden');
+            
+            // Update prev/next buttons
+            const prevBtn = document.getElementById('prevPageBtn');
+            const nextBtn = document.getElementById('nextPageBtn');
+            if (prevBtn) prevBtn.disabled = currentPage === 1;
+            if (nextBtn) nextBtn.disabled = currentPage === totalPages;
+            
+            // Update page numbers
+            const pageNumbers = document.getElementById('pageNumbers');
+            if (pageNumbers) {
+                pageNumbers.innerHTML = '';
+                const maxVisiblePages = 5;
+                let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+                let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+                
+                if (endPage - startPage < maxVisiblePages - 1) {
+                    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                }
+                
+                if (startPage > 1) {
+                    const firstBtn = document.createElement('button');
+                    firstBtn.className = 'pagination-page-number';
+                    firstBtn.textContent = '1';
+                    firstBtn.onclick = () => goToPage(1);
+                    pageNumbers.appendChild(firstBtn);
+                    
+                    if (startPage > 2) {
+                        const ellipsis = document.createElement('span');
+                        ellipsis.className = 'px-2 text-gray-500';
+                        ellipsis.textContent = '...';
+                        pageNumbers.appendChild(ellipsis);
+                    }
+                }
+                
+                for (let i = startPage; i <= endPage; i++) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.className = `pagination-page-number ${i === currentPage ? 'active' : ''}`;
+                    pageBtn.textContent = i;
+                    pageBtn.onclick = () => goToPage(i);
+                    pageNumbers.appendChild(pageBtn);
+                }
+                
+                if (endPage < totalPages) {
+                    if (endPage < totalPages - 1) {
+                        const ellipsis = document.createElement('span');
+                        ellipsis.className = 'px-2 text-gray-500';
+                        ellipsis.textContent = '...';
+                        pageNumbers.appendChild(ellipsis);
+                    }
+                    
+                    const lastBtn = document.createElement('button');
+                    lastBtn.className = 'pagination-page-number';
+                    lastBtn.textContent = totalPages;
+                    lastBtn.onclick = () => goToPage(totalPages);
+                    pageNumbers.appendChild(lastBtn);
+                }
+            }
+            
+            // Update pagination info
+            const paginationInfo = document.getElementById('paginationInfo');
+            if (paginationInfo) {
+                const startIndex = (currentPage - 1) * itemsPerPage + 1;
+                const endIndex = Math.min(currentPage * itemsPerPage, regularStudents.length);
+                paginationInfo.textContent = `Showing ${startIndex}-${endIndex} of ${regularStudents.length}`;
+            }
         }
 
 
@@ -2125,6 +4212,12 @@
             document.getElementById('leaderboardContainer').classList.remove('hidden');
             loadLeaderboard();
             
+            // Hide floating AI button while viewing leaderboard
+            const floatingAIButton = document.getElementById('floatingAIButton');
+            if (floatingAIButton) {
+                floatingAIButton.classList.add('hidden');
+            }
+            
             // Scroll to leaderboard
             document.getElementById('leaderboardContainer').scrollIntoView({ behavior: 'smooth' });
         }
@@ -2133,11 +4226,80 @@
         function hideLeaderboard() {
             document.getElementById('leaderboardContainer').classList.add('hidden');
             document.getElementById('resultsContainer').classList.remove('hidden');
+            
+            // Show floating AI button again when leaving leaderboard
+            const floatingAIButton = document.getElementById('floatingAIButton');
+            if (floatingAIButton && window.quizResultsForAI) {
+                floatingAIButton.classList.remove('hidden');
+            }
         }
 
         // Go to dashboard
         function goToDashboard() {
             window.location.href = '../dashboard.html';
+        }
+
+        // Auto-submit quiz when time runs out
+        async function autoSubmitQuiz() {
+            if (isQuizCompleted) {
+                console.log('Quiz already completed, skipping auto-submit');
+                return;
+            }
+            
+            console.log('⏰ Time is up! Auto-submitting quiz...');
+            
+            // Stop timer
+            stopTimer();
+            
+            // Mark quiz as completed
+            isQuizCompleted = true;
+            
+            // Show notification
+            await Swal.fire({
+                title: 'Time\'s Up!',
+                html: `
+                    <div class="text-center">
+                        <div class="w-24 h-24 mx-auto mb-4 flex items-center justify-center">
+                            <i class="fas fa-clock text-6xl text-red-500"></i>
+                        </div>
+                        <p class="text-lg text-gray-700 mb-4">Your time has expired. The quiz will be submitted automatically.</p>
+                    </div>
+                `,
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#6366f1',
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            });
+            
+            // Collect current answers
+            const answers = {};
+            for (let i = 1; i <= 10; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                answers[`q${i}`] = selected ? selected.value : null;
+                // Update userAnswers for review display
+                userAnswers[`q${i}`] = selected ? selected.value : null;
+            }
+            const psAnswer = document.getElementById('ps-answer')?.value || '';
+            answers['ps-answer'] = psAnswer;
+            userAnswers['ps-answer'] = psAnswer;
+            
+            // Submit quiz
+            const dbResult = await saveQuizResults(answers, quizDuration);
+            
+            if (dbResult && dbResult.success) {
+                // Stop anti-cheating system
+                stopAntiCheating();
+                
+                // Hide submit button
+                const submitButtonContainer = document.getElementById('submitButtonContainer');
+                if (submitButtonContainer) {
+                    submitButtonContainer.style.display = 'none';
+                }
+                
+                // Show results
+                showResults(dbResult);
+            }
         }
 
         // ==================== ANTI-CHEATING SYSTEM ====================

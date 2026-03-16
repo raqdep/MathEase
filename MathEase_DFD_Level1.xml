@@ -1,0 +1,661 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2025-01-27T00:00:00.000Z" agent="5.0" etag="dfd-level1-formal" version="22.1.16" type="device">
+  <diagram name="MathEase DFD Level 1 - System Decomposition" id="mathEaseDFD1">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2400" pageHeight="1600" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Title -->
+        <mxCell id="title" value="Level 1" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="20" width="400" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- External Entities -->
+        <mxCell id="student" value="Student" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="100" y="200" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="teacher" value="Teacher" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="2200" y="200" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="admin" value="Admin" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1150" y="100" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="email" value="Email System" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=12;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1150" y="1400" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Processes Row 1 -->
+        <mxCell id="p1" value="1.0&#xa;User&#xa;Authentication" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="300" y="400" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="p2" value="2.0&#xa;Registration &amp;&#xa;Email Verification" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="500" y="400" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="p3" value="3.0&#xa;Class&#xa;Management" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="700" y="400" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="p4" value="4.0&#xa;Lesson&#xa;Management" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="900" y="400" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="p5" value="5.0&#xa;Quiz&#xa;Management" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="400" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- Processes Row 2 -->
+        <mxCell id="p6" value="6.0&#xa;Progress&#xa;Tracking" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="300" y="550" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="p7" value="7.0&#xa;Notification&#xa;Management" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="500" y="550" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="p8" value="8.0&#xa;Admin&#xa;Management" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="700" y="550" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="p9" value="9.0&#xa;Badge &amp;&#xa;Achievement&#xa;System" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontSize=11;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="900" y="550" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- Data Stores Row 1 -->
+        <mxCell id="d1" value="D1&#xa;Users" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="300" y="800" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="d2" value="D2&#xa;Teachers" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="450" y="800" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="d3" value="D3&#xa;Classes" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="600" y="800" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="d4" value="D4&#xa;Class&#xa;Enrollments" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="750" y="800" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="d5" value="D5&#xa;Topics" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="900" y="800" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="d6" value="D6&#xa;Lessons" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="800" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="d7" value="D7&#xa;Lesson&#xa;Completion" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="800" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Data Stores Row 2 -->
+        <mxCell id="d8" value="D8&#xa;Quizzes" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="300" y="950" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="d9" value="D9&#xa;Quiz&#xa;Attempts" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="450" y="950" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="d10" value="D10&#xa;Quiz&#xa;Answers" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="600" y="950" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="d11" value="D11&#xa;User&#xa;Progress" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="750" y="950" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="d12" value="D12&#xa;Topic&#xa;Progress" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="900" y="950" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="d13" value="D13&#xa;Notifications" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="950" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="d14" value="D14&#xa;Badges" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="950" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="d15" value="D15&#xa;User&#xa;Badges" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1350" y="950" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="d16" value="D16&#xa;Admins" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffffff;strokeColor=#000000;fontSize=10;fontStyle=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1350" y="800" width="100" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- Data Flows from Student to Processes (Left side, X=250 for incoming) -->
+        <mxCell id="f1" value="Login Request" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="student" target="p1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="250" y="230" />
+              <mxPoint x="250" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f2" value="Registration Data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="student" target="p2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="250" y="250" />
+              <mxPoint x="250" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f3" value="Class Join Request" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="student" target="p3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="250" y="270" />
+              <mxPoint x="250" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f4" value="Lesson Access Request" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="student" target="p4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="250" y="290" />
+              <mxPoint x="250" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f5" value="Lesson Completion" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="student" target="p4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="250" y="310" />
+              <mxPoint x="250" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f6" value="Quiz Answers" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="student" target="p5">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="250" y="330" />
+              <mxPoint x="250" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Data Flows from Processes to Student (Left side, X=210 for outgoing) -->
+        <mxCell id="f7" value="Auth Status" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="p1" target="student">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="440" />
+              <mxPoint x="210" y="230" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f8" value="Verification Status" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="p2" target="student">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="440" />
+              <mxPoint x="210" y="250" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f9" value="Lessons" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="p4" target="student">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="440" />
+              <mxPoint x="210" y="270" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f10" value="Quiz Questions" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="p5" target="student">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="440" />
+              <mxPoint x="210" y="290" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f11" value="Progress Reports" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="p6" target="student">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="590" />
+              <mxPoint x="210" y="310" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f12" value="Notifications" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="p7" target="student">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="590" />
+              <mxPoint x="210" y="330" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f13" value="Badges" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="p9" target="student">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="210" y="590" />
+              <mxPoint x="210" y="350" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Data Flows from Teacher to Processes (Right side, X=2150 for incoming) -->
+        <mxCell id="f14" value="Login Request" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="teacher" target="p1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2150" y="230" />
+              <mxPoint x="2150" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f15" value="Class Creation" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="teacher" target="p3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2150" y="250" />
+              <mxPoint x="2150" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f16" value="Enrollment Approval" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="teacher" target="p3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2150" y="270" />
+              <mxPoint x="2150" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f17" value="Topic Lock Settings" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="teacher" target="p4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2150" y="290" />
+              <mxPoint x="2150" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f18" value="Progress Request" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="teacher" target="p6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2150" y="310" />
+              <mxPoint x="2150" y="590" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Data Flows from Processes to Teacher (Right side, X=2110 for outgoing) -->
+        <mxCell id="f19" value="Class Lists" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="p3" target="teacher">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2110" y="440" />
+              <mxPoint x="2110" y="230" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f20" value="Enrollment Requests" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="p3" target="teacher">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2110" y="440" />
+              <mxPoint x="2110" y="250" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f21" value="Student Progress" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="p6" target="teacher">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2110" y="590" />
+              <mxPoint x="2110" y="270" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f22" value="Notifications" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="p7" target="teacher">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2110" y="590" />
+              <mxPoint x="2110" y="290" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Data Flows from Admin to Processes (Top, Y=160 for incoming) -->
+        <mxCell id="f23" value="Login Request" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="admin" target="p1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1200" y="160" />
+              <mxPoint x="370" y="160" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f24" value="Teacher Approval" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="admin" target="p8">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1200" y="180" />
+              <mxPoint x="770" y="180" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Data Flows from Processes to Admin (Top, Y=140 for outgoing) -->
+        <mxCell id="f25" value="System Statistics" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="p8" target="admin">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="770" y="140" />
+              <mxPoint x="1200" y="140" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f26" value="User Reports" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="p8" target="admin">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="770" y="120" />
+              <mxPoint x="1200" y="120" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f27" value="Teacher Requests" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="p8" target="admin">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="770" y="100" />
+              <mxPoint x="1200" y="100" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Data Flows from Processes to Email System (Bottom, Y=1200 for incoming) -->
+        <mxCell id="f28" value="Verification Email" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="p2" target="email">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="570" y="1200" />
+              <mxPoint x="1200" y="1200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f29" value="OTP Code" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="p2" target="email">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="570" y="1220" />
+              <mxPoint x="1200" y="1220" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="f30" value="Password Reset Link" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="p2" target="email">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="570" y="1240" />
+              <mxPoint x="1200" y="1240" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Data Flow from Email System to Process (Bottom, Y=1260 for outgoing) -->
+        <mxCell id="f31" value="Email Delivery Status" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10;fontColor=#000000;" edge="1" parent="1" source="email" target="p2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1200" y="1260" />
+              <mxPoint x="570" y="1260" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Process to Data Store Flows (Orthogonal routing with proper spacing) -->
+        <!-- P1 to D1 -->
+        <mxCell id="fd1" value="User Data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="p1" target="d1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="370" y="490" />
+              <mxPoint x="350" y="800" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- P2 to D1 -->
+        <mxCell id="fd2" value="New User Data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="p2" target="d1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="570" y="490" />
+              <mxPoint x="350" y="800" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- P3 to D2, D3, D4 -->
+        <mxCell id="fd3" value="Teacher Data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="p3" target="d2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="770" y="490" />
+              <mxPoint x="500" y="800" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="fd4" value="Class Data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="p3" target="d3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="770" y="510" />
+              <mxPoint x="650" y="800" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="fd5" value="Enrollment Data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="p3" target="d4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="770" y="530" />
+              <mxPoint x="800" y="800" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- P4 to D5, D6, D7 -->
+        <mxCell id="fd6" value="Topic Data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="p4" target="d5">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="970" y="490" />
+              <mxPoint x="950" y="800" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="fd7" value="Lesson Data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="p4" target="d6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="970" y="510" />
+              <mxPoint x="1100" y="800" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="fd8" value="Completion Data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="p4" target="d7">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="970" y="530" />
+              <mxPoint x="1250" y="800" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- P5 to D8, D9, D10 -->
+        <mxCell id="fd9" value="Quiz Data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="p5" target="d8">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1170" y="490" />
+              <mxPoint x="350" y="950" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="fd10" value="Attempt Data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="p5" target="d9">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1170" y="510" />
+              <mxPoint x="500" y="950" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="fd11" value="Answer Data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="p5" target="d10">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1170" y="530" />
+              <mxPoint x="650" y="950" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- P6 to D11, D12 -->
+        <mxCell id="fd12" value="Progress Data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="p6" target="d11">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="370" y="640" />
+              <mxPoint x="800" y="950" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="fd13" value="Topic Progress Data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="p6" target="d12">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="370" y="660" />
+              <mxPoint x="950" y="950" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- P7 to D13 -->
+        <mxCell id="fd14" value="Notification Data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="p7" target="d13">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="570" y="640" />
+              <mxPoint x="1100" y="950" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- P8 to D16, D2 -->
+        <mxCell id="fd15" value="Admin Data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="p8" target="d16">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="770" y="640" />
+              <mxPoint x="1400" y="800" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="fd16" value="Teacher Status" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="p8" target="d2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="770" y="660" />
+              <mxPoint x="500" y="950" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- P9 to D14, D15 -->
+        <mxCell id="fd17" value="Badge Data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="p9" target="d14">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="970" y="640" />
+              <mxPoint x="1250" y="950" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="fd18" value="User Badge Data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;" edge="1" parent="1" source="p9" target="d15">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="970" y="660" />
+              <mxPoint x="1400" y="950" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Cross-process flows (dashed lines, orthogonal) -->
+        <mxCell id="fp1" value="User ID" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;dashed=1;" edge="1" parent="1" source="p1" target="p3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="440" y="440" />
+              <mxPoint x="700" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="fp2" value="User ID" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;dashed=1;" edge="1" parent="1" source="p1" target="p4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="440" y="460" />
+              <mxPoint x="900" y="460" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="fp3" value="Completion Status" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;dashed=1;" edge="1" parent="1" source="p4" target="p6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1040" y="440" />
+              <mxPoint x="300" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="fp4" value="Quiz Score" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;dashed=1;" edge="1" parent="1" source="p5" target="p6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1240" y="440" />
+              <mxPoint x="300" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="fp5" value="Progress Update" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;dashed=1;" edge="1" parent="1" source="p6" target="p9">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="300" y="590" />
+              <mxPoint x="1040" y="590" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="fp6" value="Enrollment Event" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;dashed=1;" edge="1" parent="1" source="p3" target="p7">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="840" y="440" />
+              <mxPoint x="500" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="fp7" value="Quiz Completion Event" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;fontColor=#000000;dashed=1;" edge="1" parent="1" source="p5" target="p7">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1240" y="460" />
+              <mxPoint x="500" y="460" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

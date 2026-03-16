@@ -17,7 +17,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Validate email format
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new Exception("Invalid email format");
+            $response = array(
+                'success' => false,
+                'message' => 'Please enter a valid email address.',
+                'error_type' => 'invalid_email_format',
+                'field' => 'email'
+            );
+            header('Content-Type: application/json');
+            echo json_encode($response);
+            exit;
         }
         
         // Check if user exists and get verification status
@@ -29,19 +37,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$email]);
         
         if ($stmt->rowCount() === 0) {
-            throw new Exception("Invalid email or password");
+            $response = array(
+                'success' => false,
+                'message' => 'Email address not found. Please check your email or sign up.',
+                'error_type' => 'email_not_found',
+                'field' => 'email'
+            );
+            header('Content-Type: application/json');
+            echo json_encode($response);
+            exit;
         }
         
         $user = $stmt->fetch();
         
         // Check if email is verified
         if (!$user['email_verified']) {
-            throw new Exception("Please verify your email before logging in. Check your email for verification instructions.");
+            $response = array(
+                'success' => false,
+                'message' => 'Please verify your email before logging in. Check your email for verification instructions.',
+                'error_type' => 'email_not_verified',
+                'field' => 'email'
+            );
+            header('Content-Type: application/json');
+            echo json_encode($response);
+            exit;
         }
         
         // Verify password
         if (!password_verify($password, $user['password'])) {
-            throw new Exception("Invalid email or password");
+            $response = array(
+                'success' => false,
+                'message' => 'Incorrect password. Please try again or reset your password.',
+                'error_type' => 'wrong_password',
+                'field' => 'password'
+            );
+            header('Content-Type: application/json');
+            echo json_encode($response);
+            exit;
         }
         
         // Set session variables

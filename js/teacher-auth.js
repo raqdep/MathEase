@@ -71,35 +71,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Teacher ID digit-only enforcement
-    const teacherIdInput = document.getElementById('teacherId');
-    if (teacherIdInput) {
-        teacherIdInput.addEventListener('input', function(e) {
-            // Remove any non-digit characters
-            this.value = this.value.replace(/[^0-9]/g, '');
+    // Teacher ID field removed - no longer needed
+
+    // First Name / Last Name: auto-capitalize first letter on blur
+    const firstNameInput = document.getElementById('firstName');
+    const lastNameInput = document.getElementById('lastName');
+    [firstNameInput, lastNameInput].forEach(input => {
+        if (!input) return;
+        input.addEventListener('blur', function() {
+            const raw = this.value.trim();
+            if (!raw) return;
+            this.value = raw.charAt(0).toUpperCase() + raw.slice(1).toLowerCase();
         });
-        
-        teacherIdInput.addEventListener('keypress', function(e) {
-            // Prevent non-digit characters from being entered
-            if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {
-                e.preventDefault();
-            }
-        });
-        
-        teacherIdInput.addEventListener('paste', function(e) {
-            // Handle paste events - only allow digits
-            e.preventDefault();
-            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
-            const digitsOnly = pastedText.replace(/[^0-9]/g, '');
-            const currentValue = this.value;
-            const start = this.selectionStart;
-            const end = this.selectionEnd;
-            
-            // Insert digits at cursor position
-            const newValue = currentValue.substring(0, start) + digitsOnly + currentValue.substring(end);
-            this.value = newValue;
-        });
-    }
+    });
 
     // Real-time validation
     const inputs = document.querySelectorAll('input[required], select[required]');
@@ -160,11 +144,11 @@ function togglePassword(inputId) {
 }
 window.togglePassword = togglePassword;
 
-// Password strength calculation
+// Password strength calculation (8–30 chars, lowercase, uppercase, number, special)
 function calculatePasswordStrength(password) {
     let score = 0;
     const requirements = {
-        length: password.length >= 8,
+        length: password.length >= 8 && password.length <= 30,
         lowercase: /[a-z]/.test(password),
         uppercase: /[A-Z]/.test(password),
         number: /[0-9]/.test(password),
@@ -183,6 +167,17 @@ function calculatePasswordStrength(password) {
     else strength = 'very-strong';
     
     return { strength, requirements };
+}
+
+// Get password requirements (same rules: 8–30 chars + lowercase, uppercase, number, special)
+function getPasswordRequirements(password) {
+    return {
+        length: password.length >= 8 && password.length <= 30,
+        lowercase: /[a-z]/.test(password),
+        uppercase: /[A-Z]/.test(password),
+        number: /[0-9]/.test(password),
+        special: /[^a-zA-Z0-9]/.test(password)
+    };
 }
 
 // Update password strength indicator
@@ -234,7 +229,17 @@ function validateTeacherForm(form) {
         const password = form.querySelector('#password');
         const confirmPassword = form.querySelector('#confirmPassword');
         const email = form.querySelector('#email');
-        const teacherId = form.querySelector('#teacherId');
+        // Teacher ID field removed - no longer needed
+        
+        // Password: must meet ALL requirements (8–30 chars, lowercase, uppercase, number, special)
+        if (password && password.value) {
+            const req = getPasswordRequirements(password.value);
+            const allMet = Object.values(req).every(Boolean);
+            if (!allMet) {
+                showFieldError(password, 'Password must meet all requirements above (8–30 characters, lowercase, uppercase, number, special character).');
+                isValid = false;
+            }
+        }
         
         // Password confirmation validation
         if (password && confirmPassword && password.value !== confirmPassword.value) {
@@ -248,11 +253,7 @@ function validateTeacherForm(form) {
             isValid = false;
         }
         
-        // Teacher ID format validation (assuming alphanumeric format)
-        if (teacherId && !isValidTeacherId(teacherId.value)) {
-            showFieldError(teacherId, 'Teacher ID should be alphanumeric');
-            isValid = false;
-        }
+        // Teacher ID validation removed - field no longer exists
     }
     
     return isValid;
@@ -285,10 +286,14 @@ function validateField(field) {
         return false;
     }
     
-    // Password validation
-    if (field.type === 'password' && value) {
+    // Password validation (8–30 characters)
+    if (field.type === 'password' && field.id === 'password' && value) {
         if (value.length < 8) {
-            showFieldError(field, 'Password must be at least 8 characters long');
+            showFieldError(field, 'Password must be at least 8 characters');
+            return false;
+        }
+        if (value.length > 30) {
+            showFieldError(field, 'Password must be at most 30 characters');
             return false;
         }
     }
@@ -337,12 +342,7 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
-// Teacher ID validation - more flexible to allow common formats
-function isValidTeacherId(teacherId) {
-    // Allow alphanumeric characters, hyphens, underscores, and spaces
-    // Common teacher ID formats: T001, T-001, T_001, T 001, etc.
-    return /^[A-Za-z0-9\s\-_]+$/.test(teacherId) && teacherId.trim().length >= 2;
-}
+// Teacher ID validation removed - field no longer exists
 
 // Handle teacher login form submission
 async function handleTeacherLogin(e) {
@@ -365,16 +365,92 @@ async function handleTeacherLogin(e) {
             cache: 'no-store'
         });
         
-        const data = await response.json();
+        // Check if response is ok
+        if (!response.ok) {
+            console.error('Response not OK:', response.status, response.statusText);
+        }
+        
+        // Get response as text first to check if it's valid JSON
+        const responseText = await response.text();
+        let data;
+        
+        try {
+            data = JSON.parse(responseText);
+        } catch (jsonError) {
+            console.error('Failed to parse JSON response:', jsonError);
+            console.error('Response text:', responseText);
+            
+            // Check if it's an HTML error page
+            if (responseText.includes('<br />') || responseText.includes('<b>')) {
+                Swal.fire({ 
+                    icon: 'error', 
+                    title: 'Server Error', 
+                    html: '<p>A PHP error occurred on the server.</p><p>Please check server logs or contact administrator.</p><p style="font-size: 0.8em; color: #666;">Error details logged to console.</p>',
+                    confirmButtonText: 'OK'
+                });
+            } else {
+                Swal.fire({ 
+                    icon: 'error', 
+                    title: 'Server Error', 
+                    text: 'Invalid response from server. Please try again.' 
+                });
+            }
+            
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+            return;
+        }
         
         if (data.success) {
-            const redirectUrl = data.redirect ? data.redirect.replace('..\\/', '').replace('../', '') : 'teacher-dashboard.html';
-            Swal.fire({ icon: 'success', title: 'Login successful', text: 'Redirecting to teacher dashboard...', timer: 900, showConfirmButton: false });
+            // Clean up redirect URL - handle both ../ and ..\/
+            let redirectUrl = data.redirect || 'teacher-dashboard.html';
+            redirectUrl = redirectUrl.replace(/^\.\.\/+/, '').replace(/^\.\.\\\/+/, '');
+            
+            const userType = data.user_type || 'teacher';
+            const dashboardType = userType === 'admin' ? 'admin dashboard' : 'teacher dashboard';
+            
+            // If admin login, also set sessionStorage for admin dashboard compatibility
+            if (userType === 'admin') {
+                sessionStorage.setItem('admin_id', data.admin_id || '');
+                sessionStorage.setItem('admin_name', data.admin_name || data.message.split(' ').slice(-1)[0] || 'Admin');
+                sessionStorage.setItem('admin_role', data.admin_role || 'super_admin');
+                sessionStorage.setItem('admin_email', data.admin_email || '');
+            }
+            
+            Swal.fire({ 
+                icon: 'success', 
+                title: 'Login successful', 
+                text: `Redirecting to ${dashboardType}...`, 
+                timer: 900, 
+                showConfirmButton: false 
+            });
             setTimeout(() => {
                 window.location.href = redirectUrl;
             }, 500);
         } else {
-            Swal.fire({ icon: 'error', title: 'Login failed', text: data.message || 'Please try again.' });
+            // Show specific error on the correct field
+            const errorField = data.field || 'email';
+            const fieldElement = form.querySelector(`#${errorField}`);
+            
+            if (fieldElement && data.error_type) {
+                // Show error on specific field
+                showFieldError(fieldElement, data.message || 'Please check this field.');
+                
+                // Focus on the error field
+                fieldElement.focus();
+                
+                // Also show a general notification
+                Swal.fire({ 
+                    icon: 'error', 
+                    title: 'Login failed', 
+                    text: data.message || 'Please try again.',
+                    timer: 3000,
+                    showConfirmButton: true
+                });
+            } else {
+                // Fallback to general error message
+                Swal.fire({ icon: 'error', title: 'Login failed', text: data.message || 'Please try again.' });
+            }
         }
     } catch (error) {
         Swal.fire({ icon: 'error', title: 'Error', text: 'An error occurred. Please try again.' });
@@ -465,102 +541,22 @@ async function handleTeacherRegister(e) {
     }
 }
 
-// Show notification
+// Show notification using SweetAlert2
 function showNotification(message, type = 'info') {
-    // Remove existing notifications
-    const existingNotifications = document.querySelectorAll('.notification');
-    existingNotifications.forEach(notification => notification.remove());
-    
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = `
-        <div class="notification-content">
-            <span class="notification-message">${message}</span>
-            <button class="notification-close">&times;</button>
-        </div>
-    `;
-    
-    // Add styles
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${type === 'success' ? '#27ae60' : type === 'error' ? '#e74c3c' : type === 'warning' ? '#f39c12' : '#3498db'};
-        color: white;
-        padding: 1rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 10000;
-        max-width: 400px;
-        animation: slideInRight 0.3s ease-out;
-        font-family: Arial, sans-serif;
-        font-size: 14px;
-        line-height: 1.4;
-    `;
-    
-    // Add animation keyframes
-    if (!document.querySelector('#notification-styles')) {
-        const style = document.createElement('style');
-        style.id = 'notification-styles';
-        style.textContent = `
-            @keyframes slideInRight {
-                from { transform: translateX(100%); opacity: 0; }
-                to { transform: translateX(0); opacity: 1; }
-            }
-            @keyframes slideOutRight {
-                from { transform: translateX(0); opacity: 1; }
-                to { transform: translateX(100%); opacity: 0; }
-            }
-            .notification-content {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-            }
-            .notification-close {
-                background: none;
-                border: none;
-                color: white;
-                font-size: 18px;
-                cursor: pointer;
-                margin-left: 10px;
-                padding: 0;
-                width: 20px;
-                height: 20px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            .notification-close:hover {
-                opacity: 0.8;
-            }
-        `;
-        document.head.appendChild(style);
+    const icon = type === 'error' ? 'error' : type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info';
+    const title = type === 'error' ? 'Error' : type === 'success' ? 'Success' : type === 'warning' ? 'Notice' : 'Info';
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            icon: icon,
+            title: title,
+            text: message,
+            confirmButtonText: 'OK',
+            customClass: { confirmButton: 'swal-confirm-btn' }
+        });
+    } else {
+        alert(message);
     }
-    
-    // Add close functionality
-    const closeBtn = notification.querySelector('.notification-close');
-    closeBtn.addEventListener('click', () => {
-        notification.style.animation = 'slideOutRight 0.3s ease-out';
-        setTimeout(() => notification.remove(), 300);
-    });
-    
-    // Auto-remove after 5 seconds
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.style.animation = 'slideOutRight 0.3s ease-out';
-            setTimeout(() => notification.remove(), 300);
-        }
-    }, 5000);
-    
-    // Add to page
-    document.body.appendChild(notification);
-    
-    return notification;
 }
-
-
-
 
 // Modal functionality
 function initializeModals() {

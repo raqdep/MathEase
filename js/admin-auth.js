@@ -101,13 +101,41 @@ async function handleAdminLogin(e) {
 }
 
 // Check if admin is logged in
-function checkAdminAuth() {
+async function checkAdminAuth() {
+    // First check sessionStorage (for backward compatibility)
     const adminId = sessionStorage.getItem('admin_id');
-    if (!adminId) {
-        window.location.href = 'admin-login.html';
+    if (adminId) {
+        return true;
+    }
+    
+    // If not in sessionStorage, check PHP session via API
+    try {
+        const response = await fetch('php/check-admin-session.php', {
+            method: 'GET',
+            credentials: 'same-origin',
+            cache: 'no-store'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && data.logged_in) {
+            // Admin is logged in via PHP session, store in sessionStorage
+            sessionStorage.setItem('admin_id', data.admin_id);
+            sessionStorage.setItem('admin_name', data.admin_name);
+            sessionStorage.setItem('admin_role', data.admin_role);
+            sessionStorage.setItem('admin_email', data.admin_email);
+            return true;
+        } else {
+            // Not logged in, redirect to login
+            window.location.href = 'teacher-login.html';
+            return false;
+        }
+    } catch (error) {
+        console.error('Error checking admin session:', error);
+        // On error, redirect to login
+        window.location.href = 'teacher-login.html';
         return false;
     }
-    return true;
 }
 
 // Admin logout

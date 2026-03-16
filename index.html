@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>MathEase - Interactive General Mathematics Learning Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/style.css">
@@ -53,7 +56,8 @@
         
         /* Enhanced floating animation */
         .animate-float-enhanced {
-           /* animation: float-gentle 6s ease-in-out infinite; */
+            /* animation: float-gentle 6s ease-in-out infinite; */
+            /* Animation disabled for performance */
         }
         
         /* Glow effect for the image container */
@@ -84,10 +88,68 @@
             justify-content: center;
         }
         
+        /* Tablet and Medium Screens */
         @media (max-width: 1024px) {
             .screenshot-container {
                 min-height: 350px;
                 padding: 1rem;
+            }
+            
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                text-align: center;
+                padding: 1.5rem;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.5rem;
+                line-height: 1.2;
+            }
+            
+            .hero-description {
+                font-size: 1.1rem;
+            }
+            
+            .max-w-7xl {
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
+            }
+            
+            section {
+                padding: 4rem 1.5rem !important;
+            }
+            
+            .grid {
+                gap: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 2.5rem !important;
+            }
+            
+            .welcome-character {
+                width: 250px;
+            }
+            
+            .welcome-character-container {
+                bottom: 15px;
+                right: 30px;
+            }
+        }
+        
+        /* Small Tablets */
+        @media (max-width: 900px) {
+            .hero-content h1 {
+                font-size: 2.25rem;
+            }
+            
+            .grid-cols-1.md\:grid-cols-2.lg\:grid-cols-3 {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            
+            .grid-cols-1.md\:grid-cols-3 {
+                grid-template-columns: repeat(2, 1fr) !important;
             }
         }
         
@@ -113,6 +175,470 @@
                 height: 3rem;
                 margin: 0 auto;
             }
+            
+            /* Hero Section Mobile */
+            .hero {
+                padding-top: 70px;
+                min-height: auto;
+                padding-bottom: 3rem;
+            }
+            
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                text-align: center;
+                padding: 1rem;
+            }
+            
+            .hero-content h1 {
+                font-size: 2rem;
+                line-height: 1.3;
+                margin-bottom: 1rem;
+            }
+            
+            .hero-description {
+                font-size: 1rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                gap: 0.75rem;
+                width: 100%;
+            }
+            
+            .hero-buttons .btn {
+                width: 100%;
+                padding: 14px 24px;
+            }
+            
+            .hero-image {
+                min-height: 300px;
+                border-radius: 16px;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            /* Fix video container positioning on mobile */
+            .welcome-character-container {
+                position: absolute;
+                bottom: 20px;
+                right: 20px;
+                z-index: 10;
+            }
+            
+            .welcome-character {
+                width: 180px !important;
+                max-width: calc(100% - 40px);
+            }
+            
+            .math-animation {
+                height: 250px;
+            }
+            
+            .formula {
+                font-size: 1.1rem;
+            }
+            
+            /* Sections Mobile */
+            section {
+                padding: 3rem 1rem !important;
+            }
+            
+            section.py-20 {
+                padding-top: 2rem !important;
+                padding-bottom: 2rem !important;
+            }
+            
+            .max-w-7xl {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+            
+            /* Typography Mobile */
+            h2 {
+                font-size: 2rem !important;
+                margin-bottom: 1rem !important;
+            }
+            
+            h3 {
+                font-size: 1.5rem !important;
+            }
+            
+            /* Grid Mobile - Force single column */
+            .grid {
+                gap: 1.5rem !important;
+            }
+            
+            .grid-cols-1.md\:grid-cols-2.lg\:grid-cols-3,
+            .grid-cols-1.md\:grid-cols-2,
+            .grid-cols-1.md\:grid-cols-3,
+            .grid-cols-1.lg\:grid-cols-2 {
+                grid-template-columns: 1fr !important;
+            }
+            
+            /* Cards Mobile */
+            .bg-white\/70,
+            .bg-white {
+                padding: 1.5rem !important;
+            }
+            
+            /* Team Section Mobile */
+            .w-24.h-24 {
+                width: 4rem;
+                height: 4rem;
+            }
+            
+            /* Footer Mobile */
+            footer .grid {
+                grid-template-columns: 1fr !important;
+                gap: 2rem;
+            }
+            
+            footer {
+                padding: 3rem 1rem !important;
+            }
+            
+            /* Modal Mobile */
+            #loginModal .max-w-md {
+                margin: 1rem;
+                max-width: calc(100% - 2rem);
+            }
+            
+            /* Back to Top Button Mobile */
+            #backToTop {
+                bottom: 1rem;
+                right: 1rem;
+                width: 3rem;
+                height: 3rem;
+            }
+            
+            /* Text sizes mobile */
+            .text-xl {
+                font-size: 1rem !important;
+            }
+            
+            .text-2xl {
+                font-size: 1.5rem !important;
+            }
+            
+            .text-3xl {
+                font-size: 2rem !important;
+            }
+            
+            .text-4xl {
+                font-size: 2.25rem !important;
+            }
+            
+            /* Button sizes mobile */
+            .btn {
+                padding: 12px 20px;
+                font-size: 0.95rem;
+            }
+            
+            /* Image containers mobile */
+            .screenshot-container img {
+                max-width: 100%;
+                height: auto;
+            }
+            
+            /* Team grid mobile */
+            .grid-cols-1.md\:grid-cols-2.lg\:grid-cols-3 {
+                grid-template-columns: 1fr !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Extra Small Mobile */
+            .hero-content h1 {
+                font-size: 1.75rem;
+                line-height: 1.2;
+            }
+            
+            .hero-description {
+                font-size: 0.95rem;
+                line-height: 1.5;
+            }
+            
+            .btn {
+                padding: 12px 20px;
+                font-size: 0.9rem;
+                min-height: 44px;
+            }
+            
+            section {
+                padding: 2rem 0.75rem !important;
+            }
+            
+            section.py-20 {
+                padding-top: 1.5rem !important;
+                padding-bottom: 1.5rem !important;
+            }
+            
+            .max-w-7xl {
+                padding-left: 0.75rem !important;
+                padding-right: 0.75rem !important;
+            }
+            
+            h2 {
+                font-size: 1.75rem !important;
+                margin-bottom: 1rem !important;
+                line-height: 1.3;
+            }
+            
+            h3 {
+                font-size: 1.25rem !important;
+                line-height: 1.4;
+            }
+            
+            .text-xl {
+                font-size: 1rem !important;
+            }
+            
+            .text-4xl {
+                font-size: 2rem !important;
+            }
+            
+            .p-8 {
+                padding: 1.25rem !important;
+            }
+            
+            .mb-16 {
+                margin-bottom: 2rem !important;
+            }
+            
+            .mb-12 {
+                margin-bottom: 1.5rem !important;
+            }
+            
+            /* All grids single column on small mobile */
+            .grid-cols-1.md\:grid-cols-2.lg\:grid-cols-3,
+            .grid-cols-1.md\:grid-cols-3,
+            .grid-cols-1.lg\:grid-cols-2,
+            .grid-cols-1.md\:grid-cols-2 {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .w-16.h-16,
+            .w-20.h-20 {
+                width: 3rem;
+                height: 3rem;
+            }
+            
+            .text-2xl {
+                font-size: 1.5rem !important;
+            }
+            
+            .text-3xl {
+                font-size: 2rem !important;
+            }
+            
+            /* Navigation Mobile */
+            .nav-logo span {
+                font-size: 1.25rem;
+            }
+            
+            .logo-img {
+                height: 32px;
+            }
+            
+            /* Welcome Character Mobile */
+            .welcome-character {
+                width: 140px !important;
+                max-width: calc(100% - 20px);
+            }
+            
+            .welcome-character-container {
+                bottom: 10px;
+                right: 10px;
+            }
+            
+            /* Math Animation Mobile */
+            .math-animation {
+                height: 200px;
+                padding-bottom: 100px;
+                padding-right: 100px;
+            }
+            
+            .formula {
+                font-size: 0.9rem;
+            }
+            
+            /* Cards padding mobile */
+            .bg-white\/70,
+            .bg-white {
+                padding: 1.25rem !important;
+            }
+            
+            /* Footer mobile */
+            footer {
+                padding: 2rem 0.75rem !important;
+            }
+            
+            footer .grid {
+                gap: 1.5rem;
+            }
+            
+            /* Team images mobile */
+            .w-24.h-24 {
+                width: 3.5rem;
+                height: 3.5rem;
+            }
+            
+            /* Feature icons mobile */
+            .w-16.h-16 {
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+            
+            .w-20.h-20 {
+                width: 3rem;
+                height: 3rem;
+            }
+            
+            /* Button groups mobile */
+            .flex.flex-col.sm\:flex-row {
+                flex-direction: column !important;
+            }
+            
+            .flex.flex-col.sm\:flex-row > * {
+                width: 100%;
+            }
+        }
+        
+        /* Very small devices (320px and below) */
+        @media (max-width: 320px) {
+            .hero-content h1 {
+                font-size: 1.5rem;
+            }
+            
+            .hero-description {
+                font-size: 0.9rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem !important;
+            }
+            
+            .welcome-character {
+                width: 120px !important;
+            }
+            
+            section {
+                padding: 1.5rem 0.5rem !important;
+            }
+            
+            .max-w-7xl {
+                padding-left: 0.5rem !important;
+                padding-right: 0.5rem !important;
+            }
+        }
+        
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+            .btn,
+            .nav-link,
+            a {
+                min-height: 44px;
+                min-width: 44px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                -webkit-tap-highlight-color: rgba(99, 102, 241, 0.3);
+            }
+            
+            .hamburger {
+                min-width: 44px;
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                -webkit-tap-highlight-color: rgba(255, 255, 255, 0.3);
+            }
+            
+            /* Prevent text selection on buttons */
+            .btn,
+            button {
+                -webkit-user-select: none;
+                user-select: none;
+            }
+        }
+        
+        /* Prevent horizontal scroll on mobile */
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            position: relative;
+            max-width: 100vw;
+        }
+        
+        /* Ensure all containers respect viewport */
+        * {
+            max-width: 100%;
+        }
+        
+        img, video {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        /* Fix any potential overflow issues */
+        .container,
+        .max-w-7xl,
+        section {
+            overflow-x: hidden;
+        }
+        
+        /* Improve scrolling on mobile */
+        @media (max-width: 768px) {
+            * {
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            body {
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+        }
+        
+        /* Landscape mobile */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .hero {
+                min-height: auto;
+                padding: 2rem 0;
+            }
+            
+            .hero-container {
+                gap: 1.5rem;
+            }
+            
+            .hero-content h1 {
+                font-size: 1.75rem;
+            }
+            
+            .hero-description {
+                font-size: 0.95rem;
+                margin-bottom: 1rem;
+            }
+            
+            .hero-image {
+                min-height: 200px;
+            }
+            
+            .welcome-character {
+                width: 150px !important;
+            }
+            
+            .math-animation {
+                height: 180px;
+            }
+        }
+        
+        /* Large screens optimization */
+        @media (min-width: 1400px) {
+            .max-w-7xl {
+                max-width: 1280px;
+            }
         }
         
         /* Staggered animation delays */
@@ -122,26 +648,139 @@
         .feature-item:nth-child(4) { animation-delay: 0.4s; }
         
         /* Welcome Character Styles */
+        .hero-image {
+            position: relative;
+            overflow: hidden;
+        }
+        
         .welcome-character-container {
             position: absolute;
-            bottom: 40px;
+            bottom: 20px;
             right: 40px;
-            z-index: 10;
+            z-index: 5;
+            pointer-events: none;
         }
         
         .welcome-character {
-            width: 250px;
+            width: 320px;
             height: auto;
-            filter: drop-shadow(0 15px 30px rgba(0,0,0,0.2));
+            max-width: 100%;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
+            display: block;
+            border: none;
+            outline: none;
+            background: transparent;
+            object-fit: contain;
+            pointer-events: auto;
+        }
+        
+        /* Ensure formulas don't overlap with video - position formulas away from bottom-right */
+        .math-animation {
+            position: relative;
+            z-index: 1;
+            padding-bottom: 120px;
+            padding-right: 120px;
+        }
+        
+        .math-animation .formula {
+            z-index: 1;
+        }
+        
+        /* Desktop/Laptop: hero layout - video right, formulas left; formulas on top */
+        @media (min-width: 769px) {
+            .hero-image {
+                display: grid !important;
+                grid-template-columns: 1fr minmax(260px, 340px);
+                align-items: end;
+                gap: 0;
+                min-height: 55vh;
+            }
+            .math-animation {
+                z-index: 10;
+                grid-column: 1;
+                height: 100%;
+                min-height: 360px;
+                padding-bottom: 0 !important;
+                padding-right: 0 !important;
+            }
+            .math-animation .formula {
+                z-index: 10;
+            }
+            .welcome-character-container {
+                z-index: 2;
+                position: relative !important;
+                right: auto !important;
+                bottom: auto !important;
+                grid-column: 2;
+                justify-self: end;
+                align-self: end;
+                padding-right: 1rem;
+                padding-bottom: 0.5rem;
+            }
+            .welcome-character {
+                max-width: 320px;
+            }
+            /* Floating formulas: left side only, clear positions */
+            .math-animation .formula:nth-child(1) {
+                top: 18% !important;
+                left: 12% !important;
+                right: auto !important;
+                bottom: auto !important;
+            }
+            .math-animation .formula:nth-child(2) {
+                top: 8% !important;
+                left: 32% !important;
+                right: auto !important;
+                bottom: auto !important;
+                transform: translateX(-50%) !important;
+            }
+            .math-animation .formula:nth-child(3) {
+                top: 50% !important;
+                left: 14% !important;
+                right: auto !important;
+                bottom: auto !important;
+            }
+        }
+        
+        /* Adjust formula positions (mobile / base) */
+        .math-animation .formula:nth-child(1) {
+            top: 15% !important;
+            left: 10% !important;
+            right: auto !important;
+            bottom: auto !important;
+        }
+        
+        .math-animation .formula:nth-child(2) {
+            top: 5% !important;
+            left: 50% !important;
+            right: auto !important;
+            bottom: auto !important;
+            transform: translateX(-50%) !important;
+        }
+        
+        .math-animation .formula:nth-child(3) {
+            top: 50% !important;
+            left: 5% !important;
+            right: auto !important;
+            bottom: auto !important;
+        }
+        
+        .welcome-character-container video.welcome-character {
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        
+        .welcome-character:focus,
+        .welcome-character:focus-visible {
+            outline: none;
+            border: none;
         }
         
         .welcome-character:hover {
-           /* transform: scale(1.1) rotate(5deg); */
-            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3));
+            /* transform: scale(1.1) rotate(5deg); */
+            /* Hover effect disabled */
         }
-        
         
         /* Welcome Animation */
         @keyframes welcome-bounce {
@@ -160,23 +799,41 @@
             animation: welcome-bounce 2s ease-in-out;
         }
         
-        @media (max-width: 768px) {
+        @media (max-width: 1024px) {
             .welcome-character {
-                width: 150px;
+                width: 250px;
             }
             .welcome-character-container {
-                bottom: 20px;
+                bottom: 15px;
+                right: 30px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .welcome-character {
+                width: 180px;
+            }
+            .welcome-character-container {
+                bottom: 10px;
                 right: 20px;
+            }
+            
+            .hero-image {
+                min-height: 250px;
             }
         }
         
         @media (max-width: 480px) {
             .welcome-character {
-                width: 120px;
+                width: 140px;
             }
             .welcome-character-container {
-                bottom: 15px;
+                bottom: 10px;
                 right: 15px;
+            }
+            
+            .hero-image {
+                min-height: 200px;
             }
         }
     </style>
@@ -276,28 +933,26 @@
             </div>
             <ul class="nav-menu">
                 <li class="nav-item">
-                    <a href="#home" class="nav-link">Home</a>
+                    <a href="#home" class="nav-link"><i class="nav-icon fas fa-home" aria-hidden="true"></i><span class="nav-text">Home</span></a>
                 </li>
                 <li class="nav-item">
-                    <a href="#topics" class="nav-link">Topics</a>
+                    <a href="#topics" class="nav-link"><i class="nav-icon fas fa-book" aria-hidden="true"></i><span class="nav-text">Topics</span></a>
                 </li>
                 <li class="nav-item">
-                    <a href="#teachers" class="nav-link">For Teachers</a>
+                    <a href="#teachers" class="nav-link"><i class="nav-icon fas fa-chalkboard-teacher" aria-hidden="true"></i><span class="nav-text">For Teachers</span></a>
                 </li>
                 <li class="nav-item">
-                    <a href="#students" class="nav-link">For Students</a>
+                    <a href="#students" class="nav-link"><i class="nav-icon fas fa-user-graduate" aria-hidden="true"></i><span class="nav-text">For Students</span></a>
                 </li>
                 <li class="nav-item">
-                    <a href="#team" class="nav-link">Our Team</a>
+                    <a href="#team" class="nav-link"><i class="nav-icon fas fa-users" aria-hidden="true"></i><span class="nav-text">Our Team</span></a>
                 </li>
                 <li class="nav-item">
-                    <a href="#about" class="nav-link">About Us</a>
+                    <a href="#about" class="nav-link"><i class="nav-icon fas fa-info-circle" aria-hidden="true"></i><span class="nav-text">About Us</span></a>
                 </li>
-                
                 <li class="nav-item">
-                    <a href="login.html" class="nav-link">Login</a>
+                    <a href="login.html" class="nav-link"><i class="nav-icon fas fa-sign-in-alt" aria-hidden="true"></i><span class="nav-text">Login</span></a>
                 </li>
-                
             </ul>
             <div class="hamburger">
                 <span class="bar"></span>
@@ -306,6 +961,9 @@
             </div>
         </div>
     </nav>
+    
+    <!-- Mobile Menu Backdrop -->
+    <div class="mobile-menu-backdrop" id="mobileMenuBackdrop"></div>
 
     <!-- Hero Section -->
     <section id="home" class="hero">
@@ -329,10 +987,12 @@
                 </div>
                 <!-- Welcome Character -->
                 <div class="welcome-character-container">
-                    <img src="Img/Character/welcome-removebg-preview.png" 
-                         alt="Welcome to MathEase" 
-                         class="welcome-character animate-float-enhanced"
-                         id="welcomeCharacter">
+                    <video src="Img/Character/0226(2).mp4"
+                           class="welcome-character"
+                           id="welcomeCharacter"
+                           autoplay loop muted playsinline
+                           aria-label="Welcome to MathEase">
+                    </video>
                 </div>
             </div>
         </div>

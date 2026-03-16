@@ -1,9 +1,12 @@
 <?php
+// Load environment variables
+require_once __DIR__ . '/load-env.php';
+
 // Database configuration for MathEase
-define('DB_HOST', 'mathtry-db.c9aqi8mg6z1y.ap-southeast-2.rds.amazonaws.com');
-define('DB_USER', 'admin');
-define('DB_PASS', 'mathtry123');
-define('DB_NAME', 'mathease_database');
+define('DB_HOST', getenv('DB_HOST') ?: 'mathease-db.crqqmwqm0c6s.ap-southeast-2.rds.amazonaws.com');
+define('DB_USER', getenv('DB_USER') ?: 'admin');
+define('DB_PASS', getenv('DB_PASS') ?: 'mathease123');
+define('DB_NAME', getenv('DB_NAME') ?: 'mathease_database3');
 
 // Create database connection
 try {
@@ -47,13 +50,13 @@ function generate_token() {
  * Recommended: use Gmail SMTP with an App Password (if using Gmail accounts).
  * Install PHPMailer via Composer for best results: composer require phpmailer/phpmailer
  */
+// Email configuration - loaded from .env file
 define('MAIL_HOST', getenv('MAIL_HOST') ?: 'smtp.gmail.com');
-define('MAIL_USERNAME', getenv('MAIL_USERNAME') ?: 'matheasenc@gmail.com');
-define('MAIL_PASSWORD', getenv('MAIL_PASSWORD') ?: 'gwdttwfujxvktmrz');
+define('MAIL_USERNAME', getenv('MAIL_USERNAME') ?: 'matheasenc2025@gmail.com');
+define('MAIL_PASSWORD', getenv('MAIL_PASSWORD') ?: 'yqgnedvxjmqubfvx');
 define('MAIL_PORT', getenv('MAIL_PORT') ?: 465);
-define('MAIL_FROM', getenv('MAIL_FROM') ?: 'matheasenc@gmail.com');
+define('MAIL_FROM', getenv('MAIL_FROM') ?: 'matheasenc2025@gmail.com');
 define('MAIL_FROM_NAME', getenv('MAIL_FROM_NAME') ?: 'MathEase');
-
 /**
  * send_email - Simple and working Gmail email delivery
  * Uses a straightforward approach that actually works

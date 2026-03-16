@@ -21,31 +21,382 @@
     <style>
         .lesson-section{display:none}
         .lesson-section.active{display:block}
+        
+        /* ==========================================
+           QUIZ DESIGN STYLES
+           ========================================== */
+
+        /* Quiz Option Buttons */
+        .quiz-option {
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .quiz-option:hover:not(:disabled) {
+            border-color: #8b5cf6 !important;
+            background: linear-gradient(to right, rgba(139, 92, 246, 0.1), rgba(168, 85, 247, 0.1)) !important;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15) !important;
+            transform: translateX(4px) scale(1.01);
+        }
+
+        .quiz-option:active:not(:disabled) {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2) !important;
+        }
+
+        .quiz-option:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+            background-color: #f3f4f6 !important;
+            border-color: #d1d5db !important;
+        }
+
+        /* Letter Badge Styling */
+        .quiz-option .w-8.h-8 {
+            transition: all 0.2s ease;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            border: 1px solid #d1d5db;
+        }
+
+        .quiz-option:hover:not(:disabled) .w-8.h-8 {
+            background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%) !important;
+            color: white !important;
+            border-color: #8b5cf6 !important;
+            transform: scale(1.1);
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Progress Bar Styling */
+        .swal2-popup .bg-gray-200 {
+            background-color: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+            height: 8px;
+        }
+
+        .swal2-popup .bg-gradient-to-r.from-primary.to-secondary {
+            background: linear-gradient(90deg, #8b5cf6 0%, #a855f7 100%) !important;
+            border-radius: 9999px;
+            transition: width 0.3s ease;
+            box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Quiz Modal Enhancements */
+        .swal2-popup {
+            border-radius: 1rem !important;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .swal2-title {
+            font-weight: 700 !important;
+            color: #1f2937 !important;
+            margin-bottom: 1rem !important;
+        }
+
+        /* Quiz Question Text */
+        .swal2-html-container p.text-xl {
+            color: #111827;
+            line-height: 1.6;
+            font-weight: 600;
+        }
+
+        /* Result Display Enhancements */
+        .swal2-popup .inline-flex {
+            animation: scaleIn 0.3s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Success/Error Badge Colors */
+        .swal2-popup .bg-green-100 {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%) !important;
+            border: 2px solid #10b981;
+        }
+
+        .swal2-popup .bg-red-100 {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%) !important;
+            border: 2px solid #ef4444;
+        }
+
+        /* Quiz Instructions Styling */
+        .swal2-popup .bg-gradient-to-r {
+            border-radius: 0.75rem;
+        }
+
+        .swal2-popup .border-l-4 {
+            border-left-width: 4px;
+        }
+
+        /* Focus States for Accessibility */
+        .quiz-option:focus-visible {
+            outline: 2px solid #8b5cf6;
+            outline-offset: 2px;
+            border-color: #8b5cf6;
+        }
+
+        /* Loading State (if needed) */
+        .quiz-option.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .quiz-option.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 1rem;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #8b5cf6;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Mobile Responsive Quiz Styles */
+        @media (max-width: 768px) {
+            .quiz-option {
+                padding: 0.875rem 1rem !important;
+                font-size: 0.875rem;
+                min-height: 48px;
+            }
+            
+            .quiz-option .w-8.h-8 {
+                width: 1.75rem !important;
+                height: 1.75rem !important;
+                font-size: 0.75rem;
+            }
+            
+            .swal2-popup {
+                width: 90% !important;
+                max-width: 100% !important;
+                padding: 1.5rem !important;
+            }
+            
+            .swal2-title {
+                font-size: 1.25rem !important;
+            }
+            
+            .swal2-html-container {
+                padding: 0.5rem !important;
+            }
+            
+            .swal2-html-container p.text-xl {
+                font-size: 1rem !important;
+            }
+            
+            /* Timer mobile layout */
+            .flex.justify-between.items-start.mb-8 {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .flex-shrink-0.ml-4 {
+                margin-left: 0 !important;
+                margin-top: 1rem;
+                align-self: flex-end;
+            }
+            
+            .relative.w-20.h-20 {
+                width: 4rem !important;
+                height: 4rem !important;
+            }
+            
+            .relative.w-20.h-20 svg {
+                width: 4rem !important;
+                height: 4rem !important;
+            }
+            
+            .lesson-timer-display {
+                font-size: 0.875rem !important;
+            }
+            
+            .swal2-confirm,
+            .swal2-cancel {
+                padding: 0.75rem 1.5rem !important;
+                font-size: 0.875rem !important;
+                min-height: 44px;
+            }
+            
+            .swal2-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quiz-option {
+                padding: 0.75rem 0.875rem !important;
+                font-size: 0.8125rem;
+                min-height: 44px;
+            }
+            
+            .swal2-popup {
+                width: 95% !important;
+                padding: 1rem !important;
+            }
+            
+            .swal2-title {
+                font-size: 1.125rem !important;
+            }
+            
+            .swal2-confirm,
+            .swal2-cancel {
+                width: 100%;
+                padding: 0.75rem !important;
+                font-size: 0.8125rem !important;
+            }
+        }
+        
+        /* Mobile App-like Touch Improvements */
+        @media (max-width: 768px) {
+            .quiz-option {
+                -webkit-tap-highlight-color: transparent;
+                touch-action: manipulation;
+            }
+            
+            .swal2-confirm,
+            .swal2-cancel {
+                -webkit-tap-highlight-color: transparent;
+                touch-action: manipulation;
+            }
+            
+            .quiz-option,
+            .swal2-confirm,
+            .swal2-cancel {
+                user-select: none;
+                -webkit-user-select: none;
+            }
+            
+            .swal2-container {
+                padding: 0.5rem !important;
+            }
+        }
+        
+        /* Performance Analysis Mobile Styles */
+        @media (max-width: 768px) {
+            #performanceAnalysisSection {
+                padding: 1.5rem !important;
+                margin: 1rem 0 !important;
+            }
+            
+            #performanceAnalysisSection h3 {
+                font-size: 1.5rem !important;
+            }
+            
+            #performanceAnalysisSection p {
+                font-size: 0.875rem !important;
+            }
+            
+            #analyzeBtn {
+                width: 100%;
+                padding: 1rem !important;
+                font-size: 1rem !important;
+            }
+            
+            #analysisResult .grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem !important;
+            }
+            
+            #analysisResult .space-y-6 > div {
+                padding: 1rem !important;
+            }
+        }
     </style>
+    <link rel="stylesheet" href="simple-and-compound-values.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 <body class="font-poppins bg-gray-50 min-h-screen">
-    <nav class="bg-white/80 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-xl flex items-center justify-center">
-                        <img src="../css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-6 w-6">
-                    </div>
-                    <span class="text-xl font-bold text-slate-800">MathEase</span>
+                <div class="flex items-center">
+                    <a href="../index.html" class="flex items-center space-x-2">
+                        <img src="../css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-8 w-8">
+                        <span class="text-xl font-bold text-primary">MathEase</span>
+                    </a>
                 </div>
-                <div class="hidden md:flex items-center space-x-1">
-                    <a href="../dashboard.html" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Dashboard</a>
-                    <a href="../quizzes.html" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Quizzes</a>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <div class="relative group">
-                        <button class="flex items-center space-x-2 text-slate-700 hover:text-slate-900 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-50 transition-all duration-200">
-                            <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-full flex items-center justify-center">
-                                <i class="fas fa-user text-white text-xs"></i>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="../dashboard.html" class="text-gray-700 hover:text-primary transition-colors">
+                        <i class="fas fa-home mr-2"></i>Dashboard
+                    </a>
+                    <a href="../topics.html" class="text-primary font-semibold">
+                        <i class="fas fa-book mr-2"></i>Topics
+                    </a>
+                    <!-- User Dropdown -->
+                    <div class="relative" id="userDropdown">
+                        <button onclick="toggleUserDropdown()" class="flex items-center space-x-2 text-gray-600 hover:text-primary transition-colors focus:outline-none">
+                            <div class="relative">
+                                <img id="userProfileImage" src="" alt="Profile" class="w-8 h-8 rounded-full object-cover border-2 border-gray-300 hidden" onerror="this.classList.add('hidden'); (function(){var iconEl = document.getElementById('userProfileIcon'); if(iconEl) iconEl.style.display='block';})();">
+                                <i id="userProfileIcon" class="fas fa-user-circle text-xl"></i>
                             </div>
                             <span id="userName">Student</span>
+                            <i class="fas fa-chevron-down text-xs ml-1"></i>
+                        </button>
+                        <!-- Dropdown Menu -->
+                        <div id="userDropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                            <div class="px-4 py-2 border-b border-gray-200 flex items-center space-x-3">
+                                <div class="relative">
+                                    <img id="userProfileImageDropdown" src="" alt="Profile" class="w-10 h-10 rounded-full object-cover border-2 border-gray-300 hidden" onerror="this.classList.add('hidden'); (function(){var iconEl = document.getElementById('userProfileIconDropdown'); if(iconEl) iconEl.style.display='block';})();">
+                                    <i id="userProfileIconDropdown" class="fas fa-user-circle text-2xl text-gray-400"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-800" id="userNameDropdown">Student</p>
+                                    <p class="text-xs text-gray-500">Student Account</p>
+                                </div>
+                            </div>
+                            <button onclick="confirmLogout()" class="w-full text-left block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mobile Menu -->
+                <div class="md:hidden">
+                    <button onclick="toggleMobileMenu()" class="text-gray-600 hover:text-primary transition-colors">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <!-- Mobile Dropdown -->
+                    <div id="mobileMenu" class="hidden absolute top-16 left-0 right-0 bg-white shadow-lg border-b border-gray-200 z-50">
+                        <div class="px-4 py-3 border-b border-gray-200 flex items-center space-x-3">
+                            <div class="relative">
+                                <img id="userProfileImageMobile" src="" alt="Profile" class="w-10 h-10 rounded-full object-cover border-2 border-gray-300 hidden" onerror="this.classList.add('hidden'); (function(){var iconEl = document.getElementById('userProfileIconMobile'); if(iconEl) iconEl.style.display='block';})();">
+                                <i id="userProfileIconMobile" class="fas fa-user-circle text-2xl text-gray-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-gray-800" id="userNameMobile">Student</p>
+                                <p class="text-xs text-gray-500">Student Account</p>
+                            </div>
+                        </div>
+                        <a href="../dashboard.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                            <i class="fas fa-home mr-2"></i>Dashboard
+                        </a>
+                        <a href="../topics.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                            <i class="fas fa-book mr-2"></i>Topics
+                        </a>
+                        <button onclick="confirmLogout()" class="w-full text-left block px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
                         </button>
                     </div>
                 </div>
@@ -53,316 +404,1308 @@
         </div>
     </nav>
 
-    <div class="bg-gradient-to-br from-primary via-secondary to-accent text-white relative overflow-hidden">
-        <div class="absolute inset-0">
-            <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="1.5"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-60"></div>
-        </div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative">
-            <div class="text-center">
-                <div class="mb-6">
-                    <span class="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium">Topic: Simple & Compound Interests</span>
+    <!-- Header -->
+    <header class="gradient-bg text-white py-12 md:py-16 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+                <!-- Left side - Text Content -->
+                <div class="flex-1 text-center md:text-left">
+                    <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
+                        <i class="fas fa-percent mr-2"></i>
+                        <span class="font-semibold">General Mathematics 11</span>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6">Interest, Maturity, Future, and Present Values</h1>
+                    <p class="text-lg md:text-xl lg:text-2xl text-white/90 mb-6 md:mb-8 max-w-2xl mx-auto md:mx-0">
+                        Learn to compute simple and compound interests, present value, and maturity (future) value using real-life contexts.
+                    </p>
+                    <div class="flex justify-center md:justify-start">
+                        <div class="bg-white/20 backdrop-blur-sm rounded-full px-6 md:px-8 py-2 md:py-3">
+                            <span class="text-base md:text-lg font-semibold">5 Interactive Topics</span>
+                        </div>
+                    </div>
                 </div>
-                <h1 class="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-white via-purple-100 to-violet-200 bg-clip-text text-transparent">
-                    Interest, Maturity, Future, and Present Values
-                </h1>
-                <p class="text-lg md:text-xl text-purple-100 mb-8 max-w-3xl mx-auto leading-relaxed">
-                    Learn to compute simple and compound interests, present value, and maturity (future) value using real-life contexts.
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button onclick="showLesson(1)" class="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 inline-flex items-center justify-center">
-                        <i class="fas fa-play mr-3"></i>
-                        Start Learning
-                    </button>
-                    <button onclick="showTopicOverview()" class="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-8 py-4 rounded-2xl font-bold text-lg border border-white/30 transition-all duration-300 inline-flex items-center justify-center">
-                        <i class="fas fa-info-circle mr-3"></i>
-                        Topic Overview
-                    </button>
+                <!-- Right side - Character Image -->
+                <div class="flex-shrink-0 order-first md:order-last">
+                    <div class="relative">
+                        <img src="../Img/Character/happy__1_-removebg-preview.png" 
+                             alt="MathEase Character" 
+                             class="w-48 h-48 md:w-64 md:h-64 lg:w-80 lg:h-80 object-contain drop-shadow-2xl animate-bounce-slow">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+        <!-- Decorative elements -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+        <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+    </header>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
-            <div class="lesson-nav-btn bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border-2 border-transparent hover:border-primary" data-lesson="1">
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-hand-holding-usd text-2xl"></i>
+    <!-- Main Content -->
+    <main class="px-4 sm:px-6 lg:px-8 py-8">
+        <div class="lesson-layout">
+            <!-- Lesson Sidebar -->
+            <aside class="lesson-sidebar" id="lessonSidebar">
+                <div class="lesson-sidebar-list">
+                    <!-- Topic 1 -->
+                    <div class="lesson-topic expanded" data-lesson="1" id="sidebar-topic-1">
+                        <div class="lesson-topic-header" aria-expanded="true">
+                            <span class="lesson-topic-dot" aria-hidden="true">1</span>
+                            <span class="lesson-topic-title">Topic 1: Context and Motivation</span>
+                            <span class="lesson-topic-progress"><span class="topic-status-text"></span></span>
+                            <span class="lesson-topic-caret"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="lesson-topic-children">
+                            <div class="lesson-subitem active" data-lesson="1" data-section="objective" data-section-id="lesson1-objective">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Objective</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="1" data-section="example" data-section-id="lesson1-example">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Example</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="1" data-section="reference" data-section-id="lesson1-reference">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Reference</span>
+                            </div>
+                        </div>
                     </div>
-                    <h3 class="font-bold text-gray-800 mb-2">Lesson 1</h3>
-                    <p class="text-sm text-gray-600">What’s In & Dialogue</p>
-                </div>
-            </div>
-            <div class="lesson-nav-btn bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border-2 border-transparent hover:border-primary" data-lesson="2">
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-calculator text-2xl"></i>
+                    <!-- Topic 2 -->
+                    <div class="lesson-topic locked" data-lesson="2" id="sidebar-topic-2">
+                        <div class="lesson-topic-header" aria-expanded="false">
+                            <span class="lesson-topic-dot">2</span>
+                            <span class="lesson-topic-title">Topic 2: Simple Interest</span>
+                            <span class="lesson-topic-progress"><span class="topic-status-text">—</span></span>
+                            <span class="lesson-topic-caret"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="lesson-topic-children">
+                            <div class="lesson-subitem" data-lesson="2" data-section="objective" data-section-id="lesson2-objective">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Objective</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="2" data-section="example" data-section-id="lesson2-example">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Example</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="2" data-section="reference" data-section-id="lesson2-reference">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Reference</span>
+                            </div>
+                        </div>
                     </div>
-                    <h3 class="font-bold text-gray-800 mb-2">Lesson 2</h3>
-                    <p class="text-sm text-gray-600">Simple Interest</p>
-                </div>
-            </div>
-            <div class="lesson-nav-btn bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border-2 border-transparent hover:border-primary" data-lesson="3">
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-piggy-bank text-2xl"></i>
+                    <!-- Topic 3 -->
+                    <div class="lesson-topic locked" data-lesson="3" id="sidebar-topic-3">
+                        <div class="lesson-topic-header" aria-expanded="false">
+                            <span class="lesson-topic-dot">3</span>
+                            <span class="lesson-topic-title">Topic 3: Activities (Simple)</span>
+                            <span class="lesson-topic-progress"><span class="topic-status-text">—</span></span>
+                            <span class="lesson-topic-caret"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="lesson-topic-children">
+                            <div class="lesson-subitem" data-lesson="3" data-section="objective" data-section-id="lesson3-objective">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Objective</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="3" data-section="example" data-section-id="lesson3-example">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Example</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="3" data-section="reference" data-section-id="lesson3-reference">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Reference</span>
+                            </div>
+                        </div>
                     </div>
-                    <h3 class="font-bold text-gray-800 mb-2">Lesson 3</h3>
-                    <p class="text-sm text-gray-600">Activities (Simple)</p>
-                </div>
-            </div>
-            <div class="lesson-nav-btn bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border-2 border-transparent hover:border-primary" data-lesson="4">
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-chart-line text-2xl"></i>
+                    <!-- Topic 4 -->
+                    <div class="lesson-topic locked" data-lesson="4" id="sidebar-topic-4">
+                        <div class="lesson-topic-header" aria-expanded="false">
+                            <span class="lesson-topic-dot">4</span>
+                            <span class="lesson-topic-title">Topic 4: Compound Interest</span>
+                            <span class="lesson-topic-progress"><span class="topic-status-text">—</span></span>
+                            <span class="lesson-topic-caret"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="lesson-topic-children">
+                            <div class="lesson-subitem" data-lesson="4" data-section="objective" data-section-id="lesson4-objective">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Objective</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="4" data-section="example" data-section-id="lesson4-example">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Example</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="4" data-section="reference" data-section-id="lesson4-reference">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Reference</span>
+                            </div>
+                        </div>
                     </div>
-                    <h3 class="font-bold text-gray-800 mb-2">Lesson 4</h3>
-                    <p class="text-sm text-gray-600">Compound Interest</p>
-                </div>
-            </div>
-            <div class="lesson-nav-btn bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border-2 border-transparent hover:border-primary" data-lesson="5">
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-briefcase text-2xl"></i>
+                    <!-- Topic 5 -->
+                    <div class="lesson-topic locked" data-lesson="5" id="sidebar-topic-5">
+                        <div class="lesson-topic-header" aria-expanded="false">
+                            <span class="lesson-topic-dot">5</span>
+                            <span class="lesson-topic-title">Topic 5: Activities (Compound)</span>
+                            <span class="lesson-topic-progress"><span class="topic-status-text">—</span></span>
+                            <span class="lesson-topic-caret"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="lesson-topic-children">
+                            <div class="lesson-subitem" data-lesson="5" data-section="objective" data-section-id="lesson5-objective">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Objective</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="5" data-section="example" data-section-id="lesson5-example">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Example</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="5" data-section="reference" data-section-id="lesson5-reference">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Reference</span>
+                            </div>
+                        </div>
                     </div>
-                    <h3 class="font-bold text-gray-800 mb-2">Lesson 5</h3>
-                    <p class="text-sm text-gray-600">Activities (Compound)</p>
                 </div>
-            </div>
-        </div>
-
-        <div class="lesson-content">
+            </aside>
+            
+            <!-- Mobile Sidebar Toggle -->
+            <button type="button" id="sidebarToggle" class="lg:hidden fixed top-20 left-4 z-40 px-3 py-2 bg-white border border-gray-200 rounded-lg shadow-md text-gray-700 hover:bg-gray-50" aria-label="Open lesson menu">
+                <i class="fas fa-list mr-2"></i>Lessons
+            </button>
+            
+            <!-- Mobile Backdrop -->
+            <div id="mobileBackdrop" class="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30 hidden"></div>
+            
+            <!-- Lesson Content -->
+            <div class="lesson-main flex-1 min-w-0 px-4 lg:px-8" style="margin-left: 0;">
+                <div class="lesson-content">
             <section id="lesson1" class="lesson-section active">
                 <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
-                    <div class="text-center mb-8">
-                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-book-open text-3xl"></i>
+                    <div class="flex justify-between items-start mb-8">
+                        <div class="flex-1">
+                            <div class="text-center md:text-left mb-6">
+                                <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto md:mx-0 mb-4">
+                                    <i class="fas fa-book-open text-3xl"></i>
+                                </div>
+                                <h2 class="text-3xl font-bold text-gray-800 mb-4">Topic 1: Context and Motivation</h2>
+                                <p class="text-lg text-gray-600 max-w-3xl mx-auto md:mx-0">Business transactions like deposits, withdrawals, loans, and credit purchases involve interest. Understanding simple vs compound interest helps in making wise financial decisions.</p>
+                            </div>
                         </div>
-                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 1: Context and Motivation</h2>
-                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">Business transactions like deposits, withdrawals, loans, and credit purchases involve interest. Understanding simple vs compound interest helps in making wise financial decisions.</p>
+                        <!-- Live Timer Display - Small, Right Side -->
+                        <div class="flex-shrink-0 ml-4">
+                            <div class="relative w-20 h-20">
+                                <svg class="transform -rotate-90 w-20 h-20">
+                                    <circle cx="40" cy="40" r="34" stroke="#e5e7eb" stroke-width="6" fill="none" class="timer-bg"></circle>
+                                    <circle cx="40" cy="40" r="34" stroke="#8b5cf6" stroke-width="6" fill="none" 
+                                            class="timer-progress" 
+                                            stroke-dasharray="213.63" 
+                                            stroke-dashoffset="213.63"
+                                            stroke-linecap="round"></circle>
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span class="lesson-timer-display text-sm font-bold text-gray-800">00:00</span>
+                                    <span class="text-xs text-gray-500 mt-0.5">Time</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-6 mb-6 text-gray-800">
-                        <p class="mb-3 font-semibold">Dialogue (What’s New)</p>
-                        <p class="text-sm leading-6">
-                            Janice and Jamaica discuss saving versus spending. Janice considers a Kid Savers bank account with 2.5% annual interest to help with college.
-                        </p>
-                        <ul class="list-disc list-inside mt-3 text-sm space-y-1">
-                            <li>Why save? What are the advantages of bank interest?</li>
-                            <li>How much will accumulate after multiple years?</li>
-                        </ul>
+                    
+                    <div class="text-center mb-8 hidden">
                     </div>
-                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 mb-8 text-center">
-                        <p class="text-gray-600 mb-4">Mark this lesson as completed to unlock the next lesson.</p>
-                        <button onclick="completeLesson(1)" class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold"><i class="fas fa-check mr-2"></i>Mark as Complete</button>
+
+                    <!-- Comprehensive Explanation Section -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8 border-l-4 border-blue-500">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                            <i class="fas fa-lightbulb text-yellow-500 mr-3"></i>What is Interest?
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-hand-holding-usd text-green-500 mr-2"></i>Interest Earned (Savings)
+                                </h4>
+                                <p class="text-gray-700 mb-3">When you deposit money in a bank, the bank pays you <strong>interest</strong> - extra money for letting them use your funds.</p>
+                                <div class="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                                    <p class="text-sm font-semibold text-gray-800 mb-2">Example:</p>
+                                    <p class="text-sm text-gray-700">If you deposit ₱10,000 at 2.5% annual interest, after 1 year you'll have:</p>
+                                    <p class="text-lg font-bold text-green-600 mt-2">₱10,000 + ₱250 = ₱10,250</p>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-credit-card text-red-500 mr-2"></i>Interest Paid (Loans)
+                                </h4>
+                                <p class="text-gray-700 mb-3">When you borrow money, you pay <strong>interest</strong> - extra money for using someone else's funds.</p>
+                                <div class="bg-red-50 rounded-lg p-4 border-l-4 border-red-500">
+                                    <p class="text-sm font-semibold text-gray-800 mb-2">Example:</p>
+                                    <p class="text-sm text-gray-700">If you borrow ₱10,000 at 5% annual interest, after 1 year you'll owe:</p>
+                                    <p class="text-lg font-bold text-red-600 mt-2">₱10,000 + ₱500 = ₱10,500</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Dialogue Section -->
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 rounded-xl p-8 mb-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-comments text-yellow-600 mr-2"></i>Dialogue: Janice and Jamaica's Conversation
+                        </h3>
+                        <div class="bg-white rounded-lg p-6 shadow-md mb-4">
+                            <div class="space-y-4">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <span class="text-white font-bold">J</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-semibold text-gray-800 mb-1">Jamaica:</p>
+                                        <p class="text-gray-700">"Janice, why are you saving money? Shouldn't we spend it on fun things?"</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <span class="text-white font-bold">J</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-semibold text-gray-800 mb-1">Janice:</p>
+                                        <p class="text-gray-700">"I'm thinking about opening a Kid Savers bank account with 2.5% annual interest. This way, my money can grow and help me pay for college in the future!"</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <h4 class="font-semibold text-gray-800 mb-2">Key Questions to Consider:</h4>
+                            <ul class="list-disc list-inside text-gray-700 space-y-2">
+                                <li><strong>Why save?</strong> Saving helps you achieve future goals like education, emergencies, or major purchases.</li>
+                                <li><strong>What are the advantages of bank interest?</strong> Your money grows over time without you doing anything extra!</li>
+                                <li><strong>How much will accumulate after multiple years?</strong> This depends on whether the bank uses simple or compound interest.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Real-World Applications -->
+                    <div class="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-8 mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                            <i class="fas fa-globe text-emerald-500 mr-3"></i>Real-World Applications
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="bg-white rounded-lg p-6 shadow-lg text-center hover:shadow-xl transition-shadow">
+                                <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-piggy-bank text-2xl"></i>
+                                </div>
+                                <h4 class="text-lg font-semibold text-gray-800 mb-3">Savings Accounts</h4>
+                                <p class="text-sm text-gray-600">Banks pay interest on your deposits, helping your money grow over time.</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-lg text-center hover:shadow-xl transition-shadow">
+                                <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-home text-2xl"></i>
+                                </div>
+                                <h4 class="text-lg font-semibold text-gray-800 mb-3">Loans & Mortgages</h4>
+                                <p class="text-sm text-gray-600">When you borrow money, you pay interest to the lender for using their funds.</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-lg text-center hover:shadow-xl transition-shadow">
+                                <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-chart-line text-2xl"></i>
+                                </div>
+                                <h4 class="text-lg font-semibold text-gray-800 mb-3">Investments</h4>
+                                <p class="text-sm text-gray-600">Understanding interest helps you make better investment decisions.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visual Aids Section -->
+                    <div class="topic-visual-aids-section">
+                        <div class="section-label mb-6">
+                            <i class="fas fa-palette"></i> Visual aids
+                        </div>
+                        <div class="virtual-aid rounded-2xl p-8 mb-8">
+                            <div class="flex items-center justify-center gap-4 mb-6">
+                                <h3 class="text-2xl font-bold text-gray-800 text-center">
+                                    <i class="fas fa-coins text-primary mr-3"></i>Interactive Interest Comparison Tool
+                                </h3>
+                                <button onclick="showInterestTutorial()" 
+                                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors text-sm font-semibold inline-flex items-center gap-2">
+                                    <i class="fas fa-question-circle"></i>
+                                    How to Use
+                                </button>
+                            </div>
+                            <p class="text-center text-gray-600 mb-6 max-w-2xl mx-auto">
+                                Compare how your money grows with different interest rates and time periods. See the difference between simple and compound interest!
+                            </p>
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div class="bg-white rounded-xl p-6 shadow-lg">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Input Values</h4>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Initial Amount (₱):</label>
+                                            <input type="number" id="compareAmount" value="10000" min="0" step="1000" oninput="updateInterestComparison()"
+                                                   class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Interest Rate (%):</label>
+                                            <input type="number" id="compareRate" value="2.5" min="0" max="30" step="0.1" oninput="updateInterestComparison()"
+                                                   class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Time Period (years):</label>
+                                            <input type="number" id="compareTime" value="5" min="1" max="30" step="1" oninput="updateInterestComparison()"
+                                                   class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border-2 border-purple-200">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Comparison Results</h4>
+                                    <div class="space-y-4">
+                                        <div class="bg-white rounded-lg p-4 shadow-md">
+                                            <p class="text-sm text-gray-600 mb-1">Simple Interest:</p>
+                                            <p class="text-2xl font-bold text-blue-600" id="simpleResult">₱11,250</p>
+                                            <p class="text-xs text-gray-500 mt-1">Interest earned: <span id="simpleInterest">₱1,250</span></p>
+                                        </div>
+                                        <div class="bg-white rounded-lg p-4 shadow-md">
+                                            <p class="text-sm text-gray-600 mb-1">Compound Interest (Annual):</p>
+                                            <p class="text-2xl font-bold text-green-600" id="compoundResult">₱11,314</p>
+                                            <p class="text-xs text-gray-500 mt-1">Interest earned: <span id="compoundInterest">₱1,314</span></p>
+                                        </div>
+                                        <div class="bg-yellow-50 rounded-lg p-4 border-l-4 border-yellow-400">
+                                            <p class="text-sm font-semibold text-gray-800 mb-1">Difference:</p>
+                                            <p class="text-lg font-bold text-purple-600" id="differenceAmount">₱64</p>
+                                            <p class="text-xs text-gray-600">Compound interest earns <span id="differencePercent">5.1%</span> more!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-6 bg-white rounded-lg p-6">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-4">Year-by-Year Growth</h4>
+                                <div class="space-y-2" id="yearlyComparison">
+                                    <!-- Will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Lesson Completion Status -->
+                    <div id="lessonCompletionStatus-1" class="hidden mb-6"></div>
+                    
                     <div class="flex justify-between items-center">
-                        <button id="prevLessonBtn" onclick="navigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"><i class="fas fa-chevron-left mr-2"></i>Previous Lesson</button>
-                        <div class="flex items-center space-x-4"><div class="text-lg font-semibold text-primary"><span id="currentLessonNum">1</span> of 5</div><div class="w-32 bg-gray-200 rounded-full h-2"><div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 20%"></div></div></div>
-                        <button id="nextLessonBtn" onclick="navigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Next Lesson<i class="fas fa-chevron-right ml-2"></i></button>
+                        <button id="prevLessonBtn-1" onclick="scNavigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"><i class="fas fa-chevron-left mr-2"></i>Previous Topic</button>
+                        <div class="flex items-center space-x-4"><div class="text-lg font-semibold text-primary"><span id="currentLessonNum-1">1</span> of 5</div><div class="w-32 bg-gray-200 rounded-full h-2"><div id="lessonProgressBar-1" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 20%"></div></div></div>
+                        <button id="nextLessonBtn-1" onclick="scNavigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors">Next Topic<i class="fas fa-chevron-right ml-2"></i></button>
                     </div>
                 </div>
             </section>
 
             <section id="lesson2" class="lesson-section">
                 <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
-                    <div class="text-center mb-8">
-                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-calculator text-3xl"></i>
-                        </div>
-                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 2: Simple Interest (Is = Prt)</h2>
-                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">Compute interest, rate, time, and maturity value: Is = Prt, F = P(1+rt) = P + Is.</p>
-                    </div>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <div class="bg-white rounded-xl p-6 shadow-lg">
-                            <h4 class="text-lg font-semibold text-gray-800 mb-4">Inputs</h4>
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Principal (P)</label>
-                                    <input type="number" id="siP" value="18500" min="0" step="100" oninput="calculateSimpleInterest()" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono">
+                    <div class="flex justify-between items-start mb-8">
+                        <div class="flex-1">
+                            <div class="text-center md:text-left mb-6">
+                                <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto md:mx-0 mb-4">
+                                    <i class="fas fa-calculator text-3xl"></i>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Rate r (%)</label>
-                                    <input type="number" id="siR" value="3" min="0" step="0.01" oninput="calculateSimpleInterest()" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Time t (years)</label>
-                                    <input type="number" id="siT" value="5" min="0" step="0.01" oninput="calculateSimpleInterest()" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono">
-                                </div>
-                                <button onclick="calculateSimpleInterest()" class="w-full bg-primary text-white py-3 px-6 rounded-lg hover:bg-secondary transition-colors font-semibold"><i class="fas fa-equals mr-2"></i>Compute</button>
+                                <h2 class="text-3xl font-bold text-gray-800 mb-4">Topic 2: Simple Interest (Is = Prt)</h2>
+                                <p class="text-lg text-gray-600 max-w-3xl mx-auto md:mx-0">Compute interest, rate, time, and maturity value: Is = Prt, F = P(1+rt) = P + Is.</p>
                             </div>
                         </div>
-                        <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white">
-                            <h4 class="text-lg font-semibold mb-4">Results</h4>
-                            <div class="bg-white/20 rounded-lg p-3 mb-3">
-                                <p class="text-sm">Simple Interest Is = Prt</p>
-                                <p id="siInterest" class="font-mono text-lg">₱ 0.00</p>
-                            </div>
-                            <div class="bg-white/20 rounded-lg p-3">
-                                <p class="text-sm">Maturity Value F = P(1+rt) = P + Is</p>
-                                <p id="siFuture" class="font-mono text-lg">₱ 0.00</p>
-                            </div>
-                            <div class="mt-4 bg-white/20 rounded-lg p-3">
-                                <p class="text-sm">Worked Example</p>
-                                <p class="font-mono text-sm" id="siExample">Is = 18500×0.03×5 = 2775 → F = 21275</p>
+                        <!-- Live Timer Display - Small, Right Side -->
+                        <div class="flex-shrink-0 ml-4">
+                            <div class="relative w-20 h-20">
+                                <svg class="transform -rotate-90 w-20 h-20">
+                                    <circle cx="40" cy="40" r="34" stroke="#e5e7eb" stroke-width="6" fill="none" class="timer-bg"></circle>
+                                    <circle cx="40" cy="40" r="34" stroke="#8b5cf6" stroke-width="6" fill="none" 
+                                            class="timer-progress" 
+                                            stroke-dasharray="213.63" 
+                                            stroke-dashoffset="213.63"
+                                            stroke-linecap="round"></circle>
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span class="lesson-timer-display text-sm font-bold text-gray-800">00:00</span>
+                                    <span class="text-xs text-gray-500 mt-0.5">Time</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <p class="font-semibold mb-1">Solve for P</p>
-                            <p class="font-mono text-sm">P = Is / (rt)</p>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <p class="font-semibold mb-1">Solve for r</p>
-                            <p class="font-mono text-sm">r = Is / (Pt)</p>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <p class="font-semibold mb-1">Solve for t</p>
-                            <p class="font-mono text-sm">t = Is / (Pr)</p>
+                    <!-- Comprehensive Explanation -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8 border-l-4 border-blue-500">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                            <i class="fas fa-book-reader text-blue-500 mr-3"></i>Understanding Simple Interest
+                        </h3>
+                        <div class="space-y-6">
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-3">What is Simple Interest?</h4>
+                                <p class="text-gray-700 mb-3">Simple interest is calculated <strong>only on the principal amount</strong> (the original money deposited or borrowed). It does not compound - meaning interest doesn't earn interest.</p>
+                                <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                    <p class="text-sm font-semibold text-gray-800 mb-2">Key Characteristics:</p>
+                                    <ul class="text-sm text-gray-700 space-y-1 list-disc list-inside">
+                                        <li>Interest is calculated once per period</li>
+                                        <li>Same interest amount each period</li>
+                                        <li>Linear growth over time</li>
+                                        <li>Simple to calculate and understand</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-3">The Simple Interest Formula</h4>
+                                <div class="bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg p-4 mb-3">
+                                    <p class="text-xl font-bold text-center text-gray-800 mb-2">Is = P × r × t</p>
+                                    <div class="grid grid-cols-3 gap-4 text-sm mt-3">
+                                        <div class="text-center">
+                                            <p class="font-semibold text-gray-700">P</p>
+                                            <p class="text-gray-600">Principal</p>
+                                        </div>
+                                        <div class="text-center">
+                                            <p class="font-semibold text-gray-700">r</p>
+                                            <p class="text-gray-600">Rate (decimal)</p>
+                                        </div>
+                                        <div class="text-center">
+                                            <p class="font-semibold text-gray-700">t</p>
+                                            <p class="text-gray-600">Time (years)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                                    <p class="text-sm font-semibold text-gray-800 mb-2">Example Calculation:</p>
+                                    <p class="text-sm text-gray-700 mb-2">If P = ₱10,000, r = 5% (0.05), t = 3 years:</p>
+                                    <p class="text-sm font-mono text-gray-800">Is = ₱10,000 × 0.05 × 3 = ₱1,500</p>
+                                    <p class="text-xs text-gray-600 mt-2">Each year earns: ₱10,000 × 0.05 = ₱500</p>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-3">Maturity Value (Future Value)</h4>
+                                <p class="text-gray-700 mb-3">The maturity value (F) is the total amount you'll have after interest is added:</p>
+                                <div class="bg-gradient-to-r from-green-100 to-emerald-100 rounded-lg p-4">
+                                    <p class="text-xl font-bold text-center text-gray-800 mb-2">F = P + Is</p>
+                                    <p class="text-sm text-center text-gray-600">or</p>
+                                    <p class="text-xl font-bold text-center text-gray-800 mt-2">F = P(1 + rt)</p>
+                                </div>
+                                <div class="bg-yellow-50 rounded-lg p-4 mt-3 border-l-4 border-yellow-400">
+                                    <p class="text-sm font-semibold text-gray-800 mb-2">Using the example above:</p>
+                                    <p class="text-sm font-mono text-gray-800">F = ₱10,000 + ₱1,500 = ₱11,500</p>
+                                    <p class="text-sm font-mono text-gray-800 mt-1">or F = ₱10,000(1 + 0.05×3) = ₱11,500</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 my-8 text-center">
-                        <button onclick="completeLesson(2)" class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold"><i class="fas fa-check mr-2"></i>Mark as Complete</button>
+                    <!-- Visual Aids Section -->
+                    <div class="topic-visual-aids-section">
+                        <div class="section-label mb-6">
+                            <i class="fas fa-palette"></i> Visual aids
+                        </div>
+                        <div class="virtual-aid rounded-2xl p-8 mb-8">
+                            <div class="flex items-center justify-center gap-4 mb-6">
+                                <h3 class="text-2xl font-bold text-gray-800 text-center">
+                                    <i class="fas fa-calculator text-primary mr-3"></i>Interactive Simple Interest Calculator
+                                </h3>
+                                <button onclick="showSimpleInterestTutorial()" 
+                                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors text-sm font-semibold inline-flex items-center gap-2">
+                                    <i class="fas fa-question-circle"></i>
+                                    Tutorial
+                                </button>
+                            </div>
+                            <p class="text-center text-gray-600 mb-6 max-w-2xl mx-auto">
+                                Enter values below and watch the calculations update in real-time. See step-by-step solutions and visual breakdowns!
+                            </p>
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div class="space-y-6">
+                                    <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+                                        <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                                            <i class="fas fa-sliders-h text-primary mr-2"></i>Input Values
+                                        </h4>
+                                        <div class="space-y-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center justify-between">
+                                                    <span>Principal (P):</span>
+                                                    <span class="text-xs text-gray-500 font-mono" id="siPDisplay">₱18,500</span>
+                                                </label>
+                                                <input type="number" id="siP" value="18500" min="0" step="100" oninput="calculateSimpleInterest()"
+                                                       class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono transition-all hover:border-blue-400">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center justify-between">
+                                                    <span>Rate r (%):</span>
+                                                    <span class="text-xs text-gray-500 font-mono" id="siRDisplay">3.0%</span>
+                                                </label>
+                                                <input type="number" id="siR" value="3" min="0" step="0.01" oninput="calculateSimpleInterest()"
+                                                       class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono transition-all hover:border-blue-400">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center justify-between">
+                                                    <span>Time t (years):</span>
+                                                    <span class="text-xs text-gray-500 font-mono" id="siTDisplay">5 years</span>
+                                                </label>
+                                                <input type="number" id="siT" value="5" min="0" step="0.01" oninput="calculateSimpleInterest()"
+                                                       class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono transition-all hover:border-blue-400">
+                                            </div>
+                                            <button onclick="calculateSimpleInterest()"
+                                                    class="w-full bg-gradient-to-r from-primary to-secondary text-white py-3 px-6 rounded-lg hover:from-secondary hover:to-primary transition-all font-semibold shadow-lg hover:shadow-xl transform hover:scale-105">
+                                                <i class="fas fa-equals mr-2"></i>Calculate Now!
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Step-by-Step Solution -->
+                                    <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border-2 border-purple-200">
+                                        <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                                            <i class="fas fa-list-ol text-purple-600 mr-2"></i>Step-by-Step Solution
+                                        </h4>
+                                        <div id="siStepByStep" class="space-y-3 text-sm">
+                                            <!-- Will be populated by JavaScript -->
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="space-y-6">
+                                    <!-- Results Card -->
+                                    <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white shadow-lg">
+                                        <h4 class="text-lg font-semibold mb-4 flex items-center">
+                                            <i class="fas fa-chart-pie mr-2"></i>Results
+                                        </h4>
+                                        <div class="space-y-4">
+                                            <div class="bg-white/20 rounded-lg p-4 backdrop-blur-sm">
+                                                <p class="text-sm mb-2 flex items-center">
+                                                    <i class="fas fa-coins text-yellow-300 mr-2"></i>Simple Interest Is = Prt
+                                                </p>
+                                                <p id="siInterest" class="font-mono text-2xl font-bold">₱ 0.00</p>
+                                            </div>
+                                            <div class="bg-white/20 rounded-lg p-4 backdrop-blur-sm">
+                                                <p class="text-sm mb-2 flex items-center">
+                                                    <i class="fas fa-money-bill-wave text-green-300 mr-2"></i>Maturity Value F = P + Is
+                                                </p>
+                                                <p id="siFuture" class="font-mono text-2xl font-bold">₱ 0.00</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Visual Breakdown -->
+                                        <div class="mt-6 bg-white/20 rounded-lg p-4 backdrop-blur-sm">
+                                            <p class="text-sm font-semibold mb-3">Visual Breakdown:</p>
+                                            <div class="space-y-2">
+                                                <div class="flex items-center justify-between text-xs mb-1">
+                                                    <span>Principal</span>
+                                                    <span id="siPrincipalPercent">0%</span>
+                                                </div>
+                                                <div class="w-full bg-white/30 rounded-full h-4 overflow-hidden">
+                                                    <div id="siPrincipalBar" class="bg-blue-400 h-4 rounded-full transition-all duration-500 flex items-center justify-end pr-2">
+                                                        <span class="text-xs text-white font-semibold" id="siPrincipalBarText">₱0</span>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center justify-between text-xs mb-1 mt-2">
+                                                    <span>Interest</span>
+                                                    <span id="siInterestPercent">0%</span>
+                                                </div>
+                                                <div class="w-full bg-white/30 rounded-full h-4 overflow-hidden">
+                                                    <div id="siInterestBar" class="bg-green-400 h-4 rounded-full transition-all duration-500 flex items-center justify-end pr-2">
+                                                        <span class="text-xs text-white font-semibold" id="siInterestBarText">₱0</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Formula Reference -->
+                                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                                        <h4 class="text-lg font-semibold text-gray-800 mb-4">Solving for Unknowns</h4>
+                                        <div class="grid grid-cols-1 gap-3">
+                                            <div class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
+                                                <p class="font-semibold mb-1 text-sm">Solve for P:</p>
+                                                <p class="font-mono text-sm text-primary">P = Is / (rt)</p>
+                                            </div>
+                                            <div class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
+                                                <p class="font-semibold mb-1 text-sm">Solve for r:</p>
+                                                <p class="font-mono text-sm text-primary">r = Is / (Pt)</p>
+                                            </div>
+                                            <div class="bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
+                                                <p class="font-semibold mb-1 text-sm">Solve for t:</p>
+                                                <p class="font-mono text-sm text-primary">t = Is / (Pr)</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Lesson Completion Status -->
+                    <div id="lessonCompletionStatus-2" class="hidden mb-6"></div>
+                    
                     <div class="flex justify-between items-center">
-                        <button id="prevLessonBtn" onclick="navigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"><i class="fas fa-chevron-left mr-2"></i>Previous Lesson</button>
-                        <div class="flex items-center space-x-4"><div class="text-lg font-semibold text-primary"><span id="currentLessonNum">2</span> of 5</div><div class="w-32 bg-gray-200 rounded-full h-2"><div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 40%"></div></div></div>
-                        <button id="nextLessonBtn" onclick="navigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Next Lesson<i class="fas fa-chevron-right ml-2"></i></button>
+                        <button id="prevLessonBtn-2" onclick="scNavigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"><i class="fas fa-chevron-left mr-2"></i>Previous Topic</button>
+                        <div class="flex items-center space-x-4"><div class="text-lg font-semibold text-primary"><span id="currentLessonNum-2">2</span> of 5</div><div class="w-32 bg-gray-200 rounded-full h-2"><div id="lessonProgressBar-2" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 40%"></div></div></div>
+                        <button id="nextLessonBtn-2" onclick="scNavigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors">Next Topic<i class="fas fa-chevron-right ml-2"></i></button>
                     </div>
                 </div>
             </section>
 
             <section id="lesson3" class="lesson-section">
                 <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
-                    <div class="text-center mb-8">
-                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-tasks text-3xl"></i>
+                    <div class="flex justify-between items-start mb-8">
+                        <div class="flex-1">
+                            <div class="text-center md:text-left mb-6">
+                                <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto md:mx-0 mb-4">
+                                    <i class="fas fa-tasks text-3xl"></i>
+                                </div>
+                                <h2 class="text-3xl font-bold text-gray-800 mb-4">Topic 3: Activities on Simple Interest</h2>
+                                <p class="text-lg text-gray-600 max-w-3xl mx-auto md:mx-0">Practice solving simple interest problems through interactive activities and exercises.</p>
+                            </div>
                         </div>
-                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 3: Activities on Simple Interest</h2>
-                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">Answer practice questions and complete tables on simple interest and maturity value.</p>
+                        <!-- Live Timer Display - Small, Right Side -->
+                        <div class="flex-shrink-0 ml-4">
+                            <div class="relative w-20 h-20">
+                                <svg class="transform -rotate-90 w-20 h-20">
+                                    <circle cx="40" cy="40" r="34" stroke="#e5e7eb" stroke-width="6" fill="none" class="timer-bg"></circle>
+                                    <circle cx="40" cy="40" r="34" stroke="#8b5cf6" stroke-width="6" fill="none" 
+                                            class="timer-progress" 
+                                            stroke-dasharray="213.63" 
+                                            stroke-dashoffset="213.63"
+                                            stroke-linecap="round"></circle>
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span class="lesson-timer-display text-sm font-bold text-gray-800">00:00</span>
+                                    <span class="text-xs text-gray-500 mt-0.5">Time</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="bg-blue-50 border-l-4 border-primary p-6 mb-6 text-sm text-gray-800 space-y-3">
-                        <p><strong>Activity 1.1</strong> Compute Is and F with given P, r, t (convert percent to decimals; months to years).</p>
-                        <p><strong>Activity 1.2</strong> Find missing components given any three of P, r, t, Is, F.</p>
-                        <p><strong>Activity 1.3 & 1.4</strong> Complete the tables by solving unknowns in order.</p>
-                        <p><strong>Concept Check</strong> Fill-in-the-blanks summary of simple interest relationships.</p>
+
+                    <!-- Comprehensive Guide -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8 border-l-4 border-blue-500">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                            <i class="fas fa-graduation-cap text-blue-500 mr-3"></i>Practice Activities Guide
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-calculator text-green-500 mr-2"></i>Activity 1.1: Basic Calculations
+                                </h4>
+                                <p class="text-gray-700 mb-3">Compute simple interest (Is) and maturity value (F) when given Principal (P), rate (r), and time (t).</p>
+                                <div class="bg-green-50 rounded-lg p-3 border-l-4 border-green-500">
+                                    <p class="text-sm font-semibold text-gray-800 mb-2">Key Steps:</p>
+                                    <ol class="text-xs text-gray-700 space-y-1 list-decimal list-inside">
+                                        <li>Convert percentage rate to decimal (divide by 100)</li>
+                                        <li>Convert months to years if needed (divide by 12)</li>
+                                        <li>Apply formula: Is = P × r × t</li>
+                                        <li>Calculate F = P + Is</li>
+                                    </ol>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-search text-purple-500 mr-2"></i>Activity 1.2: Finding Unknowns
+                                </h4>
+                                <p class="text-gray-700 mb-3">Find missing components when given any three of P, r, t, Is, or F.</p>
+                                <div class="bg-purple-50 rounded-lg p-3 border-l-4 border-purple-500">
+                                    <p class="text-sm font-semibold text-gray-800 mb-2">Formulas:</p>
+                                    <ul class="text-xs text-gray-700 space-y-1 list-disc list-inside">
+                                        <li>P = Is / (r × t)</li>
+                                        <li>r = Is / (P × t)</li>
+                                        <li>t = Is / (P × r)</li>
+                                        <li>Is = F - P</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 my-8 text-center">
-                        <button onclick="completeLesson(3)" class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold"><i class="fas fa-check mr-2"></i>Mark as Complete</button>
+
+                    <!-- Visual Aids Section -->
+                    <div class="topic-visual-aids-section">
+                        <div class="section-label mb-6">
+                            <i class="fas fa-palette"></i> Visual aids
+                        </div>
+                        <div class="virtual-aid rounded-2xl p-8 mb-8">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                                <i class="fas fa-table text-primary mr-3"></i>Interactive Practice Table
+                            </h3>
+                            <p class="text-center text-gray-600 mb-6 max-w-2xl mx-auto">
+                                Fill in the missing values in the table below. Click on any cell to calculate!
+                            </p>
+                            <div class="bg-white rounded-xl p-6 shadow-lg overflow-x-auto">
+                                <table class="w-full border-collapse">
+                                    <thead>
+                                        <tr class="bg-gradient-to-r from-primary to-secondary text-white">
+                                            <th class="border border-gray-300 px-4 py-3 text-left">Principal (P)</th>
+                                            <th class="border border-gray-300 px-4 py-3 text-left">Rate (r%)</th>
+                                            <th class="border border-gray-300 px-4 py-3 text-left">Time (t years)</th>
+                                            <th class="border border-gray-300 px-4 py-3 text-left">Interest (Is)</th>
+                                            <th class="border border-gray-300 px-4 py-3 text-left">Maturity Value (F)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="practiceTableBody">
+                                        <tr class="hover:bg-blue-50 transition-colors">
+                                            <td class="border border-gray-300 px-4 py-3">
+                                                <input type="number" class="practice-input w-full px-2 py-1 border rounded" data-row="0" data-field="P" value="10000" placeholder="Enter P">
+                                            </td>
+                                            <td class="border border-gray-300 px-4 py-3">
+                                                <input type="number" class="practice-input w-full px-2 py-1 border rounded" data-row="0" data-field="r" value="5" placeholder="Enter r">
+                                            </td>
+                                            <td class="border border-gray-300 px-4 py-3">
+                                                <input type="number" class="practice-input w-full px-2 py-1 border rounded" data-row="0" data-field="t" value="2" placeholder="Enter t">
+                                            </td>
+                                            <td class="border border-gray-300 px-4 py-3 font-mono bg-gray-50" id="row0-Is">₱1,000.00</td>
+                                            <td class="border border-gray-300 px-4 py-3 font-mono bg-gray-50" id="row0-F">₱11,000.00</td>
+                                        </tr>
+                                        <tr class="hover:bg-blue-50 transition-colors">
+                                            <td class="border border-gray-300 px-4 py-3">
+                                                <input type="number" class="practice-input w-full px-2 py-1 border rounded" data-row="1" data-field="P" value="15000" placeholder="Enter P">
+                                            </td>
+                                            <td class="border border-gray-300 px-4 py-3">
+                                                <input type="number" class="practice-input w-full px-2 py-1 border rounded" data-row="1" data-field="r" value="3" placeholder="Enter r">
+                                            </td>
+                                            <td class="border border-gray-300 px-4 py-3">
+                                                <input type="number" class="practice-input w-full px-2 py-1 border rounded" data-row="1" data-field="t" placeholder="Enter t">
+                                            </td>
+                                            <td class="border border-gray-300 px-4 py-3">
+                                                <input type="number" class="practice-input w-full px-2 py-1 border rounded" data-row="1" data-field="Is" value="1350" placeholder="Enter Is">
+                                            </td>
+                                            <td class="border border-gray-300 px-4 py-3 font-mono bg-gray-50" id="row1-F">₱16,350.00</td>
+                                        </tr>
+                                        <tr class="hover:bg-blue-50 transition-colors">
+                                            <td class="border border-gray-300 px-4 py-3">
+                                                <input type="number" class="practice-input w-full px-2 py-1 border rounded" data-row="2" data-field="P" placeholder="Enter P">
+                                            </td>
+                                            <td class="border border-gray-300 px-4 py-3">
+                                                <input type="number" class="practice-input w-full px-2 py-1 border rounded" data-row="2" data-field="r" value="6" placeholder="Enter r">
+                                            </td>
+                                            <td class="border border-gray-300 px-4 py-3">
+                                                <input type="number" class="practice-input w-full px-2 py-1 border rounded" data-row="2" data-field="t" value="3" placeholder="Enter t">
+                                            </td>
+                                            <td class="border border-gray-300 px-4 py-3">
+                                                <input type="number" class="practice-input w-full px-2 py-1 border rounded" data-row="2" data-field="Is" value="3600" placeholder="Enter Is">
+                                            </td>
+                                            <td class="border border-gray-300 px-4 py-3 font-mono bg-gray-50" id="row2-F">₱23,600.00</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="mt-4 flex justify-end">
+                                    <button onclick="calculatePracticeTable()" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-secondary transition-colors">
+                                        <i class="fas fa-calculator mr-2"></i>Calculate All
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    <!-- Lesson Completion Status -->
+                    <div id="lessonCompletionStatus-3" class="hidden mb-6"></div>
+                    
                     <div class="flex justify-between items-center">
-                        <button id="prevLessonBtn" onclick="navigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"><i class="fas fa-chevron-left mr-2"></i>Previous Lesson</button>
-                        <div class="flex items-center space-x-4"><div class="text-lg font-semibold text-primary"><span id="currentLessonNum">3</span> of 5</div><div class="w-32 bg-gray-200 rounded-full h-2"><div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 60%"></div></div></div>
-                        <button id="nextLessonBtn" onclick="navigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Next Lesson<i class="fas fa-chevron-right ml-2"></i></button>
+                        <button id="prevLessonBtn-3" onclick="scNavigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"><i class="fas fa-chevron-left mr-2"></i>Previous Topic</button>
+                        <div class="flex items-center space-x-4"><div class="text-lg font-semibold text-primary"><span id="currentLessonNum-3">3</span> of 5</div><div class="w-32 bg-gray-200 rounded-full h-2"><div id="lessonProgressBar-3" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 60%"></div></div></div>
+                        <button id="nextLessonBtn-3" onclick="scNavigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors">Next Topic<i class="fas fa-chevron-right ml-2"></i></button>
                     </div>
                 </div>
             </section>
 
             <section id="lesson4" class="lesson-section">
                 <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
-                    <div class="text-center mb-8">
-                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-chart-line text-3xl"></i>
-                        </div>
-                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 4: Compound Interest & Time Value</h2>
-                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">Compute maturity value F = P(1+r/n)^(nt), compound interest Ic = F − P, and present value P = F/(1+r/n)^(nt).</p>
-                    </div>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <div class="bg-white rounded-xl p-6 shadow-lg">
-                            <h4 class="text-lg font-semibold text-gray-800 mb-4">Inputs</h4>
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Principal (P)</label>
-                                    <input type="number" id="ciP" value="35000" min="0" step="100" oninput="calculateCompoundInteractive()" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono">
+                    <div class="flex justify-between items-start mb-8">
+                        <div class="flex-1">
+                            <div class="text-center md:text-left mb-6">
+                                <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto md:mx-0 mb-4">
+                                    <i class="fas fa-chart-line text-3xl"></i>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Annual Rate r (%)</label>
-                                    <input type="number" id="ciR" value="3" min="0" step="0.01" oninput="calculateCompoundInteractive()" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Time t (years)</label>
-                                    <input type="number" id="ciT" value="3" min="0" step="0.01" oninput="calculateCompoundInteractive()" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Compounding per year (n)</label>
-                                    <select id="ciN" onchange="calculateCompoundInteractive()" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none">
-                                        <option value="1">Annually (1)</option>
-                                        <option value="2">Semi-annually (2)</option>
-                                        <option value="4">Quarterly (4)</option>
-                                        <option value="12">Monthly (12)</option>
-                                        <option value="365">Daily (365)</option>
-                                    </select>
-                                </div>
-                                <button onclick="calculateCompoundInteractive()" class="w-full bg-primary text-white py-3 px-6 rounded-lg hover:bg-secondary transition-colors font-semibold"><i class="fas fa-equals mr-2"></i>Compute</button>
+                                <h2 class="text-3xl font-bold text-gray-800 mb-4">Topic 4: Compound Interest & Time Value</h2>
+                                <p class="text-lg text-gray-600 max-w-3xl mx-auto md:mx-0">Compute maturity value F = P(1+r/n)^(nt), compound interest Ic = F − P, and present value P = F/(1+r/n)^(nt).</p>
                             </div>
                         </div>
-                        <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white">
-                            <h4 class="text-lg font-semibold mb-4">Results</h4>
-                            <div class="bg-white/20 rounded-lg p-3 mb-3">
-                                <p class="text-sm">Maturity Value F</p>
-                                <p id="ciF" class="font-mono text-lg">₱ 0.00</p>
-                            </div>
-                            <div class="bg-white/20 rounded-lg p-3 mb-3">
-                                <p class="text-sm">Compound Interest Ic = F − P</p>
-                                <p id="ciIc" class="font-mono text-lg">₱ 0.00</p>
-                            </div>
-                            <div class="bg-white/20 rounded-lg p-3">
-                                <p class="text-sm">Present Value for given F</p>
-                                <div class="flex gap-2 mt-2">
-                                    <input type="number" id="pvF" placeholder="Enter F" class="flex-1 px-3 py-2 rounded text-slate-900">
-                                    <button class="px-3 py-2 bg-white/30 rounded" onclick="computePVFromF()">Compute PV</button>
+                        <!-- Live Timer Display - Small, Right Side -->
+                        <div class="flex-shrink-0 ml-4">
+                            <div class="relative w-20 h-20">
+                                <svg class="transform -rotate-90 w-20 h-20">
+                                    <circle cx="40" cy="40" r="34" stroke="#e5e7eb" stroke-width="6" fill="none" class="timer-bg"></circle>
+                                    <circle cx="40" cy="40" r="34" stroke="#8b5cf6" stroke-width="6" fill="none" 
+                                            class="timer-progress" 
+                                            stroke-dasharray="213.63" 
+                                            stroke-dashoffset="213.63"
+                                            stroke-linecap="round"></circle>
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span class="lesson-timer-display text-sm font-bold text-gray-800">00:00</span>
+                                    <span class="text-xs text-gray-500 mt-0.5">Time</span>
                                 </div>
-                                <p id="ciPV" class="font-mono text-lg mt-2">₱ 0.00</p>
-                            </div>
-                            <div class="mt-4 bg-white/20 rounded-lg p-3">
-                                <p class="text-sm">Formula</p>
-                                <p id="ciFormula" class="font-mono text-sm">F = P(1 + r/n)^(nt)</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 my-8 text-center">
-                        <button onclick="completeLesson(4)" class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold"><i class="fas fa-check mr-2"></i>Mark as Complete</button>
+                    <!-- Comprehensive Explanation -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8 border-l-4 border-blue-500">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                            <i class="fas fa-book-reader text-blue-500 mr-3"></i>Understanding Compound Interest
+                        </h3>
+                        <div class="space-y-6">
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-3">What is Compound Interest?</h4>
+                                <p class="text-gray-700 mb-3">Compound interest is interest calculated on <strong>both the principal and previously earned interest</strong>. This means interest earns interest, creating exponential growth over time!</p>
+                                <div class="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                                    <p class="text-sm font-semibold text-gray-800 mb-2">Key Characteristics:</p>
+                                    <ul class="text-sm text-gray-700 space-y-1 list-disc list-inside">
+                                        <li>Interest compounds (earns interest on interest)</li>
+                                        <li>Exponential growth over time</li>
+                                        <li>More frequent compounding = higher returns</li>
+                                        <li>Better for long-term investments</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-3">The Compound Interest Formula</h4>
+                                <div class="bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg p-4 mb-3">
+                                    <p class="text-xl font-bold text-center text-gray-800 mb-2">F = P(1 + r/n)^(nt)</p>
+                                    <div class="grid grid-cols-4 gap-4 text-sm mt-3">
+                                        <div class="text-center">
+                                            <p class="font-semibold text-gray-700">P</p>
+                                            <p class="text-gray-600">Principal</p>
+                                        </div>
+                                        <div class="text-center">
+                                            <p class="font-semibold text-gray-700">r</p>
+                                            <p class="text-gray-600">Rate (decimal)</p>
+                                        </div>
+                                        <div class="text-center">
+                                            <p class="font-semibold text-gray-700">n</p>
+                                            <p class="text-gray-600">Compounding frequency</p>
+                                        </div>
+                                        <div class="text-center">
+                                            <p class="font-semibold text-gray-700">t</p>
+                                            <p class="text-gray-600">Time (years)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-yellow-50 rounded-lg p-4 border-l-4 border-yellow-400">
+                                    <p class="text-sm font-semibold text-gray-800 mb-2">Example Calculation:</p>
+                                    <p class="text-sm text-gray-700 mb-2">If P = ₱10,000, r = 5% (0.05), n = 4 (quarterly), t = 2 years:</p>
+                                    <p class="text-sm font-mono text-gray-800 mb-1">Step 1: r/n = 0.05/4 = 0.0125</p>
+                                    <p class="text-sm font-mono text-gray-800 mb-1">Step 2: nt = 4 × 2 = 8</p>
+                                    <p class="text-sm font-mono text-gray-800 mb-1">Step 3: (1 + 0.0125)^8 = 1.1045</p>
+                                    <p class="text-sm font-mono text-gray-800 font-bold text-green-600 mt-2">F = ₱10,000 × 1.1045 = ₱11,045</p>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-3">Compounding Frequency</h4>
+                                <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                                    <div class="bg-blue-50 p-3 rounded-lg text-center">
+                                        <p class="font-semibold text-sm">Annually</p>
+                                        <p class="text-xs text-gray-600">n = 1</p>
+                                    </div>
+                                    <div class="bg-green-50 p-3 rounded-lg text-center">
+                                        <p class="font-semibold text-sm">Semi-annually</p>
+                                        <p class="text-xs text-gray-600">n = 2</p>
+                                    </div>
+                                    <div class="bg-purple-50 p-3 rounded-lg text-center">
+                                        <p class="font-semibold text-sm">Quarterly</p>
+                                        <p class="text-xs text-gray-600">n = 4</p>
+                                    </div>
+                                    <div class="bg-pink-50 p-3 rounded-lg text-center">
+                                        <p class="font-semibold text-sm">Monthly</p>
+                                        <p class="text-xs text-gray-600">n = 12</p>
+                                    </div>
+                                    <div class="bg-yellow-50 p-3 rounded-lg text-center">
+                                        <p class="font-semibold text-sm">Daily</p>
+                                        <p class="text-xs text-gray-600">n = 365</p>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-gray-600 mt-3"><strong>💡 Tip:</strong> More frequent compounding results in higher final amounts!</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-3">Present Value (PV)</h4>
+                                <p class="text-gray-700 mb-3">Present Value is the current worth of money to be received in the future. It's the inverse of compound interest.</p>
+                                <div class="bg-gradient-to-r from-green-100 to-emerald-100 rounded-lg p-4">
+                                    <p class="text-xl font-bold text-center text-gray-800 mb-2">PV = F / (1 + r/n)^(nt)</p>
+                                    <p class="text-sm text-center text-gray-600 mt-2">This tells you how much you need to invest today to get a certain amount in the future.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Visual Aids Section -->
+                    <div class="topic-visual-aids-section">
+                        <div class="section-label mb-6">
+                            <i class="fas fa-palette"></i> Visual aids
+                        </div>
+                        <div class="virtual-aid rounded-2xl p-8 mb-8">
+                            <div class="flex items-center justify-center gap-4 mb-6">
+                                <h3 class="text-2xl font-bold text-gray-800 text-center">
+                                    <i class="fas fa-calculator text-primary mr-3"></i>Interactive Compound Interest Calculator
+                                </h3>
+                                <button onclick="showCompoundInterestTutorial()" 
+                                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors text-sm font-semibold inline-flex items-center gap-2">
+                                    <i class="fas fa-question-circle"></i>
+                                    Tutorial
+                                </button>
+                            </div>
+                            <p class="text-center text-gray-600 mb-6 max-w-2xl mx-auto">
+                                Experiment with different values and watch how compound interest grows! Try different compounding frequencies to see the impact.
+                            </p>
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div class="space-y-6">
+                                    <div class="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+                                        <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                                            <i class="fas fa-sliders-h text-primary mr-2"></i>Input Values
+                                        </h4>
+                                        <div class="space-y-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center justify-between">
+                                                    <span>Principal (P):</span>
+                                                    <span class="text-xs text-gray-500 font-mono" id="ciPDisplay">₱35,000</span>
+                                                </label>
+                                                <input type="number" id="ciP" value="35000" min="0" step="100" oninput="calculateCompoundInteractive()"
+                                                       class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono transition-all hover:border-blue-400">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center justify-between">
+                                                    <span>Annual Rate r (%):</span>
+                                                    <span class="text-xs text-gray-500 font-mono" id="ciRDisplay">3.0%</span>
+                                                </label>
+                                                <input type="number" id="ciR" value="3" min="0" step="0.01" oninput="calculateCompoundInteractive()"
+                                                       class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono transition-all hover:border-blue-400">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center justify-between">
+                                                    <span>Time t (years):</span>
+                                                    <span class="text-xs text-gray-500 font-mono" id="ciTDisplay">3 years</span>
+                                                </label>
+                                                <input type="number" id="ciT" value="3" min="0" step="0.01" oninput="calculateCompoundInteractive()"
+                                                       class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono transition-all hover:border-blue-400">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                                    <i class="fas fa-sync-alt mr-2"></i>Compounding Frequency (n):
+                                                </label>
+                                                <select id="ciN" onchange="calculateCompoundInteractive()" 
+                                                        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none transition-all hover:border-blue-400">
+                                                    <option value="1">Annually (1x per year)</option>
+                                                    <option value="2">Semi-annually (2x per year)</option>
+                                                    <option value="4">Quarterly (4x per year)</option>
+                                                    <option value="12">Monthly (12x per year)</option>
+                                                    <option value="365">Daily (365x per year)</option>
+                                                </select>
+                                            </div>
+                                            <button onclick="calculateCompoundInteractive()"
+                                                    class="w-full bg-gradient-to-r from-primary to-secondary text-white py-3 px-6 rounded-lg hover:from-secondary hover:to-primary transition-all font-semibold shadow-lg hover:shadow-xl transform hover:scale-105">
+                                                <i class="fas fa-equals mr-2"></i>Calculate Now!
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Step-by-Step Solution -->
+                                    <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border-2 border-purple-200">
+                                        <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                                            <i class="fas fa-list-ol text-purple-600 mr-2"></i>Step-by-Step Solution
+                                        </h4>
+                                        <div id="ciStepByStep" class="space-y-3 text-sm">
+                                            <!-- Will be populated by JavaScript -->
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="space-y-6">
+                                    <!-- Results Card -->
+                                    <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white shadow-lg">
+                                        <h4 class="text-lg font-semibold mb-4 flex items-center">
+                                            <i class="fas fa-chart-pie mr-2"></i>Results
+                                        </h4>
+                                        <div class="space-y-4">
+                                            <div class="bg-white/20 rounded-lg p-4 backdrop-blur-sm">
+                                                <p class="text-sm mb-2 flex items-center">
+                                                    <i class="fas fa-coins text-yellow-300 mr-2"></i>Maturity Value F
+                                                </p>
+                                                <p id="ciF" class="font-mono text-2xl font-bold">₱ 0.00</p>
+                                            </div>
+                                            <div class="bg-white/20 rounded-lg p-4 backdrop-blur-sm">
+                                                <p class="text-sm mb-2 flex items-center">
+                                                    <i class="fas fa-money-bill-wave text-green-300 mr-2"></i>Compound Interest Ic = F - P
+                                                </p>
+                                                <p id="ciIc" class="font-mono text-2xl font-bold">₱ 0.00</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Visual Breakdown -->
+                                        <div class="mt-6 bg-white/20 rounded-lg p-4 backdrop-blur-sm">
+                                            <p class="text-sm font-semibold mb-3">Visual Breakdown:</p>
+                                            <div class="space-y-2">
+                                                <div class="flex items-center justify-between text-xs mb-1">
+                                                    <span>Principal</span>
+                                                    <span id="ciPrincipalPercent">0%</span>
+                                                </div>
+                                                <div class="w-full bg-white/30 rounded-full h-4 overflow-hidden">
+                                                    <div id="ciPrincipalBar" class="bg-blue-400 h-4 rounded-full transition-all duration-500 flex items-center justify-end pr-2">
+                                                        <span class="text-xs text-white font-semibold" id="ciPrincipalBarText">₱0</span>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center justify-between text-xs mb-1 mt-2">
+                                                    <span>Interest</span>
+                                                    <span id="ciInterestPercent">0%</span>
+                                                </div>
+                                                <div class="w-full bg-white/30 rounded-full h-4 overflow-hidden">
+                                                    <div id="ciInterestBar" class="bg-green-400 h-4 rounded-full transition-all duration-500 flex items-center justify-end pr-2">
+                                                        <span class="text-xs text-white font-semibold" id="ciInterestBarText">₱0</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Present Value Calculator -->
+                                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                                        <h4 class="text-lg font-semibold text-gray-800 mb-4">Present Value Calculator</h4>
+                                        <div class="space-y-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-700 mb-2">Future Value (F):</label>
+                                                <input type="number" id="pvF" placeholder="Enter F" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono">
+                                            </div>
+                                            <button onclick="computePVFromF()" class="w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-secondary transition-colors">
+                                                <i class="fas fa-calculator mr-2"></i>Calculate Present Value
+                                            </button>
+                                            <div class="bg-gray-50 rounded-lg p-4">
+                                                <p class="text-sm text-gray-600 mb-1">Present Value:</p>
+                                                <p id="ciPV" class="font-mono text-xl font-bold text-primary">₱ 0.00</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lesson Completion Status -->
+                    <div id="lessonCompletionStatus-4" class="hidden mb-6"></div>
+                    
                     <div class="flex justify-between items-center">
-                        <button id="prevLessonBtn" onclick="navigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"><i class="fas fa-chevron-left mr-2"></i>Previous Lesson</button>
-                        <div class="flex items-center space-x-4"><div class="text-lg font-semibold text-primary"><span id="currentLessonNum">4</span> of 5</div><div class="w-32 bg-gray-200 rounded-full h-2"><div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 80%"></div></div></div>
-                        <button id="nextLessonBtn" onclick="navigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Next Lesson<i class="fas fa-chevron-right ml-2"></i></button>
+                        <button id="prevLessonBtn-4" onclick="scNavigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"><i class="fas fa-chevron-left mr-2"></i>Previous Topic</button>
+                        <div class="flex items-center space-x-4"><div class="text-lg font-semibold text-primary"><span id="currentLessonNum-4">4</span> of 5</div><div class="w-32 bg-gray-200 rounded-full h-2"><div id="lessonProgressBar-4" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 80%"></div></div></div>
+                        <button id="nextLessonBtn-4" onclick="scNavigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors">Next Topic<i class="fas fa-chevron-right ml-2"></i></button>
                     </div>
                 </div>
             </section>
 
             <section id="lesson5" class="lesson-section">
                 <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
-                    <div class="text-center mb-8">
-                        <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-user-check text-3xl"></i>
+                    <div class="flex justify-between items-start mb-8">
+                        <div class="flex-1">
+                            <div class="text-center md:text-left mb-6">
+                                <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto md:mx-0 mb-4">
+                                    <i class="fas fa-user-check text-3xl"></i>
+                                </div>
+                                <h2 class="text-3xl font-bold text-gray-800 mb-4">Topic 5: Activities & Decision-Making</h2>
+                                <p class="text-lg text-gray-600 max-w-3xl mx-auto md:mx-0">Apply your knowledge to real-world scenarios. Compare deposit options, analyze financial decisions, and make informed choices.</p>
+                            </div>
                         </div>
-                        <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 5: Activities & Decision-Making</h2>
-                        <p class="text-lg text-gray-600 max-w-3xl mx-auto">Compare deposit options and craft advice; answer guiding questions on fairness and strategies.</p>
+                        <!-- Live Timer Display - Small, Right Side -->
+                        <div class="flex-shrink-0 ml-4">
+                            <div class="relative w-20 h-20">
+                                <svg class="transform -rotate-90 w-20 h-20">
+                                    <circle cx="40" cy="40" r="34" stroke="#e5e7eb" stroke-width="6" fill="none" class="timer-bg"></circle>
+                                    <circle cx="40" cy="40" r="34" stroke="#8b5cf6" stroke-width="6" fill="none" 
+                                            class="timer-progress" 
+                                            stroke-dasharray="213.63" 
+                                            stroke-dashoffset="213.63"
+                                            stroke-linecap="round"></circle>
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span class="lesson-timer-display text-sm font-bold text-gray-800">00:00</span>
+                                    <span class="text-xs text-gray-500 mt-0.5">Time</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="bg-orange-50 border-l-4 border-orange-400 p-6 mb-6 text-sm text-gray-800 space-y-3">
-                        <p><strong>Money Matters</strong> Create a proposal for ₱50,000 time deposit with options: 1.10% (3y), 1.25% (5y), 1.75% (8y). Compute amounts and discuss other factors (liquidity, risk, goals).</p>
-                        <p><strong>Reflection</strong> Analyze Michael’s simple vs bank compound computation; discuss why compound yields more and ways to reduce cost (e.g., early partial payments, lower rate, shorter term).</p>
+                    <!-- Comprehensive Guide -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8 border-l-4 border-blue-500">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                            <i class="fas fa-lightbulb text-yellow-500 mr-3"></i>Real-World Application Guide
+                        </h3>
+                        <div class="space-y-6">
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-piggy-bank text-green-500 mr-2"></i>Activity: Money Matters
+                                </h4>
+                                <p class="text-gray-700 mb-4">You have ₱50,000 to invest in a time deposit. Compare these options:</p>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                    <div class="bg-green-50 rounded-lg p-4 border-2 border-green-200">
+                                        <p class="font-semibold text-gray-800 mb-2">Option 1</p>
+                                        <p class="text-sm text-gray-700">Rate: 1.10%</p>
+                                        <p class="text-sm text-gray-700">Term: 3 years</p>
+                                    </div>
+                                    <div class="bg-blue-50 rounded-lg p-4 border-2 border-blue-200">
+                                        <p class="font-semibold text-gray-800 mb-2">Option 2</p>
+                                        <p class="text-sm text-gray-700">Rate: 1.25%</p>
+                                        <p class="text-sm text-gray-700">Term: 5 years</p>
+                                    </div>
+                                    <div class="bg-purple-50 rounded-lg p-4 border-2 border-purple-200">
+                                        <p class="font-semibold text-gray-800 mb-2">Option 3</p>
+                                        <p class="text-sm text-gray-700">Rate: 1.75%</p>
+                                        <p class="text-sm text-gray-700">Term: 8 years</p>
+                                    </div>
+                                </div>
+                                <div class="bg-yellow-50 rounded-lg p-4 border-l-4 border-yellow-400">
+                                    <p class="text-sm font-semibold text-gray-800 mb-2">Consider These Factors:</p>
+                                    <ul class="text-sm text-gray-700 space-y-1 list-disc list-inside">
+                                        <li><strong>Liquidity:</strong> How quickly can you access your money?</li>
+                                        <li><strong>Risk:</strong> What are the risks involved?</li>
+                                        <li><strong>Goals:</strong> What are your financial goals?</li>
+                                        <li><strong>Time Horizon:</strong> When do you need the money?</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-lg p-6 shadow-md">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-brain text-purple-500 mr-2"></i>Reflection: Simple vs Compound Interest
+                                </h4>
+                                <p class="text-gray-700 mb-3">Analyze why compound interest yields more than simple interest over time.</p>
+                                <div class="bg-purple-50 rounded-lg p-4 border-l-4 border-purple-500">
+                                    <p class="text-sm font-semibold text-gray-800 mb-2">Key Insights:</p>
+                                    <ul class="text-sm text-gray-700 space-y-1 list-disc list-inside">
+                                        <li>Compound interest grows exponentially because interest earns interest</li>
+                                        <li>Simple interest grows linearly - same amount each period</li>
+                                        <li>The longer the time period, the bigger the difference</li>
+                                        <li>Higher compounding frequency increases the advantage</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 my-8 text-center">
-                        <button onclick="completeLesson(5)" class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold"><i class="fas fa-check mr-2"></i>Finish Topic</button>
+                    <!-- Visual Aids Section -->
+                    <div class="topic-visual-aids-section">
+                        <div class="section-label mb-6">
+                            <i class="fas fa-palette"></i> Visual aids
+                        </div>
+                        <div class="virtual-aid rounded-2xl p-8 mb-8">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                                <i class="fas fa-balance-scale text-primary mr-3"></i>Interactive Deposit Comparison Tool
+                            </h3>
+                            <p class="text-center text-gray-600 mb-6 max-w-2xl mx-auto">
+                                Compare different time deposit options and see which one gives you the best return!
+                            </p>
+                            <div class="bg-white rounded-xl p-6 shadow-lg mb-6">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-4">Investment Amount</h4>
+                                <input type="number" id="depositAmount" value="50000" min="0" step="1000" oninput="compareDepositOptions()"
+                                       class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none font-mono text-lg">
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                                <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border-2 border-green-200">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4 text-center">Option 1</h4>
+                                    <div class="space-y-3">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Rate (%):</label>
+                                            <input type="number" id="opt1Rate" value="1.10" step="0.01" oninput="compareDepositOptions()"
+                                                   class="w-full px-3 py-2 border rounded-lg font-mono">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Term (years):</label>
+                                            <input type="number" id="opt1Term" value="3" step="1" oninput="compareDepositOptions()"
+                                                   class="w-full px-3 py-2 border rounded-lg font-mono">
+                                        </div>
+                                        <div class="bg-white rounded-lg p-3 mt-3">
+                                            <p class="text-xs text-gray-600 mb-1">Final Amount:</p>
+                                            <p class="text-xl font-bold text-green-600" id="opt1Amount">₱51,650</p>
+                                            <p class="text-xs text-gray-500 mt-1">Interest: <span id="opt1Interest">₱1,650</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-6 border-2 border-blue-200">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4 text-center">Option 2</h4>
+                                    <div class="space-y-3">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Rate (%):</label>
+                                            <input type="number" id="opt2Rate" value="1.25" step="0.01" oninput="compareDepositOptions()"
+                                                   class="w-full px-3 py-2 border rounded-lg font-mono">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Term (years):</label>
+                                            <input type="number" id="opt2Term" value="5" step="1" oninput="compareDepositOptions()"
+                                                   class="w-full px-3 py-2 border rounded-lg font-mono">
+                                        </div>
+                                        <div class="bg-white rounded-lg p-3 mt-3">
+                                            <p class="text-xs text-gray-600 mb-1">Final Amount:</p>
+                                            <p class="text-xl font-bold text-blue-600" id="opt2Amount">₱53,125</p>
+                                            <p class="text-xs text-gray-500 mt-1">Interest: <span id="opt2Interest">₱3,125</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border-2 border-purple-200">
+                                    <h4 class="text-lg font-semibold text-gray-800 mb-4 text-center">Option 3</h4>
+                                    <div class="space-y-3">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Rate (%):</label>
+                                            <input type="number" id="opt3Rate" value="1.75" step="0.01" oninput="compareDepositOptions()"
+                                                   class="w-full px-3 py-2 border rounded-lg font-mono">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Term (years):</label>
+                                            <input type="number" id="opt3Term" value="8" step="1" oninput="compareDepositOptions()"
+                                                   class="w-full px-3 py-2 border rounded-lg font-mono">
+                                        </div>
+                                        <div class="bg-white rounded-lg p-3 mt-3">
+                                            <p class="text-xs text-gray-600 mb-1">Final Amount:</p>
+                                            <p class="text-xl font-bold text-purple-600" id="opt3Amount">₱57,200</p>
+                                            <p class="text-xs text-gray-500 mt-1">Interest: <span id="opt3Interest">₱7,200</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 border-2 border-yellow-300">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-4 text-center">Best Option Analysis</h4>
+                                <div id="bestOptionAnalysis" class="text-center">
+                                    <!-- Will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Performance Analysis Section - Only shows after all quizzes are passed -->
+                    <div id="performanceAnalysisSection" class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8 max-w-7xl mx-auto" style="display: none;">
+                        <div class="text-center mb-6">
+                            <div class="w-20 h-20 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-chart-line text-3xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-800 mb-3">
+                                <i class="fas fa-brain text-blue-500 mr-2"></i>Performance Analysis
+                            </h3>
+                            <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-2">
+                                See where you're strong and weak, and review your correct and incorrect quiz answers.
+                            </p>
+                            <p class="text-sm text-gray-500 max-w-2xl mx-auto">
+                                We'll provide personalized recommendations on how to improve.
+                            </p>
+                        </div>
+
+                        <div class="text-center mb-6">
+                            <button id="analyzeBtn" onclick="scAnalyzePerformance()" 
+                                    class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-8 py-4 rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-colors font-semibold text-lg inline-flex items-center shadow-lg transform hover:scale-105">
+                                <i class="fas fa-chart-bar mr-2"></i>
+                                Analyze My Performance
+                            </button>
+                        </div>
+
+                        <!-- Analysis Results -->
+                        <div id="analysisResult" class="hidden mt-8">
+                            <!-- Results will be dynamically inserted here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Topic 5 Quiz Button (hidden by default, shown when viewing Topic 5 and not completed) -->
+                    <div id="topic5QuizButton" class="text-center mb-8" style="display: none;">
+                        <button onclick="scShowTopic5Quiz()" 
+                                class="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg inline-flex items-center">
+                            <i class="fas fa-trophy mr-2"></i>Take Topic 5 Quiz
+                        </button>
+                    </div>
+                    
+                    <!-- Topic Completion Section -->
+                    <div id="topicCompletionSection" class="hidden bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 my-8 text-center">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">🎉 Congratulations!</h3>
+                        <p class="text-gray-600 mb-4">You've completed all 5 topics! Mark this entire topic as complete to track your progress.</p>
+                        <button onclick="completeTopic()" class="bg-emerald-500 text-white px-8 py-3 rounded-lg hover:bg-emerald-600 transition-colors font-semibold">
+                            <i class="fas fa-check-circle mr-2"></i>Mark Topic as Complete
+                        </button>
+                    </div>
+                    
+                    <!-- Lesson Completion Status -->
+                    <div id="lessonCompletionStatus-5" class="hidden mb-6"></div>
+                    
                     <div class="flex justify-between items-center">
-                        <button id="prevLessonBtn" onclick="navigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"><i class="fas fa-chevron-left mr-2"></i>Previous Lesson</button>
-                        <div class="flex items-center space-x-4"><div class="text-lg font-semibold text-primary"><span id="currentLessonNum">5</span> of 5</div><div class="w-32 bg-gray-200 rounded-full h-2"><div id="lessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 100%"></div></div></div>
-                        <button id="nextLessonBtn" onclick="navigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>Next Lesson<i class="fas fa-chevron-right ml-2"></i></button>
+                        <button id="prevLessonBtn-5" onclick="scNavigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"><i class="fas fa-chevron-left mr-2"></i>Previous Topic</button>
+                        <div class="flex items-center space-x-4"><div class="text-lg font-semibold text-primary"><span id="currentLessonNum-5">5</span> of 5</div><div class="w-32 bg-gray-200 rounded-full h-2"><div id="lessonProgressBar-5" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 100%"></div></div></div>
+                        <button id="nextLessonBtn-5" onclick="scNavigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors" disabled>Next Topic<i class="fas fa-chevron-right ml-2"></i></button>
                     </div>
                 </div>
             </section>
+                </div>
+            </div>
         </div>
-    </div>
+    </main>
 
     <script src="../js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="simple-and-compound-values.js"></script>
 </body>
 </html>

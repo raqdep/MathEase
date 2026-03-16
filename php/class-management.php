@@ -67,22 +67,46 @@ class ClassManagement {
             $stmt = $this->pdo->prepare("
                 SELECT c.id, c.teacher_id, c.class_name, c.class_code, c.description, c.subject, 
                        c.grade_level, c.strand, c.is_active, c.max_students, c.created_at, c.updated_at,
-                       COUNT(ce.id) as total_enrollments,
-                       COUNT(CASE WHEN ce.enrollment_status = 'approved' THEN 1 END) as approved_students,
-                       COUNT(CASE WHEN ce.enrollment_status = 'approved' THEN 1 END) as student_count,
-                       COUNT(CASE WHEN ce.enrollment_status = 'pending' THEN 1 END) as pending_students
+                       COUNT(DISTINCT ce.id) as total_enrollments,
+                       COUNT(DISTINCT CASE WHEN ce.enrollment_status = 'approved' THEN ce.student_id END) as approved_students,
+                       COUNT(DISTINCT CASE WHEN ce.enrollment_status = 'approved' THEN ce.student_id END) as student_count,
+                       COUNT(DISTINCT CASE WHEN ce.enrollment_status = 'pending' THEN ce.student_id END) as pending_students
                 FROM classes c
                 LEFT JOIN class_enrollments ce ON c.id = ce.class_id
                 WHERE c.teacher_id = ? AND c.is_active = TRUE
-                GROUP BY c.id
+                GROUP BY c.id, c.teacher_id, c.class_name, c.class_code, c.description, c.subject, 
+                         c.grade_level, c.strand, c.is_active, c.max_students, c.created_at, c.updated_at
                 ORDER BY c.created_at DESC
             ");
             $stmt->execute([$teacherId]);
             $classes = $stmt->fetchAll();
             
+            // Get total unique students across all classes
+            $stmt = $this->pdo->prepare("
+                SELECT COUNT(DISTINCT ce.student_id) as total_unique_students
+                FROM classes c
+                INNER JOIN class_enrollments ce ON c.id = ce.class_id
+                WHERE c.teacher_id = ? AND c.is_active = TRUE AND ce.enrollment_status = 'approved'
+            ");
+            $stmt->execute([$teacherId]);
+            $totalStats = $stmt->fetch();
+            
+            // Get total pending enrollments
+            $stmt = $this->pdo->prepare("
+                SELECT COUNT(*) as total_pending_enrollments
+                FROM classes c
+                INNER JOIN class_enrollments ce ON c.id = ce.class_id
+                WHERE c.teacher_id = ? AND c.is_active = TRUE AND ce.enrollment_status = 'pending'
+            ");
+            $stmt->execute([$teacherId]);
+            $pendingStats = $stmt->fetch();
+            
             return [
                 'success' => true,
-                'classes' => $classes
+                'classes' => $classes,
+                'total_unique_students' => (int)($totalStats['total_unique_students'] ?? 0),
+                'total_pending_enrollments' => (int)($pendingStats['total_pending_enrollments'] ?? 0),
+                'total_classes' => count($classes)
             ];
         } catch (Exception $e) {
             return [

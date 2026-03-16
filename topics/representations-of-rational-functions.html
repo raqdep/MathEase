@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="representations-of-rational-functions.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -25,6 +26,54 @@
             }
         }
     </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .lesson-section {
+            display: none;
+        }
+        .lesson-section.active {
+            display: block;
+        }
+        .timer-progress {
+            transition: stroke-dashoffset 0.5s ease;
+        }
+        .timer-bg {
+            opacity: 0.2;
+        }
+        .lesson-timer-display {
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: 0.05em;
+        }
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        .animate-bounce-slow {
+            animation: bounce-slow 3s ease-in-out infinite;
+        }
+        @media (max-width: 768px) {
+            header.gradient-bg .flex-shrink-0 .relative img {
+                width: 8rem; height: 8rem;
+                max-width: 160px; max-height: 160px;
+            }
+            header.gradient-bg h1 { font-size: 2rem; }
+            .lesson-main .bg-white.rounded-2xl.shadow-xl { padding: 1.5rem !important; }
+            .lesson-main .bg-white.rounded-2xl h2 { font-size: 1.5rem !important; }
+            #sidebarToggle { font-size: 0.875rem !important; padding: 0.5rem 0.875rem !important; }
+        }
+        @media (max-width: 480px) {
+            header.gradient-bg .flex-shrink-0 .relative img {
+                width: 6rem; height: 6rem;
+                max-width: 120px; max-height: 120px;
+            }
+            header.gradient-bg h1 { font-size: 1.5rem; }
+            .lesson-main .bg-white.rounded-2xl.shadow-xl { padding: 1rem !important; }
+            .lesson-main .bg-white.rounded-2xl h2 { font-size: 1.375rem !important; }
+            #sidebarToggle { font-size: 0.8125rem !important; padding: 0.5rem 0.75rem !important; }
+        }
+    </style>
 </head>
 <body class="font-poppins bg-gray-50">
     <!-- Navigation -->
@@ -44,120 +93,239 @@
                     <a href="../topics.html" class="text-primary font-semibold">
                         <i class="fas fa-book mr-2"></i>Topics
                     </a>
-                    <span class="text-gray-600">
-                        <i class="fas fa-user mr-2"></i><span id="userName">Student</span>
-                    </span>
-                    <a href="../php/logout.php" class="text-gray-700 hover:text-red-600 transition-colors">
-                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
-                    </a>
+                    <!-- User Dropdown -->
+                    <div class="relative" id="userDropdown">
+                        <button onclick="toggleUserDropdown()" class="flex items-center space-x-2 text-gray-600 hover:text-primary transition-colors focus:outline-none">
+                            <div class="relative">
+                                <img id="userProfileImage" src="" alt="Profile" class="w-8 h-8 rounded-full object-cover border-2 border-gray-300 hidden" onerror="this.classList.add('hidden'); (function(){var iconEl = document.getElementById('userProfileIcon'); if(iconEl) iconEl.style.display='block';})();">
+                                <i id="userProfileIcon" class="fas fa-user-circle text-xl"></i>
+                            </div>
+                            <span id="userName">Student</span>
+                            <i class="fas fa-chevron-down text-xs ml-1"></i>
+                        </button>
+                        <!-- Dropdown Menu -->
+                        <div id="userDropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                            <div class="px-4 py-2 border-b border-gray-200 flex items-center space-x-3">
+                                <div class="relative">
+                                    <img id="userProfileImageDropdown" src="" alt="Profile" class="w-10 h-10 rounded-full object-cover border-2 border-gray-300 hidden" onerror="this.classList.add('hidden'); (function(){var iconEl = document.getElementById('userProfileIconDropdown'); if(iconEl) iconEl.style.display='block';})();">
+                                    <i id="userProfileIconDropdown" class="fas fa-user-circle text-2xl text-gray-400"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-800" id="userNameDropdown">Student</p>
+                                    <p class="text-xs text-gray-500">Student Account</p>
+                                </div>
+                            </div>
+                            <button onclick="confirmLogout()" class="w-full text-left block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mobile Menu -->
+                <div class="md:hidden">
+                    <button onclick="toggleMobileMenu()" class="text-gray-600 hover:text-primary transition-colors">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <!-- Mobile Dropdown -->
+                    <div id="mobileMenu" class="hidden absolute top-16 left-0 right-0 bg-white shadow-lg border-b border-gray-200 z-50">
+                        <div class="px-4 py-3 border-b border-gray-200 flex items-center space-x-3">
+                            <div class="relative">
+                                <img id="userProfileImageMobile" src="" alt="Profile" class="w-10 h-10 rounded-full object-cover border-2 border-gray-300 hidden" onerror="this.classList.add('hidden'); (function(){var iconEl = document.getElementById('userProfileIconMobile'); if(iconEl) iconEl.style.display='block';})();">
+                                <i id="userProfileIconMobile" class="fas fa-user-circle text-2xl text-gray-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-gray-800" id="userNameMobile">Student</p>
+                                <p class="text-xs text-gray-500">Student Account</p>
+                            </div>
+                        </div>
+                        <button onclick="confirmLogout()" class="w-full text-left block px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- Header -->
-    <header class="gradient-bg text-white py-16">
+    <header class="gradient-bg text-white py-12 md:py-16 relative overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center">
-                <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
-                    <i class="fas fa-chart-line mr-2"></i>
-                    <span class="font-semibold">General Mathematics 11</span>
+            <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+                <!-- Left side - Text Content -->
+                <div class="flex-1 text-center md:text-left">
+                    <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
+                        <i class="fas fa-chart-line mr-2"></i>
+                        <span class="font-semibold">General Mathematics 11</span>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6">Representations of Rational Functions</h1>
+                    <p class="text-lg md:text-xl lg:text-2xl text-white/90 mb-6 md:mb-8 max-w-2xl mx-auto md:mx-0">
+                        Master the different ways to represent rational functions through algebraic, graphical, and tabular forms aligned with DepEd MELCs 2025-2026
+                    </p>
+                    <div class="flex justify-center md:justify-start">
+                        <div class="bg-white/20 backdrop-blur-sm rounded-full px-6 md:px-8 py-2 md:py-3">
+                            <span class="text-base md:text-lg font-semibold">4 Interactive Topics</span>
+                        </div>
+                    </div>
                 </div>
-                <h1 class="text-4xl md:text-6xl font-bold mb-6">Representations of Rational Functions</h1>
-                <p class="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto">
-                    Master the different ways to represent rational functions through algebraic, graphical, and tabular forms aligned with DepEd MELCs 2025-2026
-                </p>
-                <div class="flex justify-center">
-                    <div class="bg-white/20 backdrop-blur-sm rounded-full px-8 py-3">
-                        <span class="text-lg font-semibold">4 Interactive Lessons</span>
+                <!-- Right side - Character Image -->
+                <div class="flex-shrink-0 order-first md:order-last">
+                    <div class="relative">
+                        <img src="../Img/Character/happy__1_-removebg-preview.png" 
+                             alt="MathEase Character" 
+                             class="w-48 h-48 md:w-64 md:h-64 lg:w-80 lg:h-80 object-contain drop-shadow-2xl animate-bounce-slow">
                     </div>
                 </div>
             </div>
         </div>
+        <!-- Decorative elements -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+        <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <!-- Lesson Navigation -->
-        <div class="mb-12">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="1">
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-function text-2xl"></i>
+    <main class="px-4 sm:px-6 lg:px-8 py-8">
+        <div class="lesson-layout">
+            <!-- Lesson Sidebar -->
+            <aside class="lesson-sidebar" id="lessonSidebar">
+                <div class="lesson-sidebar-list">
+                    <!-- Topic 1 -->
+                    <div class="lesson-topic expanded" data-lesson="1" id="sidebar-topic-1">
+                        <div class="lesson-topic-header" aria-expanded="true">
+                            <span class="lesson-topic-dot" aria-hidden="true">1</span>
+                            <span class="lesson-topic-title">Topic 1: Understanding Rational Functions</span>
+                            <span class="lesson-topic-progress"><span class="topic-status-text"></span></span>
+                            <span class="lesson-topic-caret"><i class="fas fa-chevron-down"></i></span>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 1</h3>
-                        <p class="text-sm text-gray-600">Understanding Rational Functions</p>
-                    </div>
-                </button>
-                
-                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="2">
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-chart-area text-2xl"></i>
+                        <div class="lesson-topic-children">
+                            <div class="lesson-subitem active" data-lesson="1" data-section="objective" data-section-id="lesson1-objective">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Objective</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="1" data-section="example" data-section-id="lesson1-example">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Example</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="1" data-section="reference" data-section-id="lesson1-reference">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Reference</span>
+                            </div>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 2</h3>
-                        <p class="text-sm text-gray-600">Graphical Representation</p>
                     </div>
-                </button>
-                
-                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="3">
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-search text-2xl"></i>
+                    <!-- Topic 2 -->
+                    <div class="lesson-topic" data-lesson="2" id="sidebar-topic-2">
+                        <div class="lesson-topic-header" aria-expanded="false">
+                            <span class="lesson-topic-dot">2</span>
+                            <span class="lesson-topic-title">Topic 2: Graphical Representation</span>
+                            <span class="lesson-topic-progress"><span class="topic-status-text">—</span></span>
+                            <span class="lesson-topic-caret"><i class="fas fa-chevron-down"></i></span>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 3</h3>
-                        <p class="text-sm text-gray-600">Analyzing Asymptotes</p>
-                    </div>
-                </button>
-                
-                <button class="lesson-nav-btn bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-primary" data-lesson="4">
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-globe text-2xl"></i>
+                        <div class="lesson-topic-children">
+                            <div class="lesson-subitem" data-lesson="2" data-section="objective" data-section-id="lesson2-objective">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Objective</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="2" data-section="example" data-section-id="lesson2-example">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Example</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="2" data-section="reference" data-section-id="lesson2-reference">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Reference</span>
+                            </div>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Lesson 4</h3>
-                        <p class="text-sm text-gray-600">Real-World Applications</p>
                     </div>
-                </button>
-            </div>
-        </div>
+                    <!-- Topic 3 -->
+                    <div class="lesson-topic" data-lesson="3" id="sidebar-topic-3">
+                        <div class="lesson-topic-header" aria-expanded="false">
+                            <span class="lesson-topic-dot">3</span>
+                            <span class="lesson-topic-title">Topic 3: Analyzing Asymptotes</span>
+                            <span class="lesson-topic-progress"><span class="topic-status-text">—</span></span>
+                            <span class="lesson-topic-caret"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="lesson-topic-children">
+                            <div class="lesson-subitem" data-lesson="3" data-section="objective" data-section-id="lesson3-objective">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Objective</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="3" data-section="example" data-section-id="lesson3-example">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Example</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="3" data-section="reference" data-section-id="lesson3-reference">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Reference</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Topic 4 -->
+                    <div class="lesson-topic" data-lesson="4" id="sidebar-topic-4">
+                        <div class="lesson-topic-header" aria-expanded="false">
+                            <span class="lesson-topic-dot">4</span>
+                            <span class="lesson-topic-title">Topic 4: Real-World Applications</span>
+                            <span class="lesson-topic-progress"><span class="topic-status-text">—</span></span>
+                            <span class="lesson-topic-caret"><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="lesson-topic-children">
+                            <div class="lesson-subitem" data-lesson="4" data-section="objective" data-section-id="lesson4-objective">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Objective</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="4" data-section="example" data-section-id="lesson4-example">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Example</span>
+                            </div>
+                            <div class="lesson-subitem" data-lesson="4" data-section="reference" data-section-id="lesson4-reference">
+                                <span class="lesson-subitem-dot"></span>
+                                <span>Reference</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
 
-        <!-- Lesson Content -->
-        <div class="lesson-content">
+            <!-- Main lesson content -->
+            <div class="lesson-main flex-1 min-w-0 px-4 lg:px-8" style="margin-left: 0;">
+                <button type="button" id="sidebarToggle" class="lg:hidden fixed top-20 left-4 z-40 px-3 py-2 bg-white border border-gray-200 rounded-lg shadow-md text-gray-700 hover:bg-gray-50" aria-label="Open lesson menu">
+                    <i class="fas fa-list mr-2"></i>Lessons
+                </button>
+                <div id="sidebarBackdrop" class="mobile-backdrop"></div>
             <!-- Lesson 1: Understanding Rational Functions -->
             <section id="lesson1" class="lesson-section active">
             <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
-                <div class="text-center mb-8">
-                    <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-function text-3xl"></i>
-                    </div>
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 1: Understanding Rational Functions</h2>
-                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                        Learn the fundamental concepts of rational functions, their definitions, and how to identify them in various forms.
-                    </p>
-                </div>
-                
-                    <!-- MELCs Alignment -->
-                    <div class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-4">
-                            <i class="fas fa-graduation-cap text-primary mr-2"></i>DepEd MELCs 2025-2026 Alignment
-                        </h3>
-                        <div class="bg-white rounded-lg p-4 shadow-sm">
-                            <p class="text-gray-700 mb-2"><strong>Learning Competency:</strong></p>
-                            <p class="text-gray-600 mb-3">Represents rational functions using (a) table of values, (b) graph, and (c) equation (M11GM-Ib-1)</p>
-                            <p class="text-gray-700 mb-2"><strong>Learning Objectives:</strong></p>
-                            <ul class="text-gray-600 space-y-1">
-                                <li>• Define rational functions and identify their components</li>
-                                <li>• Understand the domain and range of rational functions</li>
-                                <li>• Recognize rational functions in different representations</li>
-                                <li>• Apply rational functions to solve real-world problems</li>
-                            </ul>
+                <div class="flex justify-between items-start mb-8">
+                    <div class="flex-1">
+                        <div class="text-center md:text-left mb-4">
+                            <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto md:mx-0 mb-4">
+                                <i class="fas fa-function text-3xl"></i>
+                            </div>
+                            <h2 class="text-3xl font-bold text-gray-800 mb-4">Topic 1: Understanding Rational Functions</h2>
+                            <p class="text-lg text-gray-600 max-w-3xl mx-auto md:mx-0">
+                                Learn the fundamental concepts of rational functions, their definitions, and how to identify them in various forms.
+                            </p>
                         </div>
                     </div>
-
+                    <!-- Timer Display (smaller, right-aligned) -->
+                    <div class="flex-shrink-0 ml-6 hidden md:flex justify-end">
+                        <div class="relative w-20 h-20">
+                            <svg class="w-20 h-20 transform -rotate-90" viewBox="0 0 80 80">
+                                <circle cx="40" cy="40" r="34" fill="none" stroke="#e5e7eb" stroke-width="6" class="timer-bg"></circle>
+                                <circle cx="40" cy="40" r="34" fill="none" stroke="#667eea" stroke-width="6" 
+                                        class="timer-progress" 
+                                        stroke-dasharray="213.63" 
+                                        stroke-dashoffset="213.63"
+                                        stroke-linecap="round"></circle>
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <span class="lesson-timer-display text-lg font-bold text-gray-800">00:00</span>
+                                <span class="text-xs text-gray-500 mt-0.5">Study Time</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                     <!-- Learning Objectives -->
-                    <div class="bg-green-50 border-l-4 border-green-500 p-6 mb-8">
+                    <div id="lesson1-objective" class="bg-green-50 border-l-4 border-green-500 p-6 mb-8">
                         <h3 class="text-xl font-semibold text-gray-800 mb-4">
                             <i class="fas fa-target mr-2"></i>Learning Objectives
                         </h3>
@@ -236,31 +404,115 @@
                     <div class="mb-6">
                         <h4 class="text-xl font-semibold text-gray-800 mb-4">Examples of Rational Functions</h4>
                         <div class="space-y-4">
-                            <div class="bg-white rounded-lg p-4 shadow-md">
-                                <div class="flex items-center justify-between">
+                            <div class="bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow">
+                                <div class="flex items-center justify-between mb-2">
                                     <div>
                                         <span class="text-lg font-semibold text-gray-800">f(x) = </span>
-                                        <span class="text-lg text-gray-700">1/x</span>
+                                        <span class="text-lg text-gray-700 font-mono">1/x</span>
                                     </div>
-                                    <span class="text-sm text-gray-500">Simple reciprocal function</span>
+                                    <span class="text-sm text-gray-500 bg-blue-50 px-2 py-1 rounded">Simple reciprocal</span>
+                                </div>
+                                <div class="text-sm text-gray-600 mt-2">
+                                    <p><strong>Domain:</strong> All real numbers except x = 0</p>
+                                    <p><strong>Key feature:</strong> Vertical asymptote at x = 0, horizontal asymptote at y = 0</p>
                                 </div>
                             </div>
-                            <div class="bg-white rounded-lg p-4 shadow-md">
-                                <div class="flex items-center justify-between">
+                            <div class="bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow">
+                                <div class="flex items-center justify-between mb-2">
                                     <div>
                                         <span class="text-lg font-semibold text-gray-800">f(x) = </span>
-                                        <span class="text-lg text-gray-700">(x² - 1)/(x + 2)</span>
+                                        <span class="text-lg text-gray-700 font-mono">(x² - 1)/(x + 2)</span>
                                     </div>
-                                    <span class="text-sm text-gray-500">Quadratic over linear</span>
+                                    <span class="text-sm text-gray-500 bg-green-50 px-2 py-1 rounded">Quadratic/Linear</span>
+                                </div>
+                                <div class="text-sm text-gray-600 mt-2">
+                                    <p><strong>Domain:</strong> All real numbers except x = -2</p>
+                                    <p><strong>Key feature:</strong> Can be simplified to f(x) = x - 2 + 3/(x + 2) (with hole at x = -1)</p>
                                 </div>
                             </div>
-                            <div class="bg-white rounded-lg p-4 shadow-md">
-                                <div class="flex items-center justify-between">
+                            <div class="bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow">
+                                <div class="flex items-center justify-between mb-2">
                                     <div>
                                         <span class="text-lg font-semibold text-gray-800">f(x) = </span>
-                                        <span class="text-lg text-gray-700">(2x + 3)/(x² - 4)</span>
+                                        <span class="text-lg text-gray-700 font-mono">(2x + 3)/(x² - 4)</span>
                                     </div>
-                                    <span class="text-sm text-gray-500">Linear over quadratic</span>
+                                    <span class="text-sm text-gray-500 bg-purple-50 px-2 py-1 rounded">Linear/Quadratic</span>
+                                </div>
+                                <div class="text-sm text-gray-600 mt-2">
+                                    <p><strong>Domain:</strong> All real numbers except x = 2 and x = -2</p>
+                                    <p><strong>Key feature:</strong> Two vertical asymptotes, horizontal asymptote at y = 0</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Concepts -->
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Understanding Rational Functions in Depth</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 shadow-md border-l-4 border-blue-500">
+                                <h5 class="font-semibold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-table text-blue-600 mr-2"></i>Table of Values Representation
+                                </h5>
+                                <p class="text-gray-700 text-sm mb-3">
+                                    A table of values shows how the function behaves for specific x-values. This helps visualize patterns and identify asymptotes.
+                                </p>
+                                <div class="bg-white rounded p-3 text-xs font-mono">
+                                    <div class="grid grid-cols-3 gap-2 text-center">
+                                        <div class="font-bold">x</div><div class="font-bold">f(x)</div><div class="font-bold">Note</div>
+                                        <div>-2</div><div>-0.5</div><div>Valid</div>
+                                        <div>-1</div><div>-1</div><div>Valid</div>
+                                        <div>0</div><div>Undefined</div><div class="text-red-600">VA</div>
+                                        <div>1</div><div>1</div><div>Valid</div>
+                                        <div>2</div><div>0.5</div><div>Valid</div>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-600 mt-2"><strong>VA</strong> = Vertical Asymptote</p>
+                            </div>
+                            <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6 shadow-md border-l-4 border-green-500">
+                                <h5 class="font-semibold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-chart-line text-green-600 mr-2"></i>Graphical Representation
+                                </h5>
+                                <p class="text-gray-700 text-sm mb-3">
+                                    Graphs provide visual insight into function behavior, showing asymptotes, intercepts, and overall shape.
+                                </p>
+                                <div class="bg-white rounded p-3">
+                                    <p class="text-xs text-gray-700 mb-2"><strong>Key elements to identify:</strong></p>
+                                    <ul class="text-xs text-gray-600 space-y-1">
+                                        <li>• Vertical asymptotes (dashed lines)</li>
+                                        <li>• Horizontal asymptotes (dashed lines)</li>
+                                        <li>• x-intercepts (where graph crosses x-axis)</li>
+                                        <li>• y-intercepts (where graph crosses y-axis)</li>
+                                        <li>• Behavior near asymptotes</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Common Patterns -->
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Common Patterns and Simplifications</h4>
+                        <div class="bg-white rounded-lg p-6 shadow-md">
+                            <div class="space-y-4">
+                                <div class="border-l-4 border-blue-500 pl-4">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Pattern 1: Factoring</h5>
+                                    <p class="text-gray-700 text-sm mb-2">Many rational functions can be simplified by factoring:</p>
+                                    <div class="bg-gray-50 rounded p-3 font-mono text-sm">
+                                        <p>f(x) = (x² - 4)/(x - 2)</p>
+                                        <p class="mt-1">= (x - 2)(x + 2)/(x - 2)</p>
+                                        <p class="mt-1 text-blue-600">= x + 2, where x ≠ 2</p>
+                                    </div>
+                                    <p class="text-xs text-gray-600 mt-2"><strong>Note:</strong> There's a hole at x = 2, not an asymptote!</p>
+                                </div>
+                                <div class="border-l-4 border-green-500 pl-4">
+                                    <h5 class="font-semibold text-gray-800 mb-2">Pattern 2: Long Division</h5>
+                                    <p class="text-gray-700 text-sm mb-2">When numerator degree ≥ denominator degree, use long division:</p>
+                                    <div class="bg-gray-50 rounded p-3 font-mono text-sm">
+                                        <p>f(x) = (x² + 3x + 2)/(x + 1)</p>
+                                        <p class="mt-1">= x + 2 + 0/(x + 1)</p>
+                                        <p class="mt-1 text-green-600">= x + 2</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -268,7 +520,7 @@
                 </div>
 
                 <!-- Examples -->
-                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-8 mb-8">
+                <div id="lesson1-example" class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-8 mb-8">
                     <h3 class="text-2xl font-bold text-gray-800 mb-6">
                         <i class="fas fa-lightbulb text-green-500 mr-3"></i>Worked Examples
                     </h3>
@@ -300,20 +552,68 @@
                             <p class="text-gray-700 mb-4">
                                 Find the domain of f(x) = (x + 3)/(x² - 9)
                             </p>
-                            <div class="bg-gray-50 rounded-lg p-4">
-                                <p class="text-gray-700 mb-2"><strong>Solution:</strong></p>
-                                <p class="text-gray-700 mb-2">Set the denominator equal to zero: x² - 9 = 0</p>
-                                <p class="text-gray-700 mb-2">Factor: (x + 3)(x - 3) = 0</p>
-                                <p class="text-gray-700 mb-2">Solve: x = -3 or x = 3</p>
-                                <p class="text-gray-700"><strong>Domain:</strong> All real numbers except x = -3 and x = 3</p>
-                                <p class="text-gray-600 text-sm mt-2">Domain: (-∞, -3) ∪ (-3, 3) ∪ (3, ∞)</p>
+                            <div class="bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                <p class="text-gray-700 mb-3 font-semibold"><strong>Step-by-Step Solution:</strong></p>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex items-start">
+                                        <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-3 mt-0.5">1</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700">Set the denominator equal to zero: <span class="font-mono bg-white px-2 py-1 rounded">x² - 9 = 0</span></p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-3 mt-0.5">2</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700">Factor using difference of squares: <span class="font-mono bg-white px-2 py-1 rounded">(x + 3)(x - 3) = 0</span></p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-3 mt-0.5">3</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700">Apply zero product property: <span class="font-mono bg-white px-2 py-1 rounded">x + 3 = 0</span> or <span class="font-mono bg-white px-2 py-1 rounded">x - 3 = 0</span></p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-3 mt-0.5">4</span>
+                                        <div class="flex-1">
+                                            <p class="text-gray-700">Solve: <span class="font-mono bg-white px-2 py-1 rounded">x = -3</span> or <span class="font-mono bg-white px-2 py-1 rounded">x = 3</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-4 pt-4 border-t border-gray-200">
+                                    <p class="text-gray-700 mb-2"><strong>Final Answer:</strong></p>
+                                    <p class="text-gray-700 mb-2"><strong>Domain:</strong> All real numbers except x = -3 and x = 3</p>
+                                    <p class="text-gray-600 text-sm font-mono bg-white px-3 py-2 rounded border">Domain: (-∞, -3) ∪ (-3, 3) ∪ (3, ∞)</p>
+                                    <p class="text-xs text-gray-500 mt-2"><i class="fas fa-info-circle mr-1"></i>These excluded values create vertical asymptotes at x = -3 and x = 3</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg p-6 shadow-md">
+                            <h4 class="text-lg font-semibold text-gray-800 mb-4">Example 3: Simplifying Rational Functions</h4>
+                            <p class="text-gray-700 mb-4">
+                                Simplify f(x) = (x² - 4)/(x - 2) and identify any holes or asymptotes.
+                            </p>
+                            <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border-l-4 border-green-500">
+                                <p class="text-gray-700 mb-3 font-semibold"><strong>Solution:</strong></p>
+                                <div class="space-y-2 text-sm">
+                                    <div class="bg-white rounded p-3 font-mono">
+                                        <p class="mb-2">f(x) = (x² - 4)/(x - 2)</p>
+                                        <p class="mb-2">= (x - 2)(x + 2)/(x - 2)</p>
+                                        <p class="text-green-600 font-semibold">= x + 2, where x ≠ 2</p>
+                                    </div>
+                                    <div class="bg-yellow-50 border border-yellow-200 rounded p-3 mt-3">
+                                        <p class="text-xs text-yellow-900"><strong>Important:</strong> Even though we canceled (x - 2), x = 2 is still excluded from the domain. This creates a <strong>hole</strong> (not an asymptote) at x = 2.</p>
+                                        <p class="text-xs text-yellow-900 mt-1"><strong>Hole location:</strong> (2, 4) - found by evaluating x + 2 at x = 2</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- References -->
-                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
+                <div id="lesson1-reference" class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
                     <h3 class="text-xl font-bold text-gray-800 mb-4">
                         <i class="fas fa-book text-blue-500 mr-2"></i>References & Additional Resources
                     </h3>
@@ -334,65 +634,127 @@
                 </div>
 
                 <!-- Enhanced Virtual Aid: Rational Function Explorer -->
-                <div class="virtual-aid rounded-2xl p-8 mb-8">
-                    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
-                        <i class="fas fa-cogs text-primary mr-3"></i>Enhanced Rational Function Explorer
-                    </h3>
+                <div class="virtual-aid rounded-2xl p-8 mb-8 border-2 border-primary/20 shadow-xl">
+                    <div class="text-center mb-6">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-full mb-4">
+                            <i class="fas fa-microscope text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">
+                            <i class="fas fa-cogs text-primary mr-3"></i>Interactive Rational Function Explorer
+                        </h3>
+                        <p class="text-gray-600 text-sm">Enter a rational function and get instant analysis of its properties</p>
+                    </div>
                     
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <!-- Input Section -->
                         <div class="space-y-6">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Numerator (P(x)):</label>
+                            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
+                                <label class="block text-sm font-semibold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-calculator text-blue-600 mr-2"></i>Numerator (P(x)):
+                                </label>
                                 <input type="text" id="numeratorInput" placeholder="e.g., x + 1" aria-label="Numerator polynomial" readonly aria-readonly="true"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                                <p class="text-xs text-gray-500 mt-1">Tip: Use ^ for powers (e.g., x^2) and parentheses for grouping.</p>
+                                       class="w-full px-4 py-3 border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-white font-mono text-gray-800">
+                                <p class="text-xs text-gray-600 mt-2 flex items-center">
+                                    <i class="fas fa-lightbulb text-yellow-500 mr-1"></i>
+                                    Use ^ for powers (e.g., x^2) and parentheses for grouping
+                                </p>
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Denominator (Q(x)):</label>
+                            <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
+                                <label class="block text-sm font-semibold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-divide text-green-600 mr-2"></i>Denominator (Q(x)):
+                                </label>
                                 <input type="text" id="denominatorInput" placeholder="e.g., x - 2" aria-label="Denominator polynomial" readonly aria-readonly="true"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                                <p class="text-xs text-gray-500 mt-1">Reminder: Values that make Q(x)=0 are excluded from the domain.</p>
+                                       class="w-full px-4 py-3 border-2 border-green-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-white font-mono text-gray-800">
+                                <p class="text-xs text-gray-600 mt-2 flex items-center">
+                                    <i class="fas fa-exclamation-triangle text-orange-500 mr-1"></i>
+                                    Values that make Q(x)=0 are excluded from the domain
+                                </p>
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Quick presets:</label>
+                            <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-200">
+                                <label class="block text-sm font-semibold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-bolt text-purple-600 mr-2"></i>Quick Presets:
+                                </label>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                    <button class="example-button" onclick="rprfSetExplorer('(x+1)','(x-2)')">(x+1)/(x-2)</button>
-                                    <button class="example-button" onclick="rprfSetExplorer('(x^2-1)','(x+2)')">(x^2-1)/(x+2)</button>
-                                    <button class="example-button" onclick="rprfSetExplorer('1','x')">1/x</button>
-                                    <button class="example-button" onclick="rprfSetExplorer('(2x+3)','(x^2-4)')">(2x+3)/(x^2-4)</button>
+                                    <button class="example-button bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-400 transition-all" onclick="rprfSetExplorer('(x+1)','(x-2)')">
+                                        <span class="font-mono">(x+1)/(x-2)</span>
+                                    </button>
+                                    <button class="example-button bg-white hover:bg-green-50 border-2 border-green-200 hover:border-green-400 transition-all" onclick="rprfSetExplorer('(x^2-1)','(x+2)')">
+                                        <span class="font-mono">(x²-1)/(x+2)</span>
+                                    </button>
+                                    <button class="example-button bg-white hover:bg-purple-50 border-2 border-purple-200 hover:border-purple-400 transition-all" onclick="rprfSetExplorer('1','x')">
+                                        <span class="font-mono">1/x</span>
+                                    </button>
+                                    <button class="example-button bg-white hover:bg-pink-50 border-2 border-pink-200 hover:border-pink-400 transition-all" onclick="rprfSetExplorer('(2x+3)','(x^2-4)')">
+                                        <span class="font-mono">(2x+3)/(x²-4)</span>
+                                    </button>
                                 </div>
                             </div>
                             <button onclick="analyzeRationalFunction()" 
-                                    class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105">
+                                    class="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary-dark text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center">
                                 <i class="fas fa-search mr-2"></i>Analyze Function
                             </button>
                         </div>
                         
                         <!-- Results Section -->
                         <div class="space-y-4">
-                            <div id="functionDisplay" class="bg-white rounded-lg p-4 shadow-md">
-                                <h4 class="font-semibold text-gray-800 mb-2">Function:</h4>
-                                <div class="text-lg font-mono text-primary">f(x) = </div>
+                            <div id="functionDisplay" class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 shadow-md border-l-4 border-blue-500">
+                                <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-function text-blue-600 mr-2"></i>Function:
+                                </h4>
+                                <div class="text-xl font-mono text-primary bg-white rounded-lg p-3 border-2 border-blue-200">f(x) = </div>
                             </div>
-                            <div id="domainDisplay" class="bg-white rounded-lg p-4 shadow-md">
-                                <h4 class="font-semibold text-gray-800 mb-2">Domain:</h4>
-                                <div class="text-gray-700">All real numbers except...</div>
+                            <div id="domainDisplay" class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-5 shadow-md border-l-4 border-green-500">
+                                <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-globe text-green-600 mr-2"></i>Domain:
+                                </h4>
+                                <div class="text-gray-700 bg-white rounded-lg p-3 border-2 border-green-200">All real numbers except...</div>
                             </div>
-                            <div id="asymptotesDisplay" class="bg-white rounded-lg p-4 shadow-md">
-                                <h4 class="font-semibold text-gray-800 mb-2">Asymptotes:</h4>
-                                <div class="text-gray-700">Vertical: <span class="text-red-600"></span></div>
-                                <div class="text-gray-700">Horizontal: <span class="text-blue-600"></span></div>
+                            <div id="asymptotesDisplay" class="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-5 shadow-md border-l-4 border-red-500">
+                                <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-chart-line text-red-600 mr-2"></i>Asymptotes:
+                                </h4>
+                                <div class="space-y-2">
+                                    <div class="bg-white rounded-lg p-3 border-2 border-red-200">
+                                        <span class="text-gray-700 font-semibold">Vertical: </span>
+                                        <span class="text-red-600 font-mono"></span>
+                                    </div>
+                                    <div class="bg-white rounded-lg p-3 border-2 border-blue-200">
+                                        <span class="text-gray-700 font-semibold">Horizontal: </span>
+                                        <span class="text-blue-600 font-mono"></span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="bg-white rounded-lg p-4 shadow-md">
-                                <h4 class="font-semibold text-gray-800 mb-2">Copy Summary:</h4>
+                            <div class="bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl p-4 shadow-md border border-gray-200">
+                                <h4 class="font-semibold text-gray-800 mb-2 flex items-center">
+                                    <i class="fas fa-copy text-gray-600 mr-2"></i>Copy Summary:
+                                </h4>
                                 <div class="flex items-center gap-2">
-                                    <button onclick="rprfCopyExplorerSummary()" class="bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded text-sm"><i class="fas fa-copy mr-1"></i>Copy</button>
+                                    <button onclick="rprfCopyExplorerSummary()" class="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all transform hover:scale-105">
+                                        <i class="fas fa-copy mr-1"></i>Copy
+                                    </button>
                                     <span class="text-xs text-gray-500">Copy function, domain, and asymptotes</span>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+                
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between items-center mt-8 pt-8 border-t border-gray-200">
+                    <button onclick="rprfNavigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" data-rprf-prev>
+                        <i class="fas fa-chevron-left mr-2"></i>Previous Topic
+                    </button>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-center">
+                            <div class="text-lg font-semibold text-primary"><span id="rprfCurrentLessonNum">1</span> of 4</div>
+                        </div>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div id="rprfLessonProgressBar" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 25%"></div>
+                        </div>
+                    </div>
+                    <button onclick="rprfNavigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed" data-rprf-next>
+                        Next Topic<i class="fas fa-chevron-right ml-2"></i>
+                    </button>
                 </div>
             </div>
         </section>
@@ -400,18 +762,39 @@
         <!-- Lesson 2: Graphical Representation -->
         <section id="lesson2" class="lesson-section">
             <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
-                <div class="text-center mb-8">
-                    <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-chart-area text-3xl"></i>
+                <div class="flex justify-between items-start mb-8">
+                    <div class="flex-1">
+                        <div class="text-center md:text-left mb-4">
+                            <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto md:mx-0 mb-4">
+                                <i class="fas fa-chart-area text-3xl"></i>
+                            </div>
+                            <h2 class="text-3xl font-bold text-gray-800 mb-4">Topic 2: Graphical Representation of Rational Functions</h2>
+                            <p class="text-lg text-gray-600 max-w-3xl mx-auto md:mx-0">
+                                Learn to graph rational functions and understand their visual characteristics including asymptotes, intercepts, and behavior.
+                            </p>
+                        </div>
                     </div>
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 2: Graphical Representation of Rational Functions</h2>
-                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                        Learn to graph rational functions and understand their visual characteristics including asymptotes, intercepts, and behavior.
-                    </p>
+                    <!-- Timer Display (smaller, right-aligned) -->
+                    <div class="flex-shrink-0 ml-6 hidden md:flex justify-end">
+                        <div class="relative w-20 h-20">
+                            <svg class="w-20 h-20 transform -rotate-90" viewBox="0 0 80 80">
+                                <circle cx="40" cy="40" r="34" fill="none" stroke="#e5e7eb" stroke-width="6" class="timer-bg"></circle>
+                                <circle cx="40" cy="40" r="34" fill="none" stroke="#667eea" stroke-width="6" 
+                                        class="timer-progress" 
+                                        stroke-dasharray="213.63" 
+                                        stroke-dashoffset="213.63"
+                                        stroke-linecap="round"></circle>
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <span class="lesson-timer-display text-lg font-bold text-gray-800">00:00</span>
+                                <span class="text-xs text-gray-500 mt-0.5">Study Time</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- Learning Objectives -->
-                <div class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
+                <div id="lesson2-objective" class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
                     <h3 class="text-xl font-semibold text-gray-800 mb-4">
                         <i class="fas fa-target mr-2"></i>Learning Objectives (MELC: M11GM-Ib-2)
                     </h3>
@@ -478,22 +861,91 @@
                     <div class="mb-6">
                         <h4 class="text-xl font-semibold text-gray-800 mb-4">Types of Asymptotes</h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="bg-white rounded-lg p-6 shadow-md">
-                                <h5 class="font-semibold text-gray-800 mb-3">
+                            <div class="bg-gradient-to-br from-red-50 to-orange-50 rounded-lg p-6 shadow-md border-l-4 border-red-500">
+                                <h5 class="font-semibold text-gray-800 mb-3 flex items-center">
                                     <i class="fas fa-arrow-up text-red-500 mr-2"></i>Vertical Asymptotes
                                 </h5>
-                                <p class="text-gray-700 text-sm mb-3">Occur where the denominator equals zero.</p>
-                                <div class="bg-gray-50 rounded p-3">
+                                <p class="text-gray-700 text-sm mb-3">Occur where the denominator equals zero (and numerator doesn't).</p>
+                                <div class="bg-white rounded p-3 border-2 border-red-200 mb-3">
                                     <p class="text-sm font-mono text-gray-800">x = a (where Q(a) = 0)</p>
                                 </div>
+                                <div class="bg-yellow-50 border border-yellow-200 rounded p-2 text-xs text-yellow-900">
+                                    <p><strong>Example:</strong> f(x) = 1/(x - 2) has vertical asymptote at x = 2</p>
+                                    <p class="mt-1"><strong>Behavior:</strong> As x approaches 2, f(x) approaches ±∞</p>
+                                </div>
                             </div>
-                            <div class="bg-white rounded-lg p-6 shadow-md">
-                                <h5 class="font-semibold text-gray-800 mb-3">
+                            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 shadow-md border-l-4 border-blue-500">
+                                <h5 class="font-semibold text-gray-800 mb-3 flex items-center">
                                     <i class="fas fa-arrow-right text-blue-500 mr-2"></i>Horizontal Asymptotes
                                 </h5>
                                 <p class="text-gray-700 text-sm mb-3">Depend on degrees of P(x) and Q(x).</p>
-                                <div class="bg-gray-50 rounded p-3">
+                                <div class="bg-white rounded p-3 border-2 border-blue-200 mb-3">
                                     <p class="text-sm font-mono text-gray-800">y = 0, y = a, or none</p>
+                                </div>
+                                <div class="bg-blue-50 border border-blue-200 rounded p-2 text-xs text-blue-900">
+                                    <p><strong>Rule:</strong> Compare highest degree terms</p>
+                                    <p class="mt-1"><strong>If deg(P) < deg(Q):</strong> y = 0</p>
+                                    <p><strong>If deg(P) = deg(Q):</strong> y = leading coefficients ratio</p>
+                                    <p><strong>If deg(P) > deg(Q):</strong> No horizontal asymptote</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Graphing Example -->
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Complete Graphing Example</h4>
+                        <div class="bg-white rounded-lg p-6 shadow-md border-2 border-primary/20">
+                            <h5 class="font-semibold text-gray-800 mb-4">Example: Graph f(x) = (x + 1)/(x - 2)</h5>
+                            <div class="space-y-4">
+                                <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                    <p class="font-semibold text-gray-800 mb-2">Step 1: Find Vertical Asymptote</p>
+                                    <p class="text-sm text-gray-700">Set denominator = 0: x - 2 = 0 → x = 2</p>
+                                    <p class="text-sm text-gray-700 mt-1"><strong>Vertical asymptote:</strong> x = 2</p>
+                                </div>
+                                <div class="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                                    <p class="font-semibold text-gray-800 mb-2">Step 2: Find Horizontal Asymptote</p>
+                                    <p class="text-sm text-gray-700">Degrees are equal (both degree 1), so y = leading coefficient ratio</p>
+                                    <p class="text-sm text-gray-700 mt-1"><strong>Horizontal asymptote:</strong> y = 1/1 = 1</p>
+                                </div>
+                                <div class="bg-purple-50 rounded-lg p-4 border-l-4 border-purple-500">
+                                    <p class="font-semibold text-gray-800 mb-2">Step 3: Find Intercepts</p>
+                                    <p class="text-sm text-gray-700"><strong>X-intercept:</strong> Set numerator = 0 → x + 1 = 0 → x = -1</p>
+                                    <p class="text-sm text-gray-700"><strong>Y-intercept:</strong> f(0) = (0+1)/(0-2) = 1/(-2) = -0.5</p>
+                                    <p class="text-sm text-gray-700 mt-1"><strong>Intercepts:</strong> (-1, 0) and (0, -0.5)</p>
+                                </div>
+                                <div class="bg-yellow-50 rounded-lg p-4 border-l-4 border-yellow-500">
+                                    <p class="font-semibold text-gray-800 mb-2">Step 4: Plot and Sketch</p>
+                                    <p class="text-sm text-gray-700">Plot intercepts, draw asymptotes as dashed lines, then sketch the curve approaching asymptotes.</p>
+                                    <p class="text-sm text-gray-700 mt-1"><strong>Domain:</strong> (-∞, 2) ∪ (2, ∞)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Behavior Near Asymptotes -->
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Understanding Behavior Near Asymptotes</h4>
+                        <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-6 shadow-md">
+                            <p class="text-gray-700 mb-4">
+                                Rational functions exhibit predictable behavior as they approach asymptotes:
+                            </p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-white rounded-lg p-4 border-2 border-red-200">
+                                    <h5 class="font-semibold text-red-700 mb-2">Near Vertical Asymptotes</h5>
+                                    <ul class="text-sm text-gray-700 space-y-1">
+                                        <li>• Function values approach ±∞</li>
+                                        <li>• Sign depends on approaching from left or right</li>
+                                        <li>• Graph never crosses the vertical line</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-white rounded-lg p-4 border-2 border-blue-200">
+                                    <h5 class="font-semibold text-blue-700 mb-2">Near Horizontal Asymptotes</h5>
+                                    <ul class="text-sm text-gray-700 space-y-1">
+                                        <li>• Function values approach the horizontal line</li>
+                                        <li>• Graph may cross horizontal asymptote</li>
+                                        <li>• Behavior as x → ±∞</li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
@@ -501,90 +953,163 @@
                 </div>
 
                 <!-- Enhanced Virtual Aid: Rational Function Grapher -->
-                <div class="virtual-aid rounded-2xl p-8 mb-8">
-                    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
-                        <i class="fas fa-chart-line text-primary mr-3"></i>Interactive Rational Function Grapher
-                    </h3>
+                <div id="lesson2-example" class="virtual-aid rounded-2xl p-8 mb-8 border-2 border-primary/20 shadow-xl">
+                    <div class="text-center mb-6">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-full mb-4">
+                            <i class="fas fa-chart-line text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">
+                            <i class="fas fa-chart-area text-primary mr-3"></i>Interactive Rational Function Grapher
+                        </h3>
+                        <p class="text-gray-600 text-sm">Visualize rational functions with asymptotes, intercepts, and key features</p>
+                    </div>
                     
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <!-- Controls -->
                         <div class="space-y-6">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Function:</label>
+                            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-200">
+                                <label class="block text-sm font-semibold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-function text-blue-600 mr-2"></i>Function:
+                                </label>
                                 <input type="text" id="graphFunctionInput" placeholder="e.g., (x+1)/(x-2)" readonly aria-readonly="true"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
-                                    <button class="example-button" onclick="rprfSetGraphFunction('(x+1)/(x-2)')">(x+1)/(x-2)</button>
-                                    <button class="example-button" onclick="rprfSetGraphFunction('1/x')">1/x</button>
-                                    <button class="example-button" onclick="rprfSetGraphFunction('(x^2-1)/(x+2)')">(x^2-1)/(x+2)</button>
-                                    <button class="example-button" onclick="rprfSetGraphFunction('(2x+3)/(x^2-4)')">(2x+3)/(x^2-4)</button>
+                                       class="w-full px-4 py-3 border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-white font-mono text-gray-800">
+                                <p class="text-xs text-gray-600 mt-2 flex items-center">
+                                    <i class="fas fa-info-circle text-blue-500 mr-1"></i>
+                                    Enter function in format: (numerator)/(denominator)
+                                </p>
+                                <div class="mt-3">
+                                    <p class="text-xs font-semibold text-gray-700 mb-2">Quick Examples:</p>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                        <button class="example-button bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-400 transition-all text-xs" onclick="rprfSetGraphFunction('(x+1)/(x-2)')">
+                                            <span class="font-mono">(x+1)/(x-2)</span>
+                                        </button>
+                                        <button class="example-button bg-white hover:bg-green-50 border-2 border-green-200 hover:border-green-400 transition-all text-xs" onclick="rprfSetGraphFunction('1/x')">
+                                            <span class="font-mono">1/x</span>
+                                        </button>
+                                        <button class="example-button bg-white hover:bg-purple-50 border-2 border-purple-200 hover:border-purple-400 transition-all text-xs" onclick="rprfSetGraphFunction('(x^2-1)/(x+2)')">
+                                            <span class="font-mono">(x²-1)/(x+2)</span>
+                                        </button>
+                                        <button class="example-button bg-white hover:bg-pink-50 border-2 border-pink-200 hover:border-pink-400 transition-all text-xs" onclick="rprfSetGraphFunction('(2x+3)/(x^2-4)')">
+                                            <span class="font-mono">(2x+3)/(x²-4)</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">X Min:</label>
-                                    <input type="number" id="xMin" value="-10" readonly aria-readonly="true"
-                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-5 border border-purple-200">
+                                <label class="block text-sm font-semibold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-expand-arrows-alt text-purple-600 mr-2"></i>View Window:
+                                </label>
+                                <div class="grid grid-cols-2 gap-3 mb-3">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">X Min:</label>
+                                        <input type="number" id="xMin" value="-10" readonly aria-readonly="true"
+                                               class="w-full px-3 py-2 border-2 border-purple-300 rounded-lg bg-white font-mono text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">X Max:</label>
+                                        <input type="number" id="xMax" value="10" readonly aria-readonly="true"
+                                               class="w-full px-3 py-2 border-2 border-purple-300 rounded-lg bg-white font-mono text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Y Min:</label>
+                                        <input type="number" id="yMin" value="-10" readonly aria-readonly="true"
+                                               class="w-full px-3 py-2 border-2 border-purple-300 rounded-lg bg-white font-mono text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Y Max:</label>
+                                        <input type="number" id="yMax" value="10" readonly aria-readonly="true"
+                                               class="w-full px-3 py-2 border-2 border-purple-300 rounded-lg bg-white font-mono text-sm">
+                                    </div>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">X Max:</label>
-                                    <input type="number" id="xMax" value="10" readonly aria-readonly="true"
-                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Y Min:</label>
-                                    <input type="number" id="yMin" value="-10" readonly aria-readonly="true"
-                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Y Max:</label>
-                                    <input type="number" id="yMax" value="10" readonly aria-readonly="true"
-                                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Quick view windows:</label>
-                                <div class="grid grid-cols-3 gap-2 sm:grid-cols-3">
-                                    <button class="example-button text-center" onclick="rprfSetGraphWindow('std')">Standard (−10..10)</button>
-                                    <button class="example-button text-center" onclick="rprfSetGraphWindow('zoomIn')">Zoom In (−5..5)</button>
-                                    <button class="example-button text-center" onclick="rprfSetGraphWindow('wide')">Wide (−20..20)</button>
+                                    <p class="text-xs font-semibold text-gray-700 mb-2">Quick Presets:</p>
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <button class="example-button bg-white hover:bg-purple-50 border-2 border-purple-200 hover:border-purple-400 transition-all text-xs py-2" onclick="rprfSetGraphWindow('std')">
+                                            Standard<br><span class="text-xs">(-10..10)</span>
+                                        </button>
+                                        <button class="example-button bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-400 transition-all text-xs py-2" onclick="rprfSetGraphWindow('zoomIn')">
+                                            Zoom In<br><span class="text-xs">(-5..5)</span>
+                                        </button>
+                                        <button class="example-button bg-white hover:bg-green-50 border-2 border-green-200 hover:border-green-400 transition-all text-xs py-2" onclick="rprfSetGraphWindow('wide')">
+                                            Wide<br><span class="text-xs">(-20..20)</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             <button onclick="graphRationalFunction()" 
-                                    class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105">
+                                    class="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary-dark text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center">
                                 <i class="fas fa-chart-line mr-2"></i>Graph Function
                             </button>
-                            <div class="bg-white rounded-lg p-3 shadow-sm text-xs text-gray-600">
-                                <p class="font-semibold mb-1">Legend</p>
-                                <p><span class="text-blue-600 font-semibold">Blue</span>: function, <span class="text-red-600 font-semibold">dashed red</span>: vertical asymptote</p>
+                            <div class="bg-gradient-to-br from-gray-50 to-slate-50 rounded-lg p-4 border border-gray-200">
+                                <p class="font-semibold text-gray-800 mb-2 flex items-center">
+                                    <i class="fas fa-info-circle text-gray-600 mr-2"></i>Legend:
+                                </p>
+                                <div class="text-xs text-gray-700 space-y-1">
+                                    <p><span class="inline-block w-3 h-3 bg-blue-600 rounded mr-2"></span><strong>Blue line:</strong> Function graph</p>
+                                    <p><span class="inline-block w-3 h-3 bg-red-600 rounded mr-2 border-2 border-dashed border-red-800"></span><strong>Red dashed:</strong> Vertical asymptote</p>
+                                    <p><span class="inline-block w-3 h-3 bg-green-600 rounded-full mr-2"></span><strong>Green dot:</strong> X-intercept</p>
+                                    <p><span class="inline-block w-3 h-3 bg-purple-600 rounded-full mr-2"></span><strong>Purple dot:</strong> Y-intercept</p>
+                                </div>
                             </div>
                         </div>
                         
                         <!-- Graph Canvas -->
                         <div class="lg:col-span-2">
-                            <div class="bg-white rounded-lg p-4 shadow-md">
-                                <canvas id="rationalGraphCanvas" width="600" height="400" class="w-full h-full border border-gray-200 rounded"></canvas>
+                            <div class="bg-white rounded-xl p-4 shadow-lg border-2 border-gray-200">
+                                <canvas id="rationalGraphCanvas" width="600" height="400" class="w-full h-full border-2 border-gray-300 rounded-lg"></canvas>
                             </div>
                             <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="bg-white rounded-lg p-4 shadow-md">
-                                    <h4 class="font-semibold text-gray-800 mb-2">Asymptotes:</h4>
-                                    <div id="asymptotesInfo" class="text-sm text-gray-700">
-                                        <div>Vertical: <span class="text-red-600"></span></div>
-                                        <div>Horizontal: <span class="text-blue-600"></span></div>
+                                <div class="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-4 shadow-md border-l-4 border-red-500">
+                                    <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                                        <i class="fas fa-chart-line text-red-600 mr-2"></i>Asymptotes:
+                                    </h4>
+                                    <div id="asymptotesInfo" class="text-sm text-gray-700 space-y-2">
+                                        <div class="bg-white rounded p-2 border border-red-200">
+                                            <span class="font-semibold">Vertical: </span>
+                                            <span class="text-red-600 font-mono"></span>
+                                        </div>
+                                        <div class="bg-white rounded p-2 border border-blue-200">
+                                            <span class="font-semibold">Horizontal: </span>
+                                            <span class="text-blue-600 font-mono"></span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="bg-white rounded-lg p-4 shadow-md">
-                                    <h4 class="font-semibold text-gray-800 mb-2">Intercepts:</h4>
-                                    <div id="interceptsInfo" class="text-sm text-gray-700">
-                                        <div>X-intercepts: <span class="text-green-600"></span></div>
-                                        <div>Y-intercept: <span class="text-purple-600"></span></div>
+                                <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 shadow-md border-l-4 border-green-500">
+                                    <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                                        <i class="fas fa-crosshairs text-green-600 mr-2"></i>Intercepts:
+                                    </h4>
+                                    <div id="interceptsInfo" class="text-sm text-gray-700 space-y-2">
+                                        <div class="bg-white rounded p-2 border border-green-200">
+                                            <span class="font-semibold">X-intercepts: </span>
+                                            <span class="text-green-600 font-mono"></span>
+                                        </div>
+                                        <div class="bg-white rounded p-2 border border-purple-200">
+                                            <span class="font-semibold">Y-intercept: </span>
+                                            <span class="text-purple-600 font-mono"></span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+                
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between items-center mt-8 pt-8 border-t border-gray-200">
+                    <button onclick="rprfNavigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" data-rprf-prev>
+                        <i class="fas fa-chevron-left mr-2"></i>Previous Topic
+                    </button>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-center">
+                            <div class="text-lg font-semibold text-primary"><span id="rprfCurrentLessonNum2">2</span> of 4</div>
+                        </div>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div id="rprfLessonProgressBar2" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 50%"></div>
+                        </div>
+                    </div>
+                    <button onclick="rprfNavigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed" data-rprf-next>
+                        Next Topic<i class="fas fa-chevron-right ml-2"></i>
+                    </button>
                 </div>
             </div>
         </section>
@@ -592,18 +1117,39 @@
         <!-- Lesson 3: Analyzing Asymptotes and Intercepts -->
         <section id="lesson3" class="lesson-section">
             <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
-                <div class="text-center mb-8">
-                    <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-search text-3xl"></i>
+                <div class="flex justify-between items-start mb-8">
+                    <div class="flex-1">
+                        <div class="text-center md:text-left mb-4">
+                            <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto md:mx-0 mb-4">
+                                <i class="fas fa-search text-3xl"></i>
+                            </div>
+                            <h2 class="text-3xl font-bold text-gray-800 mb-4">Topic 3: Analyzing Asymptotes and Intercepts</h2>
+                            <p class="text-lg text-gray-600 max-w-3xl mx-auto md:mx-0">
+                                Deep dive into the analysis of asymptotes and intercepts, understanding their mathematical significance and graphical implications.
+                            </p>
+                        </div>
                     </div>
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 3: Analyzing Asymptotes and Intercepts</h2>
-                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                        Deep dive into the analysis of asymptotes and intercepts, understanding their mathematical significance and graphical implications.
-                    </p>
+                    <!-- Timer Display (smaller, right-aligned) -->
+                    <div class="flex-shrink-0 ml-6 hidden md:flex justify-end">
+                        <div class="relative w-20 h-20">
+                            <svg class="w-20 h-20 transform -rotate-90" viewBox="0 0 80 80">
+                                <circle cx="40" cy="40" r="34" fill="none" stroke="#e5e7eb" stroke-width="6" class="timer-bg"></circle>
+                                <circle cx="40" cy="40" r="34" fill="none" stroke="#667eea" stroke-width="6" 
+                                        class="timer-progress" 
+                                        stroke-dasharray="213.63" 
+                                        stroke-dashoffset="213.63"
+                                        stroke-linecap="round"></circle>
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <span class="lesson-timer-display text-lg font-bold text-gray-800">00:00</span>
+                                <span class="text-xs text-gray-500 mt-0.5">Study Time</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- Learning Objectives -->
-                <div class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
+                <div id="lesson3-objective" class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
                     <h3 class="text-xl font-semibold text-gray-800 mb-4">
                         <i class="fas fa-target mr-2"></i>Learning Objectives (MELC: M11GM-Ib-3)
                     </h3>
@@ -678,22 +1224,108 @@
                     <div class="mb-6">
                         <h4 class="text-xl font-semibold text-gray-800 mb-4">Finding Intercepts</h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="bg-white rounded-lg p-6 shadow-md">
-                                <h5 class="font-semibold text-gray-800 mb-3">
+                            <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-6 shadow-md border-l-4 border-green-500">
+                                <h5 class="font-semibold text-gray-800 mb-3 flex items-center">
                                     <i class="fas fa-times text-green-500 mr-2"></i>X-intercepts
                                 </h5>
-                                <p class="text-gray-700 text-sm mb-3">Set f(x) = 0, which means P(x) = 0</p>
-                                <div class="bg-gray-50 rounded p-3">
+                                <p class="text-gray-700 text-sm mb-3">Set f(x) = 0, which means P(x) = 0 (since denominator cannot be zero)</p>
+                                <div class="bg-white rounded p-3 border-2 border-green-200 mb-3">
                                     <p class="text-sm font-mono text-gray-800">Solve: P(x) = 0</p>
                                 </div>
+                                <div class="bg-yellow-50 border border-yellow-200 rounded p-2 text-xs text-yellow-900">
+                                    <p><strong>Important:</strong> Check that solutions don't make denominator zero (would be holes, not intercepts)</p>
+                                </div>
+                                <div class="bg-white rounded p-2 mt-2 text-xs">
+                                    <p class="font-semibold mb-1">Example:</p>
+                                    <p class="font-mono">f(x) = (x² - 1)/(x + 2)</p>
+                                    <p class="mt-1">Set x² - 1 = 0 → x = ±1</p>
+                                    <p class="text-green-600 mt-1"><strong>X-intercepts:</strong> (-1, 0) and (1, 0)</p>
+                                </div>
                             </div>
-                            <div class="bg-white rounded-lg p-6 shadow-md">
-                                <h5 class="font-semibold text-gray-800 mb-3">
+                            <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-6 shadow-md border-l-4 border-purple-500">
+                                <h5 class="font-semibold text-gray-800 mb-3 flex items-center">
                                     <i class="fas fa-circle text-purple-500 mr-2"></i>Y-intercept
                                 </h5>
-                                <p class="text-gray-700 text-sm mb-3">Set x = 0 and evaluate f(0)</p>
-                                <div class="bg-gray-50 rounded p-3">
+                                <p class="text-gray-700 text-sm mb-3">Set x = 0 and evaluate f(0). If Q(0) = 0, there is no y-intercept.</p>
+                                <div class="bg-white rounded p-3 border-2 border-purple-200 mb-3">
                                     <p class="text-sm font-mono text-gray-800">Calculate: f(0) = P(0)/Q(0)</p>
+                                </div>
+                                <div class="bg-blue-50 border border-blue-200 rounded p-2 text-xs text-blue-900">
+                                    <p><strong>Note:</strong> Y-intercept exists only if Q(0) ≠ 0</p>
+                                </div>
+                                <div class="bg-white rounded p-2 mt-2 text-xs">
+                                    <p class="font-semibold mb-1">Example:</p>
+                                    <p class="font-mono">f(x) = (x + 1)/(x - 2)</p>
+                                    <p class="mt-1">f(0) = (0 + 1)/(0 - 2) = 1/(-2) = -0.5</p>
+                                    <p class="text-purple-600 mt-1"><strong>Y-intercept:</strong> (0, -0.5)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Asymptote Analysis Example -->
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Complete Analysis Example</h4>
+                        <div class="bg-white rounded-lg p-6 shadow-md border-2 border-primary/20">
+                            <h5 class="font-semibold text-gray-800 mb-4">Example: Analyze f(x) = (2x² + 3x - 1)/(x² - 4)</h5>
+                            <div class="space-y-4">
+                                <div class="bg-red-50 rounded-lg p-4 border-l-4 border-red-500">
+                                    <p class="font-semibold text-gray-800 mb-2">Vertical Asymptotes:</p>
+                                    <div class="text-sm text-gray-700 space-y-1">
+                                        <p>Set denominator = 0: x² - 4 = 0</p>
+                                        <p>Factor: (x - 2)(x + 2) = 0</p>
+                                        <p><strong>Vertical asymptotes:</strong> x = 2 and x = -2</p>
+                                    </div>
+                                </div>
+                                <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                    <p class="font-semibold text-gray-800 mb-2">Horizontal Asymptote:</p>
+                                    <div class="text-sm text-gray-700 space-y-1">
+                                        <p>Degrees are equal (both degree 2)</p>
+                                        <p>Horizontal asymptote = leading coefficient ratio</p>
+                                        <p><strong>Horizontal asymptote:</strong> y = 2/1 = 2</p>
+                                    </div>
+                                </div>
+                                <div class="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                                    <p class="font-semibold text-gray-800 mb-2">Intercepts:</p>
+                                    <div class="text-sm text-gray-700 space-y-1">
+                                        <p><strong>X-intercepts:</strong> Solve 2x² + 3x - 1 = 0 using quadratic formula</p>
+                                        <p class="font-mono">x = (-3 ± √17)/4</p>
+                                        <p><strong>Y-intercept:</strong> f(0) = -1/(-4) = 0.25 → (0, 0.25)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Holes vs Asymptotes -->
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Holes vs. Vertical Asymptotes</h4>
+                        <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg p-6 shadow-md border-2 border-yellow-300">
+                            <p class="text-gray-700 mb-4">
+                                It's crucial to distinguish between <strong>holes</strong> and <strong>vertical asymptotes</strong>:
+                            </p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-white rounded-lg p-4 border-2 border-yellow-200">
+                                    <h5 class="font-semibold text-yellow-700 mb-2 flex items-center">
+                                        <i class="fas fa-circle-notch text-yellow-600 mr-2"></i>Holes
+                                    </h5>
+                                    <p class="text-sm text-gray-700 mb-2">Occur when both numerator and denominator are zero at the same x-value.</p>
+                                    <div class="bg-gray-50 rounded p-2 text-xs font-mono mb-2">
+                                        <p>Example: f(x) = (x-2)/(x-2)</p>
+                                        <p class="text-yellow-700">Hole at x = 2</p>
+                                    </div>
+                                    <p class="text-xs text-gray-600">The function can be simplified, but x = 2 is still excluded.</p>
+                                </div>
+                                <div class="bg-white rounded-lg p-4 border-2 border-red-200">
+                                    <h5 class="font-semibold text-red-700 mb-2 flex items-center">
+                                        <i class="fas fa-arrow-up text-red-600 mr-2"></i>Vertical Asymptotes
+                                    </h5>
+                                    <p class="text-sm text-gray-700 mb-2">Occur when only the denominator is zero (numerator is not zero).</p>
+                                    <div class="bg-gray-50 rounded p-2 text-xs font-mono mb-2">
+                                        <p>Example: f(x) = 1/(x-2)</p>
+                                        <p class="text-red-700">Vertical asymptote at x = 2</p>
+                                    </div>
+                                    <p class="text-xs text-gray-600">The function approaches ±∞ as x approaches 2.</p>
                                 </div>
                             </div>
                         </div>
@@ -701,27 +1333,50 @@
                 </div>
 
                 <!-- Enhanced Virtual Aid: Asymptote Analyzer -->
-                <div class="virtual-aid rounded-2xl p-8 mb-8">
-                    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
-                        <i class="fas fa-calculator text-primary mr-3"></i>Asymptote and Intercept Analyzer
-                    </h3>
+                <div id="lesson3-example" class="virtual-aid rounded-2xl p-8 mb-8 border-2 border-primary/20 shadow-xl">
+                    <div class="text-center mb-6">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-full mb-4">
+                            <i class="fas fa-calculator text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">
+                            <i class="fas fa-search text-primary mr-3"></i>Asymptote and Intercept Analyzer
+                        </h3>
+                        <p class="text-gray-600 text-sm">Get detailed analysis of asymptotes, intercepts, and key features</p>
+                    </div>
                     
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <!-- Input Section -->
                         <div class="space-y-6">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Enter Rational Function:</label>
+                            <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-5 border border-indigo-200">
+                                <label class="block text-sm font-semibold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-function text-indigo-600 mr-2"></i>Enter Rational Function:
+                                </label>
                                 <input type="text" id="analyzeFunctionInput" placeholder="e.g., (x²-1)/(x+2)" readonly aria-readonly="true"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
-                                    <button class="example-button" onclick="rprfSetAnalyzeFunction('(x+1)/(x-2)')">(x+1)/(x-2)</button>
-                                    <button class="example-button" onclick="rprfSetAnalyzeFunction('(x^2-1)/(x+2)')">(x^2-1)/(x+2)</button>
-                                    <button class="example-button" onclick="rprfSetAnalyzeFunction('1/x')">1/x</button>
-                                    <button class="example-button" onclick="rprfSetAnalyzeFunction('(2x+3)/(x^2-4)')">(2x+3)/(x^2-4)</button>
+                                       class="w-full px-4 py-3 border-2 border-indigo-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-white font-mono text-gray-800">
+                                <p class="text-xs text-gray-600 mt-2 flex items-center">
+                                    <i class="fas fa-lightbulb text-yellow-500 mr-1"></i>
+                                    Use standard notation: (numerator)/(denominator)
+                                </p>
+                                <div class="mt-3">
+                                    <p class="text-xs font-semibold text-gray-700 mb-2">Try These Examples:</p>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                        <button class="example-button bg-white hover:bg-indigo-50 border-2 border-indigo-200 hover:border-indigo-400 transition-all text-xs" onclick="rprfSetAnalyzeFunction('(x+1)/(x-2)')">
+                                            <span class="font-mono">(x+1)/(x-2)</span>
+                                        </button>
+                                        <button class="example-button bg-white hover:bg-purple-50 border-2 border-purple-200 hover:border-purple-400 transition-all text-xs" onclick="rprfSetAnalyzeFunction('(x^2-1)/(x+2)')">
+                                            <span class="font-mono">(x²-1)/(x+2)</span>
+                                        </button>
+                                        <button class="example-button bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-400 transition-all text-xs" onclick="rprfSetAnalyzeFunction('1/x')">
+                                            <span class="font-mono">1/x</span>
+                                        </button>
+                                        <button class="example-button bg-white hover:bg-green-50 border-2 border-green-200 hover:border-green-400 transition-all text-xs" onclick="rprfSetAnalyzeFunction('(2x+3)/(x^2-4)')">
+                                            <span class="font-mono">(2x+3)/(x²-4)</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             <button onclick="analyzeAsymptotesAndIntercepts()" 
-                                    class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105">
+                                    class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center">
                                 <i class="fas fa-search mr-2"></i>Analyze Function
                             </button>
                         </div>
@@ -729,25 +1384,51 @@
                         <!-- Results Section -->
                         <div class="space-y-4">
                             <div id="analysisResults" class="space-y-4">
-                                <div class="bg-white rounded-lg p-4 shadow-md">
-                                    <h4 class="font-semibold text-gray-800 mb-2">Vertical Asymptotes:</h4>
-                                    <div id="verticalAsymptotes" class="text-gray-700">Enter a function to analyze</div>
+                                <div class="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-5 shadow-md border-l-4 border-red-500">
+                                    <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                                        <i class="fas fa-arrow-up text-red-600 mr-2"></i>Vertical Asymptotes:
+                                    </h4>
+                                    <div id="verticalAsymptotes" class="text-gray-700 bg-white rounded-lg p-3 border-2 border-red-200 min-h-[60px]">Enter a function to analyze</div>
                                 </div>
-                                <div class="bg-white rounded-lg p-4 shadow-md">
-                                    <h4 class="font-semibold text-gray-800 mb-2">Horizontal Asymptotes:</h4>
-                                    <div id="horizontalAsymptotes" class="text-gray-700">Enter a function to analyze</div>
+                                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 shadow-md border-l-4 border-blue-500">
+                                    <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                                        <i class="fas fa-arrow-right text-blue-600 mr-2"></i>Horizontal Asymptotes:
+                                    </h4>
+                                    <div id="horizontalAsymptotes" class="text-gray-700 bg-white rounded-lg p-3 border-2 border-blue-200 min-h-[60px]">Enter a function to analyze</div>
                                 </div>
-                                <div class="bg-white rounded-lg p-4 shadow-md">
-                                    <h4 class="font-semibold text-gray-800 mb-2">X-intercepts:</h4>
-                                    <div id="xIntercepts" class="text-gray-700">Enter a function to analyze</div>
+                                <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-5 shadow-md border-l-4 border-green-500">
+                                    <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                                        <i class="fas fa-times text-green-600 mr-2"></i>X-intercepts:
+                                    </h4>
+                                    <div id="xIntercepts" class="text-gray-700 bg-white rounded-lg p-3 border-2 border-green-200 min-h-[60px]">Enter a function to analyze</div>
                                 </div>
-                                <div class="bg-white rounded-lg p-4 shadow-md">
-                                    <h4 class="font-semibold text-gray-800 mb-2">Y-intercept:</h4>
-                                    <div id="yIntercept" class="text-gray-700">Enter a function to analyze</div>
+                                <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-5 shadow-md border-l-4 border-purple-500">
+                                    <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                                        <i class="fas fa-circle text-purple-600 mr-2"></i>Y-intercept:
+                                    </h4>
+                                    <div id="yIntercept" class="text-gray-700 bg-white rounded-lg p-3 border-2 border-purple-200 min-h-[60px]">Enter a function to analyze</div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+                
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between items-center mt-8 pt-8 border-t border-gray-200">
+                    <button onclick="rprfNavigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" data-rprf-prev>
+                        <i class="fas fa-chevron-left mr-2"></i>Previous Topic
+                    </button>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-center">
+                            <div class="text-lg font-semibold text-primary"><span id="rprfCurrentLessonNum3">3</span> of 4</div>
+                        </div>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div id="rprfLessonProgressBar3" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <button onclick="rprfNavigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed" data-rprf-next>
+                        Next Topic<i class="fas fa-chevron-right ml-2"></i>
+                    </button>
                 </div>
             </div>
         </section>
@@ -755,18 +1436,39 @@
         <!-- Lesson 4: Real-World Applications -->
         <section id="lesson4" class="lesson-section">
             <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
-                <div class="text-center mb-8">
-                    <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-globe text-3xl"></i>
+                <div class="flex justify-between items-start mb-8">
+                    <div class="flex-1">
+                        <div class="text-center md:text-left mb-4">
+                            <div class="w-20 h-20 bg-primary text-white rounded-full flex items-center justify-center mx-auto md:mx-0 mb-4">
+                                <i class="fas fa-globe text-3xl"></i>
+                            </div>
+                            <h2 class="text-3xl font-bold text-gray-800 mb-4">Topic 4: Real-World Applications of Rational Functions</h2>
+                            <p class="text-lg text-gray-600 max-w-3xl mx-auto md:mx-0">
+                                Explore how rational functions model real-world phenomena in physics, economics, engineering, and everyday life.
+                            </p>
+                        </div>
                     </div>
-                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Lesson 4: Real-World Applications of Rational Functions</h2>
-                    <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                        Explore how rational functions model real-world phenomena in physics, economics, engineering, and everyday life.
-                    </p>
+                    <!-- Timer Display (smaller, right-aligned) -->
+                    <div class="flex-shrink-0 ml-6 hidden md:flex justify-end">
+                        <div class="relative w-20 h-20">
+                            <svg class="w-20 h-20 transform -rotate-90" viewBox="0 0 80 80">
+                                <circle cx="40" cy="40" r="34" fill="none" stroke="#e5e7eb" stroke-width="6" class="timer-bg"></circle>
+                                <circle cx="40" cy="40" r="34" fill="none" stroke="#667eea" stroke-width="6" 
+                                        class="timer-progress" 
+                                        stroke-dasharray="213.63" 
+                                        stroke-dashoffset="213.63"
+                                        stroke-linecap="round"></circle>
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <span class="lesson-timer-display text-lg font-bold text-gray-800">00:00</span>
+                                <span class="text-xs text-gray-500 mt-0.5">Study Time</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- Learning Objectives -->
-                <div class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
+                <div id="lesson4-objective" class="bg-blue-50 border-l-4 border-primary p-6 mb-8">
                     <h3 class="text-xl font-semibold text-gray-800 mb-4">
                         <i class="fas fa-target mr-2"></i>Learning Objectives (MELC: M11GM-Ib-4)
                     </h3>
@@ -851,96 +1553,228 @@
                     <div class="mb-6">
                         <h4 class="text-xl font-semibold text-gray-800 mb-4">Engineering Applications</h4>
                         <div class="space-y-4">
-                            <div class="bg-white rounded-lg p-6 shadow-md">
-                                <h5 class="font-semibold text-gray-800 mb-3">
+                            <div class="bg-gradient-to-br from-gray-50 to-slate-50 rounded-lg p-6 shadow-md border-l-4 border-gray-500">
+                                <h5 class="font-semibold text-gray-800 mb-3 flex items-center">
                                     <i class="fas fa-cog text-gray-500 mr-2"></i>Control Systems
                                 </h5>
                                 <p class="text-gray-700 mb-3">Transfer functions in control systems are often rational functions:</p>
-                                <div class="bg-gray-50 rounded p-4">
+                                <div class="bg-white rounded p-4 border-2 border-gray-200 mb-3">
                                     <p class="text-center font-mono text-lg">G(s) = N(s)/D(s)</p>
                                 </div>
-                                <p class="text-gray-700 text-sm mt-2">Where N(s) and D(s) are polynomials in the complex variable s.</p>
+                                <p class="text-gray-700 text-sm mb-2">Where N(s) and D(s) are polynomials in the complex variable s.</p>
+                                <div class="bg-blue-50 border border-blue-200 rounded p-2 text-xs text-blue-900">
+                                    <p><strong>Application:</strong> Used to model system response, stability analysis, and controller design</p>
+                                </div>
                             </div>
-                            <div class="bg-white rounded-lg p-6 shadow-md">
-                                <h5 class="font-semibold text-gray-800 mb-3">
+                            <div class="bg-gradient-to-br from-red-50 to-orange-50 rounded-lg p-6 shadow-md border-l-4 border-red-500">
+                                <h5 class="font-semibold text-gray-800 mb-3 flex items-center">
                                     <i class="fas fa-car text-red-500 mr-2"></i>Vehicle Performance
                                 </h5>
                                 <p class="text-gray-700 mb-3">Fuel efficiency as a function of speed can be modeled as:</p>
-                                <div class="bg-gray-50 rounded p-4">
+                                <div class="bg-white rounded p-4 border-2 border-red-200 mb-3">
                                     <p class="text-center font-mono text-lg">E(v) = av/(v² + bv + c)</p>
                                 </div>
-                                <p class="text-gray-700 text-sm mt-2">Where v is velocity and a, b, c are vehicle-specific constants.</p>
+                                <p class="text-gray-700 text-sm mb-2">Where v is velocity and a, b, c are vehicle-specific constants.</p>
+                                <div class="bg-yellow-50 border border-yellow-200 rounded p-2 text-xs text-yellow-900">
+                                    <p><strong>Domain restriction:</strong> v > 0 (speed must be positive)</p>
+                                    <p class="mt-1"><strong>Interpretation:</strong> Efficiency peaks at optimal speed, decreases at very low or very high speeds</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step-by-Step Application Problem -->
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Step-by-Step Application Problem</h4>
+                        <div class="bg-white rounded-lg p-6 shadow-md border-2 border-primary/20">
+                            <h5 class="font-semibold text-gray-800 mb-4">Example: Average Cost Problem</h5>
+                            <p class="text-gray-700 mb-4">
+                                A company's total cost function is C(x) = 1000 + 5x, where x is the number of units produced. Find the average cost function and determine the average cost when producing 100 units.
+                            </p>
+                            <div class="space-y-3">
+                                <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                    <p class="font-semibold text-gray-800 mb-2">Step 1: Identify the Average Cost Function</p>
+                                    <p class="text-sm text-gray-700">AC(x) = C(x)/x = (1000 + 5x)/x</p>
+                                </div>
+                                <div class="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                                    <p class="font-semibold text-gray-800 mb-2">Step 2: Simplify the Function</p>
+                                    <p class="text-sm text-gray-700 font-mono">AC(x) = 1000/x + 5x/x = 1000/x + 5</p>
+                                </div>
+                                <div class="bg-purple-50 rounded-lg p-4 border-l-4 border-purple-500">
+                                    <p class="font-semibold text-gray-800 mb-2">Step 3: Evaluate at x = 100</p>
+                                    <p class="text-sm text-gray-700 font-mono">AC(100) = 1000/100 + 5 = 10 + 5 = 15</p>
+                                    <p class="text-sm text-gray-700 mt-1"><strong>Answer:</strong> The average cost per unit is $15 when producing 100 units.</p>
+                                </div>
+                                <div class="bg-yellow-50 rounded-lg p-4 border-l-4 border-yellow-500">
+                                    <p class="font-semibold text-gray-800 mb-2">Step 4: Domain Considerations</p>
+                                    <p class="text-sm text-gray-700">Domain: x > 0 (cannot produce negative or zero units)</p>
+                                    <p class="text-sm text-gray-700 mt-1"><strong>Interpretation:</strong> As production increases, the fixed cost (1000) is spread over more units, reducing average cost.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Common Mistakes in Applications -->
+                    <div class="mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">Common Mistakes in Real-World Applications</h4>
+                        <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-lg p-6 shadow-md border-2 border-red-200">
+                            <div class="space-y-4">
+                                <div class="bg-white rounded-lg p-4 border-l-4 border-red-500">
+                                    <h5 class="font-semibold text-red-700 mb-2 flex items-center">
+                                        <i class="fas fa-exclamation-triangle text-red-600 mr-2"></i>Mistake 1: Ignoring Domain Restrictions
+                                    </h5>
+                                    <p class="text-sm text-gray-700 mb-2"><strong>Error:</strong> Using negative values for quantities that must be positive (e.g., time, distance, production)</p>
+                                    <p class="text-sm text-gray-600"><strong>Solution:</strong> Always check the context and restrict the domain appropriately</p>
+                                </div>
+                                <div class="bg-white rounded-lg p-4 border-l-4 border-yellow-500">
+                                    <h5 class="font-semibold text-yellow-700 mb-2 flex items-center">
+                                        <i class="fas fa-exclamation-triangle text-yellow-600 mr-2"></i>Mistake 2: Not Simplifying Before Evaluating
+                                    </h5>
+                                    <p class="text-sm text-gray-700 mb-2"><strong>Error:</strong> Directly substituting values into complex rational expressions</p>
+                                    <p class="text-sm text-gray-600"><strong>Solution:</strong> Simplify first, then evaluate for better accuracy</p>
+                                </div>
+                                <div class="bg-white rounded-lg p-4 border-l-4 border-blue-500">
+                                    <h5 class="font-semibold text-blue-700 mb-2 flex items-center">
+                                        <i class="fas fa-exclamation-triangle text-blue-600 mr-2"></i>Mistake 3: Misinterpreting Asymptotes
+                                    </h5>
+                                    <p class="text-sm text-gray-700 mb-2"><strong>Error:</strong> Thinking horizontal asymptotes represent maximum/minimum values</p>
+                                    <p class="text-sm text-gray-600"><strong>Solution:</strong> Asymptotes show limiting behavior, not actual maximums/minimums</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Enhanced Virtual Aid: Real-World Problem Solver -->
-                <div class="virtual-aid rounded-2xl p-8 mb-8">
-                    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">
-                        <i class="fas fa-calculator text-primary mr-3"></i>Real-World Problem Solver
-                    </h3>
+                <div id="lesson4-example" class="virtual-aid rounded-2xl p-8 mb-8 border-2 border-primary/20 shadow-xl">
+                    <div class="text-center mb-6">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-full mb-4">
+                            <i class="fas fa-globe-americas text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">
+                            <i class="fas fa-calculator text-primary mr-3"></i>Real-World Problem Solver
+                        </h3>
+                        <p class="text-gray-600 text-sm">Solve practical problems using rational functions with step-by-step solutions</p>
+                    </div>
                     
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <!-- Problem Selection -->
                         <div class="space-y-6">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Select Problem Type:</label>
-                                <select id="problemType" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-200">
+                                <label class="block text-sm font-semibold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-list text-blue-600 mr-2"></i>Select Problem Type:
+                                </label>
+                                <select id="problemType" class="w-full px-4 py-3 border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary bg-white font-semibold">
                                     <option value="">Choose a problem type...</option>
-                                    <option value="resistance">Electrical Resistance</option>
-                                    <option value="lens">Optics - Lens Equation</option>
-                                    <option value="cost">Average Cost Function</option>
-                                    <option value="market">Market Share</option>
-                                    <option value="vehicle">Vehicle Performance</option>
+                                    <option value="resistance">⚡ Electrical Resistance</option>
+                                    <option value="lens">👁️ Optics - Lens Equation</option>
+                                    <option value="cost">💰 Average Cost Function</option>
+                                    <option value="market">📊 Market Share</option>
+                                    <option value="vehicle">🚗 Vehicle Performance</option>
                                 </select>
                             </div>
                             <div id="problemInputs" class="space-y-4">
                                 <!-- Dynamic inputs will be populated here -->
+                                <div class="bg-gray-50 rounded-lg p-4 border-2 border-dashed border-gray-300 text-center text-gray-500">
+                                    <i class="fas fa-hand-pointer text-2xl mb-2"></i>
+                                    <p class="text-sm">Select a problem type to begin</p>
+                                </div>
                             </div>
                             <button onclick="solveRealWorldProblem()" 
-                                    class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105">
+                                    class="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary-dark text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center">
                                 <i class="fas fa-calculator mr-2"></i>Solve Problem
                             </button>
                         </div>
                         
                         <!-- Solution Display -->
                         <div class="space-y-4">
-                            <div id="problemDescription" class="bg-white rounded-lg p-4 shadow-md">
-                                <h4 class="font-semibold text-gray-800 mb-2">Problem Description:</h4>
-                                <div class="text-gray-700">Select a problem type to see the description</div>
+                            <div id="problemDescription" class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 shadow-md border-l-4 border-blue-500">
+                                <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-question-circle text-blue-600 mr-2"></i>Problem Description:
+                                </h4>
+                                <div class="text-gray-700 bg-white rounded-lg p-3 border-2 border-blue-200 min-h-[80px]">Select a problem type to see the description</div>
                             </div>
-                            <div id="solutionSteps" class="bg-white rounded-lg p-4 shadow-md">
-                                <h4 class="font-semibold text-gray-800 mb-2">Solution Steps:</h4>
-                                <div class="text-gray-700">Enter values and click solve to see the solution</div>
+                            <div id="solutionSteps" class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-5 shadow-md border-l-4 border-green-500">
+                                <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-list-ol text-green-600 mr-2"></i>Solution Steps:
+                                </h4>
+                                <div class="text-gray-700 bg-white rounded-lg p-3 border-2 border-green-200 min-h-[200px]">Enter values and click solve to see the solution</div>
                             </div>
-                            <div id="finalAnswer" class="bg-white rounded-lg p-4 shadow-md">
-                                <h4 class="font-semibold text-gray-800 mb-2">Final Answer:</h4>
-                                <div class="text-gray-700">Solution will appear here</div>
+                            <div id="finalAnswer" class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-5 shadow-md border-l-4 border-purple-500">
+                                <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-check-circle text-purple-600 mr-2"></i>Final Answer:
+                                </h4>
+                                <div class="text-gray-700 bg-white rounded-lg p-3 border-2 border-purple-200 min-h-[60px] font-semibold">Solution will appear here</div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                    <!-- Topic 4 Quiz Button -->
+                    <div class="text-center mb-8" id="topic4QuizButton" style="display: none;">
+                        <button onclick="rprfShowTopic4Quiz()" 
+                                class="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-8 py-4 rounded-lg hover:from-purple-600 hover:to-indigo-700 transition-colors font-semibold text-lg inline-flex items-center shadow-lg transform hover:scale-105">
+                            <i class="fas fa-question-circle mr-2"></i>
+                            Take Topic 4 Quiz (5 Questions)
+                        </button>
+                        <p class="text-gray-600 mt-3 text-sm">
+                            Pass the quiz (at least 3/5 correct) to complete this topic and unlock Lesson 2 in Dashboard
+                        </p>
+                    </div>
+                
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between items-center mt-8 pt-8 border-t border-gray-200">
+                    <button onclick="rprfNavigateLesson(-1)" class="flex items-center px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" data-rprf-prev>
+                        <i class="fas fa-chevron-left mr-2"></i>Previous Topic
+                    </button>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-center">
+                            <div class="text-lg font-semibold text-primary"><span id="rprfCurrentLessonNum4">4</span> of 4</div>
+                        </div>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div id="rprfLessonProgressBar4" class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <button onclick="rprfNavigateLesson(1)" class="flex items-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed" data-rprf-next>
+                        Next Topic<i class="fas fa-chevron-right ml-2"></i>
+                    </button>
+                </div>
             </div>
         </section>
-    </div>
-
+            </div>
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center">
-                <div class="flex items-center justify-center space-x-2 mb-4">
-                    <img src="../css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-8 w-8">
-                    <span class="text-2xl font-bold">MathEase</span>
-                </div>
-                <p class="text-gray-400 text-sm">Empowering Grade 11 STEM students to master General Mathematics through interactive learning and personalized progress tracking.</p>
-                <p class="text-gray-500 text-xs mt-4">© 2024 MathEase. All rights reserved.</p>
+    <!-- Performance Analysis Section (only shows after all quizzes are completed) -->
+    <div id="performanceAnalysisSection" class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-8 mb-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style="display: none;">
+        <div class="text-center mb-6">
+            <div class="w-20 h-20 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-chart-line text-3xl"></i>
             </div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-3">
+                <i class="fas fa-brain text-blue-500 mr-2"></i>Performance Analysis
+            </h3>
+            <p class="text-lg text-gray-600 max-w-3xl mx-auto mb-2">
+                See where you're strong and weak, and review your correct and incorrect quiz answers.
+            </p>
+            <p class="text-sm text-gray-500 max-w-2xl mx-auto">
+                We'll provide personalized recommendations on how to improve.
+            </p>
         </div>
-    </footer>
+
+        <div class="text-center mb-6">
+            <button id="analyzeBtn" onclick="rprfAnalyzePerformance()" 
+                    class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-8 py-4 rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-colors font-semibold text-lg inline-flex items-center shadow-lg transform hover:scale-105">
+                <i class="fas fa-chart-bar mr-2"></i>
+                Analyze My Performance
+            </button>
+        </div>
+
+        <!-- Analysis Results -->
+        <div id="analysisResult" class="hidden mt-8">
+            <!-- Results will be dynamically inserted here -->
+        </div>
+    </div>
 
     <script src="representations-of-rational-functions.js"></script>
 </body>

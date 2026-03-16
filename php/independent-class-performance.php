@@ -422,7 +422,7 @@ function getStudentPerformanceDetails() {
             throw new Exception('Student ID is required');
         }
         
-        // Get comprehensive student performance data
+        // First, try to get data from student_performance_tracking table
         $stmt = $pdo->prepare("
             SELECT 
                 spt.*,
@@ -443,79 +443,261 @@ function getStudentPerformanceDetails() {
         $stmt->execute([$studentId]);
         $student = $stmt->fetch();
         
+        // If not found in tracking table, get basic info and quiz data from quiz results
         if (!$student) {
-            throw new Exception('Student performance data not found');
+            // Get basic student info
+            $stmt = $pdo->prepare("
+                SELECT 
+                    u.id,
+                    u.first_name,
+                    u.last_name,
+                    u.student_id as student_number,
+                    u.email,
+                    c.class_name,
+                    c.class_code,
+                    ce.enrolled_at,
+                    ce.approved_at
+                FROM users u
+                JOIN class_enrollments ce ON u.id = ce.student_id
+                JOIN classes c ON ce.class_id = c.id
+                WHERE u.id = ? AND ce.enrollment_status = 'approved'
+                LIMIT 1
+            ");
+            $stmt->execute([$studentId]);
+            $student = $stmt->fetch();
+            
+            if (!$student) {
+                throw new Exception('Student not found');
+            }
+            
+            // Get quiz data from quiz_attempts table
+            $quizTypes = [
+                'functions', 'evaluating-functions', 'operations-on-functions', 
+                'real-life-problems', 'rational-functions', 'solving-rational-equations-inequalities',
+                'representations-of-rational-functions', 'domain-range-rational-functions', 'one-to-one-functions'
+            ];
+            
+            // Initialize quiz scores
+            foreach ($quizTypes as $quizType) {
+                $fieldName = str_replace('-', '_', $quizType) . '_quiz_best_score';
+                $student[$fieldName] = 0;
+                $student[str_replace('-', '_', $quizType) . '_quiz_attempts'] = 0;
+                $student[str_replace('-', '_', $quizType) . '_quiz_status'] = 'NOT_ATTEMPTED';
+            }
+            
+            // Get best scores and attempts for each quiz type
+            foreach ($quizTypes as $quizType) {
+                $stmt = $pdo->prepare("
+                    SELECT 
+                        MAX(ROUND((score / NULLIF(total_questions, 0)) * 100, 1)) as best_score,
+                        COUNT(*) as attempts,
+                        MAX(completed_at) as last_attempt
+                    FROM quiz_attempts
+                    WHERE student_id = ? AND quiz_type = ? AND status = 'completed'
+                ");
+                $stmt->execute([$studentId, $quizType]);
+                $quizData = $stmt->fetch();
+                
+                if ($quizData && $quizData['best_score'] !== null) {
+                    $fieldName = str_replace('-', '_', $quizType) . '_quiz_best_score';
+                    $student[$fieldName] = floatval($quizData['best_score']);
+                    $student[str_replace('-', '_', $quizType) . '_quiz_attempts'] = intval($quizData['attempts']);
+                    $student[str_replace('-', '_', $quizType) . '_quiz_status'] = $quizData['best_score'] >= 70 ? 'PASSED' : 'FAILED';
+                    $student[str_replace('-', '_', $quizType) . '_quiz_last_attempt'] = $quizData['last_attempt'];
+                }
+            }
+            
+            // Get lesson completion counts
+            $stmt = $pdo->prepare("
+                SELECT 
+                    topic_name,
+                    COUNT(*) as completed
+                FROM lesson_completion
+                WHERE user_id = ?
+                GROUP BY topic_name
+            ");
+            $stmt->execute([$studentId]);
+            $lessonData = $stmt->fetchAll();
+            
+            foreach ($lessonData as $lesson) {
+                $topicField = str_replace('-', '_', $lesson['topic_name']) . '_lessons_completed';
+                $student[$topicField] = intval($lesson['completed']);
+            }
+            
+            // Set default values for missing fields
+            $student['total_score'] = 0;
+            $student['overall_performance_status'] = 'NOT_STARTED';
+            $student['functions_lessons_completed'] = $student['functions_lessons_completed'] ?? 0;
+            $student['evaluating_functions_lessons_completed'] = $student['evaluating_functions_lessons_completed'] ?? 0;
+            $student['operations_lessons_completed'] = $student['operations_lessons_completed'] ?? 0;
+            $student['rational_functions_lessons_completed'] = $student['rational_functions_lessons_completed'] ?? 0;
+            $student['real_life_lessons_completed'] = $student['solving_real_life_problems_lessons_completed'] ?? 0;
+            
+            // Calculate overall performance status based on quiz scores
+            $quizScores = [
+                $student['functions_quiz_best_score'] ?? 0,
+                $student['evaluating_functions_quiz_best_score'] ?? 0,
+                $student['operations_on_functions_quiz_best_score'] ?? 0,
+                $student['real_life_problems_quiz_best_score'] ?? 0,
+                $student['rational_functions_quiz_best_score'] ?? 0,
+                $student['solving_rational_equations_inequalities_quiz_best_score'] ?? 0,
+                $student['representations_of_rational_functions_quiz_best_score'] ?? 0,
+                $student['domain_range_rational_functions_quiz_best_score'] ?? 0,
+                $student['one_to_one_functions_quiz_best_score'] ?? 0
+            ];
+            $takenQuizzes = array_filter($quizScores, function($score) { return $score > 0; });
+            if (count($takenQuizzes) > 0) {
+                $avgScore = array_sum($takenQuizzes) / count($takenQuizzes);
+                $student['total_score'] = round($avgScore, 2);
+                
+                $passedCount = count(array_filter($takenQuizzes, function($score) { return $score >= 70; }));
+                if ($passedCount >= 8) {
+                    $student['overall_performance_status'] = 'EXCELLENT';
+                } elseif ($passedCount >= 6) {
+                    $student['overall_performance_status'] = 'GOOD';
+                } elseif ($passedCount >= 4) {
+                    $student['overall_performance_status'] = 'AVERAGE';
+                } elseif ($passedCount >= 1) {
+                    $student['overall_performance_status'] = 'NEEDS_IMPROVEMENT';
+                } else {
+                    $student['overall_performance_status'] = 'POOR';
+                }
+            }
         }
         
-        // Get performance history
-        $stmt = $pdo->prepare("
-            SELECT 
-                ph.*,
-                t.first_name as recorded_by_first_name,
-                t.last_name as recorded_by_last_name
-            FROM performance_history ph
-            LEFT JOIN teachers t ON ph.recorded_by = t.id
-            WHERE ph.student_id = ?
-            ORDER BY ph.recorded_at DESC
-            LIMIT 10
-        ");
-        $stmt->execute([$studentId]);
-        $performanceHistory = $stmt->fetchAll();
+        // Get performance history (only if tracking table exists)
+        $performanceHistory = [];
+        try {
+            $stmt = $pdo->query("SHOW TABLES LIKE 'performance_history'");
+            if ($stmt->rowCount() > 0) {
+                $stmt = $pdo->prepare("
+                    SELECT 
+                        ph.*,
+                        t.first_name as recorded_by_first_name,
+                        t.last_name as recorded_by_last_name
+                    FROM performance_history ph
+                    LEFT JOIN teachers t ON ph.recorded_by = t.id
+                    WHERE ph.student_id = ?
+                    ORDER BY ph.recorded_at DESC
+                    LIMIT 10
+                ");
+                $stmt->execute([$studentId]);
+                $performanceHistory = $stmt->fetchAll();
+            }
+        } catch (Exception $e) {
+            // Table doesn't exist, skip
+        }
         
         // Get topic-specific performance breakdown
         $topicPerformance = [
             'functions' => [
-                'score' => $student['functions_score'],
-                'lessons_completed' => $student['functions_lessons_completed'],
-                'quiz_score' => $student['functions_quiz_score'],
-                'quiz_attempts' => $student['functions_quiz_attempts'],
-                'quiz_best_score' => $student['functions_quiz_best_score'],
-                'quiz_status' => $student['functions_quiz_status'],
-                'quiz_last_attempt' => $student['functions_quiz_last_attempt']
+                'score' => $student['functions_score'] ?? 0,
+                'lessons_completed' => $student['functions_lessons_completed'] ?? 0,
+                'quiz_score' => $student['functions_quiz_score'] ?? 0,
+                'quiz_attempts' => $student['functions_quiz_attempts'] ?? 0,
+                'quiz_best_score' => $student['functions_quiz_best_score'] ?? 0,
+                'quiz_status' => $student['functions_quiz_status'] ?? 'NOT_ATTEMPTED',
+                'quiz_last_attempt' => $student['functions_quiz_last_attempt'] ?? null
             ],
             'evaluating-functions' => [
-                'score' => $student['evaluating_functions_score'],
-                'lessons_completed' => $student['evaluating_functions_lessons_completed'],
-                'quiz_score' => $student['evaluating_functions_quiz_score'],
-                'quiz_attempts' => $student['evaluating_functions_quiz_attempts'],
-                'quiz_best_score' => $student['evaluating_functions_quiz_best_score'],
-                'quiz_status' => $student['evaluating_functions_quiz_status'],
-                'quiz_last_attempt' => $student['evaluating_functions_quiz_last_attempt']
+                'score' => $student['evaluating_functions_score'] ?? 0,
+                'lessons_completed' => $student['evaluating_functions_lessons_completed'] ?? 0,
+                'quiz_score' => $student['evaluating_functions_quiz_score'] ?? 0,
+                'quiz_attempts' => $student['evaluating_functions_quiz_attempts'] ?? 0,
+                'quiz_best_score' => $student['evaluating_functions_quiz_best_score'] ?? 0,
+                'quiz_status' => $student['evaluating_functions_quiz_status'] ?? 'NOT_ATTEMPTED',
+                'quiz_last_attempt' => $student['evaluating_functions_quiz_last_attempt'] ?? null
             ],
             'operations-on-functions' => [
-                'score' => $student['operations_on_functions_score'],
-                'lessons_completed' => $student['operations_on_functions_lessons_completed'],
-                'quiz_score' => $student['operations_on_functions_quiz_score'],
-                'quiz_attempts' => $student['operations_on_functions_quiz_attempts'],
-                'quiz_best_score' => $student['operations_on_functions_quiz_best_score'],
-                'quiz_status' => $student['operations_on_functions_quiz_status'],
-                'quiz_last_attempt' => $student['operations_on_functions_quiz_last_attempt']
+                'score' => $student['operations_on_functions_score'] ?? 0,
+                'lessons_completed' => $student['operations_lessons_completed'] ?? 0,
+                'quiz_score' => $student['operations_on_functions_quiz_score'] ?? 0,
+                'quiz_attempts' => $student['operations_on_functions_quiz_attempts'] ?? 0,
+                'quiz_best_score' => $student['operations_on_functions_quiz_best_score'] ?? 0,
+                'quiz_status' => $student['operations_on_functions_quiz_status'] ?? 'NOT_ATTEMPTED',
+                'quiz_last_attempt' => $student['operations_on_functions_quiz_last_attempt'] ?? null
             ],
             'rational-functions' => [
-                'score' => $student['rational_functions_score'],
-                'lessons_completed' => $student['rational_functions_lessons_completed'],
-                'quiz_score' => $student['rational_functions_quiz_score'],
-                'quiz_attempts' => $student['rational_functions_quiz_attempts'],
-                'quiz_best_score' => $student['rational_functions_quiz_best_score'],
-                'quiz_status' => $student['rational_functions_quiz_status'],
-                'quiz_last_attempt' => $student['rational_functions_quiz_last_attempt']
+                'score' => $student['rational_functions_score'] ?? 0,
+                'lessons_completed' => $student['rational_functions_lessons_completed'] ?? 0,
+                'quiz_score' => $student['rational_functions_quiz_score'] ?? 0,
+                'quiz_attempts' => $student['rational_functions_quiz_attempts'] ?? 0,
+                'quiz_best_score' => $student['rational_functions_quiz_best_score'] ?? 0,
+                'quiz_status' => $student['rational_functions_quiz_status'] ?? 'NOT_ATTEMPTED',
+                'quiz_last_attempt' => $student['rational_functions_quiz_last_attempt'] ?? null
             ],
             'solving-real-life-problems' => [
-                'score' => $student['solving_real_life_problems_score'],
-                'lessons_completed' => $student['solving_real_life_problems_lessons_completed'],
-                'quiz_score' => $student['solving_real_life_problems_quiz_score'],
-                'quiz_attempts' => $student['solving_real_life_problems_quiz_attempts'],
-                'quiz_best_score' => $student['solving_real_life_problems_quiz_best_score'],
-                'quiz_status' => $student['solving_real_life_problems_quiz_status'],
-                'quiz_last_attempt' => $student['solving_real_life_problems_quiz_last_attempt']
+                'score' => $student['solving_real_life_problems_score'] ?? 0,
+                'lessons_completed' => $student['real_life_lessons_completed'] ?? 0,
+                'quiz_score' => $student['real_life_problems_quiz_score'] ?? 0,
+                'quiz_attempts' => $student['real_life_problems_quiz_attempts'] ?? 0,
+                'quiz_best_score' => $student['real_life_problems_quiz_best_score'] ?? 0,
+                'quiz_status' => $student['real_life_problems_quiz_status'] ?? 'NOT_ATTEMPTED',
+                'quiz_last_attempt' => $student['real_life_problems_quiz_last_attempt'] ?? null
             ]
         ];
+        
+        // Build quiz_statistics array for charts
+        $quizStatistics = [];
+        $quizTypesForStats = [
+            'functions', 'evaluating-functions', 'operations-on-functions', 
+            'real-life-problems', 'rational-functions'
+        ];
+        
+        foreach ($quizTypesForStats as $quizType) {
+            $fieldPrefix = str_replace('-', '_', $quizType);
+            $bestScore = $student[$fieldPrefix . '_quiz_best_score'] ?? 0;
+            $attempts = $student[$fieldPrefix . '_quiz_attempts'] ?? 0;
+            
+            if ($attempts > 0) {
+                // Get average score and passed attempts from quiz_attempts
+                $stmt = $pdo->prepare("
+                    SELECT 
+                        AVG(ROUND((score / NULLIF(total_questions, 0)) * 100, 1)) as avg_score, 
+                        SUM(CASE WHEN ROUND((score / NULLIF(total_questions, 0)) * 100, 1) >= 70 THEN 1 ELSE 0 END) as passed
+                    FROM quiz_attempts
+                    WHERE student_id = ? AND quiz_type = ? AND status = 'completed'
+                ");
+                $stmt->execute([$studentId, $quizType]);
+                $avgData = $stmt->fetch();
+                
+                $avgScore = $avgData && $avgData['avg_score'] !== null ? floatval($avgData['avg_score']) : $bestScore;
+                $passedAttempts = $avgData && $avgData['passed'] !== null ? intval($avgData['passed']) : ($bestScore >= 70 ? 1 : 0);
+                
+                $quizStatistics[] = [
+                    'quiz_type' => $quizType,
+                    'best_score' => $bestScore,
+                    'average_score' => $avgScore,
+                    'total_attempts' => $attempts,
+                    'passed_attempts' => $passedAttempts,
+                    'pass_rate' => $attempts > 0 ? round(($passedAttempts / $attempts) * 100, 1) : 0
+                ];
+            }
+        }
+        
+        // Get lesson completions
+        $lessonCompletions = [];
+        try {
+            $stmt = $pdo->prepare("
+                SELECT topic_name, lesson_number, completed_at
+                FROM lesson_completion
+                WHERE user_id = ?
+                ORDER BY completed_at DESC
+                LIMIT 20
+            ");
+            $stmt->execute([$studentId]);
+            $lessonCompletions = $stmt->fetchAll();
+        } catch (Exception $e) {
+            // Table doesn't exist, skip
+        }
         
         echo json_encode([
             'success' => true,
             'student' => $student,
             'topic_performance' => $topicPerformance,
             'performance_history' => $performanceHistory,
+            'quiz_statistics' => $quizStatistics,
+            'lesson_completions' => $lessonCompletions,
             'data_source' => 'Independent Performance Tracking System'
         ]);
         
