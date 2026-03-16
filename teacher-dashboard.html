@@ -2255,13 +2255,14 @@
                                 </div>
                                 <div class="flex items-center space-x-3">
                                     ${topic.topic_slug ? `<a href="topics/${topic.topic_slug}.html" target="_blank" rel="noopener" class="p-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700" title="View topic page"><i class="fas fa-external-link-alt text-xs"></i></a>` : ''}
-                                    <span class="px-3 py-1 rounded-full text-sm font-medium ${topic.is_locked ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}">
-                                        ${topic.is_locked ? 'Locked' : 'Unlocked'}
-                                    </span>
-                                    <button onclick="toggleTopicLock('${topic.topic_id}', ${topic.is_locked}, '${topic.class_id}')" 
-                                            class="p-2 rounded-lg transition-colors ${topic.is_locked ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-red-600 hover:bg-red-700 text-white'}"
-                                            title="${topic.is_locked ? 'Unlock Topic' : 'Lock Topic'}">
-                                        <i class="fas ${topic.is_locked ? 'fa-unlock' : 'fa-lock'}"></i>
+                                    <!-- Topic lock switch -->
+                                    <button onclick="toggleTopicLock('${topic.topic_id}', ${topic.is_locked}, '${topic.class_id}')"
+                                            class="flex items-center px-2 py-1 rounded-full text-xs font-medium border transition-colors ${topic.is_locked ? 'bg-red-100 border-red-300 text-red-700' : 'bg-green-100 border-green-300 text-green-700'}"
+                                            title="${topic.is_locked ? 'Topic is locked for students. Click to unlock.' : 'Topic is unlocked for students. Click to lock.'}">
+                                        <span class="mr-2">${topic.is_locked ? 'Locked' : 'Unlocked'}</span>
+                                        <span class="relative inline-flex items-center w-10 h-5 rounded-full ${topic.is_locked ? 'bg-red-500' : 'bg-green-500'}">
+                                            <span class="inline-block w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-200 ${topic.is_locked ? 'translate-x-5' : 'translate-x-1'}"></span>
+                                        </span>
                                     </button>
                                 </div>
                             </div>
@@ -2299,13 +2300,14 @@
                                 </div>
                                 <div class="flex items-center space-x-3">
                                     ${topic.topic_slug ? `<a href="topics/${topic.topic_slug}.html" target="_blank" rel="noopener" class="p-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700" title="View topic page"><i class="fas fa-external-link-alt text-xs"></i></a>` : ''}
-                                    <span class="px-3 py-1 rounded-full text-sm font-medium ${topic.is_locked ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}">
-                                        ${topic.is_locked ? 'Locked' : 'Unlocked'}
-                                    </span>
-                                    <button onclick="toggleTopicLock('${topic.topic_id}', ${topic.is_locked}, '${topic.class_id}')" 
-                                            class="p-2 rounded-lg transition-colors ${topic.is_locked ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-red-600 hover:bg-red-700 text-white'}"
-                                            title="${topic.is_locked ? 'Unlock Topic' : 'Lock Topic'}">
-                                        <i class="fas ${topic.is_locked ? 'fa-unlock' : 'fa-lock'}"></i>
+                                    <!-- Topic lock switch -->
+                                    <button onclick="toggleTopicLock('${topic.topic_id}', ${topic.is_locked}, '${topic.class_id}')"
+                                            class="flex items-center px-2 py-1 rounded-full text-xs font-medium border transition-colors ${topic.is_locked ? 'bg-red-100 border-red-300 text-red-700' : 'bg-green-100 border-green-300 text-green-700'}"
+                                            title="${topic.is_locked ? 'Topic is locked for students. Click to unlock.' : 'Topic is unlocked for students. Click to lock.'}">
+                                        <span class="mr-2">${topic.is_locked ? 'Locked' : 'Unlocked'}</span>
+                                        <span class="relative inline-flex items-center w-10 h-5 rounded-full ${topic.is_locked ? 'bg-red-500' : 'bg-green-500'}">
+                                            <span class="inline-block w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-200 ${topic.is_locked ? 'translate-x-5' : 'translate-x-1'}"></span>
+                                        </span>
                                     </button>
                                 </div>
                             </div>
