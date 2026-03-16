@@ -687,10 +687,14 @@ class QuizManager {
             } elseif (strpos($msg, 'foreign key') !== false || strpos($msg, 'Constraint') !== false) {
                 $userMessage = 'Quiz could not be saved (database constraint). Please contact your teacher.';
             }
+            // Include actual error in response so it can be shown in UI / Network tab for debugging
+            $safeDetail = preg_replace('/[\r\n].*$/s', '', $msg);
+            $safeDetail = substr($safeDetail, 0, 200);
             return [
                 'success' => false,
                 'message' => $userMessage,
-                'error_code' => 'SUBMIT_FAILED'
+                'error_code' => 'SUBMIT_FAILED',
+                'error_detail' => $safeDetail
             ];
         }
     }

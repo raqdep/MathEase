@@ -4980,6 +4980,10 @@
                         errorMessage = 'Database Timeout';
                         errorDetails = 'The database operation timed out. Please try submitting again.';
                     }
+                    // Show server error detail if provided (helps identify missing table, constraint, etc.)
+                    if (result.error_detail) {
+                        errorDetails += '<br><br><strong>Technical detail:</strong> <code class="text-xs bg-gray-100 px-1 rounded">' + (result.error_detail || '').replace(/</g, '&lt;') + '</code>';
+                    }
                     
                     await Swal.fire({
                         title: '❌ Submission Failed',
