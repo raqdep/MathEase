@@ -676,10 +676,21 @@ class QuizManager {
             
         } catch (Exception $e) {
             $this->pdo->rollBack();
-            error_log("Error submitting quiz: " . $e->getMessage());
+            $msg = $e->getMessage();
+            error_log("Error submitting quiz: " . $msg . " | Trace: " . $e->getTraceAsString());
+            // Return a safe message; include hint for common DB errors
+            $userMessage = 'Failed to submit quiz. Please try again.';
+            if (strpos($msg, 'doesn\'t exist') !== false) {
+                $userMessage = 'Quiz database table is missing. Please contact your teacher or administrator.';
+            } elseif (strpos($msg, 'Duplicate entry') !== false) {
+                $userMessage = 'This quiz was already submitted.';
+            } elseif (strpos($msg, 'foreign key') !== false || strpos($msg, 'Constraint') !== false) {
+                $userMessage = 'Quiz could not be saved (database constraint). Please contact your teacher.';
+            }
             return [
                 'success' => false,
-                'message' => 'Failed to submit quiz'
+                'message' => $userMessage,
+                'error_code' => 'SUBMIT_FAILED'
             ];
         }
     }
@@ -2366,7 +2377,7 @@ $isStudent = is_student_logged_in();
 $isTeacher = is_teacher_logged_in();
 
 // For certain actions, we need to handle authentication more gracefully
-$authRequiredActions = ['start_quiz', 'check_existing_attempt', 'get_student_history'];
+$authRequiredActions = ['start_quiz', 'check_existing_attempt', 'get_student_history', 'submit_quiz', 'save_quiz_progress', 'get_quiz_answers'];
 $teacherOnlyActions = ['save_quiz_settings', 'get_quiz_results', 'get_quiz_statistics', 'toggle_quiz_status'];
 $publicActions = ['get_quiz_settings', 'get_quiz_status']; // These can be accessed by both students and teachers
 
@@ -2432,24 +2443,25 @@ try {
             
         case 'submit_quiz':
             $attemptId = $_POST['attempt_id'] ?? null;
-            $answersJson = $_POST['answers'] ?? '{}';
-            $completionTime = $_POST['completion_time'] ?? 0;
+            $answersRaw = $_POST['answers'] ?? null;
+            $completionTime = (int) ($_POST['completion_time'] ?? 0);
             
-            // Handle answers - they might be JSON string or already an array
-            if (is_string($answersJson)) {
-                $answers = json_decode($answersJson, true);
+            // Handle answers: FormData sends answers[q1]=x, answers[q2]=y -> PHP gives array; or JSON string
+            $answers = [];
+            if (is_array($answersRaw)) {
+                $answers = $answersRaw;
+            } elseif (is_string($answersRaw) && $answersRaw !== '') {
+                $answers = json_decode($answersRaw, true);
                 if (json_last_error() !== JSON_ERROR_NONE) {
                     error_log("Quiz submission failed - Invalid JSON in answers: " . json_last_error_msg());
                     echo json_encode(['success' => false, 'message' => 'Invalid answers format']);
                     break;
                 }
-            } else {
-                // Already an array
-                $answers = $answersJson;
+                $answers = is_array($answers) ? $answers : [];
             }
             
             // Log submission attempt
-            error_log("Quiz submission attempt - Attempt ID: $attemptId, Completion Time: $completionTime, Answers: " . json_encode($answers));
+            error_log("Quiz submission attempt - Attempt ID: $attemptId, Completion Time: $completionTime, Answers count: " . count($answers));
             
             if (!$attemptId) {
                 error_log("Quiz submission failed - No attempt ID provided");
@@ -2457,17 +2469,20 @@ try {
                 break;
             }
             
-            // Validate attempt ownership if student is logged in
-            if ($isStudent) {
-                if (!$quizManager->validateAttemptOwnership($attemptId, $_SESSION['user_id'])) {
-                    error_log("Quiz submission failed - Invalid attempt ownership for user: " . $_SESSION['user_id']);
-                    echo json_encode([
-                        'success' => false, 
-                        'message' => 'You can only submit your own quiz attempts',
-                        'error_code' => 'INVALID_ATTEMPT'
-                    ]);
-                    break;
-                }
+            if (!$isStudent) {
+                error_log("Quiz submission failed - Student not logged in");
+                echo json_encode(['success' => false, 'message' => 'Please log in as a student to submit the quiz.', 'error_code' => 'AUTH_REQUIRED']);
+                break;
+            }
+            
+            if (!$quizManager->validateAttemptOwnership($attemptId, $_SESSION['user_id'])) {
+                error_log("Quiz submission failed - Invalid attempt ownership for user: " . $_SESSION['user_id']);
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'You can only submit your own quiz attempts',
+                    'error_code' => 'INVALID_ATTEMPT'
+                ]);
+                break;
             }
             
             $result = $quizManager->submitQuiz($attemptId, $answers, $completionTime);
