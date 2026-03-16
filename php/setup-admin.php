@@ -28,23 +28,38 @@ try {
         )
     ");
     
+    $adminEmail = 'matheasenc2025@gmail.com';
+    $adminPassword = 'MathEase2025!';
+
     // Check if admin already exists
     $stmt = $pdo->prepare("SELECT id FROM admins WHERE email = ?");
-    $stmt->execute(['matheasenc2025@gmail.com']);
+    $stmt->execute([$adminEmail]);
     
     if ($stmt->rowCount() > 0) {
+        // Optional: reset password if you forgot it (use ?reset_password=1 in URL)
+        $resetPassword = isset($_GET['reset_password']) && $_GET['reset_password'] === '1';
+        if ($resetPassword) {
+            $hashedPassword = password_hash($adminPassword, PASSWORD_DEFAULT);
+            $stmt = $pdo->prepare("UPDATE admins SET password = ?, is_active = 1 WHERE email = ?");
+            $stmt->execute([$hashedPassword, $adminEmail]);
+            echo json_encode([
+                'success' => true,
+                'message' => 'Admin password has been reset. Use the credentials below to login.',
+                'email' => $adminEmail,
+                'password' => $adminPassword,
+                'note' => 'Remove ?reset_password=1 from the URL after saving these credentials for security.'
+            ]);
+            exit;
+        }
         echo json_encode([
             'success' => false,
-            'message' => 'Admin account already exists. Use the existing credentials to login.',
-            'email' => 'matheasenc2025@gmail.com',
-            'password' => 'MathEase2025!'
+            'message' => 'Admin account already exists. Use the existing credentials to login. Forgot password? Visit this page with ?reset_password=1 to reset.',
+            'email' => $adminEmail
         ]);
         exit;
     }
     
     // Create default admin account
-    $adminEmail = 'matheasenc2025@gmail.com';
-    $adminPassword = 'MathEase2025!';
     $hashedPassword = password_hash($adminPassword, PASSWORD_DEFAULT);
     
     $stmt = $pdo->prepare("

@@ -21,13 +21,8 @@ document.addEventListener('DOMContentLoaded', function() {
         loginForm.addEventListener('submit', handleAdminLogin);
     }
 
-    // Auto-fill admin credentials for testing (remove in production)
-    if (window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1')) {
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        if (emailInput) emailInput.value = 'matheasenc@gmail.com';
-        if (passwordInput) passwordInput.value = 'MathEase123!!!';
-    }
+    // Optional: pre-fill admin email for convenience (matches setup-admin.php default)
+    // if (document.getElementById('email')) document.getElementById('email').value = 'matheasenc2025@gmail.com';
 });
 
 async function handleAdminLogin(e) {

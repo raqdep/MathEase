@@ -756,14 +756,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 exit;
             }
             
-            $className = $_POST['class_name'] ?? '';
-            $description = $_POST['description'] ?? '';
-            $subject = $_POST['subject'] ?? '';
-            $gradeLevel = $_POST['grade_level'] ?? '';
-            $strand = $_POST['strand'] ?? '';
-            $maxStudents = $_POST['max_students'] ?? 50;
+            $className = trim($_POST['class_name'] ?? '');
+            $description = trim($_POST['description'] ?? '');
+            $subject = trim($_POST['subject'] ?? '');
+            $gradeLevel = trim($_POST['grade_level'] ?? '');
+            // Force valid grade_level: DB ENUM is exactly '11' or '12'
+            if ($gradeLevel !== '11' && $gradeLevel !== '12') {
+                $gradeLevel = (stripos($gradeLevel, '12') !== false) ? '12' : '11';
+            }
+            $strand = strtoupper(trim($_POST['strand'] ?? ''));
+            // Force valid strand: DB ENUM is 'STEM', 'ABM', 'HUMSS', 'GAS'
+            $validStrands = ['STEM', 'ABM', 'HUMSS', 'GAS'];
+            if (!in_array($strand, $validStrands, true)) {
+                $strand = 'STEM';
+            }
+            $maxStudents = (int) ($_POST['max_students'] ?? 50);
+            if ($maxStudents < 1) $maxStudents = 50;
+            if ($maxStudents > 200) $maxStudents = 200;
             
-            if (empty($className) || empty($subject) || empty($gradeLevel) || empty($strand)) {
+            if (empty($className) || empty($subject) || empty($strand)) {
                 echo json_encode(['success' => false, 'message' => 'Missing required fields']);
                 exit;
             }

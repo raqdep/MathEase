@@ -70,38 +70,25 @@ class CreateClassModal {
                                         >
                                     </div>
 
-                                    <!-- Grade Level (Fixed) -->
+                                    <!-- Grade Level (auto: Grade 11) -->
                                     <div>
                                         <label for="gradeLevel" class="block text-xs font-semibold text-slate-700 mb-1">
                                             Grade Level
                                         </label>
-                                        <input 
-                                            type="text" 
-                                            id="gradeLevel" 
-                                            name="grade_level"
-                                            class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-100 text-slate-600 cursor-not-allowed"
-                                            value="Grade 11"
-                                            readonly
-                                        >
+                                        <input type="hidden" name="grade_level" value="11">
+                                        <input type="text" id="gradeLevel" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-100 text-slate-600 cursor-not-allowed" value="Grade 11" readonly>
                                     </div>
-                                </div>
-
-                                <div class="grid grid-cols-2 gap-3">
-                                    <!-- Strand (Fixed) -->
+                                    <!-- Strand (auto: STEM) -->
                                     <div>
                                         <label for="strand" class="block text-xs font-semibold text-slate-700 mb-1">
                                             Strand
                                         </label>
-                                        <input 
-                                            type="text" 
-                                            id="strand" 
-                                            name="strand"
-                                            class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-100 text-slate-600 cursor-not-allowed"
-                                            value="STEM"
-                                            readonly
-                                        >
+                                        <input type="hidden" name="strand" value="STEM">
+                                        <input type="text" id="strand" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg bg-slate-100 text-slate-600 cursor-not-allowed" value="STEM" readonly>
                                     </div>
+                                </div>
 
+                                <div class="grid grid-cols-2 gap-3">
                                     <!-- Max Students -->
                                     <div>
                                         <label for="maxStudents" class="block text-xs font-semibold text-slate-700 mb-1">
@@ -118,6 +105,7 @@ class CreateClassModal {
                                             value="50"
                                         >
                                     </div>
+                                    <div></div>
                                 </div>
 
                                 <!-- Description -->
