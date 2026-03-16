@@ -22,16 +22,16 @@ if (!isset($_SESSION['teacher_id']) || !isset($_SESSION['user_type']) || $_SESSI
 // Load environment variables
 require_once __DIR__ . '/load-env.php';
 
-// Groq API Key - loaded from .env file
-$groq_api_key = getenv('GROQ_API_KEY');
-$groq_api_url = getenv('GROQ_API_URL') ?: 'https://api.groq.com/openai/v1/chat/completions';
+// Gemini API Key - loaded from .env file
+$gemini_api_key = getenv('GEMINI_API_KEY');
+$gemini_model = getenv('GEMINI_MODEL') ?: 'gemini-1.5-flash';
 
-if (empty($groq_api_key)) {
+if (empty($gemini_api_key)) {
     ob_clean();
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => 'GROQ_API_KEY is not configured. Please set it in your .env file.',
+        'message' => 'GEMINI_API_KEY is not configured. Please set it in your .env file.',
         'error_type' => 'CONFIGURATION_ERROR'
     ]);
     ob_end_flush();
@@ -73,11 +73,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception('PDF content is empty after extraction. Please ensure the PDF contains readable text.');
         }
 
-        // Validate that PDF is about General Mathematics
-        error_log("Starting General Mathematics validation for PDF content (length: " . strlen($pdf_content) . " characters)");
-        $isGeneralMath = validateGeneralMathematics($pdf_content, $groq_api_key, $groq_api_url);
-        error_log("General Mathematics validation result: " . ($isGeneralMath ? 'PASSED' : 'FAILED'));
-        
+        // Light-weight math validation: keyword-based only (no external API call to save tokens)
+        error_log("Starting keyword-based General Mathematics validation for PDF content (length: " . strlen($pdf_content) . " characters)");
+        $math_keywords = [
+            'function', 'mathematics', 'math', 'equation', 'formula', 'graph', 'domain', 'range',
+            'rational', 'polynomial', 'algebra', 'interest', 'percentage', 'rate', 'principal'
+        ];
+        $content_lower = strtolower($pdf_content);
+        $keyword_count = 0;
+        foreach ($math_keywords as $kw) {
+            if (strpos($content_lower, $kw) !== false) {
+                $keyword_count++;
+            }
+        }
+        $isGeneralMath = $keyword_count >= 1;
+        error_log("Keyword math validation result: " . ($isGeneralMath ? 'PASSED' : 'FAILED') . " (found {$keyword_count} keywords)");
+
         if (!$isGeneralMath) {
             ob_clean();
             http_response_code(400);
@@ -85,29 +96,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'success' => false,
                 'message' => 'The uploaded PDF does not appear to contain General Mathematics content. Please ensure your PDF contains mathematical concepts, formulas, equations, or problem-solving related to General Mathematics.',
                 'error_type' => 'INVALID_CONTENT',
-                'debug_info' => 'Validation failed - PDF content may not contain sufficient mathematics-related keywords or concepts.'
+                'debug_info' => 'Validation failed using keyword-based check - PDF content may not contain sufficient mathematics-related keywords or concepts.'
             ]);
             ob_end_flush();
             exit;
         }
         
-        error_log("PDF validation passed - proceeding with lesson generation");
+        error_log("PDF validation passed - proceeding with Gemini lesson generation");
 
-        // For long PDFs: summarize entire content in chunks so Groq can "read" it all, then generate lesson from combined summary
-        $max_direct_chars = 10000; // under Groq token limit for a single request
-        if (strlen($pdf_content) > $max_direct_chars) {
-            error_log("PDF is long (" . strlen($pdf_content) . " chars) - summarizing in chunks to cover full content");
-            $content_for_lesson = summarizePdfInChunks($pdf_content, $groq_api_key, $groq_api_url);
-            if (empty(trim($content_for_lesson))) {
-                throw new Exception('Could not summarize PDF content. Please try a shorter PDF or try again.');
-            }
-            error_log("Chunked summary length: " . strlen($content_for_lesson) . " chars");
-        } else {
-            $content_for_lesson = $pdf_content;
-        }
+        // Cap content size so Gemini request stays safe
+        $max_direct_chars = 12000;
+        $content_for_lesson = strlen($pdf_content) > $max_direct_chars
+            ? substr($pdf_content, 0, $max_direct_chars) . "\n\n[Content truncated for processing. Lesson is based on the first part of your PDF.]"
+            : $pdf_content;
 
-        // Generate lesson using Groq AI (from full PDF or from combined summary)
-        $lesson_html = generateLessonWithAI($content_for_lesson, $lesson_title, $topic_category, $groq_api_key, $groq_api_url);
+        // Generate lesson using Gemini AI
+        $lesson_html = generateLessonWithGemini($content_for_lesson, $lesson_title, $topic_category, $gemini_api_key, $gemini_model);
         
         // Validate generated lesson
         if (empty(trim($lesson_html))) {
@@ -422,157 +426,70 @@ Respond with ONLY 'YES' if the content contains mathematics or General Mathemati
 }
 
 /**
- * Call Groq API with given messages. Returns assistant content. Throws on error.
+ * Call Gemini API with a single text prompt. Returns generated text or throws on error.
  */
-function callGroq($api_url, $api_key, $messages, $max_tokens = 2000, $temperature = 0.3) {
-    $data = [
-        'model' => 'llama-3.1-8b-instant',
-        'messages' => $messages,
-        'temperature' => $temperature,
-        'max_tokens' => $max_tokens
+function callGemini($api_key, $model, $prompt, $max_output_tokens = 4096) {
+    $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key=" . urlencode($api_key);
+    $payload = [
+        'contents' => [
+            [
+                'role' => 'user',
+                'parts' => [
+                    ['text' => $prompt]
+                ]
+            ]
+        ],
+        'generationConfig' => [
+            'maxOutputTokens' => $max_output_tokens,
+            'temperature' => 0.6,
+        ],
     ];
-    // Simple retry loop to be nicer to Groq's free-tier rate limits
-    $maxAttempts = 3;
-    $backoffSeconds = [2, 5, 10];
-    for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
-        $ch = curl_init($api_url);
-        if ($ch === false) {
-            throw new Exception('Failed to initialize cURL');
-        }
-        curl_setopt_array($ch, [
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => json_encode($data),
-            CURLOPT_HTTPHEADER => [
-                'Content-Type: application/json',
-                'Authorization: Bearer ' . $api_key
-            ],
-            CURLOPT_TIMEOUT => 90,
-            CURLOPT_CONNECTTIMEOUT => 15
-        ]);
-        $response = curl_exec($ch);
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $curl_error = curl_error($ch);
-        curl_close($ch);
 
-        if ($curl_error) {
-            if ($attempt === $maxAttempts) {
-                throw new Exception('API request failed: ' . $curl_error);
-            }
-            sleep($backoffSeconds[$attempt - 1]);
-            continue;
-        }
-        if (empty($response)) {
-            if ($attempt === $maxAttempts) {
-                throw new Exception('Empty response from AI service.');
-            }
-            sleep($backoffSeconds[$attempt - 1]);
-            continue;
-        }
-        if ($http_code !== 200) {
-            $errorData = json_decode($response, true);
-            $errorMessage = isset($errorData['error']['message']) ? $errorData['error']['message'] : 'HTTP ' . $http_code;
-            // Distinguish between size errors and rate-limit (tokens-per-minute) errors
-            if (strpos($errorMessage, 'Request too large') !== false) {
-                throw new Exception('This request is too large for the current Groq model. Please try a shorter PDF (for example, one topic or chapter).');
-            }
-            if (strpos($errorMessage, 'tokens per minute') !== false || strpos($errorMessage, 'TPM') !== false) {
-                if ($attempt === $maxAttempts) {
-                    throw new Exception('The AI service is rate limited (too many tokens per minute). Please wait 60–90 seconds and try again, or avoid sending many PDFs in a short time.');
-                }
-                sleep($backoffSeconds[$attempt - 1]);
-                continue;
-            }
-            if ($attempt === $maxAttempts) {
-                throw new Exception('Groq API error: ' . $errorMessage);
-            }
-            sleep($backoffSeconds[$attempt - 1]);
-            continue;
-        }
-
-        $result = json_decode($response, true);
-        if (json_last_error() !== JSON_ERROR_NONE || !isset($result['choices'][0]['message']['content'])) {
-            if ($attempt === $maxAttempts) {
-                throw new Exception('Invalid API response.');
-            }
-            sleep($backoffSeconds[$attempt - 1]);
-            continue;
-        }
-        return $result['choices'][0]['message']['content'];
+    $ch = curl_init($url);
+    if ($ch === false) {
+        throw new Exception('Failed to initialize cURL for Gemini API');
     }
-    throw new Exception('Unexpected error while calling AI service.');
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode($payload),
+        CURLOPT_HTTPHEADER => [
+            'Content-Type: application/json',
+        ],
+        CURLOPT_TIMEOUT => 90,
+        CURLOPT_CONNECTTIMEOUT => 15
+    ]);
+    $response = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curl_error = curl_error($ch);
+    curl_close($ch);
+
+    if ($curl_error) {
+        throw new Exception('Gemini API request failed: ' . $curl_error);
+    }
+    if (empty($response)) {
+        throw new Exception('Empty response from Gemini API.');
+    }
+    if ($http_code !== 200) {
+        $data = json_decode($response, true);
+        $message = isset($data['error']['message']) ? $data['error']['message'] : 'HTTP ' . $http_code;
+        throw new Exception('Gemini API error: ' . $message);
+    }
+
+    $data = json_decode($response, true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        throw new Exception('Failed to parse Gemini response: ' . json_last_error_msg());
+    }
+    if (!isset($data['candidates'][0]['content']['parts'][0]['text'])) {
+        throw new Exception('Invalid Gemini response: missing text content.');
+    }
+    return $data['candidates'][0]['content']['parts'][0]['text'];
 }
 
 /**
- * Summarize one chunk of PDF text for lesson creation. Preserves definitions, formulas, examples.
+ * Generate lesson HTML using Gemini AI
  */
-function summarizeOneChunk($chunk_text, $chunk_index, $total_chunks, $api_key, $api_url) {
-    $prompt = "You are summarizing a portion of a mathematics lesson (part " . ($chunk_index + 1) . " of " . $total_chunks . ") for General Mathematics.
-
-Summarize the following content in a structured way. PRESERVE:
-- Key definitions and concepts (use exact terms)
-- Important formulas and equations (write them exactly)
-- Step-by-step procedures
-- At least one worked example with solution steps
-- Section headings or topic names
-
-Keep the summary concise but complete enough that a lesson can be built from it. Use clear headings. Output plain text (no HTML). Limit to about 1500-2000 characters.
-
-Content to summarize:
-" . $chunk_text;
-
-    $messages = [
-        ['role' => 'system', 'content' => 'You are an expert at summarizing mathematics lesson content. Preserve all key concepts, formulas, and one representative example per topic. Be concise but complete.'],
-        ['role' => 'user', 'content' => $prompt]
-    ];
-    return callGroq($api_url, $api_key, $messages, 2500, 0.2);
-}
-
-/**
- * Read entire PDF by summarizing in chunks, then return combined summary for lesson generation.
- */
-function summarizePdfInChunks($full_text, $api_key, $api_url) {
-    $len = strlen($full_text);
-    // Chunk size kept conservative to reduce tokens per request (~6000 chars)
-    $chunk_size = 6000;
-    $chunks = [];
-    for ($i = 0; $i < $len; $i += $chunk_size) {
-        $chunks[] = substr($full_text, $i, $chunk_size);
-    }
-    $total = count($chunks);
-    if ($total === 0) {
-        return '';
-    }
-    if ($total === 1) {
-        return summarizeOneChunk($chunks[0], 0, 1, $api_key, $api_url);
-    }
-    $summaries = [];
-    foreach ($chunks as $idx => $chunk) {
-        $summaries[] = summarizeOneChunk($chunk, $idx, $total, $api_key, $api_url);
-        // Small delay to avoid rate limits (tokens per minute)
-        if ($idx < $total - 1) {
-            usleep(500000); // 0.5 second
-        }
-    }
-    $combined = "## Full lesson summary (from entire PDF)\n\n" . implode("\n\n---\n\n", $summaries);
-    // If combined summary is still too long for the final generation request, condense once more (keep condense request under token limit)
-    $max_for_generation = 10000;
-    if (strlen($combined) > $max_for_generation) {
-        $input_for_condense = substr($combined, 0, 12000) . (strlen($combined) > 12000 ? "\n\n[Further sections omitted for length.]" : "");
-        $condensePrompt = "Condense the following lesson summary into one coherent summary suitable for creating a single HTML lesson. Preserve all key concepts, definitions, formulas, and at least one example per topic. Use clear section headings. Keep under 9000 characters.\n\n" . $input_for_condense;
-        $messages = [
-            ['role' => 'system', 'content' => 'You condense lesson summaries while keeping all important math content and examples.'],
-            ['role' => 'user', 'content' => $condensePrompt]
-        ];
-        $combined = callGroq($api_url, $api_key, $messages, 4000, 0.2);
-    }
-    return $combined;
-}
-
-/**
- * Generate lesson HTML using Groq AI
- */
-function generateLessonWithAI($pdf_content, $lesson_title, $topic_category, $api_key, $api_url) {
+function generateLessonWithGemini($pdf_content, $lesson_title, $topic_category, $api_key, $model) {
     // Map topic categories to their full descriptions
     $topic_descriptions = [
         'functions' => 'Functions - Introduction to functions, function notation, domain and range',
