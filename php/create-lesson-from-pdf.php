@@ -68,11 +68,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception('Could not extract text from PDF. Please ensure the PDF contains readable text.');
         }
 
-        // Truncate content if too long (Groq has token limits)
-        // Keep it reasonable - around 30000 characters to leave room for prompt and response
-        $max_chars = 30000;
+        // Truncate content if too long (Groq free tier: 6000 tokens per request total)
+        // ~1 token ≈ 4 chars; we must fit PDF + prompt + system in one request, so cap PDF
+        $max_chars = 10000;
         if (strlen($pdf_content) > $max_chars) {
-            $pdf_content = substr($pdf_content, 0, $max_chars) . '... [Content truncated for processing]';
+            $pdf_content = substr($pdf_content, 0, $max_chars) . "\n\n[Content truncated for processing - lesson is based on the first part of your PDF. For longer modules, consider splitting into multiple lessons.]";
         }
 
         // Validate that we have content
@@ -247,8 +247,8 @@ function extractPDFText($file_path) {
  * Validate if PDF content is about General Mathematics
  */
 function validateGeneralMathematics($pdf_content, $api_key, $api_url) {
-    // Take a sample of the PDF content for validation (first 8000 characters for better context)
-    $sample_content = strlen($pdf_content) > 8000 ? substr($pdf_content, 0, 8000) : $pdf_content;
+    // Use a small sample to stay under Groq 6000-token request limit
+    $sample_content = strlen($pdf_content) > 3500 ? substr($pdf_content, 0, 3500) : $pdf_content;
     
     $prompt = "Analyze the following PDF content and determine if it is about General Mathematics (Grade 11 level) or any mathematics-related topic.
 
@@ -431,8 +431,11 @@ function generateLessonWithAI($pdf_content, $lesson_title, $topic_category, $api
     
     $topic_description = $topic_descriptions[$topic_category] ?? 'General Mathematics Topic';
     
-    // Use more of the PDF content - increase limit to ensure we capture the full content
-    $pdf_content_trimmed = strlen($pdf_content) > 28000 ? substr($pdf_content, 0, 28000) . "\n\n[Note: Content was truncated for processing]" : $pdf_content;
+    // Cap PDF size so total request stays under Groq 6000-token limit (input + prompt + system)
+    $max_pdf_chars = 10000;
+    $pdf_content_trimmed = strlen($pdf_content) > $max_pdf_chars
+        ? substr($pdf_content, 0, $max_pdf_chars) . "\n\n[Content truncated to fit API limits. Lesson is based on the first part of your PDF.]"
+        : $pdf_content;
     
     $prompt = "You are an expert educational content creator specializing in mathematics education for Grade 11 students. Your goal is to create CLEAR, DETAILED, and EASY-TO-UNDERSTAND lessons that students can easily comprehend.
 
@@ -644,6 +647,9 @@ Generate ONLY the lesson content HTML (the main content section, not the full HT
         error_log("Response: " . substr($response, 0, 500));
         $errorData = json_decode($response, true);
         $errorMessage = isset($errorData['error']['message']) ? $errorData['error']['message'] : 'HTTP ' . $http_code;
+        if (strpos($errorMessage, 'Request too large') !== false || strpos($errorMessage, 'tokens per minute') !== false || strpos($errorMessage, 'TPM') !== false) {
+            throw new Exception('Your PDF is too long for one lesson. The system has limited the content to the first part of your PDF. If you still see this, try a shorter PDF (e.g. one chapter) or split your module into multiple smaller PDFs and create one lesson per file.');
+        }
         throw new Exception('Groq API error: ' . $errorMessage);
     }
 

@@ -400,7 +400,7 @@ CREATE TABLE IF NOT EXISTS quiz_attempts (
     started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     completed_at TIMESTAMP NULL,
     last_heartbeat TIMESTAMP NULL,
-    status ENUM('in_progress', 'completed', 'abandoned', 'cheating') DEFAULT 'in_progress',
+    status ENUM('in_progress', 'completed', 'abandoned', 'cheating', 'reset') DEFAULT 'in_progress',
     cheating_reason VARCHAR(255) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

@@ -143,12 +143,13 @@ $GROQ_MODEL = getenv('GROQ_MODEL') ?: 'llama-3.1-8b-instant'; // Default model f
 if (empty($GROQ_API_KEY)) {
     ob_clean();
     if (!headers_sent()) {
-        http_response_code(500);
+        header('Content-Type: application/json');
     }
     echo json_encode([
         'success' => false,
-        'message' => 'GROQ_API_KEY is not configured. Please set it in your .env file.',
-        'error_type' => 'CONFIGURATION_ERROR'
+        'message' => 'AI feedback is not configured. Your quiz results are saved; detailed AI analysis (Cassy) is optional and can be enabled by your teacher.',
+        'error_type' => 'CONFIGURATION_ERROR',
+        'config_hint' => 'GROQ_API_KEY is not set in .env. See GEMINI_AI_SETUP.md or add GROQ_API_KEY for AI analysis.'
     ]);
     exit;
 }
