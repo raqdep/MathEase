@@ -136,11 +136,12 @@ try {
 require_once __DIR__ . '/load-env.php';
 
 // Groq API Configuration - loaded from .env file
-$GROQ_API_KEY = getenv('GROQ_API_KEY');
+// PERF (Cassy) uses GROQ_PERF_API_KEY / GROQ_PERF_MODEL; fallback to legacy GROQ_API_KEY / GROQ_MODEL if present
+$GROQ_PERF_API_KEY = getenv('GROQ_PERF_API_KEY') ?: getenv('GROQ_API_KEY');
 $GROQ_API_URL = getenv('GROQ_API_URL') ?: 'https://api.groq.com/openai/v1/chat/completions';
-$GROQ_MODEL = getenv('GROQ_MODEL') ?: 'llama-3.1-8b-instant'; // Default model from .env
+$GROQ_PERF_MODEL = getenv('GROQ_PERF_MODEL') ?: getenv('GROQ_MODEL') ?: 'llama-3.1-8b-instant';
 
-if (empty($GROQ_API_KEY)) {
+if (empty($GROQ_PERF_API_KEY)) {
     ob_clean();
     if (!headers_sent()) {
         header('Content-Type: application/json');
@@ -149,7 +150,7 @@ if (empty($GROQ_API_KEY)) {
         'success' => false,
         'message' => 'AI feedback is not configured. Your quiz results are saved; detailed AI analysis (Cassy) is optional and can be enabled by your teacher.',
         'error_type' => 'CONFIGURATION_ERROR',
-        'config_hint' => 'GROQ_API_KEY is not set in .env. See GEMINI_AI_SETUP.md or add GROQ_API_KEY for AI analysis.'
+        'config_hint' => 'GROQ_PERF_API_KEY is not set in .env. See GROQ_AI_SETUP.md or add GROQ_PERF_API_KEY for AI analysis.'
     ]);
     exit;
 }
@@ -159,7 +160,7 @@ $user_id = $_SESSION['user_id'];
 $student_id = $user_id;
 $topic = $_POST['topic'] ?? $_GET['topic'] ?? 'functions';
 $action = $_POST['action'] ?? $_GET['action'] ?? 'analyze_performance';
-$model = $_POST['model'] ?? $_GET['model'] ?? $GROQ_MODEL; // Use model from .env or request parameter
+$model = $_POST['model'] ?? $_GET['model'] ?? $GROQ_PERF_MODEL; // Use model from .env or request parameter
 
 try {
 
@@ -985,7 +986,7 @@ try {
         CURLOPT_POSTFIELDS => json_encode($postData),
         CURLOPT_HTTPHEADER => [
             'Content-Type: application/json',
-            'Authorization: Bearer ' . $GROQ_API_KEY
+            'Authorization: Bearer ' . $GROQ_PERF_API_KEY
         ],
         CURLOPT_TIMEOUT => 30,
         CURLOPT_CONNECTTIMEOUT => 10

@@ -22,16 +22,17 @@ if (!isset($_SESSION['teacher_id']) || !isset($_SESSION['user_type']) || $_SESSI
 // Load environment variables
 require_once __DIR__ . '/load-env.php';
 
-// Gemini API Key - loaded from .env file
-$gemini_api_key = getenv('GEMINI_API_KEY');
-$gemini_model = getenv('GEMINI_MODEL') ?: 'gemini-1.5-flash';
+// Groq API Key for lesson generation - loaded from .env file
+$groq_lesson_api_key = getenv('GROQ_LESSON_API_KEY') ?: getenv('GROQ_API_KEY');
+$groq_api_url = getenv('GROQ_API_URL') ?: 'https://api.groq.com/openai/v1/chat/completions';
+$groq_lesson_model = getenv('GROQ_LESSON_MODEL') ?: getenv('GROQ_MODEL') ?: 'llama-3.1-8b-instant';
 
-if (empty($gemini_api_key)) {
+if (empty($groq_lesson_api_key)) {
     ob_clean();
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => 'GEMINI_API_KEY is not configured. Please set it in your .env file.',
+        'message' => 'GROQ_LESSON_API_KEY is not configured. Please set it in your .env file.',
         'error_type' => 'CONFIGURATION_ERROR'
     ]);
     ob_end_flush();
@@ -110,8 +111,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ? substr($pdf_content, 0, $max_direct_chars) . "\n\n[Content truncated for processing. Lesson is based on the first part of your PDF.]"
             : $pdf_content;
 
-        // Generate lesson using Gemini AI
-        $lesson_html = generateLessonWithGemini($content_for_lesson, $lesson_title, $topic_category, $gemini_api_key, $gemini_model);
+        // Generate lesson using Groq AI (lesson key/model)
+        $lesson_html = generateLessonWithGroq($content_for_lesson, $lesson_title, $topic_category, $groq_lesson_api_key, $groq_lesson_model, $groq_api_url);
         
         // Validate generated lesson
         if (empty(trim($lesson_html))) {
@@ -426,73 +427,91 @@ Respond with ONLY 'YES' if the content contains mathematics or General Mathemati
 }
 
 /**
- * Call Gemini API with a single text prompt. Returns generated text or throws on error.
+ * Call Groq API for lesson generation. Returns assistant content or throws on error.
  */
-function callGemini($api_key, $model, $prompt, $max_output_tokens = 4096) {
-    $url = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key=" . urlencode($api_key);
-    $payload = [
-        'contents' => [
-            [
-                'role' => 'user',
-                'parts' => [
-                    ['text' => $prompt]
-                ]
-            ]
-        ],
-        'generationConfig' => [
-            'maxOutputTokens' => $max_output_tokens,
-            'temperature' => 0.6,
-        ],
-    ];
-    
-    // Use file_get_contents with stream context instead of cURL to avoid \"No URL set\" issues
-    $context = stream_context_create([
-        'http' => [
-            'method'  => 'POST',
-            'header'  => "Content-Type: application/json\r\n",
-            'content' => json_encode($payload),
-            'timeout' => 90,
-        ],
-    ]);
-    
-    $response = @file_get_contents($url, false, $context);
-    
-    if ($response === false) {
-        $error = error_get_last();
-        $message = $error && isset($error['message']) ? $error['message'] : 'Unknown HTTP error';
-        error_log('[Gemini] file_get_contents failed: ' . $message . ' | URL=' . $url);
-        throw new Exception('Gemini API request failed: ' . $message);
-    }
-    
-    // Try to get HTTP status code from response headers if available
-    $http_code = 200;
-    if (isset($http_response_header) && is_array($http_response_header) && count($http_response_header) > 0) {
-        // Example: HTTP/1.1 200 OK
-        if (preg_match('#HTTP/\S+\s+(\d{3})#', $http_response_header[0], $matches)) {
-            $http_code = (int)$matches[1];
-        }
-    }
-    
-    if ($http_code !== 200) {
-        $data = json_decode($response, true);
-        $message = isset($data['error']['message']) ? $data['error']['message'] : 'HTTP ' . $http_code;
-        throw new Exception('Gemini API error: ' . $message);
+function callGroqLesson($api_url, $api_key, $model, $prompt, $max_tokens = 4000) {
+    if (!function_exists('curl_init')) {
+        throw new Exception('cURL extension is not enabled on this server');
     }
 
-    $data = json_decode($response, true);
+    $data = [
+        'model' => $model,
+        'messages' => [
+            [
+                'role' => 'system',
+                'content' => 'You are an expert educational content creator specializing in creating interactive HTML lessons for mathematics education. Your primary task is to extract and transform PDF content into well-structured HTML lesson pages with COMPREHENSIVE, DETAILED, and EASY-TO-UNDERSTAND explanations. You MUST use ONLY the content provided in the PDF as your foundation - do not generate generic or made-up content. However, you MUST EXPAND every explanation, add step-by-step breakdowns, explain the "why" behind concepts, and ensure students can easily understand the material. Extract the actual information, examples, explanations, and problems from the PDF and enhance them with detailed, clear explanations that help students truly understand the concepts.'
+            ],
+            [
+                'role' => 'user',
+                'content' => $prompt
+            ]
+        ],
+        'temperature' => 0.6,
+        'max_tokens' => $max_tokens
+    ];
+
+    $ch = curl_init($api_url);
+    if ($ch === false) {
+        throw new Exception('Failed to initialize cURL');
+    }
+
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode($data),
+        CURLOPT_HTTPHEADER => [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $api_key
+        ],
+        CURLOPT_TIMEOUT => 60,
+        CURLOPT_CONNECTTIMEOUT => 10
+    ]);
+
+    $response = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curl_error = curl_error($ch);
+    curl_close($ch);
+
+    if ($curl_error) {
+        error_log("Groq lesson cURL Error: " . $curl_error);
+        throw new Exception('API request failed: ' . $curl_error);
+    }
+
+    if (empty($response)) {
+        error_log("Groq lesson Error: Empty response from API");
+        throw new Exception('Empty response from AI service. Please try again.');
+    }
+
+    if ($http_code !== 200) {
+        error_log("Groq lesson Error: HTTP $http_code");
+        error_log("Response: " . substr($response, 0, 500));
+        $errorData = json_decode($response, true);
+        $errorMessage = isset($errorData['error']['message']) ? $errorData['error']['message'] : 'HTTP ' . $http_code;
+        if (strpos($errorMessage, 'Request too large') !== false || strpos($errorMessage, 'tokens per minute') !== false || strpos($errorMessage, 'TPM') !== false) {
+            throw new Exception('Your PDF is too long for one lesson. The system has limited the content to the first part of your PDF. If you still see this, try a shorter PDF (e.g. one chapter) or split your module into multiple smaller PDFs and create one lesson per file.');
+        }
+        throw new Exception('Groq API error: ' . $errorMessage);
+    }
+
+    $result = json_decode($response, true);
     if (json_last_error() !== JSON_ERROR_NONE) {
-        throw new Exception('Failed to parse Gemini response: ' . json_last_error_msg());
+        error_log("Groq lesson JSON Decode Error: " . json_last_error_msg());
+        error_log("Response: " . substr($response, 0, 500));
+        throw new Exception('Failed to parse API response: ' . json_last_error_msg());
     }
-    if (!isset($data['candidates'][0]['content']['parts'][0]['text'])) {
-        throw new Exception('Invalid Gemini response: missing text content.');
+
+    if (!isset($result['choices'][0]['message']['content'])) {
+        error_log("Groq lesson Invalid Response Structure: " . json_encode($result));
+        throw new Exception('Invalid response from AI service. Missing content.');
     }
-    return $data['candidates'][0]['content']['parts'][0]['text'];
+
+    return $result['choices'][0]['message']['content'];
 }
 
 /**
- * Generate lesson HTML using Gemini AI
+ * Generate lesson HTML using Groq AI (lesson key/model)
  */
-function generateLessonWithGemini($pdf_content, $lesson_title, $topic_category, $api_key, $model) {
+function generateLessonWithGroq($pdf_content, $lesson_title, $topic_category, $api_key, $model, $api_url) {
     // Map topic categories to their full descriptions
     $topic_descriptions = [
         'functions' => 'Functions - Introduction to functions, function notation, domain and range',
