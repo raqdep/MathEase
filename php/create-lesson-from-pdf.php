@@ -1,593 +1,423 @@
 <?php
-// Start output buffering to prevent any output before JSON
-ob_start();
+/* -------------------------------------------------------------
+   create_lesson.php  –  Teacher PDF → Math Lesson (Groq)
+   ------------------------------------------------------------- */
 
-session_start();
-require_once 'config.php';
+/* ---------- 0️⃣  Constants & helpers ---------- */
+define('MAX_PDF_SIZE', 10 * 1024 * 1024);      // 10 MiB
+define('MAX_CONTENT_CHARS', 12_000);          // characters sent to the LLM
+define('MAX_TOKENS', 4000);                   // max tokens for lesson generation
+define('MATH_KEYWORDS', [
+    'function','mathematics','math','equation','formula','graph','domain','range',
+    'rational','polynomial','algebra','calculus','trigonometry','statistics',
+    'probability','solve','solution','variable','coefficient','exponent',
+    'derivative','integral','matrix','vector','slope','intercept','quadratic',
+    'linear','exponential','logarithm','inequality','fraction','decimal',
+    'percentage','ratio','proportion','geometry','angle','triangle','circle',
+    'square','rectangle','area','perimeter','volume','surface','coordinate',
+    'axis','plot','data','mean','median','mode','standard deviation',
+    'correlation','regression','model','theorem','proof','axiom','postulate',
+    'conjecture','hypothesis','numerical','computation','calculation','arithmetic',
+    'algebraic','geometric','trigonometric'
+]);
 
-// Clean any output that might have been generated
-ob_clean();
-
-header('Content-Type: application/json');
-
-// Check if user is logged in as teacher
-if (!isset($_SESSION['teacher_id']) || !isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'teacher') {
-    ob_clean();
-    http_response_code(401);
-    echo json_encode(['success' => false, 'message' => 'Unauthorized. Teacher access required.']);
-    ob_end_flush();
-    exit;
-}
-
-// Load environment variables
-require_once __DIR__ . '/load-env.php';
-
-// Groq API Key for lesson generation - loaded from .env file
-$groq_lesson_api_key = getenv('GROQ_LESSON_API_KEY') ?: getenv('GROQ_API_KEY');
-$groq_api_url = getenv('GROQ_API_URL') ?: 'https://api.groq.com/openai/v1/chat/completions';
-$groq_lesson_model = getenv('GROQ_LESSON_MODEL') ?: getenv('GROQ_MODEL') ?: 'llama-3.1-8b-instant';
-
-if (empty($groq_lesson_api_key)) {
-    ob_clean();
-    http_response_code(500);
-    echo json_encode([
-        'success' => false,
-        'message' => 'GROQ_LESSON_API_KEY is not configured. Please set it in your .env file.',
-        'error_type' => 'CONFIGURATION_ERROR'
-    ]);
-    ob_end_flush();
-    exit;
-}
-
-// Handle file upload
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try {
-        // Check if file was uploaded
-        if (!isset($_FILES['pdf_file']) || $_FILES['pdf_file']['error'] !== UPLOAD_ERR_OK) {
-            throw new Exception('No file uploaded or upload error occurred.');
-        }
-
-        $file = $_FILES['pdf_file'];
-        $lesson_title = $_POST['lesson_title'] ?? 'Untitled Lesson';
-        $topic_category = $_POST['topic_category'] ?? 'custom';
-
-        // Validate file type
-        $file_ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        if ($file_ext !== 'pdf') {
-            throw new Exception('Invalid file type. Only PDF files are allowed.');
-        }
-
-        // Validate file size (10MB max)
-        if ($file['size'] > 10 * 1024 * 1024) {
-            throw new Exception('File size exceeds 10MB limit.');
-        }
-
-        // Read PDF content (keep full text; long PDFs will be summarized in chunks)
-        $pdf_content = extractPDFText($file['tmp_name']);
-        
-        if (empty($pdf_content)) {
-            throw new Exception('Could not extract text from PDF. Please ensure the PDF contains readable text.');
-        }
-
-        // Validate that we have content
-        if (empty(trim($pdf_content))) {
-            throw new Exception('PDF content is empty after extraction. Please ensure the PDF contains readable text.');
-        }
-
-        // Light-weight math validation: keyword-based only (no external API call to save tokens)
-        error_log("Starting keyword-based General Mathematics validation for PDF content (length: " . strlen($pdf_content) . " characters)");
-        $math_keywords = [
-            'function', 'mathematics', 'math', 'equation', 'formula', 'graph', 'domain', 'range',
-            'rational', 'polynomial', 'algebra', 'interest', 'percentage', 'rate', 'principal'
-        ];
-        $content_lower = strtolower($pdf_content);
-        $keyword_count = 0;
-        foreach ($math_keywords as $kw) {
-            if (strpos($content_lower, $kw) !== false) {
-                $keyword_count++;
-            }
-        }
-        $isGeneralMath = $keyword_count >= 1;
-        error_log("Keyword math validation result: " . ($isGeneralMath ? 'PASSED' : 'FAILED') . " (found {$keyword_count} keywords)");
-
-        if (!$isGeneralMath) {
-            ob_clean();
-            http_response_code(400);
-            echo json_encode([
-                'success' => false,
-                'message' => 'The uploaded PDF does not appear to contain General Mathematics content. Please ensure your PDF contains mathematical concepts, formulas, equations, or problem-solving related to General Mathematics.',
-                'error_type' => 'INVALID_CONTENT',
-                'debug_info' => 'Validation failed using keyword-based check - PDF content may not contain sufficient mathematics-related keywords or concepts.'
-            ]);
-            ob_end_flush();
-            exit;
-        }
-        
-        error_log("PDF validation passed - proceeding with Gemini lesson generation");
-
-        // Cap content size so Gemini request stays safe
-        $max_direct_chars = 12000;
-        $content_for_lesson = strlen($pdf_content) > $max_direct_chars
-            ? substr($pdf_content, 0, $max_direct_chars) . "\n\n[Content truncated for processing. Lesson is based on the first part of your PDF.]"
-            : $pdf_content;
-
-        // Generate lesson using Groq AI (lesson key/model)
-        $lesson_html = generateLessonWithGroq($content_for_lesson, $lesson_title, $topic_category, $groq_lesson_api_key, $groq_lesson_model, $groq_api_url);
-        
-        // Validate generated lesson
-        if (empty(trim($lesson_html))) {
-            throw new Exception('AI generated empty lesson content. Please try again.');
-        }
-
-        // Save lesson to database
-        $teacher_id = $_SESSION['teacher_id'];
-        $lesson_id = saveLessonToDatabase($pdo, $teacher_id, $lesson_title, $topic_category, $lesson_html);
-
-        // Clean output buffer before sending JSON
-        ob_clean();
-        echo json_encode([
-            'success' => true,
-            'message' => 'Lesson generated successfully!',
-            'lesson_id' => $lesson_id,
-            'lesson_html' => $lesson_html,
-            'lesson_title' => $lesson_title
-        ]);
-        ob_end_flush();
-        exit;
-
-    } catch (Exception $e) {
-        // Log detailed error information
-        $errorDetails = [
-            'message' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine()
-        ];
-        error_log("Create Lesson Error: " . json_encode($errorDetails));
-        error_log("Stack trace: " . $e->getTraceAsString());
-        
-        ob_clean();
-        http_response_code(500);
-        echo json_encode([
-            'success' => false,
-            'message' => $e->getMessage(),
-            'error_type' => 'LESSON_GENERATION_ERROR'
-        ]);
-        ob_end_flush();
-        exit;
-    } catch (Error $e) {
-        // PHP 7+ fatal errors
-        error_log("Create Lesson Fatal Error: " . $e->getMessage());
-        error_log("File: " . $e->getFile() . " Line: " . $e->getLine());
-        
-        ob_clean();
-        http_response_code(500);
-        echo json_encode([
-            'success' => false,
-            'message' => 'Fatal error: ' . $e->getMessage(),
-            'error_type' => 'FATAL_ERROR'
-        ]);
-        ob_end_flush();
-        exit;
-    }
-} else {
-    ob_clean();
-    http_response_code(405);
-    echo json_encode(['success' => false, 'message' => 'Method not allowed']);
-    ob_end_flush();
-    exit;
+/**
+ * Simple logger – writes to PHP error log with a consistent prefix.
+ */
+function log_msg(string $msg): void {
+    error_log('[LessonCreate] ' . $msg);
 }
 
 /**
- * Extract text from PDF file
+ * Sends a JSON response and halts execution.
  */
-function extractPDFText($file_path) {
-    // Method 1: Try using pdftotext command-line tool (Linux/Mac/Windows with poppler)
+function json_response(array $payload, int $httpCode = 200): void {
+    // Clean any stray output, set header, output JSON, and exit.
+    if (ob_get_level()) {
+        ob_end_clean();
+    }
+    http_response_code($httpCode);
+    header('Content-Type: application/json');
+    echo json_encode($payload);
+    exit;
+}
+
+/* ---------- 1️⃣  Bootstrap ---------- */
+ob_start();                         // start buffering (will be cleared before output)
+session_start();
+
+require_once __DIR__ . '/config.php';      // must only define $pdo, no output
+require_once __DIR__ . '/load-env.php';   // loads .env into getenv()
+
+/* ---------- 2️⃣  Auth ---------- */
+if (
+    empty($_SESSION['teacher_id']) ||
+    ($_SESSION['user_type'] ?? '') !== 'teacher'
+) {
+    json_response([
+        'success' => false,
+        'message' => 'Unauthorized – teacher access required.'
+    ], 401);
+}
+
+/* ---------- 3️⃣  Groq config ---------- */
+$groqKey   = getenv('GROQ_LESSON_API_KEY') ?: getenv('GROQ_API_KEY');
+$groqUrl   = getenv('GROQ_API_URL') ?: 'https://api.groq.com/openai/v1/chat/completions';
+$groqModel = getenv('GROQ_LESSON_MODEL')
+           ?: getenv('GROQ_MODEL')
+           ?: 'llama-3.1-8b-instant';
+
+if (!$groqKey) {
+    json_response([
+        'success' => false,
+        'message' => 'Groq API key not configured. Ask the admin to add GROQ_LESSON_API_KEY to .env.',
+        'error_type' => 'CONFIG_ERROR'
+    ], 500);
+}
+
+/* ---------- 4️⃣  CSRF protection (optional but recommended) ---------- */
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    json_response(['success'=>false,'message'=>'Method not allowed'], 405);
+}
+if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== ($_SESSION['csrf_token'] ?? '')) {
+    json_response(['success'=>false,'message'=>'Invalid CSRF token'], 403);
+}
+
+/* ---------- 5️⃣  File upload validation ---------- */
+if (
+    empty($_FILES['pdf_file']) ||
+    $_FILES['pdf_file']['error'] !== UPLOAD_ERR_OK
+) {
+    json_response([
+        'success' => false,
+        'message' => 'No PDF uploaded or upload error.'
+    ], 400);
+}
+
+$file = $_FILES['pdf_file'];
+
+// ---- MIME / extension check ----
+$finfo = finfo_open(FILEINFO_MIME_TYPE);
+$mime  = finfo_file($finfo, $file['tmp_name']);
+finfo_close($finfo);
+
+if ($mime !== 'application/pdf') {
+    json_response([
+        'success' => false,
+        'message' => 'Only PDF files are accepted.'
+    ], 400);
+}
+
+// ---- size check ----
+if ($file['size'] > MAX_PDF_SIZE) {
+    json_response([
+        'success' => false,
+        'message' => 'File exceeds the maximum size of 10 MiB.'
+    ], 400);
+}
+
+/* ---------- 6️⃣  Extract PDF text ---------- */
+$lessonTitle   = trim($_POST['lesson_title'] ?? 'Untitled Lesson');
+$topicCategory = trim($_POST['topic_category'] ?? 'custom');
+
+try {
+    $pdfText = extractPdfText($file['tmp_name']);
+} catch (Throwable $e) {
+    log_msg('PDF extraction error: ' . $e->getMessage());
+    json_response([
+        'success' => false,
+        'message' => $e->getMessage(),
+        'error_type' => 'PDF_EXTRACTION'
+    ], 500);
+}
+
+/* ---------- 7️⃣  Quick sanity check – is it math? ---------- */
+$isMath = containsMathKeywords($pdfText);
+if (!$isMath) {
+    json_response([
+        'success' => false,
+        'message' => 'The uploaded PDF does not appear to contain General Mathematics content.',
+        'error_type' => 'INVALID_CONTENT',
+        'debug_info' => 'Keyword check failed – no math‑related terms found.'
+    ], 400);
+}
+
+/* ---------- 8️⃣  Prepare content for LLM ---------- */
+$promptContent = (strlen($pdfText) > MAX_CONTENT_CHARS)
+    ? substr($pdfText, 0, MAX_CONTENT_CHARS) .
+      "\n\n[Content truncated for processing – only the first part of the PDF was used.]"
+    : $pdfText;
+
+/* ---------- 9️⃣  Generate lesson via Groq ---------- */
+try {
+    $lessonHtml = generateLessonViaGroq(
+        $promptContent,
+        $lessonTitle,
+        $topicCategory,
+        $groqKey,
+        $groqModel,
+        $groqUrl
+    );
+} catch (Throwable $e) {
+    log_msg('Lesson generation error: ' . $e->getMessage());
+    json_response([
+        'success' => false,
+        'message' => $e->getMessage(),
+        'error_type' => 'AI_GENERATION'
+    ], 500);
+}
+
+/* ---------- 10️⃣  Sanitize HTML (prevent XSS) ---------- */
+if (class_exists('HTMLPurifier')) {
+    $purifier = new HTMLPurifier();
+    $lessonHtml = $purifier->purify($lessonHtml);
+}
+
+/* ---------- 11️⃣  Persist lesson ---------- */
+try {
+    $lessonId = storeLesson(
+        $pdo,
+        (int)$_SESSION['teacher_id'],
+        $lessonTitle,
+        $topicCategory,
+        $lessonHtml
+    );
+} catch (Throwable $e) {
+    log_msg('DB insert error: ' . $e->getMessage());
+    json_response([
+        'success' => false,
+        'message' => 'Could not save lesson to the database.',
+        'error_type' => 'DB_ERROR'
+    ], 500);
+}
+
+/* ---------- 12️⃣  Success response ---------- */
+json_response([
+    'success'       => true,
+    'message'       => 'Lesson generated successfully!',
+    'lesson_id'     => $lessonId,
+    'lesson_html'   => $lessonHtml,
+    'lesson_title'  => $lessonTitle
+]);
+
+/* ================================================================
+   ========================  FUNCTIONS  ============================
+   ================================================================ */
+
+/**
+ * Extract text from a PDF.
+ *
+ * Tries, in order:
+ *   1️⃣  `pdftotext` (system binary – fast, reliable)
+ *   2️⃣  `Smalot\PdfParser\Parser` (composer package)
+ *   3️⃣  Very basic regex fallback (only for extremely simple PDFs)
+ *
+ * @throws Exception when extraction fails
+ */
+function extractPdfText(string $path): string
+{
+    // ---- 1️⃣  pdftotext binary (poppler) ----
     if (function_exists('shell_exec')) {
-        // Check if pdftotext is available
-        $pdftotext_check = @shell_exec('which pdftotext 2>&1');
-        if ($pdftotext_check && strpos($pdftotext_check, 'pdftotext') !== false) {
-            $text = @shell_exec('pdftotext ' . escapeshellarg($file_path) . ' - 2>&1');
-            if ($text && strlen(trim($text)) > 50) {
-                return trim($text);
+        $which = trim(shell_exec('which pdftotext 2>/dev/null'));
+        if ($which) {
+            $out = shell_exec("pdftotext " . escapeshellarg($path) . " - 2>/dev/null");
+            if ($out && strlen(trim($out)) > 100) {
+                return trim($out);
             }
         }
-        
-        // Try Windows path
-        $text = @shell_exec('pdftotext.exe ' . escapeshellarg($file_path) . ' - 2>&1');
-        if ($text && strlen(trim($text)) > 50) {
-            return trim($text);
-        }
     }
-    
-    // Method 2: Try using smalot/pdfparser if installed via Composer
-    if (class_exists('Smalot\PdfParser\Parser')) {
+
+    // ---- 2️⃣  Composer PDF parser ----
+    if (class_exists('\Smalot\PdfParser\Parser')) {
         try {
             $parser = new \Smalot\PdfParser\Parser();
-            $pdf = $parser->parseFile($file_path);
-            $text = $pdf->getText();
-            if ($text && strlen(trim($text)) > 50) {
-                return trim($text);
+            $pdf    = $parser->parseFile($path);
+            $txt    = $pdf->getText();
+            if ($txt && strlen(trim($txt)) > 100) {
+                return trim($txt);
             }
-        } catch (Exception $e) {
-            error_log("PDF Parser Error: " . $e->getMessage());
+        } catch (Throwable $e) {
+            log_msg('Smalot parser error: ' . $e->getMessage());
         }
     }
-    
-    // Method 3: Basic text extraction from PDF content
-    // This is a fallback method - works for some PDFs but not all
-    $content = @file_get_contents($file_path);
-    if (!$content) {
-        throw new Exception('Could not read PDF file.');
+
+    // ---- 3️⃣  Very naive regex fallback ----
+    $raw = @file_get_contents($path);
+    if ($raw === false) {
+        throw new Exception('Unable to read the uploaded PDF file.');
     }
-    
-    // Extract text between stream objects (basic PDF text extraction)
-    $text = '';
-    
-    // Look for text objects in PDF
-    preg_match_all('/\((.*?)\)/s', $content, $matches);
-    if (!empty($matches[1])) {
-        $text = implode(' ', $matches[1]);
-        // Clean up the text
-        $text = preg_replace('/[^\x20-\x7E\n\r]/', '', $text);
-        $text = preg_replace('/\s+/', ' ', $text);
+
+    // Pull out text objects that look like "(some text)"
+    preg_match_all('/$([^)]{3,})$/', $raw, $matches);
+    $candidate = implode(' ', $matches[1] ?? []);
+    $candidate = preg_replace('/[^\x20-\x7E\n\r]/', ' ', $candidate);
+    $candidate = preg_replace('/\s+/', ' ', $candidate);
+    $candidate = trim($candidate);
+
+    if (strlen($candidate) < 200) {
+        throw new Exception('Could not extract readable text from the PDF. '
+            . 'Install `pdftotext` or the `smalot/pdfparser` package for reliable extraction.');
     }
-    
-    // If still no text, try extracting from BT/ET blocks
-    if (empty(trim($text))) {
-        preg_match_all('/BT\s*(.*?)\s*ET/s', $content, $btMatches);
-        if (!empty($btMatches[1])) {
-            foreach ($btMatches[1] as $block) {
-                preg_match_all('/\((.*?)\)/s', $block, $blockMatches);
-                if (!empty($blockMatches[1])) {
-                    $text .= implode(' ', $blockMatches[1]) . ' ';
-                }
-            }
-            $text = trim($text);
-        }
-    }
-    
-    // If no text found, throw an error
-    if (empty(trim($text)) || strlen(trim($text)) < 50) {
-        throw new Exception('Could not extract readable text from PDF. Please ensure the PDF contains text (not just images). For better results, install pdftotext or use a PDF parsing library like smalot/pdfparser.');
-    }
-    
-    return trim($text);
+
+    return $candidate;
 }
 
 /**
- * Validate if PDF content is about General Mathematics
+ * Very cheap “is this math?” check – looks for any of the
+ * keywords defined in the constant `MATH_KEYWORDS`.
+ *
+ * Returns true if **at least one** keyword is present.
  */
-function validateGeneralMathematics($pdf_content, $api_key, $api_url) {
-    // Use a small sample to stay under Groq 6000-token request limit
-    $sample_content = strlen($pdf_content) > 3500 ? substr($pdf_content, 0, 3500) : $pdf_content;
-    
-    $prompt = "Analyze the following PDF content and determine if it is about General Mathematics (Grade 11 level) or any mathematics-related topic.
-
-General Mathematics topics include but are not limited to:
-- Functions (introduction, evaluation, operations, composition)
-- Rational Functions
-- Domain and Range
-- Function composition and inverse functions
-- Real-life problems involving functions
-- Mathematical modeling
-- Business mathematics
-- Logic and reasoning
-- Statistics and probability (basic)
-- Financial mathematics
-- Algebra
-- Equations and inequalities
-- Graphs and graphing
-- Polynomials
-- Any mathematical concepts, formulas, or problem-solving
-
-IMPORTANT: Be LENIENT - if the content contains ANY mathematical concepts, formulas, equations, or mathematical problem-solving, respond 'YES'. Only respond 'NO' if the content is clearly NOT mathematics (like pure literature, history without math, pure science experiments, etc.).
-
-PDF Content Sample:
-" . $sample_content . "
-
-Respond with ONLY 'YES' if the content contains mathematics or General Mathematics topics, or 'NO' if it is clearly NOT mathematics (like pure literature, history, English grammar, etc.).";
-
-    // Check if cURL is available
-    if (!function_exists('curl_init')) {
-        error_log("cURL not available, using keyword fallback");
-        // If cURL is not available, do a basic keyword check as fallback
-        $math_keywords = [
-            'function', 'mathematics', 'math', 'equation', 'formula', 'graph', 'domain', 'range', 
-            'rational', 'polynomial', 'algebra', 'calculus', 'trigonometry', 'statistics', 
-            'probability', 'solve', 'solution', 'variable', 'coefficient', 'exponent'
-        ];
-        $content_lower = strtolower($sample_content);
-        $keyword_count = 0;
-        foreach ($math_keywords as $keyword) {
-            if (strpos($content_lower, $keyword) !== false) {
-                $keyword_count++;
-            }
+function containsMathKeywords(string $text): bool
+{
+    $lower = strtolower($text);
+    foreach (MATH_KEYWORDS as $kw) {
+        if (strpos($lower, $kw) !== false) {
+            return true;
         }
-        // More lenient: if at least 1 math keyword found, assume it's math-related
-        $is_math = $keyword_count >= 1;
-        error_log("cURL fallback keyword check: Found $keyword_count keywords. Is Math: " . ($is_math ? 'YES' : 'NO'));
-        return $is_math;
+    }
+    return false;
+}
+
+/**
+ * Call Groq (or any compatible OpenAI‑style endpoint) to build the lesson.
+ *
+ * @throws Exception on any HTTP / JSON / content error
+ */
+function generateLessonViaGroq(
+    string $pdfContent,
+    string $title,
+    string $topic,
+    string $apiKey,
+    string $model,
+    string $apiUrl
+): string {
+    if (!function_exists('curl_init')) {
+        throw new Exception('cURL extension is not enabled on the server.');
     }
 
-    $data = [
-        'model' => 'llama-3.1-8b-instant',
-        'messages' => [
-            [
-                'role' => 'system',
-                'content' => 'You are an expert in educational content analysis. Your task is to determine if content is about General Mathematics or any mathematics topic. Be LENIENT - if the content contains ANY mathematical concepts, formulas, equations, or problem-solving, respond "YES". Only respond "NO" if the content is clearly NOT mathematics (like pure literature, history without math, etc.). Respond with "YES" or "NO" only.'
-            ],
-            [
-                'role' => 'user',
-                'content' => $prompt
-            ]
-        ],
-        'temperature' => 0.1, // Low temperature for more consistent results
-        'max_tokens' => 20 // Allow for brief response
+    // Human‑readable descriptions for the supported categories
+    $topicMap = [
+        'functions'               => 'Functions – introduction, notation, domain & range',
+        'evaluating-functions'    => 'Evaluating Functions – plugging values into functions',
+        'operations-on-functions' => 'Operations on Functions – addition, subtraction, etc.',
+        'rational-functions'      => 'Rational Functions – ratios of polynomials',
+        'solving-real-life-problems'=> 'Real‑Life Problems – applying functions to everyday scenarios',
+        'custom'                  => 'Custom Topic – general mathematics'
     ];
+    $topicDesc = $topicMap[$topic] ?? 'General Mathematics Topic';
 
-    $ch = curl_init($api_url);
-    
-    if ($ch === false) {
-        error_log("cURL initialization failed, using keyword fallback");
-        // Fallback to keyword check
-        $math_keywords = [
-            'function', 'mathematics', 'math', 'equation', 'formula', 'graph', 'domain', 'range', 
-            'rational', 'polynomial', 'algebra', 'solve', 'solution', 'variable'
-        ];
-        $content_lower = strtolower($sample_content);
-        $keyword_count = 0;
-        foreach ($math_keywords as $keyword) {
-            if (strpos($content_lower, $keyword) !== false) {
-                $keyword_count++;
-            }
-        }
-        $is_math = $keyword_count >= 1;
-        error_log("cURL init fallback: Found $keyword_count keywords. Is Math: " . ($is_math ? 'YES' : 'NO'));
-        return $is_math;
-    }
+    $prompt = <<<PROMPT
+You are an expert mathematics educator tasked with turning the following PDF excerpt into a **single, self‑contained HTML lesson** for Grade 11 students.
 
-    curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_POST => true,
-        CURLOPT_POSTFIELDS => json_encode($data),
-        CURLOPT_HTTPHEADER => [
-            'Content-Type: application/json',
-            'Authorization: Bearer ' . $api_key
-        ],
-        CURLOPT_TIMEOUT => 30,
-        CURLOPT_CONNECTTIMEOUT => 10
-    ]);
+**IMPORTANT**: Use **only** the information that appears in the PDF excerpt below. Do **not** hallucinate new content. Expand every explanation, add step‑by‑step reasoning, and make the text as clear as possible. The final output must be **pure HTML fragment** (no <html>, <head>, <body> tags).
 
-    $response = curl_exec($ch);
-    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $curl_error = curl_error($ch);
-    curl_close($ch);
+--- PDF EXCERPT (source material) ---
+{$pdfContent}
+--- End of excerpt ---
 
-    // If API call fails, fallback to keyword check
-    if ($curl_error || $http_code !== 200 || empty($response)) {
-        error_log("API validation failed, using keyword fallback. HTTP: $http_code, Error: $curl_error");
-        $math_keywords = [
-            'function', 'mathematics', 'math', 'equation', 'formula', 'graph', 'domain', 'range', 
-            'rational', 'polynomial', 'algebra', 'calculus', 'trigonometry', 'statistics', 
-            'probability', 'solve', 'solution', 'variable', 'coefficient', 'exponent', 'derivative',
-            'integral', 'matrix', 'vector', 'slope', 'intercept', 'quadratic', 'linear', 'exponential',
-            'logarithm', 'inequality', 'fraction', 'decimal', 'percentage', 'ratio', 'proportion',
-            'geometry', 'angle', 'triangle', 'circle', 'square', 'rectangle', 'area', 'perimeter',
-            'volume', 'surface', 'coordinate', 'axis', 'plot', 'graph', 'chart', 'data', 'mean',
-            'median', 'mode', 'standard deviation', 'correlation', 'regression', 'model', 'theorem',
-            'proof', 'axiom', 'postulate', 'conjecture', 'hypothesis', 'mathematical', 'numerical',
-            'computation', 'calculation', 'arithmetic', 'algebraic', 'geometric', 'trigonometric'
-        ];
-        $content_lower = strtolower($sample_content);
-        $keyword_count = 0;
-        foreach ($math_keywords as $keyword) {
-            if (strpos($content_lower, $keyword) !== false) {
-                $keyword_count++;
-            }
-        }
-        // More lenient: if at least 1 math keyword found, assume it's math-related
-        $is_math = $keyword_count >= 1;
-        error_log("Keyword check result: Found $keyword_count math keywords. Is Math: " . ($is_math ? 'YES' : 'NO'));
-        return $is_math;
-    }
+**Lesson metadata**
+- Title: {$title}
+- Topic category: {$topic} ({$topicDesc})
 
-    // Parse response
-    $result = json_decode($response, true);
-    
-    if (json_last_error() !== JSON_ERROR_NONE || !isset($result['choices'][0]['message']['content'])) {
-        error_log("JSON parse error in validation response. Error: " . json_last_error_msg());
-        // Fallback to keyword check
-        $math_keywords = [
-            'function', 'mathematics', 'math', 'equation', 'formula', 'graph', 'domain', 'range', 
-            'rational', 'polynomial', 'algebra', 'solve', 'solution', 'variable', 'coefficient'
-        ];
-        $content_lower = strtolower($sample_content);
-        $keyword_count = 0;
-        foreach ($math_keywords as $keyword) {
-            if (strpos($content_lower, $keyword) !== false) {
-                $keyword_count++;
-            }
-        }
-        $is_math = $keyword_count >= 1;
-        error_log("Fallback keyword check: Found $keyword_count keywords. Is Math: " . ($is_math ? 'YES' : 'NO'));
-        return $is_math;
-    }
+**Output format**
+- Begin with a `<div class="lesson">` container.
+- Separate logical sections with `<section>` tags.
+- Use `<h2>` for major headings, `<h3>` for sub‑headings.
+- Present formulas inside `<code class="math">…</code>` or `<pre>` blocks.
+- Include **example problems** from the PDF (if any) and provide **full worked‑out solutions**.
+- End with a short **summary** and **self‑check questions** (again, taken from the PDF if they exist).
 
-    $ai_response = trim(strtoupper($result['choices'][0]['message']['content']));
-    error_log("AI validation response: " . $ai_response);
-    
-    // Check if response contains YES (more lenient check)
-    // Also check for variations like "YES,", "YES.", "YES!", etc.
-    $is_valid = (strpos($ai_response, 'YES') !== false) || 
-                (strpos($ai_response, 'MATHEMATICS') !== false) ||
-                (strpos($ai_response, 'MATH') !== false && strpos($ai_response, 'NO') === false);
-    
-    error_log("Final validation result: " . ($is_valid ? 'YES' : 'NO'));
-    return $is_valid;
-}
+Generate the HTML now.
+PROMPT;
 
-/**
- * Call Groq API for lesson generation. Returns assistant content or throws on error.
- */
-function callGroqLesson($api_url, $api_key, $model, $prompt, $max_tokens = 4000) {
-    if (!function_exists('curl_init')) {
-        throw new Exception('cURL extension is not enabled on this server');
-    }
-
-    $data = [
-        'model' => $model,
-        'messages' => [
-            [
-                'role' => 'system',
-                'content' => 'You are an expert educational content creator specializing in creating interactive HTML lessons for mathematics education. Your primary task is to extract and transform PDF content into well-structured HTML lesson pages with COMPREHENSIVE, DETAILED, and EASY-TO-UNDERSTAND explanations. You MUST use ONLY the content provided in the PDF as your foundation - do not generate generic or made-up content. However, you MUST EXPAND every explanation, add step-by-step breakdowns, explain the "why" behind concepts, and ensure students can easily understand the material. Extract the actual information, examples, explanations, and problems from the PDF and enhance them with detailed, clear explanations that help students truly understand the concepts.'
-            ],
-            [
-                'role' => 'user',
-                'content' => $prompt
-            ]
+    $payload = [
+        'model'       => $model,
+        'messages'    => [
+            ['role' => 'system',  'content' => 'You are a helpful assistant specialized in educational content creation.'],
+            ['role' => 'user',    'content' => $prompt]
         ],
         'temperature' => 0.6,
-        'max_tokens' => $max_tokens
+        'max_tokens'  => MAX_TOKENS
     ];
 
-    $ch = curl_init($api_url);
-    if ($ch === false) {
-        throw new Exception('Failed to initialize cURL');
-    }
-
+    $ch = curl_init($apiUrl);
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_POST => true,
-        CURLOPT_POSTFIELDS => json_encode($data),
-        CURLOPT_HTTPHEADER => [
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => json_encode($payload),
+        CURLOPT_HTTPHEADER     => [
             'Content-Type: application/json',
-            'Authorization: Bearer ' . $api_key
+            'Authorization: Bearer ' . $apiKey
         ],
-        CURLOPT_TIMEOUT => 60,
+        CURLOPT_TIMEOUT        => 60,
         CURLOPT_CONNECTTIMEOUT => 10
     ]);
 
-    $response = curl_exec($ch);
-    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $curl_error = curl_error($ch);
+    $rawResponse = curl_exec($ch);
+    $httpCode    = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError   = curl_error($ch);
     curl_close($ch);
 
-    if ($curl_error) {
-        error_log("Groq lesson cURL Error: " . $curl_error);
-        throw new Exception('API request failed: ' . $curl_error);
+    if ($curlError) {
+        throw new Exception('Network error while calling Groq: ' . $curlError);
     }
-
-    if (empty($response)) {
-        error_log("Groq lesson Error: Empty response from API");
-        throw new Exception('Empty response from AI service. Please try again.');
-    }
-
-    if ($http_code !== 200) {
-        error_log("Groq lesson Error: HTTP $http_code");
-        error_log("Response: " . substr($response, 0, 500));
-        $errorData = json_decode($response, true);
-        $errorMessage = isset($errorData['error']['message']) ? $errorData['error']['message'] : 'HTTP ' . $http_code;
-        if (strpos($errorMessage, 'Request too large') !== false || strpos($errorMessage, 'tokens per minute') !== false || strpos($errorMessage, 'TPM') !== false) {
-            throw new Exception('Your PDF is too long for one lesson. The system has limited the content to the first part of your PDF. If you still see this, try a shorter PDF (e.g. one chapter) or split your module into multiple smaller PDFs and create one lesson per file.');
+    if ($httpCode !== 200) {
+        $msg = "Groq returned HTTP {$httpCode}";
+        $decoded = json_decode($rawResponse, true);
+        if (isset($decoded['error']['message'])) {
+            $msg .= ': ' . $decoded['error']['message'];
         }
-        throw new Exception('Groq API error: ' . $errorMessage);
+        throw new Exception($msg);
     }
 
-    $result = json_decode($response, true);
+    $data = json_decode($rawResponse, true);
     if (json_last_error() !== JSON_ERROR_NONE) {
-        error_log("Groq lesson JSON Decode Error: " . json_last_error_msg());
-        error_log("Response: " . substr($response, 0, 500));
-        throw new Exception('Failed to parse API response: ' . json_last_error_msg());
+        throw new Exception('Failed to parse Groq response JSON: ' . json_last_error_msg());
     }
 
-    if (!isset($result['choices'][0]['message']['content'])) {
-        error_log("Groq lesson Invalid Response Structure: " . json_encode($result));
-        throw new Exception('Invalid response from AI service. Missing content.');
+    $content = $data['choices'][0]['message']['content'] ?? '';
+    if (trim($content) === '') {
+        throw new Exception('Groq returned empty lesson content.');
     }
 
-    return $result['choices'][0]['message']['content'];
+    return trim($content);
 }
 
 /**
- * Generate lesson HTML using Groq AI (lesson key/model)
+ * Persist the lesson in the DB and return its auto‑generated ID.
+ *
+ * @throws PDOException on any DB error
  */
-function generateLessonWithGroq($pdf_content, $lesson_title, $topic_category, $api_key, $model, $api_url) {
-    // Map topic categories to their full descriptions
-    $topic_descriptions = [
-        'functions' => 'Functions - Introduction to functions, function notation, domain and range',
-        'evaluating-functions' => 'Evaluating Functions - How to evaluate functions for given inputs',
-        'operations-on-functions' => 'Operations on Functions - Addition, subtraction, multiplication, and division of functions',
-        'rational-functions' => 'Rational Functions - Functions expressed as ratios of polynomials',
-        'solving-real-life-problems' => 'Solving Real Life Problems - Applying functions to solve real-world problems',
-        'custom' => 'Custom Topic - General mathematics topic'
-    ];
-    
-    $topic_description = $topic_descriptions[$topic_category] ?? 'General Mathematics Topic';
-    
-    // Cap content size so request stays within safe bounds
-    $max_content_chars = 10000;
-    $pdf_content_trimmed = strlen($pdf_content) > $max_content_chars
-        ? substr($pdf_content, 0, $max_content_chars) . "\n\n[Additional content omitted for length.]"
-        : $pdf_content;
-    
-    $prompt = "You are an expert educational content creator specializing in mathematics education for Grade 11 students. Your goal is to create CLEAR, DETAILED, and EASY-TO-UNDERSTAND lessons that students can easily comprehend.
+function storeLesson(PDO $pdo, int $teacherId, string $title, string $topic, string $html): int
+{
+    // Table creation – run once per deployment (kept here for demo purposes)
+    $pdo->exec(
+        "CREATE TABLE IF NOT EXISTS teacher_lessons (
+            id          INT AUTO_INCREMENT PRIMARY KEY,
+            teacher_id  INT NOT NULL,
+            title       VARCHAR(255) NOT NULL,
+            topic       VARCHAR(100) NOT NULL,
+            html_content LONGTEXT NOT NULL,
+            created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            INDEX idx_teacher (teacher_id),
+            INDEX idx_topic (topic)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+    );
 
-CRITICAL INSTRUCTION: You MUST base your lesson ENTIRELY on the content provided below. The content may be the full PDF text OR a summarized version of the entire PDF (so it may cover multiple sections). It is your PRIMARY and ONLY source material. Do NOT generate generic content - use ONLY what is in the content. However, you MUST EXPAND and ENHANCE the explanations to make them clearer and more understandable.
+    $stmt = $pdo->prepare(
+        "INSERT INTO teacher_lessons (teacher_id, title, topic, html_content)
+         VALUES (:tid, :title, :topic, :html)"
+    );
 
-The content below contains the actual lesson material. Your task is to:
-1. Read and understand ALL the content from the PDF below
-2. Extract the key concepts, examples, explanations, and information from the PDF
-3. EXPAND and ENHANCE explanations to make them clearer and more detailed
-4. Add step-by-step breakdowns for every concept and example
-5. Transform the PDF content into a well-structured HTML lesson format with COMPREHENSIVE explanations
-6. Use the EXACT information, examples, and explanations from the PDF as the foundation
-7. ADD DETAILED EXPLANATIONS, step-by-step processes, and \"why\" explanations to help students understand
-8. If the PDF content relates to the topic category (" . $topic_category . "), organize it accordingly
-9. PRESERVE the actual content from the PDF but EXPAND it with clearer explanations
+    $stmt->execute([
+        ':tid'   => $teacherId,
+        ':title' => $title,
+        ':topic' => $topic,
+        ':html'  => $html
+    ]);
 
-PDF CONTENT (THIS IS YOUR SOURCE MATERIAL - USE THIS CONTENT AND EXPAND IT):
-" . $pdf_content_trimmed . "
-
-Topic Category Selected: " . $topic_category . " (" . $topic_description . ")
-Lesson Title: " . $lesson_title . "
-
-Generate ONLY the lesson content HTML (the main content section, not the full HTML document with <html>, <head>, <body> tags). Start directly with the lesson content divs and sections formatted like PowerPoint slides.";
-
-    // Delegate the actual call to Gemini
-    return callGemini($api_key, $model, $prompt, 4096);
-}
-
-/**
- * Save lesson to database
- */
-function saveLessonToDatabase($pdo, $teacher_id, $title, $topic, $html_content) {
-    try {
-        // Create table if it doesn't exist
-        $pdo->exec("
-            CREATE TABLE IF NOT EXISTS teacher_lessons (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                teacher_id INT NOT NULL,
-                title VARCHAR(255) NOT NULL,
-                topic VARCHAR(100) NOT NULL,
-                html_content LONGTEXT NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                INDEX idx_teacher (teacher_id),
-                INDEX idx_topic (topic)
-            )
-        ");
-
-        $stmt = $pdo->prepare("
-            INSERT INTO teacher_lessons (teacher_id, title, topic, html_content)
-            VALUES (?, ?, ?, ?)
-        ");
-
-        $stmt->execute([$teacher_id, $title, $topic, $html_content]);
-        
-        return $pdo->lastInsertId();
-    } catch (PDOException $e) {
-        error_log("Database Error: " . $e->getMessage());
-        throw new Exception('Failed to save lesson to database.');
-    }
+    return (int)$pdo->lastInsertId();
 }
 ?>
