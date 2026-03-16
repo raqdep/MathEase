@@ -61,18 +61,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception('File size exceeds 10MB limit.');
         }
 
-        // Read PDF content
+        // Read PDF content (keep full text; long PDFs will be summarized in chunks)
         $pdf_content = extractPDFText($file['tmp_name']);
         
         if (empty($pdf_content)) {
             throw new Exception('Could not extract text from PDF. Please ensure the PDF contains readable text.');
-        }
-
-        // Truncate content if too long (Groq free tier: 6000 tokens per request total)
-        // ~1 token ≈ 4 chars; we must fit PDF + prompt + system in one request, so cap PDF
-        $max_chars = 10000;
-        if (strlen($pdf_content) > $max_chars) {
-            $pdf_content = substr($pdf_content, 0, $max_chars) . "\n\n[Content truncated for processing - lesson is based on the first part of your PDF. For longer modules, consider splitting into multiple lessons.]";
         }
 
         // Validate that we have content
@@ -100,8 +93,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         error_log("PDF validation passed - proceeding with lesson generation");
 
-        // Generate lesson using Groq AI
-        $lesson_html = generateLessonWithAI($pdf_content, $lesson_title, $topic_category, $groq_api_key, $groq_api_url);
+        // For long PDFs: summarize entire content in chunks so Groq can "read" it all, then generate lesson from combined summary
+        $max_direct_chars = 10000; // under Groq token limit for a single request
+        if (strlen($pdf_content) > $max_direct_chars) {
+            error_log("PDF is long (" . strlen($pdf_content) . " chars) - summarizing in chunks to cover full content");
+            $content_for_lesson = summarizePdfInChunks($pdf_content, $groq_api_key, $groq_api_url);
+            if (empty(trim($content_for_lesson))) {
+                throw new Exception('Could not summarize PDF content. Please try a shorter PDF or try again.');
+            }
+            error_log("Chunked summary length: " . strlen($content_for_lesson) . " chars");
+        } else {
+            $content_for_lesson = $pdf_content;
+        }
+
+        // Generate lesson using Groq AI (from full PDF or from combined summary)
+        $lesson_html = generateLessonWithAI($content_for_lesson, $lesson_title, $topic_category, $groq_api_key, $groq_api_url);
         
         // Validate generated lesson
         if (empty(trim($lesson_html))) {
@@ -416,6 +422,124 @@ Respond with ONLY 'YES' if the content contains mathematics or General Mathemati
 }
 
 /**
+ * Call Groq API with given messages. Returns assistant content. Throws on error.
+ */
+function callGroq($api_url, $api_key, $messages, $max_tokens = 4000, $temperature = 0.3) {
+    $data = [
+        'model' => 'llama-3.1-8b-instant',
+        'messages' => $messages,
+        'temperature' => $temperature,
+        'max_tokens' => $max_tokens
+    ];
+    $ch = curl_init($api_url);
+    if ($ch === false) {
+        throw new Exception('Failed to initialize cURL');
+    }
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => json_encode($data),
+        CURLOPT_HTTPHEADER => [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $api_key
+        ],
+        CURLOPT_TIMEOUT => 90,
+        CURLOPT_CONNECTTIMEOUT => 15
+    ]);
+    $response = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curl_error = curl_error($ch);
+    curl_close($ch);
+    if ($curl_error) {
+        throw new Exception('API request failed: ' . $curl_error);
+    }
+    if (empty($response)) {
+        throw new Exception('Empty response from AI service.');
+    }
+    if ($http_code !== 200) {
+        $errorData = json_decode($response, true);
+        $errorMessage = isset($errorData['error']['message']) ? $errorData['error']['message'] : 'HTTP ' . $http_code;
+        if (strpos($errorMessage, 'Request too large') !== false || strpos($errorMessage, 'tokens per minute') !== false || strpos($errorMessage, 'TPM') !== false) {
+            throw new Exception('Content is too long for one request. The system will use a shorter chunk.');
+        }
+        throw new Exception('Groq API error: ' . $errorMessage);
+    }
+    $result = json_decode($response, true);
+    if (json_last_error() !== JSON_ERROR_NONE || !isset($result['choices'][0]['message']['content'])) {
+        throw new Exception('Invalid API response.');
+    }
+    return $result['choices'][0]['message']['content'];
+}
+
+/** Chunk size for summarization (keep under Groq token limit per request) */
+define('PDF_SUMMARY_CHUNK_CHARS', 9000);
+
+/**
+ * Summarize one chunk of PDF text for lesson creation. Preserves definitions, formulas, examples.
+ */
+function summarizeOneChunk($chunk_text, $chunk_index, $total_chunks, $api_key, $api_url) {
+    $prompt = "You are summarizing a portion of a mathematics lesson (part " . ($chunk_index + 1) . " of " . $total_chunks . ") for General Mathematics.
+
+Summarize the following content in a structured way. PRESERVE:
+- Key definitions and concepts (use exact terms)
+- Important formulas and equations (write them exactly)
+- Step-by-step procedures
+- At least one worked example with solution steps
+- Section headings or topic names
+
+Keep the summary concise but complete enough that a lesson can be built from it. Use clear headings. Output plain text (no HTML). Limit to about 1500-2000 characters.
+
+Content to summarize:
+" . $chunk_text;
+
+    $messages = [
+        ['role' => 'system', 'content' => 'You are an expert at summarizing mathematics lesson content. Preserve all key concepts, formulas, and one representative example per topic. Be concise but complete.'],
+        ['role' => 'user', 'content' => $prompt]
+    ];
+    return callGroq($api_url, $api_key, $messages, 2500, 0.2);
+}
+
+/**
+ * Read entire PDF by summarizing in chunks, then return combined summary for lesson generation.
+ */
+function summarizePdfInChunks($full_text, $api_key, $api_url) {
+    $len = strlen($full_text);
+    $chunk_size = PDF_SUMMARY_CHUNK_CHARS;
+    $chunks = [];
+    for ($i = 0; $i < $len; $i += $chunk_size) {
+        $chunks[] = substr($full_text, $i, $chunk_size);
+    }
+    $total = count($chunks);
+    if ($total === 0) {
+        return '';
+    }
+    if ($total === 1) {
+        return summarizeOneChunk($chunks[0], 0, 1, $api_key, $api_url);
+    }
+    $summaries = [];
+    foreach ($chunks as $idx => $chunk) {
+        $summaries[] = summarizeOneChunk($chunk, $idx, $total, $api_key, $api_url);
+        // Small delay to avoid rate limits (tokens per minute)
+        if ($idx < $total - 1) {
+            usleep(500000); // 0.5 second
+        }
+    }
+    $combined = "## Full lesson summary (from entire PDF)\n\n" . implode("\n\n---\n\n", $summaries);
+    // If combined summary is still too long for the final generation request, condense once more (keep condense request under token limit)
+    $max_for_generation = 10000;
+    if (strlen($combined) > $max_for_generation) {
+        $input_for_condense = substr($combined, 0, 12000) . (strlen($combined) > 12000 ? "\n\n[Further sections omitted for length.]" : "");
+        $condensePrompt = "Condense the following lesson summary into one coherent summary suitable for creating a single HTML lesson. Preserve all key concepts, definitions, formulas, and at least one example per topic. Use clear section headings. Keep under 9000 characters.\n\n" . $input_for_condense;
+        $messages = [
+            ['role' => 'system', 'content' => 'You condense lesson summaries while keeping all important math content and examples.'],
+            ['role' => 'user', 'content' => $condensePrompt]
+        ];
+        $combined = callGroq($api_url, $api_key, $messages, 4000, 0.2);
+    }
+    return $combined;
+}
+
+/**
  * Generate lesson HTML using Groq AI
  */
 function generateLessonWithAI($pdf_content, $lesson_title, $topic_category, $api_key, $api_url) {
@@ -431,17 +555,17 @@ function generateLessonWithAI($pdf_content, $lesson_title, $topic_category, $api
     
     $topic_description = $topic_descriptions[$topic_category] ?? 'General Mathematics Topic';
     
-    // Cap PDF size so total request stays under Groq 6000-token limit (input + prompt + system)
-    $max_pdf_chars = 10000;
-    $pdf_content_trimmed = strlen($pdf_content) > $max_pdf_chars
-        ? substr($pdf_content, 0, $max_pdf_chars) . "\n\n[Content truncated to fit API limits. Lesson is based on the first part of your PDF.]"
+    // Cap content size so total request stays under Groq 6000-token limit (input + prompt + system)
+    $max_content_chars = 10000;
+    $pdf_content_trimmed = strlen($pdf_content) > $max_content_chars
+        ? substr($pdf_content, 0, $max_content_chars) . "\n\n[Additional content omitted for length.]"
         : $pdf_content;
     
     $prompt = "You are an expert educational content creator specializing in mathematics education for Grade 11 students. Your goal is to create CLEAR, DETAILED, and EASY-TO-UNDERSTAND lessons that students can easily comprehend.
 
-CRITICAL INSTRUCTION: You MUST base your lesson ENTIRELY on the PDF content provided below. The PDF content is your PRIMARY and ONLY source material. Do NOT generate generic content - use ONLY what is in the PDF. However, you MUST EXPAND and ENHANCE the explanations to make them clearer and more understandable.
+CRITICAL INSTRUCTION: You MUST base your lesson ENTIRELY on the content provided below. The content may be the full PDF text OR a summarized version of the entire PDF (so it may cover multiple sections). It is your PRIMARY and ONLY source material. Do NOT generate generic content - use ONLY what is in the content. However, you MUST EXPAND and ENHANCE the explanations to make them clearer and more understandable.
 
-The PDF content below contains the actual lesson material that was uploaded. Your task is to:
+The content below contains the actual lesson material. Your task is to:
 1. Read and understand ALL the content from the PDF below
 2. Extract the key concepts, examples, explanations, and information from the PDF
 3. EXPAND and ENHANCE explanations to make them clearer and more detailed
