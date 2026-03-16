@@ -444,34 +444,34 @@ function callGemini($api_key, $model, $prompt, $max_output_tokens = 4096) {
             'temperature' => 0.6,
         ],
     ];
-
-    // Use explicit CURLOPT_URL to avoid \"No URL set\" issues on some PHP/cURL builds
-    $ch = curl_init();
-    if ($ch === false) {
-        throw new Exception('Failed to initialize cURL for Gemini API');
-    }
-    curl_setopt_array($ch, [
-        CURLOPT_URL => $url,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_POST => true,
-        CURLOPT_POSTFIELDS => json_encode($payload),
-        CURLOPT_HTTPHEADER => [
-            'Content-Type: application/json',
+    
+    // Use file_get_contents with stream context instead of cURL to avoid \"No URL set\" issues
+    $context = stream_context_create([
+        'http' => [
+            'method'  => 'POST',
+            'header'  => "Content-Type: application/json\r\n",
+            'content' => json_encode($payload),
+            'timeout' => 90,
         ],
-        CURLOPT_TIMEOUT => 90,
-        CURLOPT_CONNECTTIMEOUT => 15
     ]);
-    $response = curl_exec($ch);
-    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $curl_error = curl_error($ch);
-    curl_close($ch);
-
-    if ($curl_error) {
-        throw new Exception('Gemini API request failed: ' . $curl_error);
+    
+    $response = @file_get_contents($url, false, $context);
+    
+    if ($response === false) {
+        $error = error_get_last();
+        $message = $error && isset($error['message']) ? $error['message'] : 'Unknown HTTP error';
+        throw new Exception('Gemini API request failed: ' . $message);
     }
-    if (empty($response)) {
-        throw new Exception('Empty response from Gemini API.');
+    
+    // Try to get HTTP status code from response headers if available
+    $http_code = 200;
+    if (isset($http_response_header) && is_array($http_response_header) && count($http_response_header) > 0) {
+        // Example: HTTP/1.1 200 OK
+        if (preg_match('#HTTP/\S+\s+(\d{3})#', $http_response_header[0], $matches)) {
+            $http_code = (int)$matches[1];
+        }
     }
+    
     if ($http_code !== 200) {
         $data = json_decode($response, true);
         $message = isset($data['error']['message']) ? $data['error']['message'] : 'HTTP ' . $http_code;
