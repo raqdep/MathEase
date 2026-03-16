@@ -445,11 +445,13 @@ function callGemini($api_key, $model, $prompt, $max_output_tokens = 4096) {
         ],
     ];
 
-    $ch = curl_init($url);
+    // Use explicit CURLOPT_URL to avoid \"No URL set\" issues on some PHP/cURL builds
+    $ch = curl_init();
     if ($ch === false) {
         throw new Exception('Failed to initialize cURL for Gemini API');
     }
     curl_setopt_array($ch, [
+        CURLOPT_URL => $url,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_POST => true,
         CURLOPT_POSTFIELDS => json_encode($payload),
