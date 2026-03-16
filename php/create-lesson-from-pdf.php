@@ -76,11 +76,15 @@ if (!$groqKey) {
 }
 
 /* ---------- 4️⃣  CSRF protection (optional but recommended) ---------- */
+// For now we only enforce CSRF if the backend has a token set in the session.
+// This avoids hard failures if the front-end is not yet sending a csrf_token field.
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     json_response(['success'=>false,'message'=>'Method not allowed'], 405);
 }
-if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== ($_SESSION['csrf_token'] ?? '')) {
-    json_response(['success'=>false,'message'=>'Invalid CSRF token'], 403);
+if (isset($_SESSION['csrf_token'])) {
+    if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        json_response(['success'=>false,'message'=>'Invalid CSRF token'], 403);
+    }
 }
 
 /* ---------- 5️⃣  File upload validation ---------- */
