@@ -471,9 +471,6 @@ function callGroq($api_url, $api_key, $messages, $max_tokens = 4000, $temperatur
     return $result['choices'][0]['message']['content'];
 }
 
-/** Chunk size for summarization (keep under Groq token limit per request) */
-define('PDF_SUMMARY_CHUNK_CHARS', 9000);
-
 /**
  * Summarize one chunk of PDF text for lesson creation. Preserves definitions, formulas, examples.
  */
@@ -504,7 +501,8 @@ Content to summarize:
  */
 function summarizePdfInChunks($full_text, $api_key, $api_url) {
     $len = strlen($full_text);
-    $chunk_size = PDF_SUMMARY_CHUNK_CHARS;
+    // Chunk size kept under Groq token limit per request (~9000 chars)
+    $chunk_size = 9000;
     $chunks = [];
     for ($i = 0; $i < $len; $i += $chunk_size) {
         $chunks[] = substr($full_text, $i, $chunk_size);
