@@ -459,8 +459,12 @@ function callGroq($api_url, $api_key, $messages, $max_tokens = 4000, $temperatur
     if ($http_code !== 200) {
         $errorData = json_decode($response, true);
         $errorMessage = isset($errorData['error']['message']) ? $errorData['error']['message'] : 'HTTP ' . $http_code;
-        if (strpos($errorMessage, 'Request too large') !== false || strpos($errorMessage, 'tokens per minute') !== false || strpos($errorMessage, 'TPM') !== false) {
-            throw new Exception('Content is too long for one request. The system will use a shorter chunk.');
+        // Distinguish between size errors and rate-limit (tokens-per-minute) errors
+        if (strpos($errorMessage, 'Request too large') !== false) {
+            throw new Exception('This request is too large for the current Groq model. Please try a shorter PDF (for example, one topic or chapter).');
+        }
+        if (strpos($errorMessage, 'tokens per minute') !== false || strpos($errorMessage, 'TPM') !== false) {
+            throw new Exception('The AI service is rate limited (too many tokens per minute). Please wait 30–60 seconds and try again, or avoid sending many PDFs in a short time.');
         }
         throw new Exception('Groq API error: ' . $errorMessage);
     }
