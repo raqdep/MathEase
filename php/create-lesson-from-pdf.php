@@ -460,6 +460,7 @@ function callGemini($api_key, $model, $prompt, $max_output_tokens = 4096) {
     if ($response === false) {
         $error = error_get_last();
         $message = $error && isset($error['message']) ? $error['message'] : 'Unknown HTTP error';
+        error_log('[Gemini] file_get_contents failed: ' . $message . ' | URL=' . $url);
         throw new Exception('Gemini API request failed: ' . $message);
     }
     
