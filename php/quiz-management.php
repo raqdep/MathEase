@@ -2089,11 +2089,14 @@ class QuizManager {
     }
     
     private function storeAnswer($attemptId, $questionNumber, $questionType, $studentAnswer, $correctAnswer, $isCorrect, $pointsEarned) {
+        // Ensure is_correct and points_earned are integers (MySQL BOOLEAN/INT reject empty string)
+        $isCorrectInt = $isCorrect ? 1 : 0;
+        $pointsEarnedInt = (int) $pointsEarned;
         $stmt = $this->pdo->prepare("
             INSERT INTO quiz_answers (attempt_id, question_number, question_type, student_answer, correct_answer, is_correct, points_earned)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         ");
-        $stmt->execute([$attemptId, $questionNumber, $questionType, $studentAnswer, $correctAnswer, $isCorrect, $pointsEarned]);
+        $stmt->execute([$attemptId, $questionNumber, $questionType, $studentAnswer, $correctAnswer, $isCorrectInt, $pointsEarnedInt]);
     }
     
     private function storeProblemSolvingAnswers($attemptId, $answers, $totalScore) {
