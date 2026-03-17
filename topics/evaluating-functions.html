@@ -569,6 +569,42 @@
             .lesson-sidebar { position: fixed; left: 0; top: 4rem; height: calc(100vh - 4rem); transform: translateX(-100%); transition: transform 0.25s ease; box-shadow: 4px 0 20px rgba(0,0,0,0.08); }
             .lesson-sidebar.open { transform: translateX(0); }
             .lesson-main { margin-left: 0 !important; }
+            /* Improve spacing for main content and virtual aid on tablets/phones */
+            .lesson-main {
+                padding-left: 0.75rem;
+                padding-right: 0.75rem;
+            }
+        }
+
+        /* Mobile refinements for virtual aid / interactive sections */
+        @media (max-width: 768px) {
+            .function-evaluator {
+                padding: 1.25rem;
+                border-width: 1px;
+                border-radius: 12px;
+                margin-left: -0.25rem;
+                margin-right: -0.25rem;
+            }
+            .function-evaluator .grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            /* Ensure practice / tutorial cards have comfortable padding on mobile */
+            .interactive-demo,
+            .practice-exercise,
+            .bg-white.rounded-lg.p-6.shadow-lg,
+            .bg-white.rounded-2xl.shadow-lg.p-8 {
+                padding: 1.25rem !important;
+            }
+            /* Soften borders on small screens */
+            .bg-blue-50.border-l-4,
+            .bg-green-50.border-l-4,
+            .bg-purple-50.border-l-4,
+            .bg-yellow-50.border-l-4,
+            .bg-red-50.border-l-4,
+            .bg-indigo-50.border-l-4 {
+                border-left-width: 3px;
+            }
         }
     </style>
 </head>

@@ -124,6 +124,276 @@
                 transform: translateY(0);
             }
         }
+
+        /* Mobile App Styles */
+        @media (max-width: 768px) {
+            /* Hide sidebar on mobile */
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                top: 0;
+                height: 100vh;
+                z-index: 1000;
+                transition: left 0.3s ease-in-out;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .sidebar.mobile-open {
+                left: 0;
+            }
+
+            /* Mobile overlay */
+            .mobile-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+            }
+
+            .mobile-overlay.active {
+                display: block;
+            }
+
+            /* Main content full width on mobile */
+            .main-content {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            /* Mobile header adjustments */
+            .mobile-header {
+                padding: 0.75rem 1rem;
+            }
+
+            .mobile-header h2 {
+                font-size: 1.25rem;
+            }
+
+            .mobile-header p {
+                font-size: 0.75rem;
+            }
+
+            /* Touch-friendly buttons */
+            button, .btn, a.button {
+                min-height: 44px;
+                min-width: 44px;
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: rgba(99, 102, 241, 0.2);
+            }
+
+            /* Bottom navigation bar */
+            .mobile-bottom-nav {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: white;
+                border-top: 1px solid #e5e7eb;
+                box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+                z-index: 100;
+                display: flex;
+                justify-content: space-around;
+                padding: 0.5rem 0;
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+
+            .mobile-bottom-nav-item {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 0.5rem;
+                color: #6b7280;
+                text-decoration: none;
+                transition: all 0.2s;
+                min-height: 60px;
+            }
+
+            .mobile-bottom-nav-item.active {
+                color: #6366f1;
+            }
+
+            .mobile-bottom-nav-item i {
+                font-size: 1.25rem;
+                margin-bottom: 0.25rem;
+            }
+
+            .mobile-bottom-nav-item span {
+                font-size: 0.625rem;
+                font-weight: 500;
+            }
+
+            /* Add padding to main content for bottom nav */
+            .main-content-wrapper {
+                padding-bottom: 80px;
+            }
+
+            /* Responsive cards */
+            .card, .stat-card {
+                margin-bottom: 1rem;
+            }
+
+            /* Responsive tables */
+            .table-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            /* Responsive modals */
+            .modal-content {
+                width: 95%;
+                max-width: 95%;
+                margin: 1rem;
+            }
+
+            /* Hamburger menu button */
+            .hamburger-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 44px;
+                height: 44px;
+                background: #f3f4f6;
+                border-radius: 0.5rem;
+                border: none;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .hamburger-btn:active {
+                background: #e5e7eb;
+                transform: scale(0.95);
+            }
+
+            /* Profile dropdown mobile adjustments */
+            #profileDropdown {
+                right: 0;
+                left: auto;
+                width: calc(100vw - 2rem);
+                max-width: 320px;
+            }
+
+            /* Grid adjustments for mobile */
+            .grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .grid-cols-2 {
+                grid-template-columns: 1fr !important;
+            }
+
+            .grid-cols-3 {
+                grid-template-columns: 1fr !important;
+            }
+
+            .grid-cols-4 {
+                grid-template-columns: 1fr !important;
+            }
+
+            /* Spacing adjustments */
+            .space-x-4 > * + * {
+                margin-left: 0.5rem;
+            }
+
+            .space-y-4 > * + * {
+                margin-top: 1rem;
+            }
+
+            /* Text size adjustments */
+            .text-2xl {
+                font-size: 1.5rem;
+            }
+
+            .text-xl {
+                font-size: 1.25rem;
+            }
+
+            /* Hide desktop-only elements */
+            .desktop-only {
+                display: none !important;
+            }
+        }
+
+        /* Desktop: Hide mobile bottom nav */
+        @media (min-width: 769px) {
+            .mobile-bottom-nav {
+                display: none;
+            }
+
+            .mobile-overlay {
+                display: none !important;
+            }
+
+            .hamburger-btn {
+                display: none;
+            }
+        }
+
+            /* Safe area for notched devices */
+            @supports (padding: max(0px)) {
+                .mobile-bottom-nav {
+                    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+                }
+            }
+
+            /* Table responsive wrapper */
+            .table-wrapper {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                margin: -1rem;
+                padding: 1rem;
+            }
+
+            /* Card spacing on mobile */
+            .card-spacing {
+                margin-bottom: 1rem;
+            }
+
+            /* Form inputs mobile friendly */
+            input, select, textarea {
+                font-size: 16px !important; /* Prevents zoom on iOS */
+                min-height: 44px;
+            }
+
+            /* Modal mobile adjustments */
+            .modal {
+                margin: 0.5rem;
+                max-height: calc(100vh - 1rem);
+            }
+
+            /* Stat cards stack on mobile */
+            .stat-grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem;
+            }
+
+            /* Better spacing for mobile lists */
+            .space-y-6 > * + * {
+                margin-top: 1.5rem;
+            }
+
+            /* Responsive text */
+            .text-responsive {
+                font-size: 0.875rem;
+            }
+
+            /* Button groups stack on mobile */
+            .button-group {
+                flex-direction: column;
+            }
+
+            .button-group > * {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+
+            /* Prevent text selection on mobile nav */
+            .mobile-bottom-nav {
+                -webkit-user-select: none;
+                user-select: none;
+            }
     </style>
 </head>
 <body class="font-inter bg-gray-50 min-h-screen">
@@ -135,10 +405,13 @@
             <div class="text-sm text-gray-500">Please wait while we fetch your data...</div>
         </div>
     </div>
+    <!-- Mobile Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileSidebar()"></div>
+
     <!-- Sidebar -->
     <div class="flex h-screen">
         <!-- Sidebar -->
-        <div class="w-64 bg-white shadow-lg border-r border-gray-200 flex flex-col">
+        <div id="sidebar" class="sidebar w-64 bg-white shadow-lg border-r border-gray-200 flex flex-col">
             <!-- Logo Section -->
             <div class="p-6 border-b border-gray-200">
                 <div class="flex items-center space-x-3">
@@ -154,28 +427,28 @@
 
             <!-- Navigation Menu -->
             <nav class="flex-1 px-4 py-6 space-y-2">
-                <button onclick="showSection('dashboard')" class="nav-item w-full flex items-center px-4 py-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-200 active" data-section="dashboard">
+                <button onclick="showSection('dashboard'); closeMobileSidebar();" class="nav-item w-full flex items-center px-4 py-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-200 active" data-section="dashboard">
                     <i class="fas fa-tachometer-alt mr-3 text-gray-400"></i>
                     Dashboard
                 </button>
                 
-                <button onclick="showSection('class-management')" class="nav-item w-full flex items-center px-4 py-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-200" data-section="class-management">
+                <button onclick="showSection('class-management'); closeMobileSidebar();" class="nav-item w-full flex items-center px-4 py-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-200" data-section="class-management">
                     <i class="fas fa-chalkboard-teacher mr-3 text-gray-400"></i>
                     Class Management
                 </button>
                 
                 
-                <button onclick="showSection('quiz-management')" class="nav-item w-full flex items-center px-4 py-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-200" data-section="quiz-management">
+                <button onclick="showSection('quiz-management'); closeMobileSidebar();" class="nav-item w-full flex items-center px-4 py-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-200" data-section="quiz-management">
                     <i class="fas fa-question-circle mr-3 text-gray-400"></i>
                     Quiz Management
                 </button>
                 
-                <button onclick="showSection('lesson-creation')" class="nav-item w-full flex items-center px-4 py-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-200" data-section="lesson-creation">
+                <button onclick="showSection('lesson-creation'); closeMobileSidebar();" class="nav-item w-full flex items-center px-4 py-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-200" data-section="lesson-creation">
                     <i class="fas fa-book-open mr-3 text-gray-400"></i>
                     Create Lesson
                 </button>
                 
-                <button onclick="showSection('class-performance')" class="nav-item w-full flex items-center px-4 py-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-200" data-section="class-performance">
+                <button onclick="showSection('class-performance'); closeMobileSidebar();" class="nav-item w-full flex items-center px-4 py-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-200" data-section="class-performance">
                     <i class="fas fa-chart-bar mr-3 text-gray-400"></i>
                     Class Performance
                 </button>
@@ -183,14 +456,20 @@
         </div>
 
         <!-- Main Content Area -->
-        <div class="flex-1 flex flex-col overflow-hidden">
+        <div class="flex-1 flex flex-col overflow-hidden main-content">
             <!-- Top Header -->
-            <header class="bg-white shadow-sm border-b border-gray-200">
-                <div class="px-6 py-4">
+            <header class="bg-white shadow-sm border-b border-gray-200 mobile-header">
+                <div class="px-4 sm:px-6 py-3 sm:py-4">
                     <div class="flex items-center justify-between">
-                        <div>
-                            <h2 class="text-2xl font-bold text-gray-900" id="pageTitle">Dashboard</h2>
-                            <p class="text-sm text-gray-600" id="pageDescription">Welcome to your teacher dashboard</p>
+                        <div class="flex items-center space-x-3">
+                            <!-- Hamburger Menu Button (Mobile Only) -->
+                            <button onclick="toggleMobileSidebar()" class="hamburger-btn desktop-only:hidden">
+                                <i class="fas fa-bars text-gray-700 text-lg"></i>
+                            </button>
+                            <div>
+                                <h2 class="text-xl sm:text-2xl font-bold text-gray-900" id="pageTitle">Dashboard</h2>
+                                <p class="text-xs sm:text-sm text-gray-600" id="pageDescription">Welcome to your teacher dashboard</p>
+                            </div>
                         </div>
                         
                         <!-- Right Side: Profile, Notifications, Stats -->
@@ -326,7 +605,7 @@
             </header>
 
             <!-- Content Area -->
-            <main class="flex-1 overflow-y-auto bg-gray-50 p-6">
+            <main class="flex-1 overflow-y-auto bg-gray-50 p-4 sm:p-6 main-content-wrapper">
                 <!-- Dashboard Section -->
                 <div id="dashboard-section" class="content-section">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
@@ -480,44 +759,60 @@
 
                 <!-- Quiz Management Section -->
                 <div id="quiz-management-section" class="content-section hidden">
+                    <!-- Header -->
                     <div class="mb-6">
-                        <h3 class="text-lg font-semibold text-gray-900">Quiz Management</h3>
-                        <p class="text-sm text-gray-600">Manage quiz deadlines and view student performance</p>
+                        <div class="flex items-center justify-between mb-2">
+                            <div>
+                                <h3 class="text-2xl font-bold text-gray-900">Quiz Management</h3>
+                                <p class="text-sm text-gray-600 mt-1">Manage quiz deadlines, time limits, and view student performance</p>
+                            </div>
+                            <div class="hidden md:flex items-center space-x-2">
+                                <div class="px-3 py-1.5 bg-indigo-100 text-indigo-700 rounded-lg text-xs font-semibold">
+                                    <i class="fas fa-clipboard-list mr-1"></i>
+                                    <span id="totalQuizzesCount">10 Quizzes</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Class Selection -->
-                    <div class="mb-6 bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <!-- Class Selection Card -->
+                    <div class="mb-6 bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 rounded-xl shadow-md border border-indigo-200 p-6">
                         <div class="flex flex-col space-y-4">
-                            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                                <div class="flex items-center">
-                                    <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mr-3">
-                                        <i class="fas fa-chalkboard-teacher text-indigo-600"></i>
+                            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                                        <i class="fas fa-chalkboard-teacher text-white text-xl"></i>
                                     </div>
                                     <div>
-                                        <h4 class="text-md font-semibold text-gray-900">Select Class</h4>
-                                        <p class="text-sm text-gray-600">Choose a class to manage quizzes</p>
+                                        <h4 class="text-lg font-bold text-gray-900">Select Class</h4>
+                                        <p class="text-sm text-gray-600">Choose a class to manage quiz settings and deadlines</p>
                                     </div>
                                 </div>
                                 <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                                    <select id="quizClassSelector" class="flex-1 sm:flex-none px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white text-sm min-w-[200px]">
+                                    <select id="quizClassSelector" class="flex-1 sm:flex-none px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white text-sm font-medium min-w-[220px] shadow-sm transition-all">
                                         <option value="">Loading classes...</option>
                                     </select>
-                                    <button onclick="refreshClassData()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center whitespace-nowrap">
+                                    <button onclick="refreshClassData()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center whitespace-nowrap">
                                         <i class="fas fa-sync-alt mr-2"></i>
                                         Refresh
                                     </button>
                                 </div>
                             </div>
-                            <div id="selectedClassInfo" class="p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg border border-indigo-100 hidden">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <span class="text-sm font-medium text-indigo-900">Selected Class: </span>
-                                        <span id="selectedClassName" class="text-sm font-semibold text-indigo-700"></span>
+                            <div id="selectedClassInfo" class="p-4 bg-white/80 backdrop-blur-sm rounded-lg border-2 border-indigo-300 shadow-sm hidden">
+                                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-check-circle text-indigo-600"></i>
+                                        </div>
+                                        <div>
+                                            <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Selected Class</span>
+                                            <p id="selectedClassName" class="text-base font-bold text-indigo-900 mt-0.5"></p>
+                                        </div>
                                     </div>
-                                    <div class="flex items-center space-x-4 text-sm">
-                                        <div class="flex items-center">
-                                            <i class="fas fa-users text-indigo-500 mr-2"></i>
-                                            <span class="text-indigo-700"><span id="selectedClassStudentCount">0</span> students</span>
+                                    <div class="flex items-center space-x-6 text-sm">
+                                        <div class="flex items-center space-x-2 px-3 py-1.5 bg-blue-50 rounded-lg border border-blue-200">
+                                            <i class="fas fa-users text-blue-600"></i>
+                                            <span class="text-blue-900 font-semibold"><span id="selectedClassStudentCount">0</span> students</span>
                                         </div>
                                     </div>
                                 </div>
@@ -527,117 +822,191 @@
 
 
                     <!-- No Class Selected Message -->
-                    <div id="noClassSelectedMessage" class="text-center py-12">
-                        <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <i class="fas fa-chalkboard-teacher text-gray-400 text-3xl"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Select a Class to Manage Quizzes</h3>
-                        <p class="text-gray-600 mb-6">Choose a class from the dropdown above to view and manage quiz settings, deadlines, and student performance.</p>
-                        <div class="inline-flex items-center px-4 py-2 bg-indigo-100 text-indigo-700 rounded-lg">
-                            <i class="fas fa-info-circle mr-2"></i>
-                            Quiz settings will apply to all your classes
+                    <div id="noClassSelectedMessage" class="text-center py-16">
+                        <div class="max-w-md mx-auto">
+                            <div class="w-28 h-28 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                                <i class="fas fa-chalkboard-teacher text-indigo-500 text-4xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-3">Select a Class to Manage Quizzes</h3>
+                            <p class="text-gray-600 mb-8 text-base leading-relaxed">Choose a class from the dropdown above to view and manage quiz settings, deadlines, time limits, and student performance.</p>
+                            <div class="inline-flex items-center px-5 py-3 bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 rounded-xl border-2 border-indigo-200 shadow-sm">
+                                <i class="fas fa-info-circle mr-2 text-indigo-600"></i>
+                                <span class="font-medium">Quiz settings are class-specific</span>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Quiz Content Wrapper -->
                     <div id="quizContentWrapper" class="hidden">
+                        <!-- Quick Stats Summary -->
+                        <div id="quizStatsSummary" class="mb-6 grid grid-cols-2 md:grid-cols-4 gap-4 hidden">
+                            <div class="bg-white rounded-xl shadow-md border border-gray-200 p-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Open Quizzes</p>
+                                        <p class="text-2xl font-bold text-emerald-600 mt-1" id="openQuizzesCount">0</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-unlock text-emerald-600 text-xl"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-xl shadow-md border border-gray-200 p-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Closed Quizzes</p>
+                                        <p class="text-2xl font-bold text-gray-600 mt-1" id="closedQuizzesCount">0</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-lock text-gray-600 text-xl"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-xl shadow-md border border-gray-200 p-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">With Deadlines</p>
+                                        <p class="text-2xl font-bold text-blue-600 mt-1" id="deadlinesSetCount">0</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-calendar-check text-blue-600 text-xl"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-xl shadow-md border border-gray-200 p-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Total Quizzes</p>
+                                        <p class="text-2xl font-bold text-indigo-600 mt-1">10</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-clipboard-list text-indigo-600 text-xl"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- All Quizzes -->
                         <div id="allQuizzes" class="space-y-4">
                             <!-- Functions Quiz -->
-                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                                <div class="flex items-center justify-between mb-4">
-                                    <div class="flex items-center">
-                                        <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg flex items-center justify-center mr-4">
-                                            <i class="fas fa-function text-white text-lg"></i>
+                            <div class="bg-white rounded-xl shadow-md border-2 border-gray-200 hover:border-indigo-300 transition-all duration-200 overflow-hidden">
+                                <div class="bg-gradient-to-r from-indigo-50 to-indigo-100 px-6 py-4 border-b border-gray-200">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-4">
+                                            <div class="w-14 h-14 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                                                <i class="fas fa-function text-white text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-lg font-bold text-gray-900">Functions Quiz</h4>
+                                                <p class="text-sm text-gray-600 mt-0.5">15 questions • Basic function concepts and operations</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h4 class="text-lg font-semibold text-gray-900">Functions Quiz</h4>
-                                            <p class="text-sm text-gray-600">15 questions • Basic function concepts and operations</p>
+                                        <div id="functionsQuizStatusBadge" class="hidden px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700">
+                                            <i class="fas fa-lock mr-1"></i>Closed
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                                            Quiz Deadline
-                                            <span class="text-xs text-gray-500 font-normal">(Local Time)</span>
-                                        </label>
-                                        <input type="datetime-local" id="functionsQuizDeadline" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                        <div id="functionsQuizDeadlineStatus" class="mt-2 text-sm">
-                                            <!-- Deadline status will be shown here -->
+                                <div class="p-6">
+                                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-calendar-alt text-indigo-500 mr-1.5"></i>
+                                                Quiz Deadline
+                                                <span class="text-xs text-gray-500 font-normal ml-1">(Local Time)</span>
+                                            </label>
+                                            <input type="datetime-local" id="functionsQuizDeadline" class="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
+                                            <div id="functionsQuizDeadlineStatus" class="mt-2 text-xs">
+                                                <!-- Deadline status will be shown here -->
+                                            </div>
+                                        </div>
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-clock text-indigo-500 mr-1.5"></i>
+                                                Time Limit (minutes)
+                                            </label>
+                                            <input type="number" id="functionsQuizTimeLimit" min="5" max="120" value="20" class="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
+                                        </div>
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-toggle-on text-indigo-500 mr-1.5"></i>
+                                                Quiz Status
+                                            </label>
+                                            <button id="functionsQuizToggle" onclick="toggleQuizStatus('functions')" class="w-full px-4 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-700">
+                                                <i class="fas fa-lock mr-2"></i>
+                                                <span>Closed</span>
+                                            </button>
                                         </div>
                                     </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Time Limit (minutes)</label>
-                                        <input type="number" id="functionsQuizTimeLimit" min="5" max="120" value="20" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Quiz Status</label>
-                                        <button id="functionsQuizToggle" onclick="toggleQuizStatus('functions')" class="w-full px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center bg-gray-200 text-gray-700">
-                                            <i class="fas fa-lock mr-2"></i>
-                                            <span>Closed</span>
+                                    <div class="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
+                                        <button onclick="saveQuizSettings('functions')" class="flex-1 sm:flex-none bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg">
+                                            <i class="fas fa-save mr-2"></i>
+                                            Save Settings
                                         </button>
-                                    </div>
-                                    <div class="flex items-end">
-                                        <div class="flex flex-wrap gap-2 w-full">
-                                            <button onclick="saveQuizSettings('functions')" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                                                <i class="fas fa-save mr-2"></i>
-                                                Save
-                                            </button>
-                                            <button onclick="viewQuizResults('functions')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                                                <i class="fas fa-chart-bar mr-2"></i>
-                                                Results
-                                            </button>
-                                        </div>
+                                        <button onclick="viewQuizResults('functions')" class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg">
+                                            <i class="fas fa-chart-bar mr-2"></i>
+                                            View Results
+                                        </button>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Evaluating Functions Quiz -->
-                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                                <div class="flex items-center justify-between mb-4">
-                                    <div class="flex items-center">
-                                        <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center mr-4">
-                                            <i class="fas fa-calculator text-white text-lg"></i>
+                            <div class="bg-white rounded-xl shadow-md border-2 border-gray-200 hover:border-orange-300 transition-all duration-200 overflow-hidden">
+                                <div class="bg-gradient-to-r from-orange-50 to-red-100 px-6 py-4 border-b border-gray-200">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-4">
+                                            <div class="w-14 h-14 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
+                                                <i class="fas fa-calculator text-white text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-lg font-bold text-gray-900">Evaluating Functions</h4>
+                                                <p class="text-sm text-gray-600 mt-0.5">10 questions • Function evaluation and substitution</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h4 class="text-lg font-semibold text-gray-900">Evaluating Functions</h4>
-                                            <p class="text-sm text-gray-600">10 questions • Function evaluation and substitution</p>
+                                        <div id="evaluatingFunctionsQuizStatusBadge" class="hidden px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700">
+                                            <i class="fas fa-lock mr-1"></i>Closed
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                                            Quiz Deadline
-                                            <span class="text-xs text-gray-500 font-normal">(Local Time)</span>
-                                        </label>
-                                        <input type="datetime-local" id="evaluatingFunctionsQuizDeadline" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Time Limit (minutes)</label>
-                                        <input type="number" id="evaluatingFunctionsQuizTimeLimit" min="5" max="120" value="20" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Quiz Status</label>
-                                        <button id="evaluatingFunctionsQuizToggle" onclick="toggleQuizStatus('evaluating-functions')" class="w-full px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center bg-gray-200 text-gray-700">
-                                            <i class="fas fa-lock mr-2"></i>
-                                            <span>Closed</span>
-                                        </button>
-                                    </div>
-                                    <div class="flex items-end">
-                                        <div class="flex flex-wrap gap-2 w-full">
-                                            <button onclick="saveQuizSettings('evaluating-functions')" class="flex-1 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                                                <i class="fas fa-save mr-2"></i>
-                                                Save
-                                            </button>
-                                            <button onclick="viewQuizResults('evaluating-functions')" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                                                <i class="fas fa-chart-bar mr-2"></i>
-                                                Results
+                                <div class="p-6">
+                                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-calendar-alt text-orange-500 mr-1.5"></i>
+                                                Quiz Deadline
+                                                <span class="text-xs text-gray-500 font-normal ml-1">(Local Time)</span>
+                                            </label>
+                                            <input type="datetime-local" id="evaluatingFunctionsQuizDeadline" class="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all">
+                                        </div>
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-clock text-orange-500 mr-1.5"></i>
+                                                Time Limit (minutes)
+                                            </label>
+                                            <input type="number" id="evaluatingFunctionsQuizTimeLimit" min="5" max="120" value="20" class="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all">
+                                        </div>
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-toggle-on text-orange-500 mr-1.5"></i>
+                                                Quiz Status
+                                            </label>
+                                            <button id="evaluatingFunctionsQuizToggle" onclick="toggleQuizStatus('evaluating-functions')" class="w-full px-4 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-700">
+                                                <i class="fas fa-lock mr-2"></i>
+                                                <span>Closed</span>
                                             </button>
                                         </div>
+                                    </div>
+                                    <div class="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
+                                        <button onclick="saveQuizSettings('evaluating-functions')" class="flex-1 sm:flex-none bg-orange-600 hover:bg-orange-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg">
+                                            <i class="fas fa-save mr-2"></i>
+                                            Save Settings
+                                        </button>
+                                        <button onclick="viewQuizResults('evaluating-functions')" class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg">
+                                            <i class="fas fa-chart-bar mr-2"></i>
+                                            View Results
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -1993,6 +2362,19 @@
                 console.error('Navigation item not found for:', sectionName);
             }
 
+            // Update mobile bottom navigation active state
+            const mobileNavItems = document.querySelectorAll('.mobile-bottom-nav-item');
+            mobileNavItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            const activeMobileItem = document.querySelector(`.mobile-bottom-nav-item[data-section="${sectionName}"]`);
+            if (activeMobileItem) {
+                activeMobileItem.classList.add('active');
+            }
+
+            // Close mobile sidebar when navigating
+            closeMobileSidebar();
+
             // Update page title and description
             updatePageHeader(sectionName);
             
@@ -2737,16 +3119,16 @@
             }
             
             // Show a test message to verify the section is working
-            if (tableBody) {
-                tableBody.innerHTML = '<tr><td colspan="12" class="px-4 py-8 text-center text-blue-500"><i class="fas fa-info-circle mr-2"></i>Class Performance section is loading...</td></tr>';
-            }
+                if (tableBody) {
+                    tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-blue-500"><i class="fas fa-info-circle mr-2"></i>Class Performance section is loading...</td></tr>';
+                }
             
             // Populate class selector with real-time data instead of old performance data
             populateClassSelectorWithRealData();
             
             // Initialize the table with default message
             if (tableBody) {
-                tableBody.innerHTML = '<tr><td colspan="12" class="px-4 py-8 text-center text-gray-500">Please select a class to view student quiz scores</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-gray-500">Please select a class to view student quiz scores</td></tr>';
                 console.log('Table initialized with default message');
             } else {
                 console.error('Table body not found!');
@@ -2896,10 +3278,10 @@
         // Update toggle button UI
         function updateToggleButtonUI(button, isOpen) {
             if (isOpen) {
-                button.className = 'w-full px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center bg-green-500 hover:bg-green-600 text-white';
+                button.className = 'w-full px-4 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center bg-emerald-500 hover:bg-emerald-600 text-white';
                 button.innerHTML = '<i class="fas fa-unlock mr-2"></i><span>Open</span>';
             } else {
-                button.className = 'w-full px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-700';
+                button.className = 'w-full px-4 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-700';
                 button.innerHTML = '<i class="fas fa-lock mr-2"></i><span>Closed</span>';
             }
         }
@@ -3584,12 +3966,69 @@
 
         function showQuizContent() {
             document.getElementById('noClassSelectedMessage').classList.add('hidden');
-            document.getElementById('quizContentWrapper').classList.remove('hidden');
+            const quizContentWrapper = document.getElementById('quizContentWrapper');
+            if (quizContentWrapper) {
+                quizContentWrapper.classList.remove('hidden');
+            }
+            const quizStatsSummary = document.getElementById('quizStatsSummary');
+            if (quizStatsSummary) {
+                quizStatsSummary.classList.remove('hidden');
+            }
         }
 
         function hideQuizContent() {
             document.getElementById('noClassSelectedMessage').classList.remove('hidden');
-            document.getElementById('quizContentWrapper').classList.add('hidden');
+            const quizContentWrapper = document.getElementById('quizContentWrapper');
+            if (quizContentWrapper) {
+                quizContentWrapper.classList.add('hidden');
+            }
+            const quizStatsSummary = document.getElementById('quizStatsSummary');
+            if (quizStatsSummary) {
+                quizStatsSummary.classList.add('hidden');
+            }
+        }
+
+        // Update quiz stats summary
+        function updateQuizStatsSummary(status) {
+            const quizTypes = [
+                'functions',
+                'evaluating-functions',
+                'operations-on-functions',
+                'real-life-problems',
+                'rational-functions',
+                'solving-rational-equations-inequalities',
+                'representations-of-rational-functions',
+                'domain-range-rational-functions',
+                'domain-range-inverse-functions',
+                'one-to-one-functions'
+            ];
+            
+            let openCount = 0;
+            let closedCount = 0;
+            let deadlinesSetCount = 0;
+            
+            quizTypes.forEach(quizType => {
+                const isOpen = status[quizType] === true;
+                if (isOpen) {
+                    openCount++;
+                } else {
+                    closedCount++;
+                }
+                
+                // Check if deadline is set
+                const deadlineInput = document.getElementById(`${quizType.replace(/-([a-z])/g, (match, letter) => letter.toUpperCase())}QuizDeadline`);
+                if (deadlineInput && deadlineInput.value) {
+                    deadlinesSetCount++;
+                }
+            });
+            
+            const openQuizzesEl = document.getElementById('openQuizzesCount');
+            const closedQuizzesEl = document.getElementById('closedQuizzesCount');
+            const deadlinesSetEl = document.getElementById('deadlinesSetCount');
+            
+            if (openQuizzesEl) openQuizzesEl.textContent = openCount;
+            if (closedQuizzesEl) closedQuizzesEl.textContent = closedCount;
+            if (deadlinesSetEl) deadlinesSetEl.textContent = deadlinesSetCount;
         }
 
         function refreshClassData() {
@@ -3719,6 +4158,56 @@
                 icon.classList.toggle('rotate-180');
             }
         }
+
+        // Mobile Sidebar Functions
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            
+            if (sidebar && overlay) {
+                sidebar.classList.toggle('mobile-open');
+                overlay.classList.toggle('active');
+                
+                // Prevent body scroll when sidebar is open
+                if (sidebar.classList.contains('mobile-open')) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            }
+        }
+
+        function closeMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileOverlay');
+            
+            if (sidebar && overlay) {
+                sidebar.classList.remove('mobile-open');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Close mobile sidebar when clicking outside
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const hamburgerBtn = document.querySelector('.hamburger-btn');
+            const overlay = document.getElementById('mobileOverlay');
+            
+            if (sidebar && overlay && sidebar.classList.contains('mobile-open')) {
+                // If clicking on overlay, close sidebar
+                if (event.target === overlay) {
+                    closeMobileSidebar();
+                }
+            }
+        });
+
+        // Close mobile sidebar on window resize (if resizing to desktop)
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                closeMobileSidebar();
+            }
+        });
 
         // Close dropdowns when clicking outside
         document.addEventListener('click', function(event) {
@@ -4372,9 +4861,13 @@
                     } else {
                         clearQuizStatusFields('one-to-one-functions');
                     }
+                    
+                    // Update quiz stats summary
+                    updateQuizStatsSummary(status);
                 } else {
                     console.log('No quiz status found for class:', currentClassId);
                     clearQuizStatusUI();
+                    updateQuizStatsSummary({});
                 }
             } catch (error) {
                 console.error('Error loading quiz status:', error);
@@ -4383,22 +4876,29 @@
         }
         // Helper function to update quiz status fields
         function updateQuizStatusFields(quizType, isOpen) {
-            const toggleButton = document.getElementById(`${quizType.replace(/-([a-z])/g, (match, letter) => letter.toUpperCase())}QuizToggle`);
-            const statusBadge = document.getElementById(`${quizType.replace(/-([a-z])/g, (match, letter) => letter.toUpperCase())}QuizStatus`);
+            const elementId = quizType.replace(/-([a-z])/g, (match, letter) => letter.toUpperCase());
+            const toggleButton = document.getElementById(`${elementId}QuizToggle`);
+            const statusBadge = document.getElementById(`${elementId}QuizStatusBadge`);
             
-            if (toggleButton && statusBadge) {
+            if (toggleButton) {
                 if (isOpen) {
                     // Quiz is open
-                    toggleButton.innerHTML = '<i class="fas fa-eye-slash mr-2"></i>Close';
-                    toggleButton.className = 'bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors';
-                    statusBadge.textContent = 'Open';
-                    statusBadge.className = 'text-sm bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full';
+                    toggleButton.innerHTML = '<i class="fas fa-unlock mr-2"></i><span>Open</span>';
+                    toggleButton.className = 'w-full px-4 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center bg-emerald-500 hover:bg-emerald-600 text-white';
+                    if (statusBadge) {
+                        statusBadge.innerHTML = '<i class="fas fa-unlock mr-1"></i>Open';
+                        statusBadge.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-200';
+                        statusBadge.classList.remove('hidden');
+                    }
                 } else {
                     // Quiz is closed
-                    toggleButton.innerHTML = '<i class="fas fa-eye mr-2"></i>Open';
-                    toggleButton.className = 'bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors';
-                    statusBadge.textContent = 'Closed';
-                    statusBadge.className = 'text-sm bg-red-100 text-red-700 px-3 py-1 rounded-full';
+                    toggleButton.innerHTML = '<i class="fas fa-lock mr-2"></i><span>Closed</span>';
+                    toggleButton.className = 'w-full px-4 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-700';
+                    if (statusBadge) {
+                        statusBadge.innerHTML = '<i class="fas fa-lock mr-1"></i>Closed';
+                        statusBadge.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200';
+                        statusBadge.classList.remove('hidden');
+                    }
                 }
             }
         }
@@ -4707,7 +5207,7 @@
                     // Initialize the table with "Please select a class" message
                     const tableBody = document.getElementById('performanceTableBody');
                     if (tableBody) {
-                        tableBody.innerHTML = '<tr><td colspan="12" class="px-4 py-8 text-center text-gray-500">Please select a class to view student quiz scores</td></tr>';
+                        tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-gray-500">Please select a class to view student quiz scores</td></tr>';
                         console.log('Table updated with default message');
                     } else {
                         console.error('Table body not found in loadClassPerformanceData');
@@ -4740,7 +5240,7 @@
                                 populateClassSelector(fallbackResult.classes);
                                 const tableBody = document.getElementById('performanceTableBody');
                                 if (tableBody) {
-                                    tableBody.innerHTML = '<tr><td colspan="12" class="px-4 py-8 text-center text-yellow-500"><i class="fas fa-info-circle mr-2"></i>Using fallback system - please run database migration for full features</td></tr>';
+                                    tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-yellow-500"><i class="fas fa-info-circle mr-2"></i>Using fallback system - please run database migration for full features</td></tr>';
                                 }
                                 updateLastUpdatedTime();
                                 return;
@@ -4759,7 +5259,7 @@
                 if (tableBody) {
                     tableBody.innerHTML = `
                         <tr>
-                            <td colspan="12" class="px-4 py-8 text-center text-orange-500">
+                            <td colspan="15" class="px-4 py-8 text-center text-orange-500">
                                 <i class="fas fa-exclamation-triangle mr-2"></i>
                                 Class Performance system is being set up. Please run the database migration first.
                                 <br><br>
@@ -4852,7 +5352,7 @@
             
             const selectedClassId = classSelector.value;
             if (!selectedClassId) {
-                tableBody.innerHTML = '<tr><td colspan="12" class="px-4 py-8 text-center text-gray-500">Please select a class to view student quiz scores</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-gray-500">Please select a class to view student quiz scores</td></tr>';
                 // Hide summary and class info when no class is selected
                 const summaryDiv = document.getElementById('classPerformanceSummary');
                 if (summaryDiv) {
@@ -4868,13 +5368,13 @@
             const availableClasses = Array.from(classSelector.options).map(option => option.value).filter(value => value !== '');
             if (!availableClasses.includes(selectedClassId)) {
                 console.error('Security violation: Invalid class ID selected');
-                tableBody.innerHTML = '<tr><td colspan="12" class="px-4 py-8 text-center text-red-500">Error: Invalid class selection</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-red-500">Error: Invalid class selection</td></tr>';
                 return;
             }
 
             try {
                 // Show loading state
-                tableBody.innerHTML = '<tr><td colspan="12" class="px-4 py-8 text-center text-gray-500">Loading...</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-gray-500">Loading...</td></tr>';
 
                 // Use the same data source as quiz management - get quiz results for ALL quiz types
                 const quizTypes = [
@@ -4977,7 +5477,10 @@
                 const snapPassed = document.getElementById('snapPassed');
                 const snapNeedsHelp = document.getElementById('snapNeedsHelp');
 
-                const averages = students.map(s => {
+                // Focus analytics on actively enrolled/approved students
+                const activeStudents = (students || []).filter(s => !s.enrollment_status || s.enrollment_status === 'approved');
+
+                const averages = activeStudents.map(s => {
                     const scores = [
                         s.functions_quiz_best_score || 0,
                         s.evaluating_functions_quiz_best_score || 0,
@@ -4997,12 +5500,12 @@
                     return { student: s, avg, quizzesTaken: takenQuizzes.length };
                 });
 
-                // Calculate class average only from students who have taken quizzes
-                const studentsWithQuizzes = averages.filter(x => x.avg > 0);
+                // Calculate class average only from students who have taken at least one quiz
+                const studentsWithQuizzes = averages.filter(x => x.quizzesTaken > 0 && x.avg > 0);
                 const avgClass = studentsWithQuizzes.length > 0 
                     ? (studentsWithQuizzes.reduce((sum, x) => sum + x.avg, 0) / studentsWithQuizzes.length) 
                     : 0;
-                const passedCount = averages.filter(x => x.avg >= 70).length;
+                const passedCount = averages.filter(x => x.quizzesTaken > 0 && x.avg >= 70).length;
                 
                 // Improved analysis: Categorize students who need help
                 // Critical: Score < 50% OR no quizzes taken but enrolled
@@ -5026,10 +5529,52 @@
                     return x.avg >= 60 && x.avg < 70 && x.quizzesTaken >= 2;
                 });
                 
-                // Total students needing help (all categories)
-                const needsHelpCount = criticalStudents.length + needsSupportStudents.length + atRiskStudents.length;
+                // Merge and de-duplicate students who need help (prioritize more critical category)
+                const helpMap = new Map();
+                
+                criticalStudents.forEach(x => {
+                    const key = x.student.student_id || x.student.id;
+                    if (!key) return;
+                    helpMap.set(key, { ...x, priority: 1, category: 'Critical' });
+                });
+                
+                needsSupportStudents.forEach(x => {
+                    const key = x.student.student_id || x.student.id;
+                    if (!key) return;
+                    const existing = helpMap.get(key);
+                    if (!existing || existing.priority > 2) {
+                        helpMap.set(key, { ...x, priority: 2, category: 'Needs Support' });
+                    }
+                });
+                
+                needsSupportStudents.forEach(x => {
+                    const key = x.student.student_id || x.student.id;
+                    if (!key) return;
+                    const existing = helpMap.get(key);
+                    if (!existing || existing.priority > 2) {
+                        helpMap.set(key, { ...x, priority: 2, category: 'Needs Support' });
+                    }
+                });
+                
+                atRiskStudents.forEach(x => {
+                    const key = x.student.student_id || x.student.id;
+                    if (!key) return;
+                    const existing = helpMap.get(key);
+                    if (!existing || existing.priority > 3) {
+                        helpMap.set(key, { ...x, priority: 3, category: 'At Risk' });
+                    }
+                });
+                
+                const allNeedingHelp = Array.from(helpMap.values()).sort((a, b) => {
+                    // Sort by priority (critical first), then by avg ascending, then by quizzesTaken ascending
+                    if (a.priority !== b.priority) return a.priority - b.priority;
+                    if (a.avg !== b.avg) return a.avg - b.avg;
+                    return a.quizzesTaken - b.quizzesTaken;
+                }).slice(0, 10);
+                
+                const needsHelpCount = allNeedingHelp.length;
 
-                if (snapStudents) snapStudents.textContent = String(students.length);
+                if (snapStudents) snapStudents.textContent = String(activeStudents.length);
                 if (snapAvg) snapAvg.textContent = `${avgClass.toFixed(1)}%`;
                 if (snapPassed) snapPassed.textContent = String(passedCount);
                 if (snapNeedsHelp) snapNeedsHelp.textContent = String(needsHelpCount);
@@ -5044,24 +5589,6 @@
                     .filter(x => x.avg > 0) // Only students who have taken quizzes
                     .slice(0, 5);
                 
-                // Improved weak students analysis: Prioritize critical, then needs support, then at risk
-                const allNeedingHelp = [
-                    ...criticalStudents.map(x => ({...x, priority: 1, category: 'Critical'})),
-                    ...needsSupportStudents.map(x => ({...x, priority: 2, category: 'Needs Support'})),
-                    ...atRiskStudents.map(x => ({...x, priority: 3, category: 'At Risk'}))
-                ].sort((a, b) => {
-                    // Sort by priority first (critical first)
-                    if (a.priority !== b.priority) {
-                        return a.priority - b.priority;
-                    }
-                    // Then by average score (lowest first)
-                    if (a.avg !== b.avg) {
-                        return a.avg - b.avg;
-                    }
-                    // Then by quizzes taken (fewer = more urgent)
-                    return a.quizzesTaken - b.quizzesTaken;
-                }).slice(0, 10); // Show top 10 students needing help
-
                 const renderStudentList = (el, items, tone) => {
                     if (!el) return;
                     if (!items || items.length === 0) {
@@ -5120,7 +5647,7 @@
                 renderStudentList(topList, top5, 'top');
                 renderStudentList(weakList, allNeedingHelp, 'weak');
 
-                // Score distribution (bands)
+                // Score distribution (bands) - use only students with at least one quiz taken
                 const bands = [
                     { label: '0–59', min: 0, max: 59.999 },
                     { label: '60–69', min: 60, max: 69.999 },
@@ -5128,7 +5655,7 @@
                     { label: '80–89', min: 80, max: 89.999 },
                     { label: '90–100', min: 90, max: 100.001 }
                 ];
-                const counts = bands.map(b => averages.filter(x => x.avg >= b.min && x.avg <= b.max).length);
+                const counts = bands.map(b => averages.filter(x => x.quizzesTaken > 0 && x.avg >= b.min && x.avg <= b.max).length);
 
                 // Trend: aggregate average percentage by date from all quiz submissions
                 const submissions = [];
@@ -5688,7 +6215,7 @@
             
             // Calculate statistics from student data
             const totalStudents = studentData.length;
-            const approvedStudents = totalStudents; // All students in quiz results are approved
+            const approvedStudents = studentData.filter(s => !s.enrollment_status || s.enrollment_status === 'approved').length;
             
             // Calculate average score
             let totalScore = 0;
@@ -8223,18 +8750,21 @@
                     #lessonContent .lesson-content-wrapper {
                         line-height: 1.7;
                         color: #374151;
+                        max-width: 960px;
+                        margin: 0 auto;
                     }
-                    /* PowerPoint-like slide containers */
+                    /* Formal slide-style containers */
                     #lessonContent .bg-white.rounded-xl.shadow-lg,
                     #lessonContent div[class*="rounded-xl"][class*="shadow"],
                     #lessonContent div[class*="rounded-2xl"][class*="shadow"] {
-                        margin-bottom: 2rem;
-                        transition: transform 0.2s ease, box-shadow 0.2s ease;
+                        margin-bottom: 2.5rem;
+                        border-radius: 1rem;
+                        border: 1px solid #e5e7eb;
+                        transition: box-shadow 0.15s ease;
                     }
                     #lessonContent .bg-white.rounded-xl.shadow-lg:hover,
                     #lessonContent div[class*="rounded-xl"][class*="shadow"]:hover {
-                        transform: translateY(-2px);
-                        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+                        box-shadow: 0 18px 30px -12px rgba(15, 23, 42, 0.25);
                     }
                     /* Slide-like sections with clear visual separation */
                     #lessonContent > div {
@@ -8332,20 +8862,40 @@
                     }
                     /* Title slide styling */
                     #lessonContent .bg-gradient-to-r {
-                        text-align: center;
-                        padding: 3rem 2rem;
+                        text-align: left;
+                        padding: 2.5rem 2rem;
+                        border-radius: 1rem 1rem 0 0;
                     }
                     /* Content slide styling */
                     #lessonContent .border-l-4 {
                         padding-left: 1.5rem;
+                        border-radius: 0.5rem;
+                        background-color: #f9fafb;
                     }
-                    /* Example slide styling */
+                    /* Example / emphasis blocks */
                     #lessonContent .bg-blue-50,
                     #lessonContent .bg-green-50,
                     #lessonContent .bg-yellow-50 {
                         padding: 1.5rem;
                         border-radius: 0.75rem;
                         margin: 1rem 0;
+                    }
+                    @media (max-width: 768px) {
+                        #lessonContent .lesson-content-wrapper {
+                            padding: 0.5rem 0.25rem;
+                        }
+                        #lessonContent .bg-white.rounded-xl.shadow-lg,
+                        #lessonContent div[class*="rounded-xl"][class*="shadow"],
+                        #lessonContent div[class*="rounded-2xl"][class*="shadow"] {
+                            margin-bottom: 1.5rem;
+                            border-radius: 0.75rem;
+                        }
+                        #lessonContent .bg-gradient-to-r {
+                            padding: 2rem 1.25rem;
+                        }
+                        #lessonContent p {
+                            font-size: 0.98rem;
+                        }
                     }
                 `;
                 
@@ -8661,6 +9211,30 @@
             </div>
         </div>
     </div>
+
+    <!-- Mobile Bottom Navigation Bar -->
+    <nav class="mobile-bottom-nav">
+        <a href="#" onclick="showSection('dashboard'); closeMobileSidebar(); return false;" class="mobile-bottom-nav-item active" data-section="dashboard">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="#" onclick="showSection('class-management'); closeMobileSidebar(); return false;" class="mobile-bottom-nav-item" data-section="class-management">
+            <i class="fas fa-chalkboard-teacher"></i>
+            <span>Classes</span>
+        </a>
+        <a href="#" onclick="showSection('quiz-management'); closeMobileSidebar(); return false;" class="mobile-bottom-nav-item" data-section="quiz-management">
+            <i class="fas fa-question-circle"></i>
+            <span>Quizzes</span>
+        </a>
+        <a href="#" onclick="showSection('lesson-creation'); closeMobileSidebar(); return false;" class="mobile-bottom-nav-item" data-section="lesson-creation">
+            <i class="fas fa-book-open"></i>
+            <span>Lessons</span>
+        </a>
+        <a href="#" onclick="showSection('class-performance'); closeMobileSidebar(); return false;" class="mobile-bottom-nav-item" data-section="class-performance">
+            <i class="fas fa-chart-bar"></i>
+            <span>Performance</span>
+        </a>
+    </nav>
 </body>
 </html>
 

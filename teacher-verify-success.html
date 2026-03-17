@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verified - MathEase Teacher</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="register-page">
+    <section class="auth-section" style="padding-top:60px;">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <div class="auth-logo">
+                        <img src="css/nav-logo/logo-mid.png" alt="MathEase Logo" class="auth-logo-img">
+                        <h1>MathEase</h1>
+                    </div>
+                    <h2>Email Verified Successfully!</h2>
+                    <p>Your teacher account has been verified and is pending admin approval.</p>
+                </div>
+
+                <div class="auth-form">
+                    <div style="text-align: center; margin: 30px 0;">
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; width: 80px; height: 80px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 20px;">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <h3 style="color: #667eea; margin: 0 0 10px 0;" id="verificationTitle">Verification Complete!</h3>
+                        <p id="welcomeMessage" style="color: #666; margin: 0;">Welcome to MathEase!</p>
+                    </div>
+
+                    <div id="infoBox" style="background: linear-gradient(135deg, #e8f4f8 0%, #d1e7f0 100%); border-left: 4px solid #667eea; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                        <div style="display: flex; align-items: start;">
+                            <div style="background: #667eea; color: white; width: 40px; height: 40px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 18px; margin-right: 15px; flex-shrink: 0;">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <h4 style="color: #667eea; margin: 0 0 8px 0; font-size: 16px;">What's Next?</h4>
+                                <p id="infoMessage" style="color: #555; margin: 0; font-size: 14px; line-height: 1.6;">
+                                    Your account has been sent to the administrator for approval. You will receive an email notification once your account has been approved. After approval, you'll be able to log in and start using your teacher account.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <a href="teacher-login.html" class="btn btn-primary btn-full" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Continue to Teacher Login
+                        </a>
+                    </div>
+                </div>
+
+                <div class="auth-footer">
+                    <p>Return to <a href="index.html">Home</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Get name and already_verified status from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const name = urlParams.get('name');
+        const alreadyVerified = urlParams.get('already_verified') === 'true';
+        
+        if (name) {
+            document.getElementById('welcomeMessage').textContent = `Welcome to MathEase, ${name}!`;
+        }
+        
+        // Handle already verified case
+        if (alreadyVerified) {
+            const infoBox = document.getElementById('infoBox');
+            const infoMessage = document.getElementById('infoMessage');
+            
+            infoBox.style.background = 'linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%)';
+            infoBox.style.borderLeftColor = '#ffc107';
+            
+            const iconDiv = infoBox.querySelector('div[style*="background: #667eea"]');
+            if (iconDiv) {
+                iconDiv.style.background = '#ffc107';
+                iconDiv.innerHTML = '<i class="fas fa-clock"></i>';
+            }
+            
+            const title = infoBox.querySelector('h4');
+            if (title) {
+                title.style.color = '#856404';
+                title.textContent = 'Account Already Verified';
+            }
+            
+            if (infoMessage) {
+                infoMessage.style.color = '#856404';
+                infoMessage.textContent = 'Your email has already been verified. Your account is currently pending admin approval. You will receive an email notification once your account has been approved.';
+            }
+        }
+    </script>
+</body>
+</html>

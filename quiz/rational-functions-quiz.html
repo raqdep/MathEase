@@ -24,86 +24,593 @@
         }
     </script>
     <style>
+        /* Enhanced background with animated gradient */
+        body {
+            background: linear-gradient(135deg, #f5f3ff 0%, #e9d5ff 50%, #f5f3ff 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(167, 139, 250, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
         .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .question-card {
-            transition: all 0.3s ease;
-        }
-        .question-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.15);
-        }
-        .option-selected {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-color: #667eea;
-            transform: scale(1.02);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-        }
-        .option-correct {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            border-color: #10b981;
-        }
-        .option-incorrect {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-            border-color: #ef4444;
-        }
-        .option-review {
-            pointer-events: none;
-            opacity: 0.8;
-        }
-        .review-mode .option {
-            pointer-events: none;
-        }
-        .review-mode .option input {
-            pointer-events: none;
-        }
-        .review-mode .option input[type="number"] {
-            pointer-events: none;
-        }
-        .progress-bar {
-            transition: width 0.3s ease;
-        }
-        .question-card {
-            animation: slideInUp 0.6s ease-out;
-        }
-        .option {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background-image: url('../Img/Beige and Green Board Math Classroom Header.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             position: relative;
             overflow: hidden;
+            margin-top: 0;
         }
-        .option::before {
+        
+        .gradient-bg::before {
             content: '';
             position: absolute;
             top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.7) 0%, rgba(118, 75, 162, 0.7) 100%);
+            z-index: 1;
         }
-        .option:hover::before {
-            left: 100%;
+        
+        .gradient-bg > * {
+            position: relative;
+            z-index: 2;
         }
-        .option:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        
+        /* Enhanced question card with better animations */
+        .question-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.15), 0 0 0 0 rgba(139, 92, 246, 0);
+            position: relative;
+            overflow: hidden;
+            animation: cardEntrance 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        @keyframes slideInUp {
+        
+        @keyframes cardEntrance {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(30px) scale(0.95);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
             }
         }
-        .virtual-aid {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        
+        .question-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(196, 181, 253, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(221, 214, 254, 0.3) 0%, transparent 50%);
+            pointer-events: none;
+            animation: patternMove 20s ease-in-out infinite;
+        }
+        
+        @keyframes patternMove {
+            0%, 100% { opacity: 0.3; transform: translate(0, 0); }
+            50% { opacity: 0.5; transform: translate(10px, -10px); }
+        }
+        
+        .question-card:hover {
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 20px 50px rgba(139, 92, 246, 0.25), 0 0 0 4px rgba(139, 92, 246, 0.1);
+        }
+        
+        /* Enhanced answer options */
+        .quiz-option {
+            position: relative;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid #e5e7eb;
+            background: white;
+            text-align: left;
+            margin-bottom: 1rem;
+            -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
+            touch-action: manipulation;
+        }
+        
+        .quiz-option:hover {
+            border-color: #a78bfa;
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+            transform: translateX(8px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.2);
+        }
+        
+        .option-label {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+            color: #7c3aed;
+            border-radius: 50%;
+            flex-shrink: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.15);
+        }
+        
+        .quiz-option.selected {
+            background: #f3e8ff;
+            border: 2px solid #8b5cf6;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+        }
+        
+        .quiz-option.selected .option-label {
+            background: #8b5cf6;
+            color: white;
+        }
+        
+        /* Review mode styling */
+        .option-correct {
+            background: #d1fae5 !important;
+            border: 2px solid #10b981 !important;
+        }
+        
+        .option-correct .option-label {
+            background: #10b981 !important;
+            color: white !important;
+        }
+        
+        .option-incorrect {
+            background: #fee2e2 !important;
+            border: 2px solid #ef4444 !important;
+        }
+        
+        .option-incorrect .option-label {
+            background: #ef4444 !important;
+            color: white !important;
+        }
+        
+        .review-mode .option,
+        .review-mode .quiz-option {
+            pointer-events: none;
+        }
+        
+        .review-mode .option input,
+        .review-mode .quiz-option input {
+            pointer-events: none;
+        }
+        
+        .review-mode textarea {
+            pointer-events: none;
+        }
+        
+        /* Progress bar styling */
+        .quiz-progress-bar {
+            height: 6px;
+            background: #e5e7eb;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 0 auto;
+            max-width: 100%;
+        }
+        
+        .quiz-progress-fill {
+            height: 100%;
+            background: #8b5cf6;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        
+        /* Circular timer styling */
+        .circular-timer {
+            position: relative;
+            width: 60px;
+            height: 60px;
+        }
+        
+        .circular-timer svg {
+            transform: rotate(-90deg);
+        }
+        
+        .circular-timer .timer-bg {
+            stroke: #e5e7eb;
+            fill: none;
+        }
+        
+        .circular-timer .timer-progress {
+            stroke: #8b5cf6;
+            fill: none;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+        
+        .timer-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        /* Ensure sticky header stays on top */
+        #progressTimerHeader {
+            position: sticky;
+            top: 64px;
+            z-index: 45;
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Adjust position when review banner is visible */
+        #reviewModeBanner:not(.hidden) ~ #progressTimerHeader {
+            top: 128px;
+        }
+        
+        /* Timer color changes */
+        .timer-text.warning {
+            color: #f59e0b !important;
+        }
+        
+        .timer-text.urgent {
+            color: #ef4444 !important;
+        }
+        
+        .timer-progress.warning {
+            stroke: #f59e0b !important;
+        }
+        
+        .timer-progress.urgent {
+            stroke: #ef4444 !important;
+        }
+        
+        /* Character animations */
+        .tips-character {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .results-character {
+            transition: all 0.5s ease;
+        }
+        
+        .results-character.motivate {
+            animation: bounce 1s ease-in-out infinite;
+        }
+        
+        .results-character.celebrate {
+            animation: celebrate 2s ease-in-out infinite;
+        }
+        
+        .results-character.sad {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        .results-character.happy {
+            animation: wiggle 1s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        @keyframes celebrate {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.1) rotate(-5deg); }
+            75% { transform: scale(1.1) rotate(5deg); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0px); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-3deg); }
+            75% { transform: rotate(3deg); }
+        }
+        
+        /* Podium Styles */
+        .podium-block {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .podium-block:hover {
+            transform: translateY(-5px);
+        }
+        
+        .podium-1 {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+            width: 160px;
+            height: 180px;
+            border-radius: 16px 16px 0 0;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(59, 130, 246, 0.4), inset 0 -5px 15px rgba(29, 78, 216, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            overflow: visible;
+        }
+        
+        .podium-2 {
+            background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+            width: 140px;
+            height: 150px;
+            border-radius: 16px 16px 0 0;
+            position: relative;
+            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.4), inset 0 -5px 15px rgba(4, 120, 87, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            overflow: visible;
+        }
+        
+        .podium-3 {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
+            width: 140px;
+            height: 120px;
+            border-radius: 16px 16px 0 0;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4), inset 0 -5px 15px rgba(180, 83, 9, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            overflow: visible;
+        }
+        
+        .podium-avatar {
+            width: 80px;
+            height: 80px;
+            top: -40px;
+            border: 4px solid white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        }
+        
+        .podium-rank {
+            width: 64px;
+            height: 64px;
+            font-size: 24px;
+            top: -20px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+        }
+        
+        .podium-crown {
+            font-size: 40px;
+            top: -50px;
+            right: -10px;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+        
+        /* Leaderboard Styles */
+        .leaderboard-entry {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e7eb;
+            transition: all 0.2s ease;
+        }
+        
+        .leaderboard-entry:hover {
+            background-color: #f9fafb;
+        }
+        
+        .leaderboard-entry.you {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border-radius: 8px;
+            margin: 4px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+        
+        .leaderboard-entry.cheating-entry {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border-left: 4px solid #ef4444;
+            border-radius: 8px;
+            margin: 4px 0;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.1);
+        }
+        
+        /* Pagination Styles */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: #f9fafb;
+            border-top: 2px solid #e5e7eb;
+        }
+        
+        .pagination-btn {
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            color: #374151;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .pagination-btn:hover:not(:disabled) {
+            background: #8b5cf6;
+            color: white;
+            border-color: #8b5cf6;
+        }
+        
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .pagination-page-numbers {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .pagination-page-number {
+            padding: 0.5rem 0.75rem;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            color: #374151;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 2.5rem;
+            text-align: center;
+        }
+        
+        .pagination-page-number:hover {
+            background: #f3e8ff;
+            border-color: #8b5cf6;
+        }
+        
+        .pagination-page-number.active {
+            background: #8b5cf6;
+            color: white;
+            border-color: #8b5cf6;
+        }
+        
+        .pagination-info {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-left: auto;
+        }
+        
+        /* AI Modal Styles */
+        #aiModal {
+            backdrop-filter: blur(4px);
+            z-index: 40 !important;
+            top: 64px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            align-items: flex-start;
+            overflow-y: auto;
+        }
+        
+        body.modal-open {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+        }
+        
+        #aiModal .bg-white {
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .math-expression {
+            font-family: 'Times New Roman', serif;
+            font-size: 1.1em;
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 640px) {
+            #progressTimerHeader {
+                top: 64px;
+                padding-top: 0.75rem;
+                padding-bottom: 0.75rem;
+            }
+            
+            #reviewModeBanner ~ #progressTimerHeader {
+                top: 128px;
+            }
+            
+            nav {
+                position: sticky;
+                top: 0;
+                z-index: 50;
+            }
+            
+            .podium-1 { width: 100px; height: 120px; }
+            .podium-2 { width: 85px; height: 95px; }
+            .podium-3 { width: 85px; height: 70px; }
+            .podium-avatar { width: 40px; height: 40px; top: -30px; }
+            .podium-rank { width: 35px; height: 35px; font-size: 16px; }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            main {
+                padding-top: 0.5rem;
+            }
+            
+            input[type="text"], textarea {
+                font-size: 1.25rem;
+                padding: 0.75rem;
+                min-height: 48px;
+            }
+            
+            .quiz-option {
+                min-height: 80px;
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
+            }
+        }
+        
+        /* Badge notification styles */
+        .badge-notification {
+            border-radius: 20px !important;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
         }
     </style>
 </head>
@@ -113,102 +620,250 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
-                    <a href="../index.html" class="flex items-center space-x-2">
+                    <a href="../dashboard.html" class="flex items-center space-x-2">
                         <img src="../css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-8 w-8">
                         <span class="text-xl font-bold text-primary">MathEase</span>
                     </a>
                 </div>
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="../dashboard.html" class="text-gray-700 hover:text-primary transition-colors">
-                        <i class="fas fa-home mr-2"></i>Dashboard
-                    </a>
-                    <a href="../topics.html" class="text-primary font-semibold">
-                        <i class="fas fa-book mr-2"></i>Topics
-                    </a>
+                <div class="flex items-center space-x-4">
                     <span class="text-gray-600">
                         <i class="fas fa-user mr-2"></i><span id="userName">Student</span>
                     </span>
-                    <a href="../php/logout.php" class="text-gray-700 hover:text-red-600 transition-colors">
-                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
-                    </a>
+                    <div class="relative" id="logoutDropdown">
+                        <button onclick="toggleLogoutDropdown()" class="text-gray-700 hover:text-red-600 transition-colors flex items-center">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div id="logoutDropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                            <a href="#" onclick="interceptLogout(event)" class="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Header -->
-    <header class="gradient-bg text-white py-12">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
-                <i class="fas fa-fraction mr-2"></i>
-                <span class="font-semibold">General Mathematics 11</span>
+    <!-- Review Mode Banner -->
+    <div id="reviewModeBanner" class="hidden bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 sm:py-4 sticky top-16 z-[55]">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-center space-x-2 sm:space-x-3">
+                <i class="fas fa-eye text-xl sm:text-2xl"></i>
+                <div class="text-center">
+                    <h2 class="text-lg sm:text-xl font-bold">Review Mode</h2>
+                    <p class="text-xs sm:text-sm text-orange-100">Quiz deadline has passed. You can review your answers but cannot submit.</p>
+                </div>
             </div>
-            <h1 class="text-3xl md:text-5xl font-bold mb-4">Rational Functions Quiz</h1>
-            <p class="text-lg md:text-xl text-white/90 mb-6">
-                Test your understanding of rational functions, equations, and inequalities
-            </p>
-            <div class="flex justify-center space-x-4">
-                <div class="bg-white/20 backdrop-blur-sm rounded-full px-6 py-2">
-                    <span class="font-semibold">10 Multiple Choice</span>
+        </div>
+    </div>
+
+    <!-- Quiz Header -->
+    <header class="gradient-bg text-white py-12">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
+                    <i class="fas fa-fraction mr-2"></i>
+                    <span class="font-semibold">Rational Functions Quiz</span>
                 </div>
-                <div class="bg-white/20 backdrop-blur-sm rounded-full px-6 py-2">
-                    <span class="font-semibold">1 Problem Solving</span>
-                </div>
-                <div class="bg-white/20 backdrop-blur-sm rounded-full px-6 py-2">
-                    <span class="font-semibold">30 Minutes</span>
-                </div>
+                <h1 class="text-4xl md:text-5xl font-bold mb-4" id="quizTitle">Master Rational Functions</h1>
             </div>
         </div>
     </header>
 
-    <!-- Quiz Instructions -->
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
-            <div class="text-center mb-6">
-                <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-info-circle text-2xl"></i>
+    <!-- Progress Bar and Timer - Always Sticky Header -->
+    <div class="bg-white shadow-lg border-b-2 border-purple-200 sticky top-16 z-[45] transition-all duration-300" id="progressTimerHeader">
+        <div class="max-w-5xl mx-auto px-3 sm:px-4 lg:px-8 py-3 sm:py-4">
+            <div class="flex flex-col sm:flex-row items-center justify-between mb-2 sm:mb-3 gap-2 sm:gap-0">
+                <!-- Left: Question Progress -->
+                <div class="flex items-center w-full sm:w-auto justify-between sm:justify-start">
+                    <div class="flex items-center">
+                        <span class="text-xs sm:text-sm text-gray-600 mr-2 font-medium">Question</span>
+                        <span class="text-xl sm:text-2xl font-bold text-gray-800" id="progressText">0/11</span>
+                    </div>
+                    
+                    <!-- Mobile: Show timer inline on small screens -->
+                    <div class="flex items-center sm:hidden">
+                        <div class="circular-timer" style="width: 45px; height: 45px;">
+                            <svg width="45" height="45">
+                                <circle class="timer-bg" cx="22.5" cy="22.5" r="19" stroke-width="3"></circle>
+                                <circle class="timer-progress" cx="22.5" cy="22.5" r="19" stroke-width="3" 
+                                        stroke-dasharray="119.38" stroke-dashoffset="119.38" id="timerCircleMobile"></circle>
+                            </svg>
+                            <div class="timer-text text-xs" id="quizTimerMobile" style="font-size: 0.7rem;">00:00</div>
+                        </div>
+                    </div>
                 </div>
-                <h2 class="text-2xl font-bold text-gray-800 mb-2">Quiz Instructions</h2>
-                <p class="text-gray-600">Read the instructions carefully before starting the quiz</p>
+                
+                <!-- Right: Circular Timer (Desktop) -->
+                <div class="hidden sm:flex items-center">
+                    <div class="circular-timer">
+                        <svg width="60" height="60">
+                            <circle class="timer-bg" cx="30" cy="30" r="26" stroke-width="4"></circle>
+                            <circle class="timer-progress" cx="30" cy="30" r="26" stroke-width="4" 
+                                    stroke-dasharray="163.36" stroke-dashoffset="163.36" id="timerCircle"></circle>
+                        </svg>
+                        <div class="timer-text" id="quizTimer">00:00</div>
+                    </div>
+                </div>
             </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div class="bg-blue-50 rounded-lg p-4">
-                    <h3 class="font-semibold text-blue-800 mb-2">
-                        <i class="fas fa-clock text-blue-500 mr-2"></i>Time Limit
-                    </h3>
-                    <p class="text-blue-700 text-sm">You have 30 minutes to complete this quiz</p>
+            <!-- Horizontal Progress Bar -->
+            <div class="quiz-progress-bar">
+                <div class="quiz-progress-fill" id="progressBar" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tips Section -->
+    <div id="tipsContainer" class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <div class="text-center mb-8 relative">
+                <div class="w-32 h-32 mx-auto mb-6 flex items-center justify-center relative">
+                    <img src="../Img/Character/tips_approved-removebg-preview.png" 
+                         alt="Tips Approved Character" 
+                         class="w-full h-full object-contain tips-character"
+                         style="filter: drop-shadow(0 15px 30px rgba(0,0,0,0.15));">
+                    
+                    <!-- Floating elements around the character -->
+                    <div class="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full animate-ping"></div>
+                    <div class="absolute -bottom-2 -left-2 w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
+                    <div class="absolute top-1/2 -right-4 w-3 h-3 bg-blue-400 rounded-full animate-bounce"></div>
                 </div>
-                <div class="bg-green-50 rounded-lg p-4">
-                    <h3 class="font-semibold text-green-800 mb-2">
-                        <i class="fas fa-check-circle text-green-500 mr-2"></i>Passing Score
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Quiz Tips & Guidelines</h2>
+                <p class="text-lg text-gray-600">Read these tips before starting your Rational Functions Quiz</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-clock text-blue-500 mr-3"></i>Time Management
                     </h3>
-                    <p class="text-green-700 text-sm">You need 70% (8 out of 11 questions) to pass</p>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Take your time to read each question carefully</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Don't rush through the problem solving section</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Review your answers before submitting</span>
+                        </li>
+                    </ul>
                 </div>
-                <div class="bg-purple-50 rounded-lg p-4">
-                    <h3 class="font-semibold text-purple-800 mb-2">
-                        <i class="fas fa-question-circle text-purple-500 mr-2"></i>Question Types
+
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-fraction text-green-500 mr-3"></i>Rational Functions
                     </h3>
-                    <p class="text-purple-700 text-sm">10 multiple choice + 1 problem solving</p>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Remember to check for restrictions in the domain</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Simplify rational expressions when possible</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Watch out for vertical and horizontal asymptotes</span>
+                        </li>
+                    </ul>
                 </div>
-                <div class="bg-orange-50 rounded-lg p-4">
-                    <h3 class="font-semibold text-orange-800 mb-2">
-                        <i class="fas fa-exclamation-triangle text-orange-500 mr-2"></i>Important
+
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-question-circle text-purple-500 mr-3"></i>Multiple Choice
                     </h3>
-                    <p class="text-orange-700 text-sm">You can only take this quiz once</p>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Eliminate obviously wrong answers first</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Pay attention to domain restrictions</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Check your work for common mistakes</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-exclamation-triangle text-yellow-500 mr-3"></i>Important Notes
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Quiz has 11 total questions (10 multiple choice + 1 problem solving)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Multiple choice: 1 point each, Problem solving: 5 points, 15 points total</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Timer starts when you click "Start Quiz"</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
-            
+
+            <!-- Badges Section -->
+            <div class="bg-gradient-to-r from-yellow-50 via-amber-50 to-orange-50 rounded-xl p-6 mb-8 border-l-4 border-yellow-500">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-trophy text-yellow-600 mr-3"></i>Earn Badges!
+                </h3>
+                <p class="text-gray-700 mb-4">Complete this quiz and earn special badges based on your performance!</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white rounded-lg p-4 border-2 border-purple-200 shadow-sm">
+                        <div class="flex items-center mb-3">
+                            <span class="text-3xl mr-3">🏆</span>
+                            <div>
+                                <h4 class="font-bold text-gray-800">Rational Functions Champion</h4>
+                                <span class="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded-full font-semibold">EPIC</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">Score 100% on this quiz</p>
+                        <p class="text-xs text-gray-500">Perfect score! Master rational functions and earn this prestigious badge!</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 border-2 border-blue-200 shadow-sm">
+                        <div class="flex items-center mb-3">
+                            <span class="text-3xl mr-3">🔧</span>
+                            <div>
+                                <h4 class="font-bold text-gray-800">Rational Functions Expert</h4>
+                                <span class="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-semibold">RARE</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">Score 60% or higher on this quiz</p>
+                        <p class="text-xs text-gray-500">Show your expertise in rational functions!</p>
+                    </div>
+                </div>
+                <div class="mt-4 bg-blue-50 rounded-lg p-3 border-l-4 border-blue-400">
+                    <p class="text-sm text-blue-800 flex items-start">
+                        <i class="fas fa-info-circle mr-2 mt-0.5"></i>
+                        <span>Badges are automatically awarded when you complete the quiz. Check your <a href="../achievements.html" class="font-semibold underline hover:text-blue-900">Achievements page</a> to see all your earned badges!</span>
+                    </p>
+                </div>
+            </div>
+
             <div class="text-center">
-                <button id="startQuizBtn" class="bg-primary text-white px-8 py-3 rounded-lg hover:bg-secondary transition-colors font-semibold text-lg">
-                    <i class="fas fa-play mr-2"></i>Start Quiz
+                <button onclick="startQuiz()" class="bg-gradient-to-r from-primary to-secondary text-white px-12 py-4 rounded-xl font-semibold text-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                    <i class="fas fa-play mr-3"></i>
+                    Start Quiz
                 </button>
             </div>
         </div>
     </div>
 
     <!-- Quiz Content -->
-    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div id="quizContainer" class="hidden">
             <!-- Question 1 -->
             <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="1">
@@ -548,94 +1203,124 @@
         <!-- Results Container -->
         <div id="resultsContainer" class="hidden">
             <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
-                <!-- Score Summary -->
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <i class="fas fa-trophy text-white text-xl"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Total Score</h3>
-                        <p class="text-2xl font-bold text-blue-600" id="totalScore">0/11</p>
+                <div class="text-center mb-8">
+                    <div id="resultsCharacter" class="w-24 h-24 mx-auto mb-4 flex items-center justify-center">
+                        <img src="../Img/Character/tips_approved-removebg-preview.png" 
+                             alt="Results Character" 
+                             class="w-full h-full object-contain results-character"
+                             style="filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));">
                     </div>
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <i class="fas fa-check-circle text-white text-xl"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Correct</h3>
-                        <p class="text-2xl font-bold text-green-600" id="correctAnswers">0</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <i class="fas fa-times-circle text-white text-xl"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Incorrect</h3>
-                        <p class="text-2xl font-bold text-red-600" id="incorrectAnswers">0</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <i class="fas fa-clock text-white text-xl"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Time Taken</h3>
-                        <p class="text-2xl font-bold text-purple-600" id="completionTime">0:00</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <i class="fas fa-percentage text-white text-xl"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Grade</h3>
-                        <p class="text-2xl font-bold text-orange-600" id="overallGrade">0%</p>
-                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Quiz Complete!</h2>
+                    <p class="text-lg text-gray-600">Here's how you performed</p>
                 </div>
 
-                <!-- Progress Bar -->
-                <div class="mb-8">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-sm font-medium text-gray-700">Overall Progress</span>
-                        <span class="text-sm font-medium text-gray-700" id="gradeProgressText">0%</span>
+                <!-- Score Summary -->
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold text-blue-600 mb-2" id="totalScore">0/15</div>
+                        <div class="text-sm text-gray-600">Total Score</div>
                     </div>
-                    <div class="w-full bg-gray-200 rounded-full h-3">
-                        <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-1000 ease-out" id="gradeProgress" style="width: 0%"></div>
+                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold text-green-600 mb-2" id="correctAnswers">0</div>
+                        <div class="text-sm text-gray-600">Correct Answers</div>
+                    </div>
+                    <div class="bg-gradient-to-r from-red-50 to-pink-50 rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold text-red-600 mb-2" id="incorrectAnswers">0</div>
+                        <div class="text-sm text-gray-600">Incorrect Answers</div>
+                    </div>
+                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold text-purple-600 mb-2" id="completionTime">0:00</div>
+                        <div class="text-sm text-gray-600">Completion Time</div>
+                    </div>
+                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold text-yellow-600 mb-2" id="studentRank">--</div>
+                        <div class="text-sm text-gray-600">Your Rank</div>
                     </div>
                 </div>
 
                 <!-- Detailed Performance Analysis -->
                 <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 mb-8">
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">
-                        <i class="fas fa-chart-line text-indigo-600 mr-2"></i>
-                        Performance Analysis
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">
+                        <i class="fas fa-chart-line text-indigo-500 mr-2"></i>Performance Analysis
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <h4 class="font-semibold text-gray-700 mb-2">Strengths</h4>
-                            <ul class="text-sm text-gray-600 space-y-1">
-                                <li class="flex items-center">
-                                    <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                                    Understanding rational function concepts
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                                    Domain and range identification
-                                </li>
-                            </ul>
+                        <div class="bg-white rounded-lg p-4">
+                            <h4 class="font-semibold text-gray-800 mb-3">Multiple Choice Questions</h4>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Questions:</span>
+                                    <span class="font-semibold">10</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Points per question:</span>
+                                    <span class="font-semibold">1 point</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Total possible:</span>
+                                    <span class="font-semibold">10 points</span>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <h4 class="font-semibold text-gray-700 mb-2">Areas for Improvement</h4>
-                            <ul class="text-sm text-gray-600 space-y-1">
-                                <li class="flex items-center">
-                                    <i class="fas fa-exclamation-triangle text-orange-500 mr-2"></i>
-                                    Solving rational equations
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-exclamation-triangle text-orange-500 mr-2"></i>
-                                    Rational inequalities
-                                </li>
-                            </ul>
+                        <div class="bg-white rounded-lg p-4">
+                            <h4 class="font-semibold text-gray-800 mb-3">Problem Solving</h4>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Questions:</span>
+                                    <span class="font-semibold">1</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Points per question:</span>
+                                    <span class="font-semibold">5 points</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Total possible:</span>
+                                    <span class="font-semibold">5 points</span>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                    <div class="mt-4 bg-white rounded-lg p-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Overall Grade:</span>
+                            <span class="text-2xl font-bold text-indigo-600" id="overallGrade">0%</span>
+                        </div>
+                        <div class="mt-2">
+                            <div class="w-full bg-gray-200 rounded-full h-3">
+                                <div class="bg-indigo-500 h-3 rounded-full transition-all duration-1000" id="gradeProgress" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review Your Answers Section -->
+                <div id="reviewAnswersSection" class="mt-8 mb-8">
+                    <div class="bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 rounded-xl p-6 mb-6 shadow-lg border-2 border-blue-200">
+                        <div class="text-center">
+                            <div class="inline-flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full p-4 mb-4 shadow-lg">
+                                <i class="fas fa-clipboard-check text-3xl"></i>
+                            </div>
+                            <h3 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-3">
+                                Review Your Answers
+                            </h3>
+                            <p class="text-gray-600 mb-2 text-lg">See which answers you got correct and incorrect</p>
+                            <p class="text-gray-500 text-sm">Review each question with explanations</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Quiz questions with answers will be displayed here -->
+                    <div id="quizReviewContainer" class="space-y-6">
+                        <!-- Questions will be dynamically inserted here -->
                     </div>
                 </div>
 
                 <!-- Action Buttons -->
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button id="aiAssistantBtn" onclick="openAIModal()" class="group relative bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-robot text-xl"></i>
+                        </div>
+                        <span>AI Performance Analysis</span>
+                    </button>
                     <button onclick="showLeaderboard()" class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
                         <i class="fas fa-trophy mr-2"></i>
                         View Leaderboard
@@ -651,86 +1336,193 @@
         <!-- Leaderboard Container -->
         <div id="leaderboardContainer" class="hidden">
             <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
-                <!-- Leaderboard Header -->
                 <div class="text-center mb-8">
-                    <div class="w-20 h-20 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-trophy text-white text-3xl"></i>
+                    <div class="w-20 h-20 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-trophy text-3xl"></i>
                     </div>
-                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Rational Functions Quiz Leaderboard</h2>
-                    <p class="text-gray-600">See how you compare with other students</p>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Class Leaderboard</h2>
+                    <p class="text-lg text-gray-600">Top performers in your class ranked by score and speed</p>
                 </div>
 
                 <!-- Leaderboard Stats -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                    <div class="text-center">
-                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                            <i class="fas fa-users text-blue-600"></i>
-                        </div>
-                        <h3 class="text-sm font-medium text-gray-700">Total Participants</h3>
-                        <p class="text-xl font-bold text-blue-600" id="totalParticipants">0</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold text-blue-600 mb-2" id="totalParticipants">0</div>
+                        <div class="text-sm text-gray-600">Total Participants</div>
                     </div>
-                    <div class="text-center">
-                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                            <i class="fas fa-chart-bar text-green-600"></i>
-                        </div>
-                        <h3 class="text-sm font-medium text-gray-700">Average Score</h3>
-                        <p class="text-xl font-bold text-green-600" id="averageScore">0%</p>
+                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold text-green-600 mb-2" id="averageScore">0%</div>
+                        <div class="text-sm text-gray-600">Average Score</div>
                     </div>
-                    <div class="text-center">
-                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                            <i class="fas fa-clock text-purple-600"></i>
-                        </div>
-                        <h3 class="text-sm font-medium text-gray-700">Fastest Time</h3>
-                        <p class="text-xl font-bold text-purple-600" id="fastestTime">0:00</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                            <i class="fas fa-medal text-orange-600"></i>
-                        </div>
-                        <h3 class="text-sm font-medium text-gray-700">Your Rank</h3>
-                        <p class="text-xl font-bold text-orange-600" id="studentRank">--</p>
+                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold text-purple-600 mb-2" id="fastestTime">0:00</div>
+                        <div class="text-sm text-gray-600">Fastest Time</div>
                     </div>
                 </div>
 
-                <!-- Leaderboard Table -->
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead>
-                            <tr class="bg-gray-50">
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rank</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                            </tr>
-                        </thead>
-                        <tbody id="leaderboardTable" class="bg-white divide-y divide-gray-200">
-                            <!-- Leaderboard entries will be populated here -->
-                        </tbody>
-                    </table>
+                <!-- Podium Section -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Top Performers</h3>
+                    <div class="flex justify-center items-end space-x-4 mb-8" id="podiumContainer">
+                        <!-- Podium will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Detailed Leaderboard -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">Complete Rankings</h3>
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                        <div id="detailedLeaderboard" class="divide-y divide-gray-200">
+                            <!-- Leaderboard entries will be populated by JavaScript -->
+                        </div>
+                        <!-- Pagination Controls -->
+                        <div id="paginationContainer" class="pagination-container hidden">
+                            <button id="prevPageBtn" class="pagination-btn" onclick="changePage(-1)">
+                                <i class="fas fa-chevron-left mr-1"></i> Previous
+                            </button>
+                            <div class="pagination-page-numbers" id="pageNumbers">
+                                <!-- Page numbers will be populated by JavaScript -->
+                            </div>
+                            <button id="nextPageBtn" class="pagination-btn" onclick="changePage(1)">
+                                Next <i class="fas fa-chevron-right ml-1"></i>
+                            </button>
+                            <div class="pagination-info" id="paginationInfo">
+                                <!-- Pagination info will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-                    <button onclick="hideLeaderboard()" class="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="hideLeaderboard()" class="bg-gradient-to-r from-primary to-secondary text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
                         <i class="fas fa-arrow-left mr-2"></i>
                         Back to Results
                     </button>
-                    <button onclick="loadLeaderboard()" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
-                        <i class="fas fa-sync-alt mr-2"></i>
-                        Refresh Leaderboard
+                    <button onclick="goToDashboard()" class="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
+                        <i class="fas fa-home mr-2"></i>
+                        Back to Dashboard
                     </button>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8 mt-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p>&copy; 2024 MathEase. All rights reserved.</p>
+    <!-- AI Assistant Modal -->
+    <div id="aiModal" class="hidden fixed bg-black bg-opacity-60 flex items-start justify-center p-4 pt-5 backdrop-blur-sm" style="top: 64px; left: 0; right: 0; bottom: 0;">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full overflow-hidden flex flex-col max-h-[90vh]">
+            <!-- Modal Header -->
+            <div class="bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 text-white p-6 flex items-center justify-between shadow-lg flex-shrink-0">
+                <div class="flex items-center space-x-4">
+                    <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-robot text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold">AI Performance Analysis</h3>
+                        <p class="text-purple-100 text-sm mt-1">Detailed feedback from Cassy</p>
+                    </div>
+                </div>
+                <button onclick="closeAIModal()" class="text-white hover:text-gray-200 transition-colors p-2 hover:bg-white/10 rounded-full">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            
+            <!-- Modal Content -->
+            <div class="flex-1 overflow-y-auto p-6 bg-gradient-to-b from-gray-50 to-white space-y-6">
+                <div id="aiLoading" class="text-center py-16">
+                    <div class="inline-block animate-spin rounded-full h-16 w-16 border-4 border-purple-200 border-t-purple-600 mb-6"></div>
+                    <p class="text-gray-700 font-semibold text-lg">Cassy is analyzing your performance...</p>
+                    <p class="text-gray-500 text-sm mt-2">This will just take a moment!</p>
+                </div>
+                
+                <div id="aiContent" class="hidden space-y-6">
+                    <!-- Performance Metrics Visualization -->
+                    <div class="bg-white rounded-xl p-6 shadow-md border border-gray-200">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-chart-bar text-purple-600 mr-3"></i>
+                            Performance Overview
+                        </h2>
+                        <div id="aiMetrics" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- Metrics will be inserted here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Strengths & Weaknesses Visualization -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Strengths Card -->
+                        <div id="strengthsCard" class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border-2 border-green-300 shadow-lg">
+                            <div class="flex items-center mb-5">
+                                <div class="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center mr-4 shadow-md">
+                                    <i class="fas fa-check-circle text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-green-800">Your Strengths</h3>
+                                    <p class="text-sm text-green-600">Areas where you excel</p>
+                                </div>
+                            </div>
+                            <div id="strengthsList" class="space-y-3">
+                                <!-- Strengths will be inserted here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Weaknesses Card -->
+                        <div id="weaknessesCard" class="bg-gradient-to-br from-red-50 to-pink-50 rounded-xl p-6 border-2 border-red-300 shadow-lg">
+                            <div class="flex items-center mb-5">
+                                <div class="w-14 h-14 bg-red-500 rounded-full flex items-center justify-center mr-4 shadow-md">
+                                    <i class="fas fa-exclamation-triangle text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-red-800">Areas to Improve</h3>
+                                    <p class="text-sm text-red-600">Focus areas for better performance</p>
+                                </div>
+                            </div>
+                            <div id="weaknessesList" class="space-y-3">
+                                <!-- Weaknesses will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- AI Analysis Text -->
+                    <div class="bg-white rounded-lg p-8 shadow-sm border border-gray-200">
+                        <div class="border-b border-gray-200 pb-4 mb-6">
+                            <h2 class="text-2xl font-semibold text-gray-900 flex items-center">
+                                <i class="fas fa-chart-line text-indigo-600 mr-3 text-xl"></i>
+                                Detailed Performance Analysis
+                            </h2>
+                            <p class="text-sm text-gray-500 mt-2 ml-9">Comprehensive evaluation of your quiz performance</p>
+                        </div>
+                        <div id="aiAnalysis" class="text-gray-700 leading-relaxed">
+                            <!-- AI analysis will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="aiError" class="hidden text-center py-16">
+                    <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-exclamation-triangle text-red-500 text-4xl"></i>
+                    </div>
+                    <p class="text-red-600 font-semibold text-lg mb-2">Failed to load AI analysis</p>
+                    <p class="text-gray-600 text-sm mb-6" id="aiErrorMessage"></p>
+                    <button onclick="loadAIAnalysis()" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-3 rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl">
+                        <i class="fas fa-redo mr-2"></i>Try Again
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="bg-gray-50 p-4 border-t border-gray-200 flex justify-end">
+                <button onclick="closeAIModal()" class="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-8 py-3 rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all shadow-md hover:shadow-lg">
+                    <i class="fas fa-times mr-2"></i>Close
+                </button>
+            </div>
         </div>
-    </footer>
+    </div>
+
+    <!-- Floating AI Assistant Button -->
+    <button id="floatingAIButton" onclick="openAIModal()" class="hidden fixed bottom-8 right-8 w-16 h-16 bg-gradient-to-br from-purple-600 via-indigo-600 to-purple-700 rounded-full shadow-2xl flex items-center justify-center text-white hover:scale-110 hover:shadow-purple-500/50 transition-all duration-300 z-50 animate-pulse hover:animate-none group">
+        <i class="fas fa-robot text-2xl group-hover:scale-110 transition-transform"></i>
+        <span class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-xs font-bold animate-ping">!</span>
+    </button>
 
     <!-- JavaScript -->
     <script>
@@ -1059,6 +1851,9 @@
                     quizContainer.classList.remove('hidden');
                     // Remove any loading state
                     quizContainer.classList.remove('opacity-50', 'pointer-events-none');
+                    
+                    // Shuffle questions only (not answer options)
+                    shuffleQuestions();
                 }
                 
                 // Start the timer
@@ -1562,33 +2357,39 @@
                 console.log('=== SUBMITTING QUIZ ===');
                 console.log('Student answers:', answers);
                 
-                // Calculate score
-                const score = calculateScore(answers);
-                const percentage = Math.round((score / 11) * 100);
+                // Submit to database
+                const dbResult = await saveQuizResults(answers, quizDuration);
                 
-                console.log('Frontend calculated score:', score, 'Percentage:', percentage);
+                // Close loading dialog
+                Swal.close();
                 
-                // Save quiz attempt
-                const attemptId = await saveQuizAttempt(answers, score, percentage);
-                
-                if (attemptId) {
-                    currentAttemptId = attemptId;
-                    console.log('Quiz saved successfully with attempt ID:', attemptId);
+                if (dbResult && dbResult.success) {
+                    // Stop anti-cheating system
+                    stopAntiCheating();
                     
-                    // Close loading dialog
-                    Swal.close();
+                    // Use database results for display
+                    console.log('✅ Using database results for display');
+                    console.log('Database result:', dbResult);
                     
-                    // Show results
-                    showResults(score, percentage, answers);
+                    // Show results using database result (which will also display review section)
+                    // Badge checking will be done in showResults() to avoid duplicates
+                    showResults(dbResult);
                 } else {
-                    Swal.close();
+                    // Database submission failed - restart timer if quiz not completed
+                    if (!isQuizCompleted) {
+                        startTimer();
+                    }
+                    
+                    // Show error and don't proceed
+                    console.error('❌ Database submission failed, cannot proceed');
                     Swal.fire({
-                        title: 'Error',
-                        text: 'There was an error saving your quiz. Please try again.',
+                        title: 'Quiz Not Saved',
+                        text: 'Your quiz could not be saved to the database. Please contact your teacher or try again later.',
                         icon: 'error',
                         confirmButtonText: 'OK',
-                        confirmButtonColor: '#667eea'
+                        confirmButtonColor: '#6366f1'
                     });
+                    return; // Don't show results if database save failed
                 }
             } catch (error) {
                 console.error('Error submitting quiz:', error);
@@ -1680,98 +2481,265 @@
         }
 
         // Save quiz attempt
-        async function saveQuizAttempt(answers, score, percentage) {
+        async function saveQuizResults(answers, timeInSeconds) {
             try {
-                if (!currentAttemptId || currentAttemptId === 0 || currentAttemptId === '0') {
-                    console.error('No valid attempt ID available (currentAttemptId:', currentAttemptId, ')');
+                console.log('Submitting quiz to database...');
+                console.log('Attempt ID:', currentAttemptId);
+                console.log('Completion Time:', timeInSeconds);
+                console.log('Answers:', answers);
+                
+                if (!currentAttemptId) {
+                    console.error('❌ No quiz attempt ID found');
+                    Swal.fire({
+                        title: 'Quiz Error',
+                        text: 'Quiz session not properly initialized. Please refresh the page and try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#6366f1'
+                    });
                     return null;
                 }
-
-                console.log('=== SENDING TO BACKEND ===');
-                console.log('Attempt ID:', currentAttemptId);
-                console.log('Answers being sent:', answers);
-                console.log('Frontend calculated score:', score);
-                console.log('Frontend calculated percentage:', percentage);
-                console.log('Completion time:', quizDuration);
-
+                
                 const formData = new FormData();
                 formData.append('action', 'submit_quiz');
                 formData.append('attempt_id', currentAttemptId);
-                formData.append('answers', JSON.stringify(answers));
-                formData.append('completion_time', quizDuration);
-
+                formData.append('completion_time', timeInSeconds);
+                
+                // Check if this is an auto-submit (from exit/close)
+                if (answers._autoSubmit) {
+                    formData.append('auto_submit', 'true');
+                    formData.append('force_score_zero', 'true');
+                    formData.append('score', '0');
+                    formData.append('percentage', '0');
+                }
+                
+                // Add answers to form data
+                for (const [key, value] of Object.entries(answers)) {
+                    if (key !== '_autoSubmit') {
+                        formData.append(`answers[${key}]`, value);
+                    }
+                }
+                
+                console.log('Sending request to quiz-management.php...');
                 const response = await fetch('../php/quiz-management.php', {
                     method: 'POST',
                     body: formData,
                     credentials: 'include'
                 });
                 
-                if (!response.ok) {
-                    console.error('HTTP error submitting quiz:', response.status);
-                    return null;
-                }
+                console.log('Response status:', response.status);
                 
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
                 const result = await response.json();
-                console.log('Backend response:', result);
+                console.log('Quiz submission result:', result);
                 
                 if (result.success) {
-                    console.log('Quiz saved successfully with score:', result.score);
-                    return currentAttemptId;
+                    console.log('✅ Quiz submitted successfully to database:', result);
+                    console.log('Score:', result.score, 'Total Questions:', result.total_questions);
+                    return result; // Return the result for the calling function
                 } else {
-                    console.error('Error saving quiz:', result.message);
+                    console.error('❌ Failed to submit quiz to database:', result.message);
+                    Swal.fire({
+                        title: 'Submission Error',
+                        text: 'Failed to save your quiz to the database. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#6366f1'
+                    });
                     return null;
                 }
             } catch (error) {
-                console.error('Error saving quiz:', error);
+                console.error('❌ Error submitting quiz to database:', error);
+                Swal.fire({
+                    title: 'Connection Error',
+                    text: 'Unable to connect to the server. Please check your internet connection and try again.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#6366f1'
+                });
                 return null;
             }
         }
 
-        // Show results
-        function showResults(score, percentage, answers) {
-            // Hide quiz container
-            document.getElementById('quizContainer').classList.add('hidden');
-            
-            // Show results container
-            document.getElementById('resultsContainer').classList.remove('hidden');
-            
-            // Debug logging for score comparison
-            console.log('=== FRONTEND SCORE CALCULATION ===');
-            console.log('Frontend calculated score:', score);
-            console.log('Frontend calculated percentage:', percentage);
-            console.log('Frontend answers:', answers);
-            
-            // Update result displays
-            document.getElementById('totalScore').textContent = `${score}/11`;
-            document.getElementById('correctAnswers').textContent = score;
-            document.getElementById('incorrectAnswers').textContent = 11 - score;
-            document.getElementById('completionTime').textContent = formatTime(quizDuration);
-            document.getElementById('overallGrade').textContent = `${percentage}%`;
-            
-            // Update progress bar text and animation
-            const progressBar = document.getElementById('gradeProgress');
-            const progressText = document.getElementById('gradeProgressText');
-            
-            if (progressText) {
-                progressText.textContent = `${percentage}%`;
+        // Show results using database result
+        async function showResults(result) {
+            try {
+                // Stop the timer when showing results
+                stopTimer();
+                
+                // Collect student answers BEFORE hiding quiz container
+                const studentAnswers = {};
+                for (let i = 1; i <= 10; i++) {
+                    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                    studentAnswers[`q${i}`] = selected ? selected.value : '';
+                }
+                
+                // Get problem solving answer
+                const psInput = document.getElementById('ps-answer');
+                studentAnswers['ps-answer'] = psInput ? psInput.value.trim() : '';
+                
+                // Show results
+                const quizContainer = document.getElementById('quizContainer');
+                const resultsContainer = document.getElementById('resultsContainer');
+                
+                if (quizContainer) quizContainer.classList.add('hidden');
+                const submitButtonContainer = document.getElementById('submitButtonContainer');
+                if (submitButtonContainer) submitButtonContainer.style.display = 'none';
+                if (resultsContainer) resultsContainer.classList.remove('hidden');
+                
+                const totalQuestions = result.total_questions || 15; // Default to 15 if not provided
+                const score = result.score || 0;
+                const percentage = Math.round((score / totalQuestions) * 100);
+                
+                // Calculate correct and incorrect answers if not provided by database
+                let correctAnswers = result.correct_answers;
+                let incorrectAnswers = result.incorrect_answers;
+                
+                if (correctAnswers === undefined || incorrectAnswers === undefined) {
+                    // Calculate from student answers
+                    let correctCount = 0;
+                    for (let i = 1; i <= 10; i++) {
+                        const userAnswer = studentAnswers[`q${i}`];
+                        const correctAnswer = quizData.answers[`q${i}`];
+                        if (userAnswer === correctAnswer) {
+                            correctCount++;
+                        }
+                    }
+                    // Check problem solving
+                    const psAnswer = studentAnswers['ps-answer'] || '';
+                    const psCorrectAnswer = quizData.problemSolving.answer;
+                    if (psAnswer && psAnswer.trim().toLowerCase() === psCorrectAnswer.trim().toLowerCase()) {
+                        correctCount++;
+                    }
+                    correctAnswers = correctCount;
+                    incorrectAnswers = 11 - correctCount;
+                }
+                
+                // Update score displays
+                const totalScoreEl = document.getElementById('totalScore');
+                const correctAnswersEl = document.getElementById('correctAnswers');
+                const incorrectAnswersEl = document.getElementById('incorrectAnswers');
+                const completionTimeEl = document.getElementById('completionTime');
+                
+                if (totalScoreEl) totalScoreEl.textContent = `${score}/${totalQuestions}`;
+                if (correctAnswersEl) correctAnswersEl.textContent = correctAnswers;
+                if (incorrectAnswersEl) incorrectAnswersEl.textContent = incorrectAnswers;
+                if (completionTimeEl) completionTimeEl.textContent = formatTime(quizDuration);
+                
+                // Update overall grade
+                const overallGradeEl = document.getElementById('overallGrade');
+                const gradeProgressEl = document.getElementById('gradeProgress');
+                
+                if (overallGradeEl) overallGradeEl.textContent = `${percentage}%`;
+                if (gradeProgressEl) {
+                    gradeProgressEl.style.width = `${percentage}%`;
+                    
+                    // Change progress bar color based on grade
+                    if (percentage >= 80) {
+                        gradeProgressEl.className = 'bg-green-500 h-3 rounded-full transition-all duration-1000';
+                    } else if (percentage >= 60) {
+                        gradeProgressEl.className = 'bg-yellow-500 h-3 rounded-full transition-all duration-1000';
+                    } else {
+                        gradeProgressEl.className = 'bg-red-500 h-3 rounded-full transition-all duration-1000';
+                    }
+                }
+                
+                // Update character based on score
+                updateResultsCharacter(percentage);
+
+                // Get and display student's rank
+                await displayStudentRank();
+
+                // Analyze which specific questions were answered correctly/incorrectly
+                const questionAnalysis = [];
+                const questionConcepts = {
+                    1: { title: 'Rational function definition', concept: 'Understanding what a rational function is' },
+                    2: { title: 'Domain of rational functions', concept: 'Finding domain restrictions' },
+                    3: { title: 'Vertical asymptotes', concept: 'Identifying vertical asymptotes' },
+                    4: { title: 'Horizontal asymptotes', concept: 'Identifying horizontal asymptotes' },
+                    5: { title: 'Extraneous solutions', concept: 'Understanding extraneous solutions in rational equations' },
+                    6: { title: 'Solving rational equations', concept: 'Solving equations with rational expressions' },
+                    7: { title: 'LCD method', concept: 'Using least common denominator to solve rational equations' },
+                    8: { title: 'Rational inequalities', concept: 'Solving rational inequalities' },
+                    9: { title: 'Sign analysis', concept: 'Using sign analysis for rational inequalities' },
+                    10: { title: 'Rational function zeros', concept: 'Finding zeros of rational functions' }
+                };
+                
+                for (let i = 1; i <= 10; i++) {
+                    const userAnswer = studentAnswers[`q${i}`];
+                    const correctAnswer = quizData.answers[`q${i}`];
+                    const isCorrect = userAnswer === correctAnswer;
+                    questionAnalysis.push({
+                        questionNumber: i,
+                        concept: questionConcepts[i].title,
+                        conceptDetail: questionConcepts[i].concept,
+                        studentAnswer: userAnswer || '',
+                        correctAnswer: correctAnswer,
+                        isCorrect: isCorrect
+                    });
+                }
+                
+                // Check problem solving
+                const psAnswer = studentAnswers['ps-answer'] || '';
+                const psCorrectAnswer = quizData.problemSolving.answer;
+                const isPsCorrect = psAnswer && psAnswer.trim().toLowerCase() === psCorrectAnswer.trim().toLowerCase();
+                
+                // Calculate MC correct/incorrect
+                const mcCorrect = correctAnswers - (isPsCorrect ? 1 : 0);
+                const mcIncorrect = incorrectAnswers - (isPsCorrect ? 0 : 1);
+                
+                // Store quiz results for AI analysis with detailed question analysis
+                window.quizResultsForAI = {
+                    score: score,
+                    totalQuestions: totalQuestions,
+                    totalPoints: 15,
+                    correct: correctAnswers,
+                    incorrect: incorrectAnswers,
+                    percentage: percentage,
+                    timeTaken: formatTime(quizDuration),
+                    mcCorrect: mcCorrect,
+                    mcIncorrect: mcIncorrect,
+                    psCorrect: isPsCorrect ? 1 : 0,
+                    psIncorrect: isPsCorrect ? 0 : 1,
+                    studentAnswers: studentAnswers,
+                    questionAnalysis: questionAnalysis,
+                    problemSolvingAnswer: psAnswer,
+                    problemSolvingCorrect: isPsCorrect
+                };
+
+                // Show quiz review with correct/incorrect answers and explanations
+                displayQuizReview(studentAnswers);
+
+                // Check and award badges for any completed quiz (backend decides which badges apply)
+                if (!isReviewMode) {
+                    await checkAndAwardBadges(result);
+                } else {
+                    console.log('Skipping badge check - quiz in review mode');
+                }
+
+                // Show floating AI button
+                const floatingAIButton = document.getElementById('floatingAIButton');
+                if (floatingAIButton) {
+                    floatingAIButton.classList.remove('hidden');
+                }
+
+                // Scroll to results
+                if (resultsContainer) {
+                    resultsContainer.scrollIntoView({ behavior: 'smooth' });
+                }
+            } catch (error) {
+                console.error('Error showing results:', error);
+                Swal.fire({
+                    title: 'Results Error',
+                    text: 'Unable to display quiz results. Please try again.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#6366f1'
+                });
             }
-            
-            if (progressBar) {
-                // Reset width first, then animate
-                progressBar.style.width = '0%';
-                setTimeout(() => {
-                    progressBar.style.width = `${percentage}%`;
-                }, 100);
-            }
-            
-            // Store current score for leaderboard comparison
-            window.currentQuizScore = score;
-            window.currentQuizPercentage = percentage;
-            
-            // Verify score with backend after a short delay
-            setTimeout(() => {
-                verifyScoreWithBackend();
-            }, 2000);
         }
         
         // Verify score with backend
@@ -2074,6 +3042,1101 @@
         // Go to dashboard
         function goToDashboard() {
             window.location.href = '../dashboard.html';
+        }
+
+        // ==================== AI ASSISTANT FUNCTIONS ====================
+        
+        // Open AI Modal
+        function openAIModal() {
+            const modal = document.getElementById('aiModal');
+            if (modal) {
+                // Prevent body scroll
+                document.body.classList.add('modal-open');
+                // Show modal
+                modal.classList.remove('hidden');
+                // Scroll to top of modal content
+                const modalContent = modal.querySelector('.flex-1.overflow-y-auto');
+                if (modalContent) {
+                    modalContent.scrollTop = 0;
+                }
+                loadAIAnalysis();
+            }
+        }
+        
+        // Close AI Modal
+        function closeAIModal() {
+            const modal = document.getElementById('aiModal');
+            if (modal) {
+                // Allow body scroll again
+                document.body.classList.remove('modal-open');
+                // Hide modal
+                modal.classList.add('hidden');
+            }
+        }
+        
+        // Load AI Analysis
+        async function loadAIAnalysis() {
+            if (!window.quizResultsForAI) {
+                document.getElementById('aiError').classList.remove('hidden');
+                document.getElementById('aiLoading').classList.add('hidden');
+                document.getElementById('aiContent').classList.add('hidden');
+                document.getElementById('aiErrorMessage').textContent = 'Quiz results not available. Please submit the quiz first.';
+                return;
+            }
+            
+            // Show loading, hide content and error
+            document.getElementById('aiLoading').classList.remove('hidden');
+            document.getElementById('aiContent').classList.add('hidden');
+            document.getElementById('aiError').classList.add('hidden');
+            
+            try {
+                const response = await fetch('../php/quiz-ai-assistant.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(window.quizResultsForAI)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.analysis) {
+                    // Hide loading, show content
+                    document.getElementById('aiLoading').classList.add('hidden');
+                    document.getElementById('aiContent').classList.remove('hidden');
+                    
+                    // Display metrics visualization
+                    if (data.metrics) {
+                        displayAIMetrics(data.metrics);
+                    }
+                    
+                    // Extract and display strengths/weaknesses
+                    extractAndDisplayStrengthsWeaknesses(data.analysis);
+                    
+                    // Format and display the analysis
+                    const analysisDiv = document.getElementById('aiAnalysis');
+                    
+                    // Normalize line endings and remove unwanted text patterns
+                    let cleanAnalysis = data.analysis
+                        // Normalize Windows/Mac line endings to simple \n
+                        .replace(/\r\n/g, '\n')
+                        .replace(/\r/g, '\n')
+                        // Remove "Meet with me" and similar scheduling text
+                        .replace(/Meet with me:.*?(?=\n|$)/gi, '')
+                        .replace(/Schedule a follow-up.*?(?=\n|$)/gi, '')
+                        .replace(/Schedule.*?session.*?(?=\n|$)/gi, '')
+                        .replace(/follow-up session.*?(?=\n|$)/gi, '')
+                        // Remove markdown headers (# and ##)
+                        .replace(/^#{1,6}\s+/gm, '')
+                        // Convert markdown bold (**text**) to styled bold
+                        .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-800">$1</strong>')
+                        // Convert markdown italic (*text*) to styled italic
+                        .replace(/\*(.*?)\*/g, '<em class="italic text-gray-600">$1</em>')
+                        // Remove markdown code blocks
+                        .replace(/```[\s\S]*?```/g, '')
+                        .replace(/`([^`]+)`/g, '<code class="bg-gray-100 px-2 py-1 rounded text-sm font-mono text-purple-600">$1</code>')
+                        // Remove extra asterisks
+                        .replace(/\*{3,}/g, '')
+                        // Merge lines like "Title" then "\n: description" into a single line
+                        .replace(/([^\n]+)\n:\s*/g, '$1: ')
+                        // Remove immediate duplicate lines (often produced in RECOMMENDATIONS / NEXT STEPS)
+                        .replace(/^(.+)\n\1(\n|$)/gm, '$1\n')
+                        // Clean up multiple newlines
+                        .replace(/\n{3,}/g, '\n\n')
+                        .trim();
+                    
+                    // Convert markdown-style headers to HTML sections with formal modern styling
+                    let formattedAnalysis = cleanAnalysis
+                        .replace(/MOTIVATION\n/gi, '</div><div class="mb-8 pb-6 border-b border-gray-200 last:border-b-0"><div class="flex items-start mb-4"><div class="flex-shrink-0 w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mr-4 mt-1"><i class="fas fa-heart text-indigo-600 text-sm"></i></div><div class="flex-1"><h3 class="text-lg font-semibold text-gray-900 mb-2">Motivation</h3></div></div><div class="ml-14 text-gray-700 leading-relaxed">')
+                        .replace(/STRENGTHS\n/gi, '</div><div class="mb-8 pb-6 border-b border-gray-200 last:border-b-0"><div class="flex items-start mb-4"><div class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-4 mt-1"><i class="fas fa-check-circle text-green-600 text-sm"></i></div><div class="flex-1"><h3 class="text-lg font-semibold text-gray-900 mb-2">Your Strengths</h3></div></div><div class="ml-14 text-gray-700 leading-relaxed">')
+                        .replace(/AREAS FOR IMPROVEMENT\n/gi, '</div><div class="mb-8 pb-6 border-b border-gray-200 last:border-b-0"><div class="flex items-start mb-4"><div class="flex-shrink-0 w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-4 mt-1"><i class="fas fa-exclamation-triangle text-red-600 text-sm"></i></div><div class="flex-1"><h3 class="text-lg font-semibold text-gray-900 mb-2">Areas to Improve</h3></div></div><div class="ml-14 text-gray-700 leading-relaxed">')
+                        .replace(/RECOMMENDATIONS\n/gi, '</div><div class="mb-10 pb-8 border-b border-gray-200 last:border-b-0"><div class="bg-gradient-to-r from-blue-50 via-indigo-50 to-blue-50 rounded-xl p-6 border-l-4 border-blue-500 shadow-md mb-6"><div class="flex items-center mb-4"><div class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mr-4 shadow-lg"><i class="fas fa-lightbulb text-white text-xl"></i></div><div class="flex-1"><h3 class="text-xl font-bold text-gray-900 mb-1">Recommendations</h3><p class="text-sm text-gray-600">Actionable steps to enhance your performance</p></div></div><div class="space-y-4">')
+                        .replace(/NEXT STEPS\n/gi, '</div></div><div class="mb-10 pb-8 border-b border-gray-200 last:border-b-0"><div class="bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 rounded-xl p-6 border-l-4 border-amber-500 shadow-md mb-6"><div class="flex items-center mb-4"><div class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center mr-4 shadow-lg"><i class="fas fa-arrow-right text-white text-xl"></i></div><div class="flex-1"><h3 class="text-xl font-bold text-gray-900 mb-1">Next Steps</h3><p class="text-sm text-gray-600">Your roadmap to continued improvement</p></div></div><div class="space-y-4">')
+                        .replace(/PERFORMANCE ANALYSIS\n/gi, '</div><div class="mb-8 pb-6 border-b border-gray-200 last:border-b-0"><div class="flex items-start mb-4"><div class="flex-shrink-0 w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mr-4 mt-1"><i class="fas fa-chart-line text-indigo-600 text-sm"></i></div><div class="flex-1"><h3 class="text-lg font-semibold text-gray-900 mb-2">Performance Analysis</h3></div></div><div class="ml-14 text-gray-700 leading-relaxed">')
+                        // Convert bullet points with enhanced styling for RECOMMENDATIONS and NEXT STEPS
+                        .replace(/^[-•]\s+(.*)$/gm, '<div class="flex items-start p-4 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all"><div class="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-4 mt-0.5"><i class="fas fa-check-circle text-blue-600 text-xs"></i></div><span class="text-gray-800 flex-1 font-medium leading-relaxed">$1</span></div>')
+                        .replace(/^\s*(\d+)\.\s+(.*)$/gm, '<div class="flex items-start p-4 bg-white rounded-lg border border-gray-200 hover:border-amber-300 hover:shadow-sm transition-all"><div class="flex-shrink-0 w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center mr-4 mt-0.5 font-bold text-amber-700 text-sm">$1</div><span class="text-gray-800 flex-1 font-medium leading-relaxed">$2</span></div>')
+                        // Convert paragraphs with professional spacing
+                        .replace(/\n\n/g, '</div><div class="mt-5 text-gray-700 leading-relaxed">')
+                        .replace(/\n/g, '<br>');
+                    
+                    formattedAnalysis = '<div class="space-y-0">' + formattedAnalysis + '</div></div>';
+                    analysisDiv.innerHTML = formattedAnalysis;
+                } else {
+                    throw new Error(data.message || 'Failed to get AI analysis');
+                }
+            } catch (error) {
+                console.error('AI Analysis Error:', error);
+                document.getElementById('aiLoading').classList.add('hidden');
+                document.getElementById('aiError').classList.remove('hidden');
+                document.getElementById('aiErrorMessage').textContent = error.message || 'An error occurred while loading AI analysis.';
+            }
+        }
+        
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('aiModal');
+            if (modal && event.target === modal) {
+                closeAIModal();
+            }
+        });
+        
+        // Display AI Metrics Visualization
+        function displayAIMetrics(metrics) {
+            const metricsDiv = document.getElementById('aiMetrics');
+            if (!metricsDiv || !metrics) return;
+            
+            const percentage = metrics.percentage || 0;
+            const mcPercentage = metrics.mcPercentage || 0;
+            const psPercentage = metrics.psPercentage || 0;
+            const mcCorrect = metrics.mcCorrect || 0;
+            const psCorrect = metrics.psCorrect || 0;
+            
+            // Determine performance level and color for overall score
+            let overallColorClass, overallIcon, overallLevel, overallStatus;
+            if (percentage >= 90) {
+                overallColorClass = 'from-green-500 to-emerald-600';
+                overallIcon = 'fa-trophy';
+                overallLevel = 'Excellent';
+                overallStatus = 'Outstanding performance!';
+            } else if (percentage >= 80) {
+                overallColorClass = 'from-blue-500 to-indigo-600';
+                overallIcon = 'fa-star';
+                overallLevel = 'Very Good';
+                overallStatus = 'Great work! Keep it up!';
+            } else if (percentage >= 70) {
+                overallColorClass = 'from-yellow-500 to-orange-600';
+                overallIcon = 'fa-check-circle';
+                overallLevel = 'Good';
+                overallStatus = 'Good performance, but more practice needed';
+            } else if (percentage >= 60) {
+                overallColorClass = 'from-orange-500 to-red-500';
+                overallIcon = 'fa-exclamation-circle';
+                overallLevel = 'Needs Improvement';
+                overallStatus = 'Focus on studying these concepts';
+            } else {
+                overallColorClass = 'from-red-500 to-red-700';
+                overallIcon = 'fa-times-circle';
+                overallLevel = 'Weak';
+                overallStatus = 'Needs significant improvement - review fundamentals';
+            }
+            
+            // Determine MC performance
+            let mcColorClass, mcStatus;
+            if (mcPercentage >= 80) {
+                mcColorClass = 'from-blue-500 to-indigo-600';
+                mcStatus = 'Strong in Multiple Choice questions';
+            } else if (mcPercentage >= 60) {
+                mcColorClass = 'from-yellow-500 to-orange-500';
+                mcStatus = 'Moderate performance in Multiple Choice';
+            } else {
+                mcColorClass = 'from-red-500 to-pink-500';
+                mcStatus = 'Needs improvement in Multiple Choice';
+            }
+            
+            // Determine PS performance
+            let psColorClass, psStatus;
+            if (psPercentage >= 80) {
+                psColorClass = 'from-purple-500 to-pink-600';
+                psStatus = 'Strong in Problem Solving';
+            } else if (psPercentage >= 50) {
+                psColorClass = 'from-yellow-500 to-orange-500';
+                psStatus = 'Moderate performance in Problem Solving';
+            } else {
+                psColorClass = 'from-red-500 to-pink-500';
+                psStatus = 'Needs improvement in Problem Solving';
+            }
+            
+            metricsDiv.innerHTML = `
+                <div class="bg-gradient-to-br ${overallColorClass} rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-transform">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-sm font-semibold uppercase tracking-wide">Overall Performance</span>
+                        <i class="fas ${overallIcon} text-2xl"></i>
+                    </div>
+                    <div class="text-4xl font-bold mb-2">${percentage}%</div>
+                    <div class="w-full bg-white/20 rounded-full h-3 mb-2">
+                        <div class="bg-white rounded-full h-3 transition-all duration-1000 shadow-lg" style="width: ${percentage}%"></div>
+                    </div>
+                    <div class="text-sm font-semibold mb-1">${overallLevel}</div>
+                    <div class="text-xs opacity-90 italic">${overallStatus}</div>
+                </div>
+                
+                <div class="bg-gradient-to-br ${mcColorClass} rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-transform">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-sm font-semibold uppercase tracking-wide">Multiple Choice</span>
+                        <i class="fas fa-list-check text-2xl"></i>
+                    </div>
+                    <div class="text-4xl font-bold mb-2">${mcPercentage}%</div>
+                    <div class="w-full bg-white/20 rounded-full h-3 mb-2">
+                        <div class="bg-white rounded-full h-3 transition-all duration-1000 shadow-lg" style="width: ${mcPercentage}%"></div>
+                    </div>
+                    <div class="text-sm font-semibold mb-1">${mcCorrect}/10 Questions</div>
+                    <div class="text-xs opacity-90 italic">${mcStatus}</div>
+                </div>
+                
+                <div class="bg-gradient-to-br ${psColorClass} rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-transform">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-sm font-semibold uppercase tracking-wide">Problem Solving</span>
+                        <i class="fas fa-calculator text-2xl"></i>
+                    </div>
+                    <div class="text-4xl font-bold mb-2">${psPercentage}%</div>
+                    <div class="w-full bg-white/20 rounded-full h-3 mb-2">
+                        <div class="bg-white rounded-full h-3 transition-all duration-1000 shadow-lg" style="width: ${psPercentage}%"></div>
+                    </div>
+                    <div class="text-sm font-semibold mb-1">${psCorrect > 0 ? 'Correct' : 'Incorrect'}</div>
+                    <div class="text-xs opacity-90 italic">${psStatus}</div>
+                </div>
+            `;
+        }
+        
+        // Analyze specific questions to generate detailed strengths and weaknesses
+        function analyzeSpecificPerformance() {
+            if (!window.quizResultsForAI || !window.quizResultsForAI.questionAnalysis) {
+                return { strengths: [], weaknesses: [] };
+            }
+            
+            const questionAnalysis = window.quizResultsForAI.questionAnalysis;
+            const strengths = [];
+            const weaknesses = [];
+            
+            // Group correct answers by concept
+            const correctConcepts = [];
+            const incorrectConcepts = [];
+            
+            questionAnalysis.forEach(q => {
+                if (q.isCorrect) {
+                    correctConcepts.push(q.concept);
+                } else {
+                    incorrectConcepts.push({
+                        concept: q.concept,
+                        conceptDetail: q.conceptDetail,
+                        questionNumber: q.questionNumber
+                    });
+                }
+            });
+            
+            // Create unique strengths list
+            const uniqueStrengths = [...new Set(correctConcepts)];
+            uniqueStrengths.forEach(concept => {
+                strengths.push({
+                    concept: concept,
+                    detail: questionAnalysis.find(q => q.concept === concept && q.isCorrect)?.conceptDetail || ''
+                });
+            });
+            
+            // Create unique weaknesses list
+            const uniqueWeaknesses = [...new Set(incorrectConcepts.map(w => w.concept))];
+            uniqueWeaknesses.forEach(concept => {
+                const weakness = incorrectConcepts.find(w => w.concept === concept);
+                weaknesses.push({
+                    concept: concept,
+                    detail: weakness?.conceptDetail || '',
+                    questionNumber: weakness?.questionNumber
+                });
+            });
+            
+            return { strengths, weaknesses };
+        }
+        
+        // Extract and display strengths and weaknesses
+        function extractAndDisplayStrengthsWeaknesses(analysis) {
+            // First try to get detailed analysis from question-specific data
+            const specificAnalysis = analyzeSpecificPerformance();
+            
+            const strengthsList = document.getElementById('strengthsList');
+            const weaknessesList = document.getElementById('weaknessesList');
+            
+            if (specificAnalysis.strengths.length > 0) {
+                strengthsList.innerHTML = specificAnalysis.strengths.map(strength => `
+                    <div class="bg-white rounded-lg p-4 shadow-sm border border-green-200 hover:shadow-md transition-shadow">
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-3 mt-1"></i>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-green-800 mb-1">${strength.concept}</h4>
+                                <p class="text-sm text-green-700">${strength.detail}</p>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                strengthsList.innerHTML = '<p class="text-green-700 text-sm italic">No specific strengths identified. Keep practicing!</p>';
+            }
+            
+            if (specificAnalysis.weaknesses.length > 0) {
+                weaknessesList.innerHTML = specificAnalysis.weaknesses.map(weakness => `
+                    <div class="bg-white rounded-lg p-4 shadow-sm border border-red-200 hover:shadow-md transition-shadow">
+                        <div class="flex items-start">
+                            <i class="fas fa-exclamation-triangle text-red-500 mr-3 mt-1"></i>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-red-800 mb-1">${weakness.concept}</h4>
+                                <p class="text-sm text-red-700">${weakness.detail}</p>
+                                ${weakness.questionNumber ? `<p class="text-xs text-red-600 mt-1">Question ${weakness.questionNumber}</p>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                weaknessesList.innerHTML = '<p class="text-red-700 text-sm italic">Great job! No specific weaknesses identified.</p>';
+            }
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modal = document.getElementById('aiModal');
+                if (modal && !modal.classList.contains('hidden')) {
+                    closeAIModal();
+                }
+            }
+        });
+
+        // ==================== BADGE FUNCTIONS ====================
+        
+        // Check and award badges for quiz completion
+        async function checkAndAwardBadges(result) {
+            try {
+                console.log('🏆 Checking for badge eligibility...');
+                console.log('Quiz result:', result);
+                
+                // Always check with backend; it will decide which badges qualify
+                const userId = await getCurrentUserId();
+                if (!userId) {
+                    console.log('❌ No user ID available for badge checking');
+                    return;
+                }
+                
+                if (!currentAttemptId) {
+                    console.log('❌ No attempt ID available for badge checking');
+                    return;
+                }
+                
+                console.log('User ID:', userId);
+                console.log('Attempt ID:', currentAttemptId);
+                console.log('Score:', result.score, '/', result.total_questions);
+                console.log('Submitting result to backend for badge evaluation');
+                
+                const formData = new FormData();
+                formData.append('action', 'check_and_award_badges');
+                formData.append('student_id', userId);
+                formData.append('quiz_type', 'rational-functions');
+                formData.append('score', result.score);
+                formData.append('total_questions', result.total_questions);
+                formData.append('attempt_id', currentAttemptId);
+                
+                console.log('Sending badge check request...');
+                const response = await fetch('../php/badge-management.php', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+                
+                console.log('Badge check response status:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Badge check result:', data);
+                    
+                    if (data.success && data.awarded_badges && data.awarded_badges.length > 0) {
+                        console.log('✅ Badges awarded:', data.awarded_badges);
+                        
+                        // Validate badge data before showing notification
+                        const validBadges = data.awarded_badges.filter(badge => {
+                            const isValid = badge && (badge.name || badge.icon_url || badge.description);
+                            if (!isValid) {
+                                console.warn('Invalid badge data found:', badge);
+                            }
+                            return isValid;
+                        });
+                        
+                        if (validBadges.length > 0) {
+                            // Show notification for all badges
+                            showBadgeNotification(validBadges);
+                            
+                            // Notify dashboard to refresh badges count
+                            localStorage.setItem('mathease-badges-updated', Date.now().toString());
+                        } else {
+                            console.log('No valid badges to display');
+                        }
+                    } else {
+                        console.log('No badges awarded or empty badge array');
+                        if (data.message) {
+                            console.log('Message:', data.message);
+                        }
+                    }
+                } else {
+                    console.error('❌ Failed to check badges:', response.status);
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
+                    
+                    // Try to parse as JSON to get error message
+                    try {
+                        const errorData = JSON.parse(errorText);
+                        console.error('Error details:', errorData);
+                    } catch (e) {
+                        console.error('Could not parse error response as JSON');
+                    }
+                }
+            } catch (error) {
+                console.error('❌ Error checking badges:', error);
+                console.error('Error stack:', error.stack);
+            }
+        }
+
+        // Show badge notification
+        function showBadgeNotification(badges) {
+            if (!badges || badges.length === 0) {
+                console.log('No badges to display');
+                return;
+            }
+            
+            // Show the highest priority badge (first in array, already sorted by backend)
+            const badge = badges[0];
+            
+            // Validate badge data and provide fallbacks for null/undefined values
+            const badgeIcon = badge.icon_url || '🏆';
+            const badgeName = badge.name || 'New Badge';
+            const badgeDescription = badge.description || 'Congratulations on earning this badge!';
+            const badgeRarity = badge.rarity || 'common';
+            
+            console.log('🎉 Displaying badge notification:', {
+                icon: badgeIcon,
+                name: badgeName,
+                description: badgeDescription,
+                rarity: badgeRarity,
+                totalBadges: badges.length
+            });
+            
+            // Build HTML for all badges if multiple
+            let badgesHTML = '';
+            const rarityColors = {
+                'common': 'bg-gray-100 text-gray-800',
+                'rare': 'bg-blue-100 text-blue-800',
+                'epic': 'bg-purple-100 text-purple-800',
+                'legendary': 'bg-yellow-100 text-yellow-800'
+            };
+            const rarityColor = rarityColors[badgeRarity] || rarityColors.common;
+            
+            if (badges.length === 1) {
+                badgesHTML = `
+                    <div class="text-center">
+                        <div class="text-6xl mb-4 animate-bounce">${badgeIcon}</div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">${badgeName}</h3>
+                        <p class="text-gray-600 mb-3">${badgeDescription}</p>
+                        <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${rarityColor} mb-3">
+                            ${badgeRarity.toUpperCase()}
+                        </div>
+                        <p class="text-sm text-gray-500">🎉 You've earned a new badge! Check your achievements page to see it.</p>
+                    </div>
+                `;
+            } else {
+                // Show all badges in a list
+                badgesHTML = `
+                    <div class="text-center">
+                        <div class="text-6xl mb-4 animate-bounce">${badgeIcon}</div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">${badgeName}</h3>
+                        <p class="text-gray-600 mb-3">${badgeDescription}</p>
+                        <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${rarityColor} mb-3">
+                            ${badgeRarity.toUpperCase()}
+                        </div>
+                        <div class="bg-purple-50 rounded-lg p-3 mt-3">
+                            <p class="text-sm font-semibold text-purple-800 mb-2">🎊 You earned ${badges.length} badges!</p>
+                            <div class="space-y-2">
+                                ${badges.map((b, index) => {
+                                    const bRarity = b.rarity || 'common';
+                                    const bRarityColor = rarityColors[bRarity] || rarityColors.common;
+                                    return `
+                                        <div class="flex items-center justify-center text-sm text-purple-700 bg-white rounded-lg p-2">
+                                            <span class="mr-2 text-xl">${b.icon_url || '🏆'}</span>
+                                            <span class="flex-1 text-left">${b.name || 'Badge ' + (index + 1)}</span>
+                                            <span class="px-2 py-1 rounded-full text-xs font-semibold ${bRarityColor} ml-2">
+                                                ${bRarity.toUpperCase()}
+                                            </span>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-3">Check your achievements page to see all your badges!</p>
+                    </div>
+                `;
+            }
+            
+            Swal.fire({
+                title: '🎉 Congratulations!',
+                html: badgesHTML,
+                icon: 'success',
+                confirmButtonText: 'Awesome!',
+                confirmButtonColor: '#10b981',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showCloseButton: false,
+                customClass: {
+                    popup: 'badge-notification'
+                }
+            });
+        }
+
+        // Get current user ID from server
+        async function getCurrentUserId() {
+            try {
+                const response = await fetch('../php/user.php', {
+                    credentials: 'include',
+                    cache: 'no-store'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.user) {
+                        return data.user.id;
+                    }
+                }
+                return null;
+            } catch (error) {
+                console.error('Error getting user ID:', error);
+                return null;
+            }
+        }
+
+        // ==================== LEADERBOARD FUNCTIONS ====================
+        
+        // Pagination variables
+        let currentLeaderboardData = [];
+        let currentPage = 1;
+        const itemsPerPage = 10;
+
+        // Show leaderboard
+        function showLeaderboard() {
+            document.getElementById('resultsContainer').classList.add('hidden');
+            document.getElementById('leaderboardContainer').classList.remove('hidden');
+            loadLeaderboard();
+            
+            // Hide floating AI button while viewing leaderboard
+            const floatingAIButton = document.getElementById('floatingAIButton');
+            if (floatingAIButton) {
+                floatingAIButton.classList.add('hidden');
+            }
+            
+            // Scroll to leaderboard
+            document.getElementById('leaderboardContainer').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Hide leaderboard
+        function hideLeaderboard() {
+            document.getElementById('leaderboardContainer').classList.add('hidden');
+            document.getElementById('resultsContainer').classList.remove('hidden');
+            
+            // Show floating AI button again when leaving leaderboard
+            const floatingAIButton = document.getElementById('floatingAIButton');
+            if (floatingAIButton && window.quizResultsForAI) {
+                floatingAIButton.classList.remove('hidden');
+            }
+        }
+
+        // Load leaderboard data
+        async function loadLeaderboard() {
+            const podiumContainer = document.getElementById('podiumContainer');
+            const detailedLeaderboard = document.getElementById('detailedLeaderboard');
+            
+            try {
+                const response = await fetch('../php/quiz-management.php?action=get_leaderboard&quiz_type=rational-functions&limit=1000&same_class_only=true', {
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success && result.leaderboard) {
+                    const leaderboardData = result.leaderboard;
+                    
+                    if (leaderboardData.length === 0) {
+                        // Show empty state
+                        document.getElementById('totalParticipants').textContent = '0';
+                        document.getElementById('averageScore').textContent = '0%';
+                        document.getElementById('fastestTime').textContent = '0:00';
+                        
+                        podiumContainer.innerHTML = `
+                            <div class="text-center py-8">
+                                <i class="fas fa-trophy text-6xl text-gray-300 mb-4"></i>
+                                <p class="text-lg text-gray-500">No quiz attempts yet</p>
+                                <p class="text-sm text-gray-400">Be the first to take the quiz!</p>
+                            </div>
+                        `;
+                        
+                        detailedLeaderboard.innerHTML = `
+                            <div class="px-6 py-8 text-center text-gray-500">
+                                <i class="fas fa-trophy text-4xl mb-4 text-gray-300"></i>
+                                <p class="text-lg">No quiz attempts yet</p>
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    // Update stats
+                    document.getElementById('totalParticipants').textContent = leaderboardData.length;
+                    const averageScore = leaderboardData.length > 0 ? Math.round(leaderboardData.reduce((sum, student) => sum + parseFloat(student.percentage), 0) / leaderboardData.length) : 0;
+                    document.getElementById('averageScore').textContent = averageScore + '%';
+                    
+                    const fastestTime = leaderboardData.length > 0 ? leaderboardData.reduce((fastest, student) => {
+                        const studentTime = parseFloat(student.formatted_time.replace(':', '.'));
+                        const fastestTime = parseFloat(fastest.replace(':', '.'));
+                        return studentTime < fastestTime ? student.formatted_time : fastest;
+                    }, leaderboardData[0].formatted_time) : '0:00';
+                    
+                    document.getElementById('fastestTime').textContent = fastestTime;
+                    
+                    // Create podium
+                    createPodium(leaderboardData.slice(0, 3));
+                    
+                    // Store leaderboard data and reset pagination
+                    currentLeaderboardData = leaderboardData;
+                    currentPage = 1;
+                    
+                    // Create detailed leaderboard with pagination
+                    createDetailedLeaderboard(leaderboardData);
+                } else {
+                    podiumContainer.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="fas fa-exclamation-triangle text-6xl text-red-300 mb-4"></i>
+                            <p class="text-lg text-red-500">Error loading leaderboard</p>
+                        </div>
+                    `;
+                    
+                    detailedLeaderboard.innerHTML = `
+                        <div class="px-6 py-8 text-center text-red-500">
+                            <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+                            <p class="text-lg">Error loading leaderboard</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading leaderboard:', error);
+                podiumContainer.innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="fas fa-exclamation-triangle text-6xl text-red-300 mb-4"></i>
+                        <p class="text-lg text-red-500">Error loading leaderboard</p>
+                    </div>
+                `;
+                
+                detailedLeaderboard.innerHTML = `
+                    <div class="px-6 py-8 text-center text-red-500">
+                        <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+                        <p class="text-lg">Error loading leaderboard</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Create podium for top 3
+        function createPodium(topStudents) {
+            const podiumContainer = document.getElementById('podiumContainer');
+            
+            if (topStudents.length === 0) {
+                podiumContainer.innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="fas fa-trophy text-6xl text-gray-300 mb-4"></i>
+                        <p class="text-lg text-gray-500">No quiz attempts yet</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            podiumContainer.innerHTML = '';
+            
+            // Create podium blocks for top 3
+            const positions = [2, 1, 3]; // Order: 2nd, 1st, 3rd
+            positions.forEach((position, index) => {
+                const student = topStudents[position - 1];
+                if (!student) return;
+                
+                const podiumBlock = document.createElement('div');
+                podiumBlock.className = 'podium-block';
+                
+                const initials = student.student_name.split(' ').map(n => n[0]).join('').toUpperCase();
+                const isCurrentUser = student.is_current_user == 1;
+                
+                podiumBlock.innerHTML = `
+                    <div class="podium-${position}">
+                        <div class="podium-avatar">
+                            <span class="text-white font-bold text-lg">${initials}</span>
+                        </div>
+                        <div class="podium-rank podium-rank-${position}">${position}</div>
+                        ${position === 1 ? '<div class="podium-crown">👑</div>' : ''}
+                    </div>
+                    <div class="podium-info">
+                        <div class="podium-name">${student.student_name}</div>
+                        <div class="podium-points">${student.score}/${student.total_questions}</div>
+                        ${isCurrentUser ? '<div class="text-xs text-blue-600 font-medium mt-1">You</div>' : ''}
+                    </div>
+                `;
+                
+                podiumContainer.appendChild(podiumBlock);
+            });
+        }
+        
+        // Create detailed leaderboard with pagination
+        function createDetailedLeaderboard(leaderboardData) {
+            const detailedLeaderboard = document.getElementById('detailedLeaderboard');
+            
+            if (leaderboardData.length === 0) {
+                detailedLeaderboard.innerHTML = `
+                    <div class="px-6 py-8 text-center text-gray-500">
+                        <i class="fas fa-trophy text-4xl mb-4 text-gray-300"></i>
+                        <p class="text-lg">No quiz attempts yet</p>
+                    </div>
+                `;
+                currentLeaderboardData = [];
+                updatePaginationControls();
+                return;
+            }
+            
+            detailedLeaderboard.innerHTML = '';
+            
+            // Separate cheating students from regular students
+            const cheatingStudents = leaderboardData.filter(student => 
+                student.cheating_reason && student.cheating_reason !== null
+            );
+            const regularStudents = leaderboardData.filter(student => 
+                !student.cheating_reason || student.cheating_reason === null
+            );
+            
+            // Calculate pagination
+            const totalPages = Math.ceil(regularStudents.length / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedRegularStudents = regularStudents.slice(startIndex, endIndex);
+            
+            // Add paginated regular students
+            paginatedRegularStudents.forEach((student) => {
+                const isCurrentUser = student.is_current_user == 1;
+                const entry = createLeaderboardEntry(student, student.rank_position, isCurrentUser, false);
+                detailedLeaderboard.appendChild(entry);
+            });
+            
+            // Add current user if not already in the regular students list and not on current page
+            const currentUser = leaderboardData.find(student => student.is_current_user == 1);
+            const currentUserInRegular = regularStudents.some(s => s.is_current_user == 1);
+            const currentUserOnCurrentPage = paginatedRegularStudents.some(s => s.is_current_user == 1);
+            const showCurrentUser = currentUser && currentUserInRegular && !currentUserOnCurrentPage;
+            
+            if (showCurrentUser) {
+                const currentUserEntry = createLeaderboardEntry(currentUser, currentUser.rank_position, true, false);
+                detailedLeaderboard.appendChild(currentUserEntry);
+            }
+            
+            // Add cheating students section if there are any (always show all cheating students)
+            if (cheatingStudents.length > 0) {
+                // Add separator
+                const separator = document.createElement('div');
+                separator.className = 'bg-gray-100 px-6 py-3';
+                separator.innerHTML = `
+                    <div class="flex items-center justify-center">
+                        <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>
+                        <span class="text-red-600 font-semibold">Students with Cheating Incidents</span>
+                    </div>
+                `;
+                detailedLeaderboard.appendChild(separator);
+                
+                // Add all cheating students (use their actual rank_position)
+                cheatingStudents.forEach((student) => {
+                    const isCurrentUser = student.is_current_user == 1;
+                    const entry = createLeaderboardEntry(student, student.rank_position, isCurrentUser, true);
+                    detailedLeaderboard.appendChild(entry);
+                });
+            }
+            
+            // Update pagination controls
+            updatePaginationControls();
+        }
+        
+        // Pagination functions
+        function changePage(direction) {
+            const totalPages = Math.ceil(currentLeaderboardData.filter(s => !s.cheating_reason || s.cheating_reason === null).length / itemsPerPage);
+            const newPage = currentPage + direction;
+            
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                createDetailedLeaderboard(currentLeaderboardData);
+            }
+        }
+        
+        function goToPage(page) {
+            const totalPages = Math.ceil(currentLeaderboardData.filter(s => !s.cheating_reason || s.cheating_reason === null).length / itemsPerPage);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                createDetailedLeaderboard(currentLeaderboardData);
+            }
+        }
+        
+        function updatePaginationControls() {
+            const paginationContainer = document.getElementById('paginationContainer');
+            if (!paginationContainer) return;
+            
+            const regularStudents = currentLeaderboardData.filter(s => !s.cheating_reason || s.cheating_reason === null);
+            const totalPages = Math.ceil(regularStudents.length / itemsPerPage);
+            
+            if (totalPages <= 1) {
+                paginationContainer.classList.add('hidden');
+                return;
+            }
+            
+            paginationContainer.classList.remove('hidden');
+            
+            // Update prev/next buttons
+            const prevBtn = document.getElementById('prevPageBtn');
+            const nextBtn = document.getElementById('nextPageBtn');
+            if (prevBtn) prevBtn.disabled = currentPage === 1;
+            if (nextBtn) nextBtn.disabled = currentPage === totalPages;
+            
+            // Update page numbers
+            const pageNumbers = document.getElementById('pageNumbers');
+            if (pageNumbers) {
+                pageNumbers.innerHTML = '';
+                const maxVisiblePages = 5;
+                let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+                let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+                
+                if (endPage - startPage < maxVisiblePages - 1) {
+                    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                }
+                
+                if (startPage > 1) {
+                    const firstBtn = document.createElement('button');
+                    firstBtn.className = 'pagination-page-number';
+                    firstBtn.textContent = '1';
+                    firstBtn.onclick = () => goToPage(1);
+                    pageNumbers.appendChild(firstBtn);
+                    
+                    if (startPage > 2) {
+                        const ellipsis = document.createElement('span');
+                        ellipsis.className = 'px-2 text-gray-500';
+                        ellipsis.textContent = '...';
+                        pageNumbers.appendChild(ellipsis);
+                    }
+                }
+                
+                for (let i = startPage; i <= endPage; i++) {
+                    const pageBtn = document.createElement('button');
+                    pageBtn.className = `pagination-page-number ${i === currentPage ? 'active' : ''}`;
+                    pageBtn.textContent = i;
+                    pageBtn.onclick = () => goToPage(i);
+                    pageNumbers.appendChild(pageBtn);
+                }
+                
+                if (endPage < totalPages) {
+                    if (endPage < totalPages - 1) {
+                        const ellipsis = document.createElement('span');
+                        ellipsis.className = 'px-2 text-gray-500';
+                        ellipsis.textContent = '...';
+                        pageNumbers.appendChild(ellipsis);
+                    }
+                    
+                    const lastBtn = document.createElement('button');
+                    lastBtn.className = 'pagination-page-number';
+                    lastBtn.textContent = totalPages;
+                    lastBtn.onclick = () => goToPage(totalPages);
+                    pageNumbers.appendChild(lastBtn);
+                }
+            }
+            
+            // Update pagination info
+            const paginationInfo = document.getElementById('paginationInfo');
+            if (paginationInfo) {
+                const startIndex = (currentPage - 1) * itemsPerPage + 1;
+                const endIndex = Math.min(currentPage * itemsPerPage, regularStudents.length);
+                paginationInfo.textContent = `Showing ${startIndex}-${endIndex} of ${regularStudents.length}`;
+            }
+        }
+        
+        // Create individual leaderboard entry
+        function createLeaderboardEntry(student, rank, isCurrentUser = false, isCheating = false) {
+            const entry = document.createElement('div');
+            entry.className = `leaderboard-entry ${isCurrentUser ? 'you' : ''} ${isCheating ? 'cheating-entry' : ''}`;
+            
+            const initials = student.student_name.split(' ').map(n => n[0]).join('').toUpperCase();
+            
+            // Check if this student was marked as cheating
+            const cheatingIndicator = isCheating ? 
+                `<div class="text-red-600 text-xs font-medium">Cheating Detected</div>` : '';
+            
+            // For cheating students, always show score as 0
+            const displayScore = isCheating ? 0 : (student.score || 0);
+            const totalQuestions = student.total_questions || 11;
+            const scoreDisplay = isCheating ? `0/${totalQuestions}` : `${displayScore}/${totalQuestions}`;
+            
+            entry.innerHTML = `
+                <div class="leaderboard-rank">${rank}</div>
+                <div class="leaderboard-student">
+                    <div class="leaderboard-avatar ${isCheating ? 'bg-red-500' : ''}">${initials}</div>
+                    <div class="leaderboard-name">
+                        ${student.student_name}
+                        ${cheatingIndicator}
+                    </div>
+                </div>
+                <div class="leaderboard-points ${isCheating ? 'text-red-500' : ''}">${scoreDisplay}</div>
+            `;
+            
+            return entry;
+        }
+
+        // Display student's rank
+        async function displayStudentRank() {
+            try {
+                const response = await fetch('../php/quiz-management.php?action=get_leaderboard&quiz_type=rational-functions&limit=1000&same_class_only=true', {
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success && result.leaderboard) {
+                    const currentStudent = result.leaderboard.find(student => student.is_current_user == 1);
+                    
+                    if (currentStudent) {
+                        const rank = currentStudent.rank_position;
+                        let rankDisplay = '';
+                        if (rank === 1) {
+                            rankDisplay = '🥇 1st';
+                        } else if (rank === 2) {
+                            rankDisplay = '🥈 2nd';
+                        } else if (rank === 3) {
+                            rankDisplay = '🥉 3rd';
+                        } else {
+                            rankDisplay = `#${rank}`;
+                        }
+                        
+                        const rankElement = document.getElementById('studentRank');
+                        if (rankElement) {
+                            rankElement.textContent = rankDisplay;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error getting student rank:', error);
+            }
+        }
+
+        // ==================== HELPER FUNCTIONS ====================
+        
+        // Update results character based on score
+        function updateResultsCharacter(percentage) {
+            const characterElement = document.getElementById('resultsCharacter');
+            if (!characterElement) return;
+            
+            let character = '';
+            let message = '';
+            
+            if (percentage >= 90) {
+                character = '🎉';
+                message = 'Outstanding!';
+            } else if (percentage >= 80) {
+                character = '😊';
+                message = 'Great job!';
+            } else if (percentage >= 70) {
+                character = '👍';
+                message = 'Good work!';
+            } else if (percentage >= 60) {
+                character = '💪';
+                message = 'Keep practicing!';
+            } else {
+                character = '📚';
+                message = 'Study more!';
+            }
+            
+            characterElement.textContent = character;
+        }
+
+        // Display quiz review
+        function displayQuizReview(studentAnswers) {
+            const reviewContainer = document.getElementById('quizReview');
+            if (!reviewContainer) return;
+            
+            let reviewHTML = '<div class="space-y-6">';
+            
+            // Review multiple choice questions
+            for (let i = 1; i <= 10; i++) {
+                const userAnswer = studentAnswers[`q${i}`] || '';
+                const correctAnswer = quizData.answers[`q${i}`];
+                const isCorrect = userAnswer === correctAnswer;
+                const question = quizData.questions[`q${i}`];
+                
+                reviewHTML += `
+                    <div class="bg-white rounded-lg p-6 shadow-sm border-2 ${isCorrect ? 'border-green-500' : 'border-red-500'}">
+                        <div class="flex items-start justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Question ${i}</h3>
+                            <span class="px-3 py-1 rounded-full text-sm font-semibold ${isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        <p class="text-gray-700 mb-4">${question}</p>
+                        <div class="space-y-2">
+                            <div class="flex items-center">
+                                <span class="font-semibold text-gray-600 w-32">Your Answer:</span>
+                                <span class="${isCorrect ? 'text-green-700' : 'text-red-700'}">${userAnswer || 'No answer'}</span>
+                            </div>
+                            ${!isCorrect ? `
+                                <div class="flex items-center">
+                                    <span class="font-semibold text-gray-600 w-32">Correct Answer:</span>
+                                    <span class="text-green-700">${correctAnswer}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Review problem solving question
+            const psAnswer = studentAnswers['ps-answer'] || '';
+            const psInput = document.getElementById('ps-answer');
+            const psValue = psInput ? psInput.value.trim() : '';
+            const isPsCorrect = isProblemSolvingCorrect(psValue);
+            
+            reviewHTML += `
+                <div class="bg-white rounded-lg p-6 shadow-sm border-2 ${isPsCorrect ? 'border-green-500' : 'border-red-500'}">
+                    <div class="flex items-start justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Problem Solving Question</h3>
+                        <span class="px-3 py-1 rounded-full text-sm font-semibold ${isPsCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            ${isPsCorrect ? '✓ Correct' : '✗ Incorrect'}
+                        </span>
+                    </div>
+                    <p class="text-gray-700 mb-4">${quizData.problemSolving.question}</p>
+                    <div class="space-y-2">
+                        <div class="flex items-center">
+                            <span class="font-semibold text-gray-600 w-32">Your Answer:</span>
+                            <span class="${isPsCorrect ? 'text-green-700' : 'text-red-700'}">${psValue || 'No answer'}</span>
+                        </div>
+                        ${!isPsCorrect ? `
+                            <div class="flex items-center">
+                                <span class="font-semibold text-gray-600 w-32">Correct Answer:</span>
+                                <span class="text-green-700">${quizData.problemSolving.answer}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            
+            reviewHTML += '</div>';
+            reviewContainer.innerHTML = reviewHTML;
+        }
+
+        // Shuffle questions only (not answer options)
+        function shuffleQuestions() {
+            const questionOrder = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+            
+            // Fisher-Yates shuffle
+            for (let i = questionOrder.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [questionOrder[i], questionOrder[j]] = [questionOrder[j], questionOrder[i]];
+            }
+            
+            // Reorder question cards in DOM
+            const quizContainer = document.getElementById('quizContainer');
+            if (!quizContainer) return;
+            
+            questionOrder.forEach((qNum, index) => {
+                const questionCard = document.querySelector(`[data-question="${qNum}"]`);
+                if (questionCard) {
+                    quizContainer.appendChild(questionCard);
+                }
+            });
         }
 
     </script>

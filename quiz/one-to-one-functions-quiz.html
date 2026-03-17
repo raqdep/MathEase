@@ -34,36 +34,6 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(102, 126, 234, 0.15);
         }
-        .option-selected {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-color: #667eea;
-            transform: scale(1.02);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-        }
-        .option-correct {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            border-color: #10b981;
-        }
-        .option-incorrect {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-            border-color: #ef4444;
-        }
-        .option-review {
-            pointer-events: none;
-            opacity: 0.8;
-        }
-        .review-mode .option {
-            pointer-events: none;
-        }
-        .review-mode .option input {
-            pointer-events: none;
-        }
-        .review-mode .option input[type="number"] {
-            pointer-events: none;
-        }
         .progress-bar {
             transition: width 0.3s ease;
         }
@@ -102,8 +72,835 @@
                 transform: translateY(0);
             }
         }
-        .virtual-aid {
+        
+        /* Podium Styles */
+        .podium-block {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .podium-block:hover {
+            transform: translateY(-5px);
+        }
+        
+        .podium-1 {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            width: 120px;
+            height: 140px;
+            border-radius: 12px 12px 0 0;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+            overflow: visible;
+        }
+        
+        .podium-2 {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            width: 100px;
+            height: 110px;
+            border-radius: 12px 12px 0 0;
+            position: relative;
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+            overflow: visible;
+        }
+        
+        .podium-3 {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            width: 100px;
+            height: 80px;
+            border-radius: 12px 12px 0 0;
+            position: relative;
+            box-shadow: 0 6px 15px rgba(245, 158, 11, 0.3);
+            overflow: visible;
+        }
+        
+        .podium-rank {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .podium-rank-1 {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+        
+        .podium-rank-2 {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        
+        .podium-rank-3 {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+        
+        .podium-avatar {
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border: 3px solid white;
+        }
+        
+        .podium-crown {
+            position: absolute;
+            top: -45px;
+            right: -5px;
+            color: #fbbf24;
+            font-size: 16px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .podium-info {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .podium-name {
+            font-weight: bold;
+            color: #374151;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+        
+        .podium-points {
+            font-size: 16px;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        
+        /* Detailed Leaderboard Styles */
+        .leaderboard-entry {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e5e7eb;
+            transition: all 0.2s ease;
+        }
+        
+        .leaderboard-entry:hover {
+            background-color: #f9fafb;
+        }
+        
+        .leaderboard-entry:last-child {
+            border-bottom: none;
+        }
+        
+        .leaderboard-entry.you {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border-radius: 8px;
+            margin: 4px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+        
+        .leaderboard-rank {
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: 500;
+            min-width: 30px;
+        }
+        
+        .leaderboard-entry.you .leaderboard-rank {
+            color: white;
+        }
+        
+        .leaderboard-student {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            margin-left: 12px;
+        }
+        
+        .leaderboard-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+        
+        .leaderboard-name {
+            font-weight: 600;
+            color: #374151;
+            font-size: 14px;
+        }
+        
+        .leaderboard-entry.you .leaderboard-name {
+            color: white;
+        }
+        
+        .leaderboard-points {
+            font-weight: bold;
+            color: #3b82f6;
+            font-size: 16px;
+        }
+        
+        .leaderboard-entry.you .leaderboard-points {
+            color: white;
+        }
+        
+        /* Cheating entry styling */
+        .leaderboard-entry.cheating-entry {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border-left: 4px solid #ef4444;
+            border-radius: 8px;
+            margin: 4px 0;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.1);
+        }
+        
+        .leaderboard-entry.cheating-entry .leaderboard-name {
+            color: #dc2626;
+            font-weight: 600;
+        }
+        
+        .leaderboard-entry.cheating-entry .leaderboard-points {
+            color: #dc2626;
+            font-weight: bold;
+        }
+        
+        /* Badge notification styles */
+        .badge-notification {
+            border-radius: 20px !important;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        .badge-notification .swal2-html-container {
+            margin: 0 !important;
+        }
+        
+        .badge-notification .swal2-title {
+            color: #10b981 !important;
+            font-size: 2rem !important;
+            margin-bottom: 1rem !important;
+        }
+        
+        /* Character animations */
+        .tips-character {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .results-character {
+            transition: all 0.5s ease;
+        }
+        
+        .results-character.motivate {
+            animation: bounce 1s ease-in-out infinite;
+        }
+        
+        .results-character.celebrate {
+            animation: celebrate 2s ease-in-out infinite;
+        }
+        
+        .results-character.sad {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        .results-character.happy {
+            animation: wiggle 1s ease-in-out infinite;
+        }
+        
+        .warning-character {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        @keyframes celebrate {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.1) rotate(-5deg); }
+            75% { transform: scale(1.1) rotate(5deg); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0px); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-3deg); }
+            75% { transform: rotate(3deg); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .podium-block {
+                margin: 0 8px;
+            }
+            
+            .podium-1 {
+                width: 100px;
+                height: 120px;
+            }
+            
+            .podium-2 {
+                width: 85px;
+                height: 95px;
+            }
+            
+            .podium-3 {
+                width: 85px;
+                height: 70px;
+            }
+            
+            .podium-avatar {
+                width: 40px;
+                height: 40px;
+                top: -30px;
+            }
+            
+            .podium-rank {
+                width: 35px;
+                height: 35px;
+                font-size: 16px;
+            }
+            
+            .podium-name {
+                font-size: 12px;
+            }
+            
+            .podium-points {
+                font-size: 14px;
+            }
+            
+            .leaderboard-entry {
+                padding: 10px 12px;
+            }
+            
+            .leaderboard-avatar {
+                width: 28px;
+                height: 28px;
+                font-size: 10px;
+                margin-right: 8px;
+            }
+            
+            .leaderboard-name {
+                font-size: 13px;
+            }
+            
+            .leaderboard-points {
+                font-size: 14px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .podium-block {
+                margin: 0 4px;
+            }
+            
+            .podium-1 {
+                width: 80px;
+                height: 100px;
+            }
+            
+            .podium-2 {
+                width: 70px;
+                height: 80px;
+            }
+            
+            .podium-3 {
+                width: 70px;
+                height: 60px;
+            }
+            
+            .podium-avatar {
+                width: 35px;
+                height: 35px;
+                top: -25px;
+            }
+            
+            .podium-rank {
+                width: 30px;
+                height: 30px;
+                font-size: 14px;
+            }
+            
+            .podium-name {
+                font-size: 11px;
+            }
+            
+            .podium-points {
+                font-size: 12px;
+            }
+        }
+        
+        .math-expression {
+            font-family: 'Times New Roman', serif;
+            font-size: 1.1em;
+        }
+        
+        /* Light purple background */
+        body {
+            background: #f5f3ff;
+            min-height: 100vh;
+        }
+        
+        /* Question card styling */
+        .question-card {
+            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .question-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(196, 181, 253, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(221, 214, 254, 0.3) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        /* Progress bar styling */
+        .quiz-progress-bar {
+            height: 6px;
+            background: #e5e7eb;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 0 auto;
+            max-width: 100%;
+        }
+        
+        .quiz-progress-fill {
+            height: 100%;
+            background: #8b5cf6;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        
+        /* Circular timer styling */
+        .circular-timer {
+            position: relative;
+            width: 60px;
+            height: 60px;
+        }
+        
+        .circular-timer svg {
+            transform: rotate(-90deg);
+        }
+        
+        .circular-timer .timer-bg {
+            stroke: #e5e7eb;
+            fill: none;
+        }
+        
+        .circular-timer .timer-progress {
+            stroke: #8b5cf6;
+            fill: none;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+        
+        .timer-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        /* Ensure sticky header stays on top */
+        #progressTimerHeader {
+            position: sticky;
+            top: 64px;
+            z-index: 45;
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Adjust position when review banner is visible */
+        #reviewModeBanner:not(.hidden) ~ #progressTimerHeader {
+            top: 128px;
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 640px) {
+            #progressTimerHeader {
+                top: 64px;
+                padding-top: 0.75rem;
+                padding-bottom: 0.75rem;
+            }
+            
+            #reviewModeBanner ~ #progressTimerHeader {
+                top: 128px;
+            }
+            
+            nav {
+                position: sticky;
+                top: 0;
+                z-index: 50;
+            }
+        }
+        
+        /* Prevent body scroll issues on mobile */
+        @media (max-width: 768px) {
+            body {
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            main {
+                padding-top: 0.5rem;
+            }
+            
+            input[type="number"], textarea {
+                font-size: 1.25rem;
+                padding: 0.75rem;
+                min-height: 48px;
+            }
+            
+            .option {
+                min-height: 80px;
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: rgba(139, 92, 246, 0.2);
+            }
+            
+            .option:active {
+                transform: translateY(-2px) scale(0.98);
+            }
+        }
+        
+        /* Timer color changes based on remaining time */
+        .timer-text.warning {
+            color: #ef4444 !important;
+        }
+        
+        .timer-text.urgent {
+            color: #dc2626 !important;
+        }
+        
+        .timer-progress.warning {
+            stroke: #f59e0b !important;
+        }
+        
+        .timer-progress.urgent {
+            stroke: #ef4444 !important;
+        }
+        
+        /* Quiz option styling for modern design */
+        .quiz-option {
+            position: relative;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+            background: white;
+            text-align: left;
+            margin-bottom: 1rem;
+        }
+        
+        .quiz-option:hover {
+            border-color: #a78bfa;
+            background: #faf5ff;
+            transform: translateX(4px);
+        }
+        
+        .option-label {
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            background: #f3e8ff;
+            color: #7c3aed;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        
+        .quiz-option.selected {
+            background: #f3e8ff;
+            border: 2px solid #8b5cf6;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+        }
+        
+        .quiz-option.selected .option-label {
+            background: #8b5cf6;
+            color: white;
+        }
+        
+        /* Review mode styling */
+        .option-correct {
+            background: #d1fae5 !important;
+            border: 2px solid #10b981 !important;
+        }
+        
+        .option-correct .option-label {
+            background: #10b981 !important;
+            color: white !important;
+        }
+        
+        .option-incorrect {
+            background: #fee2e2 !important;
+            border: 2px solid #ef4444 !important;
+        }
+        
+        .option-incorrect .option-label {
+            background: #ef4444 !important;
+            color: white !important;
+        }
+        
+        .review-mode .option,
+        .review-mode .quiz-option {
+            pointer-events: none;
+        }
+        
+        .review-mode .option input,
+        .review-mode .quiz-option input {
+            pointer-events: none;
+        }
+        
+        .review-mode textarea {
+            pointer-events: none;
+        }
+
+        /* AI Modal Styles */
+        #aiModal {
+            backdrop-filter: blur(4px);
+        }
+        
+        #aiModal .bg-white {
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        #aiAnalysis h2 {
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        #aiAnalysis h3 {
+            color: #4b5563;
+        }
+        
+        #aiAnalysis p {
+            line-height: 1.7;
+        }
+
+        /* Enhanced Podium Styles */
+        .podium-1 {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+            width: 160px;
+            height: 180px;
+            border-radius: 16px 16px 0 0;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(59, 130, 246, 0.4), inset 0 -5px 15px rgba(29, 78, 216, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .podium-1::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 30%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+            border-radius: 16px 16px 0 0;
+        }
+        
+        .podium-2 {
+            background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+            width: 140px;
+            height: 150px;
+            border-radius: 16px 16px 0 0;
+            position: relative;
+            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.4), inset 0 -5px 15px rgba(4, 120, 87, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .podium-2::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 30%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+            border-radius: 16px 16px 0 0;
+        }
+        
+        .podium-3 {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
+            width: 140px;
+            height: 120px;
+            border-radius: 16px 16px 0 0;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4), inset 0 -5px 15px rgba(180, 83, 9, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .podium-3::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 30%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+            border-radius: 16px 16px 0 0;
+        }
+        
+        .podium-avatar {
+            width: 80px;
+            height: 80px;
+            top: -40px;
+            border: 4px solid white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        }
+        
+        .podium-rank {
+            width: 64px;
+            height: 64px;
+            font-size: 24px;
+            top: -20px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+        }
+        
+        .podium-crown {
+            font-size: 40px;
+            top: -50px;
+            right: -10px;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        /* Pagination Styles */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: #f9fafb;
+            border-top: 2px solid #e5e7eb;
+        }
+        
+        .pagination-btn {
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            color: #374151;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .pagination-btn:hover:not(:disabled) {
+            background: #8b5cf6;
+            color: white;
+            border-color: #8b5cf6;
+        }
+        
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .pagination-page-numbers {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .pagination-page-number {
+            padding: 0.5rem 0.75rem;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            color: #374151;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 2.5rem;
+            text-align: center;
+        }
+        
+        .pagination-page-number:hover {
+            background: #f3e8ff;
+            border-color: #8b5cf6;
+        }
+        
+        .pagination-page-number.active {
+            background: #8b5cf6;
+            color: white;
+            border-color: #8b5cf6;
+        }
+        
+        .pagination-info {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-left: auto;
         }
     </style>
 </head>
@@ -113,95 +910,243 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
-                    <a href="../index.html" class="flex items-center space-x-2">
+                    <a href="../dashboard.html" class="flex items-center space-x-2">
                         <img src="../css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-8 w-8">
                         <span class="text-xl font-bold text-primary">MathEase</span>
                     </a>
                 </div>
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="../dashboard.html" class="text-gray-700 hover:text-primary transition-colors">
-                        <i class="fas fa-home mr-2"></i>Dashboard
-                    </a>
-                    <a href="../topics.html" class="text-primary font-semibold">
-                        <i class="fas fa-book mr-2"></i>Topics
-                    </a>
+                <div class="flex items-center space-x-4">
                     <span class="text-gray-600">
                         <i class="fas fa-user mr-2"></i><span id="userName">Student</span>
                     </span>
-                    <a href="../php/logout.php" class="text-gray-700 hover:text-red-600 transition-colors">
-                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
-                    </a>
+                    <div class="relative" id="logoutDropdown">
+                        <button onclick="toggleLogoutDropdown()" class="text-gray-700 hover:text-red-600 transition-colors flex items-center">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                        </button>
+                        <div id="logoutDropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                            <a href="#" onclick="interceptLogout(event)" class="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Header -->
-    <header class="gradient-bg text-white py-12">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
-                <i class="fas fa-exchange-alt mr-2"></i>
-                <span class="font-semibold">General Mathematics 11</span>
+    <!-- Review Mode Banner -->
+    <div id="reviewModeBanner" class="hidden bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 sm:py-4 sticky top-16 z-[55]">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-center space-x-2 sm:space-x-3">
+                <i class="fas fa-eye text-xl sm:text-2xl"></i>
+                <div class="text-center">
+                    <h2 class="text-lg sm:text-xl font-bold">Review Mode</h2>
+                    <p class="text-xs sm:text-sm text-orange-100">Quiz deadline has passed. You can review your answers but cannot submit.</p>
+                </div>
             </div>
-            <h1 class="text-3xl md:text-5xl font-bold mb-4">One-to-One Functions Quiz</h1>
-            <p class="text-lg md:text-xl text-white/90 mb-6">
-                Test your understanding of one-to-one functions, inverse functions, and their applications
-            </p>
-            <div class="flex justify-center space-x-4">
-                <div class="bg-white/20 backdrop-blur-sm rounded-full px-6 py-2">
-                    <span class="font-semibold">10 Multiple Choice</span>
+        </div>
+    </div>
+
+    <!-- Quiz Header -->
+    <header class="gradient-bg text-white py-12">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
+                    <i class="fas fa-exchange-alt mr-2"></i>
+                    <span class="font-semibold">One-to-One Functions Quiz</span>
                 </div>
-                <div class="bg-white/20 backdrop-blur-sm rounded-full px-6 py-2">
-                    <span class="font-semibold">1 Problem Solving</span>
-                </div>
-                <div class="bg-white/20 backdrop-blur-sm rounded-full px-6 py-2">
-                    <span class="font-semibold">30 Minutes</span>
-                </div>
+                <h1 class="text-4xl md:text-5xl font-bold mb-4" id="quizTitle">Master One-to-One Functions</h1>
             </div>
         </div>
     </header>
 
-    <!-- Quiz Instructions -->
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
-            <div class="text-center mb-6">
-                <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-info-circle text-2xl"></i>
+    <!-- Progress Bar and Timer - Always Sticky Header -->
+    <div class="bg-white shadow-lg border-b-2 border-purple-200 sticky top-16 z-[45] transition-all duration-300" id="progressTimerHeader">
+        <div class="max-w-5xl mx-auto px-3 sm:px-4 lg:px-8 py-3 sm:py-4">
+            <div class="flex flex-col sm:flex-row items-center justify-between mb-2 sm:mb-3 gap-2 sm:gap-0">
+                <!-- Left: Question Progress -->
+                <div class="flex items-center w-full sm:w-auto justify-between sm:justify-start">
+                    <div class="flex items-center">
+                        <span class="text-xs sm:text-sm text-gray-600 mr-2 font-medium">Question</span>
+                        <span class="text-xl sm:text-2xl font-bold text-gray-800" id="progressText">0/11</span>
+                    </div>
+                    
+                    <!-- Mobile: Show timer inline on small screens -->
+                    <div class="flex items-center sm:hidden">
+                        <div class="circular-timer" style="width: 45px; height: 45px;">
+                            <svg width="45" height="45">
+                                <circle class="timer-bg" cx="22.5" cy="22.5" r="19" stroke-width="3"></circle>
+                                <circle class="timer-progress" cx="22.5" cy="22.5" r="19" stroke-width="3" 
+                                        stroke-dasharray="119.38" stroke-dashoffset="119.38" id="timerCircleMobile"></circle>
+                            </svg>
+                            <div class="timer-text text-xs" id="quizTimerMobile" style="font-size: 0.7rem;">00:00</div>
+                        </div>
+                    </div>
                 </div>
-                <h2 class="text-2xl font-bold text-gray-800 mb-2">Quiz Instructions</h2>
-                <p class="text-gray-600">Read the instructions carefully before starting the quiz</p>
+                
+                <!-- Right: Circular Timer (Desktop) -->
+                <div class="hidden sm:flex items-center">
+                    <div class="circular-timer">
+                        <svg width="60" height="60">
+                            <circle class="timer-bg" cx="30" cy="30" r="26" stroke-width="4"></circle>
+                            <circle class="timer-progress" cx="30" cy="30" r="26" stroke-width="4" 
+                                    stroke-dasharray="163.36" stroke-dashoffset="163.36" id="timerCircle"></circle>
+                        </svg>
+                        <div class="timer-text" id="quizTimer">00:00</div>
+                    </div>
+                </div>
             </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div class="bg-blue-50 rounded-lg p-4">
-                    <h3 class="font-semibold text-blue-800 mb-2">
-                        <i class="fas fa-clock text-blue-500 mr-2"></i>Time Limit
-                    </h3>
-                    <p class="text-blue-700 text-sm">You have 30 minutes to complete this quiz</p>
+            <!-- Horizontal Progress Bar -->
+            <div class="quiz-progress-bar">
+                <div class="quiz-progress-fill" id="progressBar" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tips Section -->
+    <div id="tipsContainer" class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <div class="text-center mb-8 relative">
+                <div class="w-32 h-32 mx-auto mb-6 flex items-center justify-center relative">
+                    <img src="../Img/Character/tips_approved-removebg-preview.png" 
+                         alt="Tips Approved Character" 
+                         class="w-full h-full object-contain tips-character"
+                         style="filter: drop-shadow(0 15px 30px rgba(0,0,0,0.15));">
+                    
+                    <!-- Floating elements around the character -->
+                    <div class="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full animate-ping"></div>
+                    <div class="absolute -bottom-2 -left-2 w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
+                    <div class="absolute top-1/2 -right-4 w-3 h-3 bg-blue-400 rounded-full animate-bounce"></div>
                 </div>
-                <div class="bg-green-50 rounded-lg p-4">
-                    <h3 class="font-semibold text-green-800 mb-2">
-                        <i class="fas fa-check-circle text-green-500 mr-2"></i>Passing Score
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Quiz Tips & Guidelines</h2>
+                <p class="text-lg text-gray-600">Read these tips before starting your One-to-One Functions Quiz</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-clock text-blue-500 mr-3"></i>Time Management
                     </h3>
-                    <p class="text-green-700 text-sm">You need 70% (8 out of 11 questions) to pass</p>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Take your time to read each question carefully</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Don't rush through the problem solving section</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Review your answers before submitting</span>
+                        </li>
+                    </ul>
                 </div>
-                <div class="bg-purple-50 rounded-lg p-4">
-                    <h3 class="font-semibold text-purple-800 mb-2">
-                        <i class="fas fa-question-circle text-purple-500 mr-2"></i>Question Types
+
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-exchange-alt text-green-500 mr-3"></i>One-to-One Functions
                     </h3>
-                    <p class="text-purple-700 text-sm">10 multiple choice + 1 problem solving</p>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Remember the horizontal line test for one-to-one functions</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Understand that domain and range swap for inverse functions</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Practice finding inverse functions algebraically</span>
+                        </li>
+                    </ul>
                 </div>
-                <div class="bg-orange-50 rounded-lg p-4">
-                    <h3 class="font-semibold text-orange-800 mb-2">
-                        <i class="fas fa-exclamation-triangle text-orange-500 mr-2"></i>Important
+
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-question-circle text-purple-500 mr-3"></i>Multiple Choice
                     </h3>
-                    <p class="text-orange-700 text-sm">You can only take this quiz once</p>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Eliminate obviously wrong answers first</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Remember that only one-to-one functions have inverses</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Think about the relationship f(f⁻¹(x)) = x</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="fas fa-exclamation-triangle text-yellow-500 mr-3"></i>Important Notes
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Quiz has 11 total questions (10 multiple choice + 1 problem solving)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Multiple choice: 1 point each, Problem solving: 1 point, 11 points total</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                            <span>Timer starts when you click "Start Quiz"</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
-            
+
+            <!-- Badges Section -->
+            <div class="bg-gradient-to-r from-yellow-50 via-amber-50 to-orange-50 rounded-xl p-6 mb-8 border-l-4 border-yellow-500">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-trophy text-yellow-600 mr-3"></i>Earn Badges!
+                </h3>
+                <p class="text-gray-700 mb-4">Complete this quiz and earn special badges based on your performance!</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white rounded-lg p-4 border-2 border-purple-200 shadow-sm">
+                        <div class="flex items-center mb-3">
+                            <span class="text-3xl mr-3">🏆</span>
+                            <div>
+                                <h4 class="font-bold text-gray-800">One-to-One Functions Champion</h4>
+                                <span class="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded-full font-semibold">EPIC</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">Score 100% on this quiz</p>
+                        <p class="text-xs text-gray-500">Perfect score! Master one-to-one functions and earn this prestigious badge!</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 border-2 border-blue-200 shadow-sm">
+                        <div class="flex items-center mb-3">
+                            <span class="text-3xl mr-3">🔧</span>
+                            <div>
+                                <h4 class="font-bold text-gray-800">One-to-One Functions Expert</h4>
+                                <span class="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-semibold">RARE</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600 mb-2">Score 60% or higher on this quiz</p>
+                        <p class="text-xs text-gray-500">Show your expertise in one-to-one functions!</p>
+                    </div>
+                </div>
+                <div class="mt-4 bg-blue-50 rounded-lg p-3 border-l-4 border-blue-400">
+                    <p class="text-sm text-blue-800 flex items-start">
+                        <i class="fas fa-info-circle mr-2 mt-0.5"></i>
+                        <span>Badges are automatically awarded when you complete the quiz. Check your <a href="../achievements.html" class="font-semibold underline hover:text-blue-900">Achievements page</a> to see all your earned badges!</span>
+                    </p>
+                </div>
+            </div>
+
             <div class="text-center">
-                <button id="startQuizBtn" class="bg-primary text-white px-8 py-3 rounded-lg hover:bg-secondary transition-colors font-semibold text-lg">
-                    <i class="fas fa-play mr-2"></i>Start Quiz
+                <button onclick="startQuiz()" class="bg-gradient-to-r from-primary to-secondary text-white px-12 py-4 rounded-xl font-semibold text-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                    <i class="fas fa-play mr-3"></i>
+                    Start Quiz
                 </button>
             </div>
         </div>
@@ -211,431 +1156,586 @@
     <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div id="quizContainer" class="hidden">
             <!-- Question 1 -->
-            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="1">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-gray-800">Question 1 of 11</h3>
-                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
-                </div>
-                <div class="mb-6">
-                    <p class="text-lg text-gray-700 mb-4">
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="1">
+                <!-- Question Text in Light Purple Card -->
+                <div class="relative z-10 p-6 sm:p-8 mb-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
                         What is a one-to-one function?
-                    </p>
-                    <div class="space-y-3">
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q1" value="a" class="mr-3">
-                            <span>A function where each element in the range corresponds to exactly one element in the domain</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q1" value="b" class="mr-3">
-                            <span>A function that has only one output</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q1" value="c" class="mr-3">
-                            <span>A function that is always increasing</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q1" value="d" class="mr-3">
-                            <span>A function that has no domain restrictions</span>
-                        </label>
-                    </div>
+                        <span class="text-pink-500 ml-2">?</span>
+                    </h2>
+                </div>
+                
+                <!-- Answer Options - Simple List -->
+                <div class="relative z-10 space-y-3">
+                    <label class="quiz-option">
+                        <input type="radio" name="q1" value="a" class="hidden">
+                        <div class="option-label">a</div>
+                        <span class="flex-1">A function where each element in the range corresponds to exactly one element in the domain</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q1" value="b" class="hidden">
+                        <div class="option-label">b</div>
+                        <span class="flex-1">A function that has only one output</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q1" value="c" class="hidden">
+                        <div class="option-label">c</div>
+                        <span class="flex-1">A function that is always increasing</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q1" value="d" class="hidden">
+                        <div class="option-label">d</div>
+                        <span class="flex-1">A function that has no domain restrictions</span>
+                    </label>
                 </div>
             </div>
 
             <!-- Question 2 -->
-            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="2">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-gray-800">Question 2 of 11</h3>
-                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
-                </div>
-                <div class="mb-6">
-                    <p class="text-lg text-gray-700 mb-4">
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="2">
+                <div class="relative z-10 p-6 sm:p-8 mb-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
                         Which of the following is a one-to-one function?
-                    </p>
-                    <div class="space-y-3">
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q2" value="a" class="mr-3">
-                            <span>f(x) = 2x + 3</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q2" value="b" class="mr-3">
-                            <span>f(x) = x²</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q2" value="c" class="mr-3">
-                            <span>f(x) = |x|</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q2" value="d" class="mr-3">
-                            <span>f(x) = x² - 4</span>
-                        </label>
-                    </div>
+                        <span class="text-pink-500 ml-2">?</span>
+                    </h2>
+                </div>
+                <div class="relative z-10 space-y-3">
+                    <label class="quiz-option">
+                        <input type="radio" name="q2" value="a" class="hidden">
+                        <div class="option-label">a</div>
+                        <span class="flex-1 math-expression">f(x) = 2x + 3</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q2" value="b" class="hidden">
+                        <div class="option-label">b</div>
+                        <span class="flex-1 math-expression">f(x) = x²</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q2" value="c" class="hidden">
+                        <div class="option-label">c</div>
+                        <span class="flex-1 math-expression">f(x) = |x|</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q2" value="d" class="hidden">
+                        <div class="option-label">d</div>
+                        <span class="flex-1 math-expression">f(x) = x² - 4</span>
+                    </label>
                 </div>
             </div>
 
             <!-- Question 3 -->
-            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="3">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-gray-800">Question 3 of 11</h3>
-                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
-                </div>
-                <div class="mb-6">
-                    <p class="text-lg text-gray-700 mb-4">
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="3">
+                <div class="relative z-10 p-6 sm:p-8 mb-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
                         What is the horizontal line test used for?
-                    </p>
-                    <div class="space-y-3">
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q3" value="a" class="mr-3">
-                            <span>To determine if a function is one-to-one</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q3" value="b" class="mr-3">
-                            <span>To find the domain of a function</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q3" value="c" class="mr-3">
-                            <span>To find the range of a function</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q3" value="d" class="mr-3">
-                            <span>To find the y-intercept of a function</span>
-                        </label>
-                    </div>
+                        <span class="text-pink-500 ml-2">?</span>
+                    </h2>
+                </div>
+                <div class="relative z-10 space-y-3">
+                    <label class="quiz-option">
+                        <input type="radio" name="q3" value="a" class="hidden">
+                        <div class="option-label">a</div>
+                        <span class="flex-1">To determine if a function is one-to-one</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q3" value="b" class="hidden">
+                        <div class="option-label">b</div>
+                        <span class="flex-1">To find the domain of a function</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q3" value="c" class="hidden">
+                        <div class="option-label">c</div>
+                        <span class="flex-1">To find the range of a function</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q3" value="d" class="hidden">
+                        <div class="option-label">d</div>
+                        <span class="flex-1">To find the y-intercept of a function</span>
+                    </label>
                 </div>
             </div>
 
             <!-- Question 4 -->
-            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="4">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-gray-800">Question 4 of 11</h3>
-                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
-                </div>
-                <div class="mb-6">
-                    <p class="text-lg text-gray-700 mb-4">
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="4">
+                <div class="relative z-10 p-6 sm:p-8 mb-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
                         Which function is NOT one-to-one?
-                    </p>
-                    <div class="space-y-3">
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q4" value="a" class="mr-3">
-                            <span>f(x) = x³</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q4" value="b" class="mr-3">
-                            <span>f(x) = 3x - 1</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q4" value="c" class="mr-3">
-                            <span>f(x) = x²</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q4" value="d" class="mr-3">
-                            <span>f(x) = x + 5</span>
-                        </label>
-                    </div>
+                        <span class="text-pink-500 ml-2">?</span>
+                    </h2>
+                </div>
+                <div class="relative z-10 space-y-3">
+                    <label class="quiz-option">
+                        <input type="radio" name="q4" value="a" class="hidden">
+                        <div class="option-label">a</div>
+                        <span class="flex-1 math-expression">f(x) = x³</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q4" value="b" class="hidden">
+                        <div class="option-label">b</div>
+                        <span class="flex-1 math-expression">f(x) = 3x - 1</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q4" value="c" class="hidden">
+                        <div class="option-label">c</div>
+                        <span class="flex-1 math-expression">f(x) = x²</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q4" value="d" class="hidden">
+                        <div class="option-label">d</div>
+                        <span class="flex-1 math-expression">f(x) = x + 5</span>
+                    </label>
                 </div>
             </div>
 
             <!-- Question 5 -->
-            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="5">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-gray-800">Question 5 of 11</h3>
-                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
-                </div>
-                <div class="mb-6">
-                    <p class="text-lg text-gray-700 mb-4">
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="5">
+                <div class="relative z-10 p-6 sm:p-8 mb-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
                         What is the inverse of f(x) = 2x + 3?
-                    </p>
-                    <div class="space-y-3">
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q5" value="a" class="mr-3">
-                            <span>f⁻¹(x) = (x - 3)/2</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q5" value="b" class="mr-3">
-                            <span>f⁻¹(x) = (x + 3)/2</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q5" value="c" class="mr-3">
-                            <span>f⁻¹(x) = 2x - 3</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q5" value="d" class="mr-3">
-                            <span>f⁻¹(x) = x/2 - 3</span>
-                        </label>
-                    </div>
+                        <span class="text-pink-500 ml-2">?</span>
+                    </h2>
+                </div>
+                <div class="relative z-10 space-y-3">
+                    <label class="quiz-option">
+                        <input type="radio" name="q5" value="a" class="hidden">
+                        <div class="option-label">a</div>
+                        <span class="flex-1 math-expression">f⁻¹(x) = (x - 3)/2</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q5" value="b" class="hidden">
+                        <div class="option-label">b</div>
+                        <span class="flex-1 math-expression">f⁻¹(x) = (x + 3)/2</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q5" value="c" class="hidden">
+                        <div class="option-label">c</div>
+                        <span class="flex-1 math-expression">f⁻¹(x) = 2x - 3</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q5" value="d" class="hidden">
+                        <div class="option-label">d</div>
+                        <span class="flex-1 math-expression">f⁻¹(x) = x/2 - 3</span>
+                    </label>
                 </div>
             </div>
 
             <!-- Question 6 -->
-            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="6">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-gray-800">Question 6 of 11</h3>
-                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
-                </div>
-                <div class="mb-6">
-                    <p class="text-lg text-gray-700 mb-4">
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="6">
+                <div class="relative z-10 p-6 sm:p-8 mb-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
                         What is the relationship between a function and its inverse?
-                    </p>
-                    <div class="space-y-3">
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q6" value="a" class="mr-3">
-                            <span>f(f⁻¹(x)) = x and f⁻¹(f(x)) = x</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q6" value="b" class="mr-3">
-                            <span>f(f⁻¹(x)) = 0</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q6" value="c" class="mr-3">
-                            <span>f(f⁻¹(x)) = 1</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q6" value="d" class="mr-3">
-                            <span>f(f⁻¹(x)) = x²</span>
-                        </label>
-                    </div>
+                        <span class="text-pink-500 ml-2">?</span>
+                    </h2>
+                </div>
+                <div class="relative z-10 space-y-3">
+                    <label class="quiz-option">
+                        <input type="radio" name="q6" value="a" class="hidden">
+                        <div class="option-label">a</div>
+                        <span class="flex-1 math-expression">f(f⁻¹(x)) = x and f⁻¹(f(x)) = x</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q6" value="b" class="hidden">
+                        <div class="option-label">b</div>
+                        <span class="flex-1 math-expression">f(f⁻¹(x)) = 0</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q6" value="c" class="hidden">
+                        <div class="option-label">c</div>
+                        <span class="flex-1 math-expression">f(f⁻¹(x)) = 1</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q6" value="d" class="hidden">
+                        <div class="option-label">d</div>
+                        <span class="flex-1 math-expression">f(f⁻¹(x)) = x²</span>
+                    </label>
                 </div>
             </div>
 
             <!-- Question 7 -->
-            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="7">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-gray-800">Question 7 of 11</h3>
-                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
-                </div>
-                <div class="mb-6">
-                    <p class="text-lg text-gray-700 mb-4">
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="7">
+                <div class="relative z-10 p-6 sm:p-8 mb-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
                         Which test can be used to determine if a function is one-to-one algebraically?
-                    </p>
-                    <div class="space-y-3">
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q7" value="a" class="mr-3">
-                            <span>Assume f(a) = f(b) and show that a = b</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q7" value="b" class="mr-3">
-                            <span>Find the derivative of the function</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q7" value="c" class="mr-3">
-                            <span>Find the domain of the function</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q7" value="d" class="mr-3">
-                            <span>Find the range of the function</span>
-                        </label>
-                    </div>
+                        <span class="text-pink-500 ml-2">?</span>
+                    </h2>
+                </div>
+                <div class="relative z-10 space-y-3">
+                    <label class="quiz-option">
+                        <input type="radio" name="q7" value="a" class="hidden">
+                        <div class="option-label">a</div>
+                        <span class="flex-1">Assume f(a) = f(b) and show that a = b</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q7" value="b" class="hidden">
+                        <div class="option-label">b</div>
+                        <span class="flex-1">Find the derivative of the function</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q7" value="c" class="hidden">
+                        <div class="option-label">c</div>
+                        <span class="flex-1">Find the domain of the function</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q7" value="d" class="hidden">
+                        <div class="option-label">d</div>
+                        <span class="flex-1">Find the range of the function</span>
+                    </label>
                 </div>
             </div>
 
             <!-- Question 8 -->
-            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="8">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-gray-800">Question 8 of 11</h3>
-                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
-                </div>
-                <div class="mb-6">
-                    <p class="text-lg text-gray-700 mb-4">
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="8">
+                <div class="relative z-10 p-6 sm:p-8 mb-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
                         What happens to the domain and range when finding the inverse of a one-to-one function?
-                    </p>
-                    <div class="space-y-3">
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q8" value="a" class="mr-3">
-                            <span>Domain and range swap</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q8" value="b" class="mr-3">
-                            <span>Domain and range remain the same</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q8" value="c" class="mr-3">
-                            <span>Domain becomes empty</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q8" value="d" class="mr-3">
-                            <span>Range becomes empty</span>
-                        </label>
-                    </div>
+                        <span class="text-pink-500 ml-2">?</span>
+                    </h2>
+                </div>
+                <div class="relative z-10 space-y-3">
+                    <label class="quiz-option">
+                        <input type="radio" name="q8" value="a" class="hidden">
+                        <div class="option-label">a</div>
+                        <span class="flex-1">Domain and range swap</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q8" value="b" class="hidden">
+                        <div class="option-label">b</div>
+                        <span class="flex-1">Domain and range remain the same</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q8" value="c" class="hidden">
+                        <div class="option-label">c</div>
+                        <span class="flex-1">Domain becomes empty</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q8" value="d" class="hidden">
+                        <div class="option-label">d</div>
+                        <span class="flex-1">Range becomes empty</span>
+                    </label>
                 </div>
             </div>
 
             <!-- Question 9 -->
-            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="9">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-gray-800">Question 9 of 11</h3>
-                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
-                </div>
-                <div class="mb-6">
-                    <p class="text-lg text-gray-700 mb-4">
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="9">
+                <div class="relative z-10 p-6 sm:p-8 mb-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
                         In cryptography, why are one-to-one functions important?
-                    </p>
-                    <div class="space-y-3">
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q9" value="a" class="mr-3">
-                            <span>They ensure unique encryption and decryption</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q9" value="b" class="mr-3">
-                            <span>They make encryption faster</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q9" value="c" class="mr-3">
-                            <span>They reduce the size of encrypted data</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q9" value="d" class="mr-3">
-                            <span>They make encryption more complex</span>
-                        </label>
-                    </div>
+                        <span class="text-pink-500 ml-2">?</span>
+                    </h2>
+                </div>
+                <div class="relative z-10 space-y-3">
+                    <label class="quiz-option">
+                        <input type="radio" name="q9" value="a" class="hidden">
+                        <div class="option-label">a</div>
+                        <span class="flex-1">They ensure unique encryption and decryption</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q9" value="b" class="hidden">
+                        <div class="option-label">b</div>
+                        <span class="flex-1">They make encryption faster</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q9" value="c" class="hidden">
+                        <div class="option-label">c</div>
+                        <span class="flex-1">They reduce the size of encrypted data</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q9" value="d" class="hidden">
+                        <div class="option-label">d</div>
+                        <span class="flex-1">They make encryption more complex</span>
+                    </label>
                 </div>
             </div>
 
             <!-- Question 10 -->
-            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="10">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-gray-800">Question 10 of 11</h3>
-                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
-                </div>
-                <div class="mb-6">
-                    <p class="text-lg text-gray-700 mb-4">
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="10">
+                <div class="relative z-10 p-6 sm:p-8 mb-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
                         What is the inverse of f(x) = x³?
-                    </p>
-                    <div class="space-y-3">
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q10" value="a" class="mr-3">
-                            <span>f⁻¹(x) = ∛x</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q10" value="b" class="mr-3">
-                            <span>f⁻¹(x) = x/3</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q10" value="c" class="mr-3">
-                            <span>f⁻¹(x) = 3x</span>
-                        </label>
-                        <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors option">
-                            <input type="radio" name="q10" value="d" class="mr-3">
-                            <span>f⁻¹(x) = x³</span>
-                        </label>
-                    </div>
+                        <span class="text-pink-500 ml-2">?</span>
+                    </h2>
+                </div>
+                <div class="relative z-10 space-y-3">
+                    <label class="quiz-option">
+                        <input type="radio" name="q10" value="a" class="hidden">
+                        <div class="option-label">a</div>
+                        <span class="flex-1 math-expression">f⁻¹(x) = ∛x</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q10" value="b" class="hidden">
+                        <div class="option-label">b</div>
+                        <span class="flex-1 math-expression">f⁻¹(x) = x/3</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q10" value="c" class="hidden">
+                        <div class="option-label">c</div>
+                        <span class="flex-1 math-expression">f⁻¹(x) = 3x</span>
+                    </label>
+                    <label class="quiz-option">
+                        <input type="radio" name="q10" value="d" class="hidden">
+                        <div class="option-label">d</div>
+                        <span class="flex-1 math-expression">f⁻¹(x) = x³</span>
+                    </label>
                 </div>
             </div>
 
             <!-- Problem Solving Question -->
-            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="11">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-gray-800">Problem Solving Question</h3>
-                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">1 point</span>
+            <div class="question-card bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 rounded-3xl shadow-2xl p-8 sm:p-10 mb-8 border-4 border-purple-400" data-question="11">
+                <!-- Header Section -->
+                <div class="flex flex-col sm:flex-row items-center justify-between mb-8 pb-6 border-b-2 border-purple-200">
+                    <div class="flex items-center space-x-4 mb-4 sm:mb-0">
+                        <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-full text-lg font-bold shadow-lg">
+                            <i class="fas fa-calculator mr-2"></i>Problem Solving
+                        </div>
+                        <span class="bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-800 px-5 py-2 rounded-full text-base font-bold shadow-md">
+                            <i class="fas fa-star mr-1"></i>1 point
+                        </span>
+                    </div>
                 </div>
-                <div class="mb-6">
-                    <p class="text-lg text-gray-700 mb-4">
-                        A temperature conversion function is F = (9/5)C + 32, where C is Celsius and F is Fahrenheit. Find the inverse function that converts Fahrenheit to Celsius. Express your answer as C = (your answer).
-                    </p>
-                    <div class="bg-white rounded-lg p-6 shadow-sm border-2 border-gray-200">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Enter the inverse function:</label>
-                        <input type="text" id="ps-answer" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none" placeholder="e.g., (5/9)(F - 32)">
+                
+                <!-- Question Information Section -->
+                <div class="mb-8">
+                    <div class="bg-gradient-to-r from-blue-50 to-cyan-50 border-l-4 border-blue-500 p-6 mb-6 rounded-r-xl shadow-md">
+                        <div class="flex items-start">
+                            <div class="bg-blue-500 rounded-full p-3 mr-4">
+                                <i class="fas fa-thermometer-half text-white text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-blue-800 mb-3 text-xl flex items-center">
+                                    <i class="fas fa-lightbulb mr-2"></i>Given Function
+                                </h4>
+                                <div class="bg-white rounded-lg p-4 mb-3">
+                                    <p class="math-expression text-center text-xl font-semibold text-gray-800">F = (9/5)C + 32</p>
+                                    <p class="text-center text-sm text-gray-600 mt-2">where C is Celsius and F is Fahrenheit</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Question Section -->
+                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 p-6 mb-6 rounded-r-xl shadow-md">
+                        <div class="flex items-start">
+                            <div class="bg-green-500 rounded-full p-3 mr-4">
+                                <i class="fas fa-question-circle text-white text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-green-800 mb-3 text-xl flex items-center">
+                                    <i class="fas fa-bullseye mr-2"></i>What We Need to Find
+                                </h4>
+                                <p class="text-green-700 text-lg font-semibold mb-3">
+                                    Find the inverse function that converts Fahrenheit to Celsius. Express your answer as <strong class="text-green-800 text-xl">C = (your answer)</strong>
+                                </p>
+                                <div class="bg-white rounded-lg p-3 border border-green-200">
+                                    <p class="text-green-600 text-base flex items-center">
+                                        <i class="fas fa-lightbulb mr-2 text-yellow-500"></i>
+                                        <strong>Hint:</strong> To find the inverse, solve for C in terms of F. Start by subtracting 32, then multiply by 5/9! 🌡️
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step-by-step guide -->
+                    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 mb-6 border-l-4 border-indigo-500 shadow-md">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-list-ol text-indigo-500 mr-3"></i>Step-by-Step Guide
+                        </h4>
+                        <div class="space-y-3">
+                            <div class="flex items-start bg-white rounded-lg p-3">
+                                <span class="bg-indigo-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3 mt-1 flex-shrink-0">1</span>
+                                <div>
+                                    <p class="font-medium text-gray-800">Start with the given function:</p>
+                                    <p class="text-sm text-gray-600">F = (9/5)C + 32</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start bg-white rounded-lg p-3">
+                                <span class="bg-indigo-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3 mt-1 flex-shrink-0">2</span>
+                                <div>
+                                    <p class="font-medium text-gray-800">Subtract 32 from both sides:</p>
+                                    <p class="text-sm text-gray-600">F - 32 = (9/5)C</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start bg-white rounded-lg p-3">
+                                <span class="bg-indigo-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3 mt-1 flex-shrink-0">3</span>
+                                <div>
+                                    <p class="font-medium text-gray-800">Multiply both sides by 5/9:</p>
+                                    <p class="text-sm text-gray-600">(5/9)(F - 32) = C</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start bg-white rounded-lg p-3">
+                                <span class="bg-indigo-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3 mt-1 flex-shrink-0">4</span>
+                                <div>
+                                    <p class="font-medium text-gray-800">Write the inverse function:</p>
+                                    <p class="text-sm text-gray-600">C = (5/9)(F - 32)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Answer Input Section -->
+                    <div class="bg-gradient-to-br from-white to-purple-50 rounded-2xl p-6 sm:p-8 mb-6 border-4 border-purple-300 shadow-2xl">
+                        <div class="text-center mb-6">
+                            <h4 class="font-bold text-gray-800 mb-2 text-2xl sm:text-3xl flex items-center justify-center">
+                                <i class="fas fa-pencil-alt mr-3 text-purple-600"></i>Your Answer
+                            </h4>
+                            <p class="text-lg text-gray-600">Enter the inverse function in the format: C = (your answer)</p>
+                        </div>
+                        <div class="mb-4">
+                            <label for="ps-answer" class="block text-sm font-medium text-gray-700 mb-2">Your Answer:</label>
+                            <input 
+                                type="text" 
+                                id="ps-answer" 
+                                name="ps-answer" 
+                                class="w-full px-4 py-3 border-4 border-purple-400 rounded-xl focus:border-purple-600 focus:ring-4 focus:ring-purple-200 transition-all text-lg"
+                                placeholder="e.g., (5/9)(F - 32)"
+                            >
+                        </div>
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-yellow-700">
+                                        <strong>Note:</strong> Make sure your answer is in the correct format. The answer should be C = (5/9)(F - 32) or an equivalent form.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Submit Button -->
-            <div class="text-center">
-                <button id="submitQuizBtn" class="bg-primary text-white px-8 py-3 rounded-lg hover:bg-secondary transition-colors font-semibold text-lg">
-                    <i class="fas fa-check mr-2"></i>Submit Quiz
+            <!-- Submit Button - Matching Image Design -->
+            <div class="text-center mb-8" id="submitButtonContainer" style="display: none;">
+                <button onclick="submitQuiz()" class="bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white px-8 sm:px-12 md:px-16 py-4 sm:py-5 rounded-2xl font-bold text-base sm:text-lg md:text-2xl shadow-lg hover:shadow-xl active:scale-95 transition-all duration-300 transform hover:scale-105 touch-manipulation min-h-[48px] min-w-[120px]">
+                    <i class="fas fa-paper-plane mr-2"></i>Submit Quiz
                 </button>
             </div>
         </div>
+    </main>
 
-        <!-- Results Container -->
-        <div id="resultsContainer" class="hidden">
+    <!-- Results Container -->
+    <div id="resultsContainer" class="hidden">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
-                <!-- Score Summary -->
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <i class="fas fa-trophy text-white text-xl"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Total Score</h3>
-                        <p class="text-2xl font-bold text-blue-600" id="totalScore">0/11</p>
+                <div class="text-center mb-8">
+                    <div id="resultsCharacter" class="w-24 h-24 mx-auto mb-4 flex items-center justify-center">
+                        <img src="../Img/Character/tips_approved-removebg-preview.png" 
+                             alt="Results Character" 
+                             class="w-full h-full object-contain results-character"
+                             style="filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));">
                     </div>
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <i class="fas fa-check-circle text-white text-xl"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Correct</h3>
-                        <p class="text-2xl font-bold text-green-600" id="correctAnswers">0</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <i class="fas fa-times-circle text-white text-xl"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Incorrect</h3>
-                        <p class="text-2xl font-bold text-red-600" id="incorrectAnswers">0</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <i class="fas fa-clock text-white text-xl"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Time Taken</h3>
-                        <p class="text-2xl font-bold text-purple-600" id="completionTime">0:00</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <i class="fas fa-percentage text-white text-xl"></i>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-1">Grade</h3>
-                        <p class="text-2xl font-bold text-orange-600" id="overallGrade">0%</p>
-                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Quiz Complete!</h2>
+                    <p class="text-lg text-gray-600">Here's how you performed</p>
                 </div>
 
-                <!-- Progress Bar -->
-                <div class="mb-8">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-sm font-medium text-gray-700">Overall Progress</span>
-                        <span class="text-sm font-medium text-gray-700" id="gradeProgressText">0%</span>
+                <!-- Score Summary -->
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold text-blue-600 mb-2" id="totalScore">0/11</div>
+                        <div class="text-sm text-gray-600">Total Score</div>
                     </div>
-                    <div class="w-full bg-gray-200 rounded-full h-3">
-                        <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-1000 ease-out" id="gradeProgress" style="width: 0%"></div>
+                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold text-green-600 mb-2" id="correctAnswers">0</div>
+                        <div class="text-sm text-gray-600">Correct Answers</div>
+                    </div>
+                    <div class="bg-gradient-to-r from-red-50 to-pink-50 rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold text-red-600 mb-2" id="incorrectAnswers">0</div>
+                        <div class="text-sm text-gray-600">Incorrect Answers</div>
+                    </div>
+                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold text-purple-600 mb-2" id="completionTime">0:00</div>
+                        <div class="text-sm text-gray-600">Completion Time</div>
+                    </div>
+                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold text-yellow-600 mb-2" id="studentRank">--</div>
+                        <div class="text-sm text-gray-600">Your Rank</div>
                     </div>
                 </div>
 
                 <!-- Detailed Performance Analysis -->
                 <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 mb-8">
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">
-                        <i class="fas fa-chart-line text-indigo-600 mr-2"></i>
-                        Performance Analysis
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">
+                        <i class="fas fa-chart-line text-indigo-500 mr-2"></i>Performance Analysis
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <h4 class="font-semibold text-gray-700 mb-2">Strengths</h4>
-                            <ul class="text-sm text-gray-600 space-y-1">
-                                <li class="flex items-center">
-                                    <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                                    Understanding one-to-one function concepts
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                                    Inverse function relationships
-                                </li>
-                            </ul>
+                        <div class="bg-white rounded-lg p-4">
+                            <h4 class="font-semibold text-gray-800 mb-3">Multiple Choice Questions</h4>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Questions:</span>
+                                    <span class="font-semibold">10</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Points per question:</span>
+                                    <span class="font-semibold">1 point</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Total possible:</span>
+                                    <span class="font-semibold">10 points</span>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <h4 class="font-semibold text-gray-700 mb-2">Areas for Improvement</h4>
-                            <ul class="text-sm text-gray-600 space-y-1">
-                                <li class="flex items-center">
-                                    <i class="fas fa-exclamation-triangle text-orange-500 mr-2"></i>
-                                    Horizontal line test application
-                                </li>
-                                <li class="flex items-center">
-                                    <i class="fas fa-exclamation-triangle text-orange-500 mr-2"></i>
-                                    Real-world applications
-                                </li>
-                            </ul>
+                        <div class="bg-white rounded-lg p-4">
+                            <h4 class="font-semibold text-gray-800 mb-3">Problem Solving</h4>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Questions:</span>
+                                    <span class="font-semibold">1</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Points per question:</span>
+                                    <span class="font-semibold">1 point</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Total possible:</span>
+                                    <span class="font-semibold">1 point</span>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                    <div class="mt-4 bg-white rounded-lg p-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Overall Grade:</span>
+                            <span class="text-2xl font-bold text-indigo-600" id="overallGrade">0%</span>
+                        </div>
+                        <div class="mt-2">
+                            <div class="w-full bg-gray-200 rounded-full h-3">
+                                <div class="bg-indigo-500 h-3 rounded-full transition-all duration-1000" id="gradeProgress" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review Your Answers Section -->
+                <div id="reviewAnswersSection" class="mt-8 mb-8">
+                    <div class="bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 rounded-xl p-6 mb-6 shadow-lg border-2 border-blue-200">
+                        <div class="text-center">
+                            <div class="inline-flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full p-4 mb-4 shadow-lg">
+                                <i class="fas fa-clipboard-check text-3xl"></i>
+                            </div>
+                            <h3 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-3">
+                                Review Your Answers
+                            </h3>
+                            <p class="text-gray-600 mb-2 text-lg">See which answers you got correct and incorrect</p>
+                            <p class="text-gray-500 text-sm">Review each question with explanations</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Quiz questions with answers will be displayed here -->
+                    <div id="quizReviewContainer" class="space-y-6">
+                        <!-- Questions will be dynamically inserted here -->
                     </div>
                 </div>
 
                 <!-- Action Buttons -->
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button id="aiAssistantBtn" onclick="openAIModal()" class="group relative bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white px-6 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-robot text-xl"></i>
+                        </div>
+                        <span>AI Performance Analysis</span>
+                    </button>
                     <button onclick="showLeaderboard()" class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
                         <i class="fas fa-trophy mr-2"></i>
                         View Leaderboard
@@ -647,79 +1747,199 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Leaderboard Container -->
-        <div id="leaderboardContainer" class="hidden">
-            <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
-                <!-- Leaderboard Header -->
-                <div class="text-center mb-8">
-                    <div class="w-20 h-20 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-trophy text-white text-3xl"></i>
+    <!-- AI Assistant Modal -->
+    <div id="aiModal" class="hidden fixed bg-black bg-opacity-60 flex items-start justify-center p-4 pt-5 backdrop-blur-sm" style="top: 64px; left: 0; right: 0; bottom: 0;">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full overflow-hidden flex flex-col max-h-[90vh]">
+            <!-- Modal Header -->
+            <div class="bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 text-white p-6 flex items-center justify-between shadow-lg flex-shrink-0">
+                <div class="flex items-center space-x-4">
+                    <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-robot text-2xl"></i>
                     </div>
-                    <h2 class="text-3xl font-bold text-gray-800 mb-2">One-to-One Functions Quiz Leaderboard</h2>
-                    <p class="text-gray-600">See how you compare with other students</p>
+                    <div>
+                        <h3 class="text-2xl font-bold">AI Performance Analysis</h3>
+                        <p class="text-purple-100 text-sm mt-1">Detailed feedback from Cassy</p>
+                    </div>
+                </div>
+                <button onclick="closeAIModal()" class="text-white hover:text-gray-200 transition-colors p-2 hover:bg-white/10 rounded-full">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+            
+            <!-- Modal Content -->
+            <div class="flex-1 overflow-y-auto p-6 bg-gradient-to-b from-gray-50 to-white">
+                <div id="aiLoading" class="text-center py-16">
+                    <div class="inline-block animate-spin rounded-full h-16 w-16 border-4 border-purple-200 border-t-purple-600 mb-6"></div>
+                    <p class="text-gray-700 font-semibold text-lg">Cassy is analyzing your performance...</p>
+                    <p class="text-gray-500 text-sm mt-2">This will just take a moment!</p>
+                </div>
+                
+                <div id="aiContent" class="hidden space-y-6">
+                    <!-- Performance Metrics Visualization -->
+                    <div class="bg-white rounded-xl p-6 shadow-md border border-gray-200">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-chart-bar text-purple-600 mr-3"></i>
+                            Performance Overview
+                        </h2>
+                        <div id="aiMetrics" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- Metrics will be inserted here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Strengths & Weaknesses Visualization -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Strengths Card -->
+                        <div id="strengthsCard" class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border-2 border-green-300 shadow-lg">
+                            <div class="flex items-center mb-5">
+                                <div class="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center mr-4 shadow-md">
+                                    <i class="fas fa-check-circle text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-green-800">Your Strengths</h3>
+                                    <p class="text-sm text-green-600">Areas where you excel</p>
+                                </div>
+                            </div>
+                            <div id="strengthsList" class="space-y-3">
+                                <!-- Strengths will be inserted here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Weaknesses Card -->
+                        <div id="weaknessesCard" class="bg-gradient-to-br from-red-50 to-pink-50 rounded-xl p-6 border-2 border-red-300 shadow-lg">
+                            <div class="flex items-center mb-5">
+                                <div class="w-14 h-14 bg-red-500 rounded-full flex items-center justify-center mr-4 shadow-md">
+                                    <i class="fas fa-exclamation-triangle text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-red-800">Areas to Improve</h3>
+                                    <p class="text-sm text-red-600">Focus areas for better performance</p>
+                                </div>
+                            </div>
+                            <div id="weaknessesList" class="space-y-3">
+                                <!-- Weaknesses will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- AI Analysis Text -->
+                    <div class="bg-white rounded-lg p-8 shadow-sm border border-gray-200">
+                        <div class="border-b border-gray-200 pb-4 mb-6">
+                            <h2 class="text-2xl font-semibold text-gray-900 flex items-center">
+                                <i class="fas fa-chart-line text-indigo-600 mr-3 text-xl"></i>
+                                Detailed Performance Analysis
+                            </h2>
+                            <p class="text-sm text-gray-500 mt-2 ml-9">Comprehensive evaluation of your quiz performance</p>
+                        </div>
+                        <div id="aiAnalysis" class="text-gray-700 leading-relaxed">
+                            <!-- AI analysis will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="aiError" class="hidden text-center py-16">
+                    <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-exclamation-triangle text-red-500 text-4xl"></i>
+                    </div>
+                    <p class="text-red-600 font-semibold text-lg mb-2">Failed to load AI analysis</p>
+                    <p class="text-gray-600 text-sm mb-6" id="aiErrorMessage"></p>
+                    <button onclick="loadAIAnalysis()" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-3 rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl">
+                        <i class="fas fa-redo mr-2"></i>Try Again
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="bg-gray-50 p-4 border-t border-gray-200 flex justify-end">
+                <button onclick="closeAIModal()" class="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-8 py-3 rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all shadow-md hover:shadow-lg">
+                    <i class="fas fa-times mr-2"></i>Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating AI Assistant Button -->
+    <button id="floatingAIButton" onclick="openAIModal()" class="hidden fixed bottom-8 right-8 w-16 h-16 bg-gradient-to-br from-purple-600 via-indigo-600 to-purple-700 rounded-full shadow-2xl flex items-center justify-center text-white hover:scale-110 hover:shadow-purple-500/50 transition-all duration-300 z-50 animate-pulse hover:animate-none group">
+        <i class="fas fa-robot text-2xl group-hover:scale-110 transition-transform"></i>
+        <span class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-xs font-bold animate-ping">!</span>
+    </button>
+
+    <!-- Leaderboard Container -->
+    <div id="leaderboardContainer" class="hidden">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-trophy text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Class Leaderboard</h2>
+                    <p class="text-lg text-gray-600">Top performers in your class ranked by score and speed</p>
                 </div>
 
                 <!-- Leaderboard Stats -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                    <div class="text-center">
-                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                            <i class="fas fa-users text-blue-600"></i>
-                        </div>
-                        <h3 class="text-sm font-medium text-gray-700">Total Participants</h3>
-                        <p class="text-xl font-bold text-blue-600" id="totalParticipants">0</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold text-blue-600 mb-2" id="totalParticipants">0</div>
+                        <div class="text-sm text-gray-600">Total Participants</div>
                     </div>
-                    <div class="text-center">
-                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                            <i class="fas fa-chart-bar text-green-600"></i>
-                        </div>
-                        <h3 class="text-sm font-medium text-gray-700">Average Score</h3>
-                        <p class="text-xl font-bold text-green-600" id="averageScore">0%</p>
+                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold text-green-600 mb-2" id="averageScore">0%</div>
+                        <div class="text-sm text-gray-600">Average Score</div>
                     </div>
-                    <div class="text-center">
-                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                            <i class="fas fa-clock text-purple-600"></i>
-                        </div>
-                        <h3 class="text-sm font-medium text-gray-700">Fastest Time</h3>
-                        <p class="text-xl font-bold text-purple-600" id="fastestTime">0:00</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                            <i class="fas fa-medal text-orange-600"></i>
-                        </div>
-                        <h3 class="text-sm font-medium text-gray-700">Your Rank</h3>
-                        <p class="text-xl font-bold text-orange-600" id="studentRank">--</p>
+                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 text-center">
+                        <div class="text-3xl font-bold text-purple-600 mb-2" id="fastestTime">0:00</div>
+                        <div class="text-sm text-gray-600">Fastest Time</div>
                     </div>
                 </div>
 
-                <!-- Leaderboard Table -->
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead>
-                            <tr class="bg-gray-50">
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rank</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                            </tr>
-                        </thead>
-                        <tbody id="leaderboardTable" class="bg-white divide-y divide-gray-200">
-                            <!-- Leaderboard entries will be populated here -->
-                        </tbody>
-                    </table>
+                <!-- Podium Section -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Top Performers</h3>
+                    <div class="flex justify-center items-end space-x-4 mb-8" id="podiumContainer">
+                        <!-- Podium will be populated by JavaScript -->
+                    </div>
                 </div>
 
-                <!-- Back Button -->
-                <div class="text-center mt-8">
-                    <button onclick="hideLeaderboard()" class="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
+                <!-- Detailed Leaderboard -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">Complete Rankings</h3>
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                        <div id="detailedLeaderboard" class="divide-y divide-gray-200">
+                            <!-- Leaderboard entries will be populated by JavaScript -->
+                        </div>
+                        <!-- Pagination Controls -->
+                        <div id="paginationContainer" class="pagination-container hidden">
+                            <button id="prevPageBtn" class="pagination-btn" onclick="changePage(-1)">
+                                <i class="fas fa-chevron-left mr-1"></i> Previous
+                            </button>
+                            <div class="pagination-page-numbers" id="pageNumbers">
+                                <!-- Page numbers will be populated by JavaScript -->
+                            </div>
+                            <button id="nextPageBtn" class="pagination-btn" onclick="changePage(1)">
+                                Next <i class="fas fa-chevron-right ml-1"></i>
+                            </button>
+                            <div class="pagination-info" id="paginationInfo">
+                                <!-- Pagination info will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="hideLeaderboard()" class="bg-gradient-to-r from-primary to-secondary text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
                         <i class="fas fa-arrow-left mr-2"></i>
                         Back to Results
+                    </button>
+                    <button onclick="goToDashboard()" class="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300">
+                        <i class="fas fa-home mr-2"></i>
+                        Back to Dashboard
                     </button>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
 
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-8 mt-12">
@@ -733,11 +1953,34 @@
         // Timer variables
         let quizStartTime;
         let timerInterval;
-        let quizDuration = 0; // in seconds
+        let quizDuration = 0; // in seconds (elapsed time)
+        let timeRemaining = 0; // in seconds (countdown)
+        let timeLimitMinutes = 20; // Default time limit in minutes (from teacher settings)
         let currentAttemptId = null;
         let isReviewMode = false;
         let quizDeadline = null;
         let quizStarted = false; // Track if quiz has been started
+        let userAnswers = {};
+        let isQuizCompleted = false;
+        let autoSubmitTimeout = null;
+        let quizResultsForAI = null;
+        
+        // Anti-cheating variables
+        let isQuizActive = false;
+        let focusLostTime = null;
+        let tabSwitchCount = 0;
+        let maxAllowedTabSwitches = 3; // Maximum allowed tab switches (marks as cheating after 3rd switch)
+        let maxAllowedFocusLoss = 30000; // 30 seconds max focus loss
+        let heartbeatInterval = null;
+        let lastHeartbeat = null;
+        let isPageVisible = true;
+        let hasLoggedOut = false;
+        let hasExitedQuiz = false;
+        
+        // Leaderboard variables
+        let currentLeaderboardData = [];
+        let currentPage = 1;
+        let itemsPerPage = 10;
 
         // Quiz data with correct answers
         const quizData = {
@@ -751,11 +1994,14 @@
                 q7: 'a', // Assume f(a) = f(b) and show that a = b
                 q8: 'a', // Domain and range swap
                 q9: 'a', // They ensure unique encryption and decryption
-                q10: 'a' // f⁻¹(x) = ∛x
+                q10: 'a', // f⁻¹(x) = ∛x
+                'ps-answer': '(5/9)(F - 32)' // Temperature conversion inverse function
             },
-            problemSolving: {
-                answer: '(5/9)(F - 32)' // Temperature conversion inverse function
-            }
+            points: {
+                q1: 1, q2: 1, q3: 1, q4: 1, q5: 1, q6: 1, q7: 1, q8: 1, q9: 1, q10: 1,
+                'ps-answer': 1
+            },
+            questionOrder: [] // Will store shuffled question order
         };
 
         // Initialize quiz
@@ -772,7 +2018,7 @@
 
         // Add event listeners to all options
         function addOptionListeners() {
-            const options = document.querySelectorAll('.option');
+            const options = document.querySelectorAll('.quiz-option');
             options.forEach(option => {
                 option.addEventListener('click', function() {
                     if (!isReviewMode) {
@@ -780,15 +2026,26 @@
                         if (radio) {
                             radio.checked = true;
                             updateOptionStyles();
+                            updateProgress();
                         }
                     }
                 });
             });
+            
+            // Also listen for problem solving input
+            const psInput = document.getElementById('ps-answer');
+            if (psInput) {
+                psInput.addEventListener('input', function() {
+                    if (!isReviewMode) {
+                        updateProgress();
+                    }
+                });
+            }
         }
 
         // Update option styles when selected
         function updateOptionStyles() {
-            const options = document.querySelectorAll('.option');
+            const options = document.querySelectorAll('.quiz-option');
             options.forEach(option => {
                 const radio = option.querySelector('input[type="radio"]');
                 if (radio && radio.checked) {
@@ -798,17 +2055,51 @@
                 }
             });
         }
+        
+        // Update progress with animations
+        function updateProgress() {
+            const totalQuestions = 11; // 10 multiple choice + 1 problem solving question
+            let answered = 0;
+            
+            // Count answered multiple choice questions
+            for (let i = 1; i <= 10; i++) {
+                if (document.querySelector(`input[name="q${i}"]:checked`)) {
+                    answered++;
+                }
+            }
+            
+            // Count answered problem solving question
+            const psAnswerElement = document.getElementById('ps-answer');
+            if (psAnswerElement && psAnswerElement.value.trim() !== '') {
+                answered++;
+            }
+            
+            const progress = (answered / totalQuestions) * 100;
+            const progressBar = document.getElementById('progressBar');
+            
+            // Animate progress bar
+            if (progressBar) {
+                progressBar.style.transition = 'width 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                progressBar.style.width = progress + '%';
+            }
+            
+            const progressText = document.getElementById('progressText');
+            if (progressText) {
+                progressText.textContent = `${answered}/${totalQuestions}`;
+            }
+        }
 
         // Start quiz function
-        function startQuiz() {
+        async function startQuiz() {
             try {
                 // Set quiz started flag
                 quizStarted = true;
+                isQuizActive = true;
                 
                 // Hide instructions container
-                const instructionsContainer = document.querySelector('.max-w-4xl.mx-auto.px-4.sm\\:px-6.lg\\:px-8.py-8');
+                const instructionsContainer = document.querySelector('.tips-container');
                 if (instructionsContainer) {
-                    instructionsContainer.style.display = 'none';
+                    instructionsContainer.classList.add('hidden');
                 }
                 
                 // Show quiz container
@@ -817,8 +2108,17 @@
                     quizContainer.classList.remove('hidden');
                 }
                 
+                // Shuffle questions (only questions, not answers)
+                shuffleQuestions();
+                
+                // Start quiz in database
+                await startQuizInDatabase();
+                
                 // Start the timer
                 startTimer();
+                
+                // Initialize anti-cheating
+                initializeAntiCheating();
                 
                 // Initialize quiz
                 initializeQuiz();
@@ -839,7 +2139,71 @@
             quizStartTime = new Date();
             timerInterval = setInterval(() => {
                 quizDuration++;
+                timeRemaining = (timeLimitMinutes * 60) - quizDuration;
+                
+                // Update timer display
+                updateTimerDisplay();
+                
+                // Auto-submit when time is up
+                if (timeRemaining <= 0 && !isQuizCompleted) {
+                    clearInterval(timerInterval);
+                    isQuizCompleted = true;
+                    Swal.fire({
+                        title: 'Time\'s Up!',
+                        text: 'Your quiz has been automatically submitted.',
+                        icon: 'info',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#667eea',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    }).then(() => {
+                        submitQuiz();
+                    });
+                }
             }, 1000);
+        }
+        
+        // Stop timer
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+        
+        // Update timer display
+        function updateTimerDisplay() {
+            const timerCircle = document.getElementById('timerCircle');
+            const timerText = document.getElementById('timerText');
+            
+            if (timerCircle && timerText) {
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+                timerText.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                // Update circle progress
+                const totalSeconds = timeLimitMinutes * 60;
+                const progress = timeRemaining / totalSeconds;
+                const circumference = 2 * Math.PI * 45; // radius = 45
+                const offset = circumference * (1 - progress);
+                timerCircle.style.strokeDashoffset = offset;
+                
+                // Change color based on time remaining
+                if (progress < 0.25) {
+                    timerCircle.style.stroke = '#ef4444'; // red
+                } else if (progress < 0.5) {
+                    timerCircle.style.stroke = '#f59e0b'; // amber
+                } else {
+                    timerCircle.style.stroke = '#10b981'; // green
+                }
+            }
+        }
+        
+        // Get formatted time
+        function getFormattedTime() {
+            const minutes = Math.floor(quizDuration / 60);
+            const seconds = quizDuration % 60;
+            return `${minutes}:${seconds.toString().padStart(2, '0')}`;
         }
 
         // Initialize quiz
@@ -851,27 +2215,43 @@
         // Submit quiz function
         async function submitQuiz() {
             try {
-                // Clear timer
-                clearInterval(timerInterval);
+                if (isReviewMode) {
+                    Swal.fire({
+                        title: 'Review Mode',
+                        text: 'You cannot submit the quiz in review mode.',
+                        icon: 'info',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#667eea'
+                    });
+                    return;
+                }
+                
+                // Clear auto-submit timeout if exists
+                if (autoSubmitTimeout) {
+                    clearTimeout(autoSubmitTimeout);
+                    autoSubmitTimeout = null;
+                }
+                
+                // Stop anti-cheating monitoring
+                stopAntiCheating();
                 
                 // Get student answers
                 const answers = getStudentAnswers();
+                userAnswers = answers;
                 
-                // Calculate score
-                const score = calculateScore(answers);
-                const percentage = Math.round((score / 11) * 100);
+                // Calculate completion time
+                const completionTime = quizDuration;
                 
-                // Save quiz attempt
-                const attemptId = await saveQuizAttempt(answers, score, percentage);
+                // Submit to database
+                const dbResult = await submitQuizToDatabase(answers, completionTime);
                 
-                if (attemptId) {
-                    currentAttemptId = attemptId;
-                    // Show results
-                    showResults(score, percentage, answers);
+                if (dbResult && dbResult.success) {
+                    // Show results with database result
+                    showResults(dbResult);
                 } else {
                     Swal.fire({
-                        title: 'Error',
-                        text: 'There was an error saving your quiz. Please try again.',
+                        title: 'Submission Error',
+                        text: dbResult?.message || 'There was an error submitting your quiz. Please try again.',
                         icon: 'error',
                         confirmButtonText: 'OK',
                         confirmButtonColor: '#667eea'
@@ -900,8 +2280,8 @@
             }
             
             // Problem solving question
-            const psAnswer = document.getElementById('ps-answer').value;
-            answers['q11'] = psAnswer;
+            const psAnswerElement = document.getElementById('ps-answer');
+            answers['ps-answer'] = psAnswerElement ? psAnswerElement.value.trim() : '';
             
             return answers;
         }
@@ -909,91 +2289,229 @@
         // Calculate score
         function calculateScore(answers) {
             let score = 0;
+            let totalPoints = 0;
             
             // Check multiple choice questions
             for (let i = 1; i <= 10; i++) {
                 const questionKey = `q${i}`;
                 const studentAnswer = answers[questionKey];
                 const correctAnswer = quizData.answers[questionKey];
+                const points = quizData.points[questionKey] || 1;
+                totalPoints += points;
                 
                 if (studentAnswer && studentAnswer.toString().toLowerCase() === correctAnswer.toString().toLowerCase()) {
-                    score++;
+                    score += points;
                 }
             }
             
             // Check problem solving question
-            const psAnswer = answers['q11'];
-            const psCorrect = quizData.problemSolving.answer;
+            const psAnswer = answers['ps-answer'];
+            const psCorrect = quizData.answers['ps-answer'];
+            const psPoints = quizData.points['ps-answer'] || 1;
+            totalPoints += psPoints;
             
-            if (psAnswer && psAnswer.toString().toLowerCase() === psCorrect.toString().toLowerCase()) {
-                score++;
+            if (psAnswer && psAnswer.toString().trim().toLowerCase() === psCorrect.toString().trim().toLowerCase()) {
+                score += psPoints;
             }
             
-            return score;
+            return { score, totalPoints };
         }
 
-        // Save quiz attempt
-        async function saveQuizAttempt(answers, score, percentage) {
+        // Submit quiz to database
+        async function submitQuizToDatabase(answers, completionTime, retryCount = 0) {
+            const maxRetries = 2; // Maximum 2 retries (3 total attempts)
+            
             try {
-                const response = await fetch('../php/quiz-management.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        action: 'save_quiz_attempt',
-                        quiz_type: 'one-to-one-functions',
-                        answers: answers,
-                        score: score,
-                        total_questions: 11,
-                        percentage: percentage,
-                        time_taken: quizDuration
-                    }),
-                    credentials: 'include'
-                });
+                console.log(`Submitting quiz to database... (Attempt ${retryCount + 1}/${maxRetries + 1})`);
+                console.log('Attempt ID:', currentAttemptId);
+                console.log('Completion Time:', completionTime);
+                console.log('Answers:', answers);
+                
+                const formData = new FormData();
+                formData.append('action', 'submit_quiz');
+                formData.append('attempt_id', currentAttemptId);
+                formData.append('completion_time', completionTime);
+                formData.append('quiz_type', 'one-to-one-functions');
+                
+                // Add answers to form data
+                for (const [key, value] of Object.entries(answers)) {
+                    // Ensure ps-answer is included even if empty
+                    const answerValue = value !== null && value !== undefined ? value : '';
+                    formData.append(`answers[${key}]`, answerValue);
+                    if (key === 'ps-answer') {
+                        console.log(`✅ Added ${key} to form data:`, answerValue || '(empty)');
+                    }
+                }
+                
+                // Double-check ps-answer is included
+                if (!answers.hasOwnProperty('ps-answer')) {
+                    console.warn('⚠️ ps-answer missing from answers object, adding empty value');
+                    formData.append('answers[ps-answer]', '');
+                }
+                
+                console.log('Sending request to quiz-management.php...');
+                console.log('All answer keys being sent:', Object.keys(answers));
+                console.log('ps-answer value being sent:', answers['ps-answer'] || '(empty)');
+                
+                // Create abort controller for timeout
+                const controller = new AbortController();
+                // Increase timeout for retries: 60s first attempt, 90s retries
+                const timeoutDuration = retryCount === 0 ? 60000 : 90000;
+                const timeoutId = setTimeout(() => controller.abort(), timeoutDuration);
+                
+                let response;
+                try {
+                    response = await fetch('../php/quiz-management.php', {
+                        method: 'POST',
+                        body: formData,
+                        credentials: 'include',
+                        signal: controller.signal
+                    });
+                    clearTimeout(timeoutId);
+                } catch (fetchError) {
+                    clearTimeout(timeoutId);
+                    if (fetchError.name === 'AbortError') {
+                        console.error('⏱️ Request timeout');
+                        if (retryCount < maxRetries) {
+                            console.log(`🔄 Retrying... (${retryCount + 1}/${maxRetries})`);
+                            return await submitQuizToDatabase(answers, completionTime, retryCount + 1);
+                        }
+                        return { success: false, message: 'Request timeout. Please check your connection and try again.' };
+                    }
+                    throw fetchError;
+                }
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('❌ Response not OK:', response.status, errorText);
+                    if (retryCount < maxRetries) {
+                        console.log(`🔄 Retrying... (${retryCount + 1}/${maxRetries})`);
+                        await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1))); // Exponential backoff
+                        return await submitQuizToDatabase(answers, completionTime, retryCount + 1);
+                    }
+                    return { success: false, message: `Server error: ${response.status}` };
+                }
                 
                 const result = await response.json();
+                console.log('📦 Response received:', result);
                 
                 if (result.success) {
-                    return result.attempt_id;
+                    console.log('✅ Quiz submitted successfully');
+                    if (result.attempt_id) {
+                        currentAttemptId = result.attempt_id;
+                    }
+                    return result;
                 } else {
-                    console.error('Error saving quiz:', result.message);
-                    return null;
+                    console.error('❌ Submission failed:', result.message);
+                    if (retryCount < maxRetries && result.message && result.message.includes('timeout')) {
+                        console.log(`🔄 Retrying due to timeout... (${retryCount + 1}/${maxRetries})`);
+                        await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
+                        return await submitQuizToDatabase(answers, completionTime, retryCount + 1);
+                    }
+                    return { success: false, message: result.message || 'Failed to submit quiz' };
                 }
             } catch (error) {
-                console.error('Error saving quiz:', error);
-                return null;
+                console.error('❌ Error submitting quiz:', error);
+                if (retryCount < maxRetries) {
+                    console.log(`🔄 Retrying after error... (${retryCount + 1}/${maxRetries})`);
+                    await new Promise(resolve => setTimeout(resolve, 1000 * (retryCount + 1)));
+                    return await submitQuizToDatabase(answers, completionTime, retryCount + 1);
+                }
+                return { success: false, message: error.message || 'An error occurred while submitting the quiz' };
             }
         }
 
         // Show results
-        function showResults(score, percentage, answers) {
-            // Hide quiz container
-            document.getElementById('quizContainer').classList.add('hidden');
-            
-            // Show results container
-            document.getElementById('resultsContainer').classList.remove('hidden');
-            
-            // Update result displays
-            document.getElementById('totalScore').textContent = `${score}/11`;
-            document.getElementById('correctAnswers').textContent = score;
-            document.getElementById('incorrectAnswers').textContent = 11 - score;
-            document.getElementById('completionTime').textContent = formatTime(quizDuration);
-            document.getElementById('overallGrade').textContent = `${percentage}%`;
-            
-            // Animate progress bar
-            const progressBar = document.getElementById('gradeProgress');
-            progressBar.style.width = `${percentage}%`;
-            
-            // Load leaderboard data
-            loadLeaderboard();
-        }
-
-        // Format time in MM:SS format
-        function formatTime(seconds) {
-            const minutes = Math.floor(seconds / 60);
-            const remainingSeconds = seconds % 60;
-            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        async function showResults(result) {
+            try {
+                // Stop the timer when showing results
+                stopTimer();
+                
+                // Hide progress and timer header when quiz is submitted
+                const progressTimerHeader = document.getElementById('progressTimerHeader');
+                if (progressTimerHeader) {
+                    progressTimerHeader.classList.add('hidden');
+                }
+                
+                // Show results
+                const quizContainer = document.getElementById('quizContainer');
+                const resultsContainer = document.getElementById('resultsContainer');
+                
+                if (quizContainer) quizContainer.classList.add('hidden');
+                if (resultsContainer) resultsContainer.classList.remove('hidden');
+                
+                const totalQuestions = result.total_questions || 11; // Number of questions (11)
+                const totalPoints = result.total_points || 11; // Total points (10 MC * 1 + 1 PS * 1 = 11)
+                const percentage = Math.round((result.score / totalPoints) * 100);
+                
+                // Update score displays
+                const totalScoreEl = document.getElementById('totalScore');
+                const correctAnswersEl = document.getElementById('correctAnswers');
+                const incorrectAnswersEl = document.getElementById('incorrectAnswers');
+                const completionTimeEl = document.getElementById('completionTime');
+                
+                if (totalScoreEl) totalScoreEl.textContent = `${result.score}/${totalPoints}`;
+                if (correctAnswersEl) correctAnswersEl.textContent = result.correct_answers;
+                if (incorrectAnswersEl) incorrectAnswersEl.textContent = result.incorrect_answers;
+                if (completionTimeEl) completionTimeEl.textContent = getFormattedTime();
+                
+                // Update overall grade
+                const overallGradeEl = document.getElementById('overallGrade');
+                const gradeProgressEl = document.getElementById('gradeProgress');
+                
+                if (overallGradeEl) overallGradeEl.textContent = `${percentage}%`;
+                if (gradeProgressEl) {
+                    gradeProgressEl.style.width = `${percentage}%`;
+                    
+                    // Change progress bar color based on grade
+                    if (percentage >= 80) {
+                        gradeProgressEl.className = 'bg-green-500 h-3 rounded-full transition-all duration-1000';
+                    } else if (percentage >= 60) {
+                        gradeProgressEl.className = 'bg-yellow-500 h-3 rounded-full transition-all duration-1000';
+                    } else {
+                        gradeProgressEl.className = 'bg-red-500 h-3 rounded-full transition-all duration-1000';
+                    }
+                }
+                
+                // Update character based on score
+                updateResultsCharacter(percentage);
+                
+                // Display student rank
+                if (result.rank) {
+                    displayStudentRank(result.rank);
+                }
+                
+                // Store quiz results for AI analysis
+                quizResultsForAI = {
+                    score: result.score,
+                    total_points: totalPoints,
+                    percentage: percentage,
+                    correct_answers: result.correct_answers,
+                    incorrect_answers: result.incorrect_answers,
+                    time_taken: quizDuration,
+                    answers: userAnswers,
+                    quiz_type: 'one-to-one-functions'
+                };
+                
+                // Display quiz review
+                displayQuizReview(userAnswers, result);
+                
+                // Check and award badges (only if not in review mode)
+                if (!isReviewMode) {
+                    checkAndAwardBadges(result);
+                }
+                
+                // Show floating AI button
+                const floatingAIButton = document.getElementById('floatingAIButton');
+                if (floatingAIButton) {
+                    floatingAIButton.classList.remove('hidden');
+                }
+                
+                // Load leaderboard
+                await loadLeaderboard();
+            } catch (error) {
+                console.error('Error showing results:', error);
+            }
         }
 
         // Load leaderboard
@@ -1006,65 +2524,15 @@
                 const result = await response.json();
                 
                 if (result.success && result.leaderboard) {
-                    updateLeaderboardStats(result.leaderboard);
-                    populateLeaderboardTable(result.leaderboard);
+                    currentLeaderboardData = result.leaderboard;
+                    createPodium(result.leaderboard);
+                    createDetailedLeaderboard(result.leaderboard);
                 }
             } catch (error) {
                 console.error('Error loading leaderboard:', error);
             }
         }
 
-        // Update leaderboard statistics
-        function updateLeaderboardStats(leaderboard) {
-            const totalParticipants = leaderboard.length;
-            const averageScore = leaderboard.length > 0 ? 
-                Math.round(leaderboard.reduce((sum, entry) => sum + entry.percentage, 0) / leaderboard.length) : 0;
-            const fastestTime = leaderboard.length > 0 ? 
-                Math.min(...leaderboard.map(entry => entry.time_taken)) : 0;
-            
-            document.getElementById('totalParticipants').textContent = totalParticipants;
-            document.getElementById('averageScore').textContent = `${averageScore}%`;
-            document.getElementById('fastestTime').textContent = formatTime(fastestTime);
-            
-            // Find student's rank
-            const studentRank = leaderboard.findIndex(entry => entry.attempt_id === currentAttemptId) + 1;
-            document.getElementById('studentRank').textContent = studentRank > 0 ? `#${studentRank}` : '--';
-        }
-
-        // Populate leaderboard table
-        function populateLeaderboardTable(leaderboard) {
-            const tableBody = document.getElementById('leaderboardTable');
-            tableBody.innerHTML = '';
-            
-            leaderboard.forEach((entry, index) => {
-                const row = document.createElement('tr');
-                const isCurrentStudent = entry.attempt_id === currentAttemptId;
-                
-                row.className = isCurrentStudent ? 'bg-blue-50' : '';
-                row.innerHTML = `
-                    <td class="px-6 py-4 text-sm font-medium text-gray-900">
-                        <div class="flex items-center">
-                            ${index < 3 ? `<i class="fas fa-trophy text-${index === 0 ? 'yellow' : index === 1 ? 'gray' : 'orange'}-500 mr-2"></i>` : ''}
-                            #${index + 1}
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 text-sm text-gray-900">
-                        <div class="flex items-center">
-                            <div class="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mr-3">
-                                <span class="text-white text-xs font-bold">${entry.first_name.charAt(0)}${entry.last_name.charAt(0)}</span>
-                            </div>
-                            ${entry.first_name} ${entry.last_name}
-                            ${isCurrentStudent ? '<span class="ml-2 bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">You</span>' : ''}
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 text-sm text-gray-900">${entry.score}/${entry.total_questions}</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">${formatTime(entry.time_taken)}</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">${new Date(entry.quiz_date).toLocaleDateString()}</td>
-                `;
-                
-                tableBody.appendChild(row);
-            });
-        }
 
         // Show leaderboard
         function showLeaderboard() {
@@ -1083,6 +2551,745 @@
             window.location.href = '../dashboard.html';
         }
 
+        // Shuffle questions function
+        function shuffleQuestions() {
+            console.log('🔀 Shuffling questions...');
+            const quizContainer = document.getElementById('quizContainer');
+            if (!quizContainer) return;
+            
+            // Get all question cards (1-10, exclude problem solving 11)
+            const questions = Array.from(quizContainer.querySelectorAll('[data-question]'))
+                .filter(q => q.getAttribute('data-question') !== '11');
+            
+            // Shuffle using Fisher-Yates algorithm
+            for (let i = questions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [questions[i], questions[j]] = [questions[j], questions[i]];
+            }
+            
+            // Store the new order
+            quizData.questionOrder = questions.map(q => parseInt(q.getAttribute('data-question')));
+            console.log('✅ Question order:', quizData.questionOrder);
+            
+            // Reorder questions in DOM (but keep problem solving at the end)
+            const problemSolving = quizContainer.querySelector('[data-question="11"]');
+            const submitButton = document.getElementById('submitButtonContainer');
+            
+            // Remove all questions from container
+            questions.forEach(q => q.remove());
+            if (problemSolving) problemSolving.remove();
+            
+            // Add shuffled questions back
+            const fragment = document.createDocumentFragment();
+            questions.forEach(q => fragment.appendChild(q));
+            quizContainer.insertBefore(fragment, submitButton);
+            
+            // Add problem solving question back at the end
+            if (problemSolving) {
+                quizContainer.insertBefore(problemSolving, submitButton);
+            }
+            
+            console.log('✅ Questions shuffled successfully');
+        }
+        
+        // Start quiz in database
+        async function startQuizInDatabase() {
+            try {
+                console.log('Starting quiz in database...');
+                const formData = new FormData();
+                formData.append('action', 'start_quiz');
+                formData.append('quiz_type', 'one-to-one-functions');
+                
+                const response = await fetch('../php/quiz-management.php', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentAttemptId = result.attempt_id;
+                    console.log('✅ Quiz started successfully with attempt ID:', currentAttemptId);
+                } else {
+                    console.error('❌ Failed to start quiz:', result.message);
+                }
+            } catch (error) {
+                console.error('❌ Error starting quiz in database:', error);
+            }
+        }
+        
+        // Update results character
+        function updateResultsCharacter(percentage) {
+            const characterImg = document.querySelector('#resultsCharacter img');
+            if (!characterImg) return;
+            
+            if (percentage >= 90) {
+                characterImg.src = '../css/characters/excited.png';
+                characterImg.alt = 'Excited Character';
+            } else if (percentage >= 70) {
+                characterImg.src = '../css/characters/happy.png';
+                characterImg.alt = 'Happy Character';
+            } else if (percentage >= 50) {
+                characterImg.src = '../css/characters/neutral.png';
+                characterImg.alt = 'Neutral Character';
+            } else {
+                characterImg.src = '../css/characters/sad.png';
+                characterImg.alt = 'Sad Character';
+            }
+        }
+        
+        // Display student rank
+        async function displayStudentRank(rank) {
+            const rankElement = document.getElementById('studentRank');
+            if (rankElement && rank) {
+                rankElement.textContent = `#${rank}`;
+            }
+        }
+        
+        // Display quiz review
+        function displayQuizReview(studentAnswers, result) {
+            const reviewContainer = document.getElementById('quizReviewContainer');
+            if (!reviewContainer) return;
+            
+            reviewContainer.innerHTML = '';
+            
+            // Review each question
+            for (let i = 1; i <= 10; i++) {
+                const questionKey = `q${i}`;
+                const studentAnswer = studentAnswers[questionKey];
+                const correctAnswer = quizData.answers[questionKey];
+                const isCorrect = studentAnswer && studentAnswer.toLowerCase() === correctAnswer.toLowerCase();
+                
+                const questionDiv = document.createElement('div');
+                questionDiv.className = `p-4 mb-4 rounded-lg ${isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`;
+                questionDiv.innerHTML = `
+                    <div class="flex items-start justify-between mb-2">
+                        <h3 class="font-semibold text-gray-800">Question ${i}</h3>
+                        ${isCorrect ? '<span class="text-green-600 font-bold">✓ Correct</span>' : '<span class="text-red-600 font-bold">✗ Incorrect</span>'}
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        <p><strong>Your answer:</strong> ${studentAnswer || 'Not answered'}</p>
+                        <p><strong>Correct answer:</strong> ${correctAnswer}</p>
+                    </div>
+                `;
+                reviewContainer.appendChild(questionDiv);
+            }
+            
+            // Review problem solving question
+            const psAnswer = studentAnswers['ps-answer'];
+            const psCorrect = quizData.answers['ps-answer'];
+            const isPSCorrect = psAnswer && psAnswer.trim().toLowerCase() === psCorrect.trim().toLowerCase();
+            
+            const psDiv = document.createElement('div');
+            psDiv.className = `p-4 mb-4 rounded-lg ${isPSCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`;
+            psDiv.innerHTML = `
+                <div class="flex items-start justify-between mb-2">
+                    <h3 class="font-semibold text-gray-800">Problem Solving Question</h3>
+                    ${isPSCorrect ? '<span class="text-green-600 font-bold">✓ Correct</span>' : '<span class="text-red-600 font-bold">✗ Incorrect</span>'}
+                </div>
+                <div class="text-sm text-gray-600">
+                    <p><strong>Your answer:</strong> ${psAnswer || 'Not answered'}</p>
+                    <p><strong>Correct answer:</strong> ${psCorrect}</p>
+                </div>
+            `;
+            reviewContainer.appendChild(psDiv);
+        }
+        
+        // Check and award badges
+        async function checkAndAwardBadges(result) {
+            try {
+                console.log('🏆 Checking for badge eligibility...');
+                
+                const userId = await getCurrentUserId();
+                if (!userId || !currentAttemptId) {
+                    console.log('❌ No user ID or attempt ID available for badge checking');
+                    return;
+                }
+                
+                const formData = new FormData();
+                formData.append('action', 'check_and_award_badges');
+                formData.append('student_id', userId);
+                formData.append('quiz_type', 'one-to-one-functions');
+                formData.append('score', result.score);
+                formData.append('total_questions', result.total_questions || result.total_points);
+                formData.append('attempt_id', currentAttemptId);
+                
+                const response = await fetch('../php/badge-management.php', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.awarded_badges && data.awarded_badges.length > 0) {
+                        showBadgeNotification(data.awarded_badges);
+                        localStorage.setItem('mathease-badges-updated', Date.now().toString());
+                    }
+                }
+            } catch (error) {
+                console.error('❌ Error checking badges:', error);
+            }
+        }
+        
+        // Show badge notification
+        function showBadgeNotification(badges) {
+            if (!badges || badges.length === 0) return;
+            
+            const badge = badges[0];
+            const badgeName = badge.name || 'Badge';
+            const badgeIcon = badge.icon_url || '../css/badges/default-badge.png';
+            const badgeDescription = badge.description || 'Congratulations on earning this badge!';
+            const rarity = badge.rarity || 'common';
+            
+            Swal.fire({
+                title: '🏆 Badge Earned!',
+                html: `
+                    <div class="text-center">
+                        <img src="${badgeIcon}" alt="${badgeName}" class="w-32 h-32 mx-auto mb-4">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">${badgeName}</h3>
+                        <p class="text-gray-600 mb-2">${badgeDescription}</p>
+                        <span class="inline-block px-3 py-1 rounded-full text-sm font-semibold ${
+                            rarity === 'legendary' ? 'bg-purple-100 text-purple-800' :
+                            rarity === 'epic' ? 'bg-indigo-100 text-indigo-800' :
+                            rarity === 'rare' ? 'bg-blue-100 text-blue-800' :
+                            'bg-gray-100 text-gray-800'
+                        }">${rarity.charAt(0).toUpperCase() + rarity.slice(1)}</span>
+                    </div>
+                `,
+                icon: null,
+                confirmButtonText: 'Awesome!',
+                confirmButtonColor: '#667eea',
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            });
+        }
+        
+        // Get current user ID
+        async function getCurrentUserId() {
+            try {
+                const response = await fetch('../php/get-user-info.php', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                return data.user_id || null;
+            } catch (error) {
+                console.error('Error getting user ID:', error);
+                return null;
+            }
+        }
+        
+        // Create podium
+        function createPodium(topThree) {
+            const podiumContainer = document.getElementById('podiumContainer');
+            if (!podiumContainer) return;
+            
+            if (topThree.length === 0) {
+                podiumContainer.innerHTML = '<p class="text-gray-500 text-center">No students on the leaderboard yet.</p>';
+                return;
+            }
+            
+            const sorted = [...topThree].sort((a, b) => {
+                if (b.percentage !== a.percentage) return b.percentage - a.percentage;
+                return a.time_taken - b.time_taken;
+            });
+            
+            const first = sorted[0];
+            const second = sorted[1] || null;
+            const third = sorted[2] || null;
+            
+            podiumContainer.innerHTML = `
+                <div class="podium-wrapper">
+                    ${second ? `<div class="podium-block podium-2">
+                        <div class="podium-avatar">${second.first_name.charAt(0)}${second.last_name.charAt(0)}</div>
+                        <div class="podium-rank">2</div>
+                        <div class="podium-info">
+                            <div class="podium-name">${second.first_name} ${second.last_name}</div>
+                            <div class="podium-points">${second.percentage}%</div>
+                        </div>
+                    </div>` : ''}
+                    ${first ? `<div class="podium-block podium-1">
+                        <div class="podium-crown">👑</div>
+                        <div class="podium-avatar">${first.first_name.charAt(0)}${first.last_name.charAt(0)}</div>
+                        <div class="podium-rank">1</div>
+                        <div class="podium-info">
+                            <div class="podium-name">${first.first_name} ${first.last_name}</div>
+                            <div class="podium-points">${first.percentage}%</div>
+                        </div>
+                    </div>` : ''}
+                    ${third ? `<div class="podium-block podium-3">
+                        <div class="podium-avatar">${third.first_name.charAt(0)}${third.last_name.charAt(0)}</div>
+                        <div class="podium-rank">3</div>
+                        <div class="podium-info">
+                            <div class="podium-name">${third.first_name} ${third.last_name}</div>
+                            <div class="podium-points">${third.percentage}%</div>
+                        </div>
+                    </div>` : ''}
+                </div>
+            `;
+        }
+        
+        // Create detailed leaderboard
+        function createDetailedLeaderboard(leaderboardData) {
+            const detailedLeaderboard = document.getElementById('detailedLeaderboard');
+            if (!detailedLeaderboard) return;
+            
+            if (leaderboardData.length === 0) {
+                detailedLeaderboard.innerHTML = '<p class="text-gray-500 text-center py-8">No students on the leaderboard yet.</p>';
+                return;
+            }
+            
+            // Separate cheating students from regular students
+            const cheatingStudents = leaderboardData.filter(entry => entry.is_cheating === 1);
+            const regularStudents = leaderboardData.filter(entry => !entry.is_cheating || entry.is_cheating === 0);
+            
+            // Use regular students for pagination
+            currentLeaderboardData = regularStudents;
+            
+            // Display current page
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageData = regularStudents.slice(startIndex, endIndex);
+            
+            detailedLeaderboard.innerHTML = '';
+            
+            pageData.forEach((entry, index) => {
+                const actualRank = startIndex + index + 1;
+                const entryElement = createLeaderboardEntry(entry, actualRank);
+                detailedLeaderboard.appendChild(entryElement);
+            });
+            
+            updatePaginationControls(regularStudents.length);
+        }
+        
+        // Create leaderboard entry
+        function createLeaderboardEntry(entry, rank) {
+            const tr = document.createElement('tr');
+            const isCurrentStudent = entry.attempt_id === currentAttemptId;
+            
+            tr.className = isCurrentStudent ? 'bg-indigo-50 border-l-4 border-indigo-500' : 'hover:bg-gray-50';
+            
+            const initials = `${entry.first_name.charAt(0)}${entry.last_name.charAt(0)}`;
+            const isCheating = entry.is_cheating === 1;
+            
+            tr.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    #${rank}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 h-10 w-10">
+                            <div class="h-10 w-10 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 flex items-center justify-center">
+                                <span class="text-white text-sm font-bold">${initials}</span>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <div class="text-sm font-medium text-gray-900">
+                                ${entry.first_name} ${entry.last_name}
+                                ${isCurrentStudent ? '<span class="ml-2 px-2 py-1 text-xs font-semibold bg-indigo-100 text-indigo-800 rounded-full">You</span>' : ''}
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    ${entry.score}/${entry.total_questions || entry.total_points}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    ${getFormattedTimeFromSeconds(entry.time_taken)}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    ${isCheating ? '<span class="px-2 py-1 text-xs font-semibold bg-red-100 text-red-800 rounded-full">Cheating Detected</span>' : ''}
+                </td>
+            `;
+            
+            return tr;
+        }
+        
+        // Get formatted time from seconds
+        function getFormattedTimeFromSeconds(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${minutes}:${secs.toString().padStart(2, '0')}`;
+        }
+        
+        // Update pagination controls
+        function updatePaginationControls(totalItems) {
+            const paginationContainer = document.getElementById('paginationContainer');
+            if (!paginationContainer) return;
+            
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            
+            if (totalPages <= 1) {
+                paginationContainer.innerHTML = '';
+                return;
+            }
+            
+            let paginationHTML = '<div class="pagination-container">';
+            
+            // Previous button
+            paginationHTML += `<button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} class="pagination-btn ${currentPage === 1 ? 'disabled' : ''}">Previous</button>`;
+            
+            // Page numbers
+            paginationHTML += '<div class="pagination-page-numbers">';
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                    paginationHTML += `<button onclick="changePage(${i})" class="pagination-page-btn ${i === currentPage ? 'active' : ''}">${i}</button>`;
+                } else if (i === currentPage - 3 || i === currentPage + 3) {
+                    paginationHTML += '<span class="pagination-ellipsis">...</span>';
+                }
+            }
+            paginationHTML += '</div>';
+            
+            // Next button
+            paginationHTML += `<button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} class="pagination-btn ${currentPage === totalPages ? 'disabled' : ''}">Next</button>`;
+            
+            // Info
+            const startItem = (currentPage - 1) * itemsPerPage + 1;
+            const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+            paginationHTML += `<div class="pagination-info">Showing ${startItem}-${endItem} of ${totalItems}</div>`;
+            
+            paginationHTML += '</div>';
+            paginationContainer.innerHTML = paginationHTML;
+        }
+        
+        // Change page
+        function changePage(page) {
+            const totalPages = Math.ceil(currentLeaderboardData.length / itemsPerPage);
+            if (page < 1 || page > totalPages) return;
+            
+            currentPage = page;
+            createDetailedLeaderboard(currentLeaderboardData);
+        }
+        
+        // Load AI analysis
+        async function loadAIAnalysis() {
+            if (!quizResultsForAI) {
+                document.getElementById('aiError').classList.remove('hidden');
+                document.getElementById('aiLoading').classList.add('hidden');
+                return;
+            }
+            
+            document.getElementById('aiLoading').classList.remove('hidden');
+            document.getElementById('aiError').classList.add('hidden');
+            document.getElementById('aiContent').classList.add('hidden');
+            
+            try {
+                const response = await fetch('../php/ai-analysis.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(quizResultsForAI),
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                
+                document.getElementById('aiLoading').classList.add('hidden');
+                
+                if (data.success && data.analysis) {
+                    displayAIAnalysis(data.analysis);
+                    document.getElementById('aiContent').classList.remove('hidden');
+                } else {
+                    document.getElementById('aiError').classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Error loading AI analysis:', error);
+                document.getElementById('aiLoading').classList.add('hidden');
+                document.getElementById('aiError').classList.remove('hidden');
+            }
+        }
+        
+        // Display AI analysis
+        function displayAIAnalysis(analysis) {
+            const aiContent = document.getElementById('aiContent');
+            if (!aiContent) return;
+            
+            // Convert markdown to HTML
+            let formattedAnalysis = analysis.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            formattedAnalysis = formattedAnalysis.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            formattedAnalysis = formattedAnalysis.replace(/\n\n/g, '</p><p>');
+            formattedAnalysis = '<p>' + formattedAnalysis + '</p>';
+            
+            // Extract and display metrics
+            displayAIMetrics(quizResultsForAI);
+            
+            // Extract and display strengths/weaknesses
+            extractAndDisplayStrengthsWeaknesses(formattedAnalysis);
+            
+            aiContent.innerHTML = formattedAnalysis;
+        }
+        
+        // Display AI metrics
+        function displayAIMetrics(results) {
+            const metricsContainer = document.getElementById('aiMetrics');
+            if (!metricsContainer) return;
+            
+            metricsContainer.innerHTML = `
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <div class="text-sm text-blue-600 font-semibold">Score</div>
+                        <div class="text-2xl font-bold text-blue-900">${results.score}/${results.total_points}</div>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <div class="text-sm text-green-600 font-semibold">Percentage</div>
+                        <div class="text-2xl font-bold text-green-900">${results.percentage}%</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Extract and display strengths/weaknesses
+        function extractAndDisplayStrengthsWeaknesses(analysis) {
+            // This is a simplified version - you can enhance it with more sophisticated parsing
+            const strengthsContainer = document.getElementById('aiStrengths');
+            const weaknessesContainer = document.getElementById('aiWeaknesses');
+            
+            if (strengthsContainer) {
+                const strengthsMatch = analysis.match(/Strengths?[:\s]+(.*?)(?=Weaknesses?|Areas?|$)/i);
+                if (strengthsMatch) {
+                    strengthsContainer.innerHTML = strengthsMatch[1];
+                }
+            }
+            
+            if (weaknessesContainer) {
+                const weaknessesMatch = analysis.match(/Weaknesses?[:\s]+(.*?)(?=Recommendations?|$)/i);
+                if (weaknessesMatch) {
+                    weaknessesContainer.innerHTML = weaknessesMatch[1];
+                }
+            }
+        }
+        
+        // Open AI modal
+        function openAIModal() {
+            document.getElementById('aiModal').classList.remove('hidden');
+            loadAIAnalysis();
+        }
+        
+        // Close AI modal
+        function closeAIModal() {
+            document.getElementById('aiModal').classList.add('hidden');
+        }
+        
+        // Initialize anti-cheating
+        function initializeAntiCheating() {
+            isQuizActive = true;
+            tabSwitchCount = 0;
+            focusLostTime = null;
+            isPageVisible = true;
+            hasExitedQuiz = false;
+            hasLoggedOut = false;
+            
+            // Event listeners
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+            window.addEventListener('focus', handleWindowFocus);
+            window.addEventListener('blur', handleWindowBlur);
+            window.addEventListener('beforeunload', handleBeforeUnload);
+            window.addEventListener('unload', handlePageUnload);
+            document.addEventListener('keydown', handleKeyboardShortcuts);
+            
+            // Intercept logout
+            interceptLogout();
+            
+            // Start heartbeat
+            startHeartbeat();
+        }
+        
+        // Stop anti-cheating
+        function stopAntiCheating() {
+            isQuizActive = false;
+            
+            if (heartbeatInterval) {
+                clearInterval(heartbeatInterval);
+                heartbeatInterval = null;
+            }
+            
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            window.removeEventListener('focus', handleWindowFocus);
+            window.removeEventListener('blur', handleWindowBlur);
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            window.removeEventListener('unload', handlePageUnload);
+            document.removeEventListener('keydown', handleKeyboardShortcuts);
+        }
+        
+        // Start heartbeat
+        function startHeartbeat() {
+            heartbeatInterval = setInterval(() => {
+                if (isQuizActive && currentAttemptId) {
+                    fetch('../php/quiz-management.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `action=heartbeat&attempt_id=${currentAttemptId}`,
+                        credentials: 'include'
+                    }).catch(err => console.error('Heartbeat error:', err));
+                }
+            }, 30000); // Every 30 seconds
+        }
+        
+        // Handle visibility change
+        function handleVisibilityChange() {
+            if (!isQuizActive) return;
+            
+            if (document.hidden) {
+                isPageVisible = false;
+                focusLostTime = Date.now();
+                tabSwitchCount++;
+                
+                if (tabSwitchCount > maxAllowedTabSwitches) {
+                    markAsCheating('Excessive tab switching detected');
+                } else {
+                    showCheatingWarning(`Warning: You've switched tabs ${tabSwitchCount} time(s).`);
+                }
+            } else {
+                isPageVisible = true;
+                if (focusLostTime) {
+                    const focusLossDuration = Date.now() - focusLostTime;
+                    if (focusLossDuration > maxAllowedFocusLoss) {
+                        markAsCheating('Extended focus loss detected');
+                    }
+                }
+            }
+        }
+        
+        // Handle window focus
+        function handleWindowFocus() {
+            if (!isQuizActive) return;
+            isPageVisible = true;
+        }
+        
+        // Handle window blur
+        function handleWindowBlur() {
+            if (!isQuizActive) return;
+            focusLostTime = Date.now();
+        }
+        
+        // Handle before unload
+        function handleBeforeUnload(e) {
+            if (!isQuizActive || hasLoggedOut) return;
+            
+            e.preventDefault();
+            e.returnValue = '';
+            hasExitedQuiz = true;
+        }
+        
+        // Handle page unload
+        function handlePageUnload() {
+            if (isQuizActive && !hasLoggedOut && currentAttemptId) {
+                markAsCheating('Page exit detected during quiz');
+            }
+        }
+        
+        // Handle new tab
+        function handleNewTab() {
+            if (!isQuizActive) return;
+            tabSwitchCount++;
+            if (tabSwitchCount > maxAllowedTabSwitches) {
+                markAsCheating('New tab opened during quiz');
+            }
+        }
+        
+        // Handle keyboard shortcuts
+        function handleKeyboardShortcuts(e) {
+            if (!isQuizActive) return;
+            
+            // Block common shortcuts
+            if ((e.ctrlKey || e.metaKey) && (e.key === 't' || e.key === 'n' || e.key === 'w')) {
+                e.preventDefault();
+                showCheatingWarning('Keyboard shortcuts are disabled during the quiz.');
+            }
+        }
+        
+        // Mark as cheating
+        async function markAsCheating(reason) {
+            if (!currentAttemptId) return;
+            
+            try {
+                await fetch('../php/quiz-management.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `action=mark_cheating&attempt_id=${currentAttemptId}&reason=${encodeURIComponent(reason)}`,
+                    credentials: 'include'
+                });
+                
+                stopQuizDueToCheating(reason);
+            } catch (error) {
+                console.error('Error marking as cheating:', error);
+            }
+        }
+        
+        // Show cheating warning
+        function showCheatingWarning(message) {
+            Swal.fire({
+                title: '⚠️ Warning',
+                text: message,
+                icon: 'warning',
+                confirmButtonText: 'I Understand',
+                confirmButtonColor: '#f59e0b',
+                timer: 5000,
+                timerProgressBar: true
+            });
+        }
+        
+        // Show cheating notification
+        function showCheatingNotification() {
+            Swal.fire({
+                title: '❌ Cheating Detected',
+                text: 'Your quiz attempt has been marked as cheating and will not be counted.',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#ef4444',
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            });
+        }
+        
+        // Stop quiz due to cheating
+        function stopQuizDueToCheating(reason) {
+            stopAntiCheating();
+            stopTimer();
+            showCheatingNotification();
+            
+            setTimeout(() => {
+                window.location.href = '../quizzes.html';
+            }, 3000);
+        }
+        
+        // Check if page refresh
+        function isPageRefresh() {
+            return performance.navigation.type === 1;
+        }
+        
+        // Intercept logout
+        function interceptLogout() {
+            const logoutLink = document.getElementById('logoutLink');
+            if (logoutLink) {
+                logoutLink.addEventListener('click', function(e) {
+                    if (isQuizActive) {
+                        e.preventDefault();
+                        hasLoggedOut = true;
+                        markAsCheating('Logout attempted during quiz');
+                        setTimeout(() => {
+                            window.location.href = '../php/logout.php';
+                        }, 1000);
+                    }
+                });
+            }
+        }
+        
+        // Toggle logout dropdown
+        function toggleLogoutDropdown() {
+            const dropdown = document.getElementById('logoutDropdownMenu');
+            if (dropdown) {
+                dropdown.classList.toggle('hidden');
+            }
+        }
+        
+        // Clear quiz state from localStorage
+        function clearQuizStateFromLocalStorage() {
+            localStorage.removeItem('quizState');
+            localStorage.removeItem('quizAnswers');
+            localStorage.removeItem('quizStartTime');
+        }
+        
         // Check if student has already completed this quiz
         async function checkQuizCompletion() {
             try {

@@ -3505,14 +3505,8 @@
                     console.log('✅ Using database results for display');
                     console.log('Database result:', dbResult);
                     
-                    // Check and award badges for any completed quiz (backend decides which badges apply)
-                    if (!isReviewMode) {
-                        await checkAndAwardBadges(dbResult);
-                    } else {
-                        console.log('Skipping badge check - quiz in review mode');
-                    }
-                    
                     // Show results using database result (which will also display review section)
+                    // Badge checking will be done in showResults() to avoid duplicates
                     showResults(dbResult);
                 } else {
                     // Database submission failed - restart timer if quiz not completed
@@ -3691,6 +3685,13 @@
 
                 // Show quiz review with correct/incorrect answers and explanations
                 displayQuizReview(studentAnswers);
+
+                // Check and award badges for any completed quiz (backend decides which badges apply)
+                if (!isReviewMode) {
+                    await checkAndAwardBadges(result);
+                } else {
+                    console.log('Skipping badge check - quiz in review mode');
+                }
 
                 // Show floating AI button
                 const floatingAIButton = document.getElementById('floatingAIButton');
@@ -4692,15 +4693,22 @@
             try {
                 console.log('🏆 Checking for badge eligibility...');
                 console.log('Quiz result:', result);
-                // Always check with backend; it will decide which badges qualify (completion, 50%+, perfect, etc.)
+                
+                // Always check with backend; it will decide which badges qualify (e.g., completion, 50%+, perfect)
                 const userId = await getCurrentUserId();
                 if (!userId) {
                     console.log('❌ No user ID available for badge checking');
                     return;
                 }
                 
+                if (!currentAttemptId) {
+                    console.log('❌ No attempt ID available for badge checking');
+                    return;
+                }
+                
                 console.log('User ID:', userId);
                 console.log('Attempt ID:', currentAttemptId);
+                console.log('Score:', result.score, '/', result.total_questions);
                 console.log('Submitting result to backend for badge evaluation');
                 
                 const formData = new FormData();
@@ -4726,6 +4734,7 @@
                     
                     if (data.success && data.awarded_badges && data.awarded_badges.length > 0) {
                         console.log('✅ Badges awarded:', data.awarded_badges);
+                        
                         // Validate badge data before showing notification
                         const validBadges = data.awarded_badges.filter(badge => {
                             const isValid = badge && (badge.name || badge.icon_url || badge.description);
@@ -4736,20 +4745,36 @@
                         });
                         
                         if (validBadges.length > 0) {
+                            // Show notification for all badges (prioritized by backend)
                             showBadgeNotification(validBadges);
+                            
+                            // Notify dashboard to refresh badges count
+                            localStorage.setItem('mathease-badges-updated', Date.now().toString());
                         } else {
                             console.log('No valid badges to display');
                         }
                     } else {
                         console.log('No badges awarded or empty badge array');
+                        if (data.message) {
+                            console.log('Message:', data.message);
+                        }
                     }
                 } else {
                     console.error('❌ Failed to check badges:', response.status);
                     const errorText = await response.text();
                     console.error('Error response:', errorText);
+                    
+                    // Try to parse as JSON to get error message
+                    try {
+                        const errorData = JSON.parse(errorText);
+                        console.error('Error details:', errorData);
+                    } catch (e) {
+                        console.error('Could not parse error response as JSON');
+                    }
                 }
             } catch (error) {
                 console.error('❌ Error checking badges:', error);
+                console.error('Error stack:', error.stack);
             }
         }
         
@@ -4760,29 +4785,81 @@
                 return;
             }
             
-            const badge = badges[0]; // Show the first badge
+            // Show the highest priority badge (first in array, already sorted by backend)
+            const badge = badges[0];
             
             // Validate badge data and provide fallbacks for null/undefined values
             const badgeIcon = badge.icon_url || '🏆'; // Default trophy emoji if icon_url is null
             const badgeName = badge.name || 'New Badge'; // Default name if null
             const badgeDescription = badge.description || 'Congratulations on earning this badge!'; // Default description if null
+            const badgeRarity = badge.rarity || 'common'; // Default rarity
             
-            console.log('Displaying badge:', {
+            console.log('🎉 Displaying badge notification:', {
                 icon: badgeIcon,
                 name: badgeName,
-                description: badgeDescription
+                description: badgeDescription,
+                rarity: badgeRarity,
+                totalBadges: badges.length
             });
+            
+            // Build HTML for all badges if multiple
+            let badgesHTML = '';
+            const rarityColors = {
+                'common': 'bg-gray-100 text-gray-800',
+                'rare': 'bg-blue-100 text-blue-800',
+                'epic': 'bg-purple-100 text-purple-800',
+                'legendary': 'bg-yellow-100 text-yellow-800'
+            };
+            const rarityColor = rarityColors[badgeRarity] || rarityColors.common;
+            
+            if (badges.length === 1) {
+                badgesHTML = `
+                    <div class="text-center">
+                        <div class="text-6xl mb-4 animate-bounce">${badgeIcon}</div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">${badgeName}</h3>
+                        <p class="text-gray-600 mb-3">${badgeDescription}</p>
+                        <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${rarityColor} mb-3">
+                            ${badgeRarity.toUpperCase()}
+                        </div>
+                        <p class="text-sm text-gray-500">🎉 You've earned a new badge! Check your achievements page to see it.</p>
+                    </div>
+                `;
+            } else {
+                // Show all badges in a list
+                badgesHTML = `
+                    <div class="text-center">
+                        <div class="text-6xl mb-4 animate-bounce">${badgeIcon}</div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">${badgeName}</h3>
+                        <p class="text-gray-600 mb-3">${badgeDescription}</p>
+                        <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${rarityColor} mb-3">
+                            ${badgeRarity.toUpperCase()}
+                        </div>
+                        <div class="bg-purple-50 rounded-lg p-3 mt-3">
+                            <p class="text-sm font-semibold text-purple-800 mb-2">🎊 You earned ${badges.length} badges!</p>
+                            <div class="space-y-2">
+                                ${badges.map((b, index) => {
+                                    const bRarity = b.rarity || 'common';
+                                    const bRarityColor = rarityColors[bRarity] || rarityColors.common;
+                                    return `
+                                        <div class="flex items-center justify-center text-sm text-purple-700 bg-white rounded-lg p-2">
+                                            <span class="mr-2 text-xl">${b.icon_url || '🏆'}</span>
+                                            <span class="flex-1 text-left">${b.name || 'Badge ' + (index + 1)}</span>
+                                            <span class="px-2 py-1 rounded-full text-xs font-semibold ${bRarityColor} ml-2">
+                                                ${bRarity.toUpperCase()}
+                                            </span>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-3">Check your achievements page to see all your badges!</p>
+                    </div>
+                `;
+            }
             
             Swal.fire({
                 title: '🎉 Congratulations!',
-                html: `
-                    <div class="text-center">
-                        <div class="text-6xl mb-4">${badgeIcon}</div>
-                        <h3 class="text-2xl font-bold text-gray-800 mb-2">${badgeName}</h3>
-                        <p class="text-gray-600 mb-4">${badgeDescription}</p>
-                        <p class="text-sm text-gray-500">You've earned a new badge!</p>
-                    </div>
-                `,
+                html: badgesHTML,
                 icon: 'success',
                 confirmButtonText: 'Awesome!',
                 confirmButtonColor: '#10b981',

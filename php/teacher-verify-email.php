@@ -1,13 +1,10 @@
 <?php
 require_once 'config.php';
 
-header('Content-Type: application/json');
-
 $token = $_GET['token'] ?? null;
 
 if (!$token) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Verification token is required']);
+    header("Location: ../verify-error.html?error=" . urlencode('Verification token is required'));
     exit;
 }
 
@@ -53,18 +50,15 @@ try {
     $teacher = $stmt->fetch(PDO::FETCH_ASSOC);
     
     if (!$teacher) {
-        http_response_code(404);
-        echo json_encode(['success' => false, 'message' => 'Invalid or expired verification token']);
+        header("Location: ../verify-error.html?error=" . urlencode('Invalid or expired verification token'));
         exit;
     }
     
     // Check if already verified
     if ($teacher['email_verified'] == 1) {
-        echo json_encode([
-            'success' => true, 
-            'message' => 'Email already verified. Your account is pending admin approval.',
-            'already_verified' => true
-        ]);
+        // Redirect to success page even if already verified
+        $teacherName = htmlspecialchars($teacher['first_name'] . ' ' . $teacher['last_name']);
+        header("Location: ../teacher-verify-success.html?name=" . urlencode($teacherName) . "&already_verified=true");
         exit;
     }
     
@@ -173,16 +167,15 @@ try {
         error_log("Failed to log teacher activity: " . $e->getMessage());
     }
     
-    echo json_encode([
-        'success' => true,
-        'message' => 'Email verified successfully! Your account has been sent to admin for approval. You will receive an email once your account is approved.',
-        'email_verified' => true,
-        'admin_notified' => $admin_email_sent
-    ]);
+    // Redirect to success page with teacher name
+    $teacherName = htmlspecialchars($teacher['first_name'] . ' ' . $teacher['last_name']);
+    header("Location: ../teacher-verify-success.html?name=" . urlencode($teacherName));
+    exit;
     
 } catch (Exception $e) {
     error_log("Email verification error: " . $e->getMessage());
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'An error occurred during verification. Please try again.']);
+    // Redirect to error page
+    header("Location: ../verify-error.html?error=" . urlencode($e->getMessage()));
+    exit;
 }
 ?>
