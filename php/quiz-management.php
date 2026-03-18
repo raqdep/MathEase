@@ -1069,9 +1069,15 @@ class QuizManager {
             $stmt->execute($params);
             $history = $stmt->fetchAll();
             
-            // Calculate percentage for each attempt
+            // Calculate percentage for each attempt; for 'functions' quiz show questions correct (e.g. 11/11) not points (15/11)
             foreach ($history as &$attempt) {
-                $attempt['percentage'] = round(($attempt['score'] / $attempt['total_questions']) * 100, 1);
+                if (isset($attempt['quiz_type']) && $attempt['quiz_type'] === 'functions') {
+                    $correct = isset($attempt['correct_answers']) ? (int)$attempt['correct_answers'] : min((int)$attempt['score'], (int)$attempt['total_questions']);
+                    $attempt['score'] = $correct;
+                    $attempt['percentage'] = round(($correct / (int)$attempt['total_questions']) * 100, 1);
+                } else {
+                    $attempt['percentage'] = round(($attempt['score'] / $attempt['total_questions']) * 100, 1);
+                }
             }
             
             return [
