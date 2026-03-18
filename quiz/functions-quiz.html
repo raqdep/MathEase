@@ -5520,9 +5520,11 @@
                 if (quizContainer) quizContainer.classList.add('hidden');
                 if (resultsContainer) resultsContainer.classList.remove('hidden');
                 
-                const totalQuestions = result.total_questions || 11; // Number of questions (11)
-                const totalPoints = result.total_points || 15; // Total points (10 MC * 1 + 1 PS * 5 = 15)
+                const totalQuestions = result.total_questions || 11; // 11 questions (10 MC + 1 easy application)
+                const totalPoints = result.total_points || 15; // Used for percentage only
                 const percentage = Math.round((result.score / totalPoints) * 100);
+                // Show score as questions correct: 11/11 when all correct (not points 15/15)
+                const correctCount = result.correct_answers ?? 0;
                 
                 // Update score displays
                 const totalScoreEl = document.getElementById('totalScore');
@@ -5530,7 +5532,7 @@
                 const incorrectAnswersEl = document.getElementById('incorrectAnswers');
                 const completionTimeEl = document.getElementById('completionTime');
                 
-                if (totalScoreEl) totalScoreEl.textContent = `${result.score}/${totalPoints}`;
+                if (totalScoreEl) totalScoreEl.textContent = `${correctCount}/${totalQuestions}`;
                 if (correctAnswersEl) correctAnswersEl.textContent = result.correct_answers;
                 if (incorrectAnswersEl) incorrectAnswersEl.textContent = result.incorrect_answers;
                 if (completionTimeEl) completionTimeEl.textContent = getFormattedTime();

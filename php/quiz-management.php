@@ -2071,13 +2071,11 @@ class QuizManager {
     
     private function calculateProblemSolvingScore($answers) {
         $score = 0;
-        
-        // Problem solving question (5 points) - maximum profit
-        // Correct answer is 300 (not 450)
-        if (isset($answers['ps-answer']) && abs(intval($answers['ps-answer']) - 300) <= 50) {
+        // Functions quiz: (f ∘ g)(2) = f(g(2)) = f(3) = 2(3)+3 = 9
+        $psVal = isset($answers['ps-answer']) ? trim($answers['ps-answer']) : '';
+        if ($psVal !== '' && abs(intval($psVal) - 9) <= 1) {
             $score += 5;
         }
-        
         return $score;
     }
     
@@ -2106,7 +2104,7 @@ class QuizManager {
     
     private function storeProblemSolvingAnswers($attemptId, $answers, $totalScore) {
         $psAnswer = $answers['ps-answer'] ?? '';
-        $correctAnswer = '450';
+        $correctAnswer = '9'; // Functions quiz: (f ∘ g)(2) = 9
         $isCorrect = ($totalScore >= 5); // 5 out of 5 points
         
         $this->storeAnswer($attemptId, 11, 'problem_solving', $psAnswer, $correctAnswer, $isCorrect, $totalScore);
