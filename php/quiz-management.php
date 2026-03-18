@@ -1897,15 +1897,13 @@ class QuizManager {
                 // Get badge names for this quiz type
                 $badgeNamesToRemove = $quizBadgeMap[$quizType] ?? [];
                 
-                // Remove badges associated with these attempts
+                // Remove badges associated with these attempts (use user_badges.user_id = student's user id)
                 $totalBadgesRemoved = 0;
                 if (!empty($attemptIds) || !empty($badgeNamesToRemove)) {
-                    // Method 1: Remove badges by quiz_attempt_id (if column exists)
+                    // Method 1: Remove badges by quiz_attempt_id only if student_badges table with that column exists
                     if (!empty($attemptIds)) {
-                        // Check if quiz_attempt_id column exists
-                        $columnsQuery = "SHOW COLUMNS FROM student_badges LIKE 'quiz_attempt_id'";
-                        $columnExists = $this->pdo->query($columnsQuery)->rowCount() > 0;
-                        
+                        $hasStudentBadges = $this->pdo->query("SHOW TABLES LIKE 'student_badges'")->rowCount() > 0;
+                        $columnExists = $hasStudentBadges && $this->pdo->query("SHOW COLUMNS FROM student_badges LIKE 'quiz_attempt_id'")->rowCount() > 0;
                         if ($columnExists) {
                             $placeholders = implode(',', array_fill(0, count($attemptIds), '?'));
                             $removeBadgesStmt = $this->pdo->prepare("
@@ -1918,16 +1916,23 @@ class QuizManager {
                             error_log("Removed $badgesRemoved badges by quiz_attempt_id for student $studentId");
                         }
                     }
-                    
-                    // Method 2: Remove badges by badge name (fallback or additional cleanup)
-                    // This ensures badges are removed even if quiz_attempt_id is not set
+                    // Method 2: Remove badges by badge name (user_badges schema or fallback)
                     if (!empty($badgeNamesToRemove)) {
                         $placeholders = implode(',', array_fill(0, count($badgeNamesToRemove), '?'));
-                        $removeBadgesByNameStmt = $this->pdo->prepare("
-                            DELETE sb FROM student_badges sb
-                            INNER JOIN badges b ON sb.badge_id = b.id
-                            WHERE sb.student_id = ? AND b.name IN ($placeholders)
-                        ");
+                        $useUserBadges = $this->pdo->query("SHOW TABLES LIKE 'user_badges'")->rowCount() > 0;
+                        if ($useUserBadges) {
+                            $removeBadgesByNameStmt = $this->pdo->prepare("
+                                DELETE ub FROM user_badges ub
+                                INNER JOIN badges b ON ub.badge_id = b.id
+                                WHERE ub.user_id = ? AND b.name IN ($placeholders)
+                            ");
+                        } else {
+                            $removeBadgesByNameStmt = $this->pdo->prepare("
+                                DELETE sb FROM student_badges sb
+                                INNER JOIN badges b ON sb.badge_id = b.id
+                                WHERE sb.student_id = ? AND b.name IN ($placeholders)
+                            ");
+                        }
                         $removeBadgesByNameStmt->execute(array_merge([$studentId], $badgeNamesToRemove));
                         $badgesRemovedByName = $removeBadgesByNameStmt->rowCount();
                         $totalBadgesRemoved += $badgesRemovedByName;
@@ -2306,15 +2311,17 @@ class QuizManager {
             error_log("Found " . count($badges) . " active badges in database");
             
             $awardedBadges = [];
+            $useUserBadges = $this->pdo->query("SHOW TABLES LIKE 'user_badges'")->rowCount() > 0;
             
             foreach ($badges as $badge) {
                 $shouldAward = false;
                 
-                // Check if student already has this badge
-                $existingBadge = $this->pdo->prepare("
-                    SELECT id FROM student_badges 
-                    WHERE student_id = ? AND badge_id = ?
-                ");
+                // Check if student already has this badge (user_badges.user_id or student_badges.student_id)
+                if ($useUserBadges) {
+                    $existingBadge = $this->pdo->prepare("SELECT id FROM user_badges WHERE user_id = ? AND badge_id = ?");
+                } else {
+                    $existingBadge = $this->pdo->prepare("SELECT id FROM student_badges WHERE student_id = ? AND badge_id = ?");
+                }
                 $existingBadge->execute([$studentId, $badge['id']]);
                 
                 if ($existingBadge->fetch()) {
@@ -2348,12 +2355,12 @@ class QuizManager {
                 }
                 
                 if ($shouldAward) {
-                    // Award the badge
-                    $awardQuery = "
-                        INSERT INTO student_badges (student_id, badge_id, quiz_attempt_id) 
-                        VALUES (?, ?, ?)
-                    ";
-                    $this->pdo->prepare($awardQuery)->execute([$studentId, $badge['id'], $attemptId]);
+                    // Award the badge (user_badges has user_id, badge_id only; student_badges may have quiz_attempt_id)
+                    if ($useUserBadges) {
+                        $this->pdo->prepare("INSERT INTO user_badges (user_id, badge_id) VALUES (?, ?)")->execute([$studentId, $badge['id']]);
+                    } else {
+                        $this->pdo->prepare("INSERT INTO student_badges (student_id, badge_id, quiz_attempt_id) VALUES (?, ?, ?)")->execute([$studentId, $badge['id'], $attemptId]);
+                    }
                     
                     $awardedBadges[] = [
                         'id' => $badge['id'],

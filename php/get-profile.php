@@ -71,18 +71,25 @@ try {
     // Get badges from database
     $badges = [];
     try {
-        // Check if badges and student_badges tables exist
+        // Check if badges and user_badges (or student_badges) tables exist
         $tableCheck = $pdo->query("SHOW TABLES LIKE 'badges'");
         if ($tableCheck->rowCount() > 0) {
-            $tableCheck = $pdo->query("SHOW TABLES LIKE 'student_badges'");
-            if ($tableCheck->rowCount() > 0) {
+            $useUserBadges = $pdo->query("SHOW TABLES LIKE 'user_badges'")->rowCount() > 0;
+            $useStudentBadges = !$useUserBadges && $pdo->query("SHOW TABLES LIKE 'student_badges'")->rowCount() > 0;
+            if ($useUserBadges) {
                 $stmt = $pdo->prepare("
-                    SELECT 
-                        b.id,
-                        b.name,
-                        b.description,
-                        b.icon_url,
-                        sb.earned_at
+                    SELECT b.id, b.name, b.description, b.icon_url, ub.earned_at
+                    FROM badges b
+                    INNER JOIN user_badges ub ON b.id = ub.badge_id
+                    WHERE ub.user_id = ?
+                    ORDER BY ub.earned_at DESC
+                ");
+                $stmt->execute([$user_id]);
+                $badges = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                error_log("Retrieved " . count($badges) . " badges from database for user_id: $user_id");
+            } elseif ($useStudentBadges) {
+                $stmt = $pdo->prepare("
+                    SELECT b.id, b.name, b.description, b.icon_url, sb.earned_at
                     FROM badges b
                     INNER JOIN student_badges sb ON b.id = sb.badge_id
                     WHERE sb.student_id = ?

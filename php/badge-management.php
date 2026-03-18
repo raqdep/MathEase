@@ -63,15 +63,17 @@ function checkAndAwardBadges() {
     $badges = $pdo->query($badgesQuery)->fetchAll(PDO::FETCH_ASSOC);
     
     $awardedBadges = [];
+    $useUserBadges = $pdo->query("SHOW TABLES LIKE 'user_badges'")->rowCount() > 0;
     
     foreach ($badges as $badge) {
         $shouldAward = false;
         
-        // Check if student already has this badge
-        $existingBadge = $pdo->prepare("
-            SELECT id FROM student_badges 
-            WHERE student_id = ? AND badge_id = ?
-        ");
+        // Check if student already has this badge (user_badges.user_id or student_badges.student_id)
+        if ($useUserBadges) {
+            $existingBadge = $pdo->prepare("SELECT id FROM user_badges WHERE user_id = ? AND badge_id = ?");
+        } else {
+            $existingBadge = $pdo->prepare("SELECT id FROM student_badges WHERE student_id = ? AND badge_id = ?");
+        }
         $existingBadge->execute([$studentId, $badge['id']]);
         
         if ($existingBadge->fetch()) {
@@ -184,24 +186,16 @@ function checkAndAwardBadges() {
         
         if ($shouldAward) {
             try {
-                // Check if quiz_attempt_id column exists in student_badges table
-                $columnsQuery = "SHOW COLUMNS FROM student_badges LIKE 'quiz_attempt_id'";
-                $columnExists = $pdo->query($columnsQuery)->rowCount() > 0;
-                
-                // Award the badge
-                if ($columnExists && $attemptId) {
-                    $awardQuery = "
-                        INSERT INTO student_badges (student_id, badge_id, quiz_attempt_id) 
-                        VALUES (?, ?, ?)
-                    ";
-                    $pdo->prepare($awardQuery)->execute([$studentId, $badge['id'], $attemptId]);
+                // Award the badge (user_badges has user_id, badge_id only)
+                if ($useUserBadges) {
+                    $pdo->prepare("INSERT INTO user_badges (user_id, badge_id) VALUES (?, ?)")->execute([$studentId, $badge['id']]);
                 } else {
-                    // Fallback if quiz_attempt_id column doesn't exist
-                    $awardQuery = "
-                        INSERT INTO student_badges (student_id, badge_id) 
-                        VALUES (?, ?)
-                    ";
-                    $pdo->prepare($awardQuery)->execute([$studentId, $badge['id']]);
+                    $columnExists = $pdo->query("SHOW COLUMNS FROM student_badges LIKE 'quiz_attempt_id'")->rowCount() > 0;
+                    if ($columnExists && $attemptId) {
+                        $pdo->prepare("INSERT INTO student_badges (student_id, badge_id, quiz_attempt_id) VALUES (?, ?, ?)")->execute([$studentId, $badge['id'], $attemptId]);
+                    } else {
+                        $pdo->prepare("INSERT INTO student_badges (student_id, badge_id) VALUES (?, ?)")->execute([$studentId, $badge['id']]);
+                    }
                 }
                 
                 error_log("✅ Badge awarded: {$badge['name']} (ID: {$badge['id']}) to student $studentId for quiz $quizType");
@@ -282,14 +276,12 @@ function getStudentBadges() {
     $studentId = (int)$studentId;
     
     try {
-        $query = "
-            SELECT b.*, sb.earned_at 
-            FROM badges b
-            INNER JOIN student_badges sb ON b.id = sb.badge_id
-            WHERE sb.student_id = ?
-            ORDER BY sb.earned_at DESC
-        ";
-        
+        $useUserBadges = $pdo->query("SHOW TABLES LIKE 'user_badges'")->rowCount() > 0;
+        if ($useUserBadges) {
+            $query = "SELECT b.*, ub.earned_at FROM badges b INNER JOIN user_badges ub ON b.id = ub.badge_id WHERE ub.user_id = ? ORDER BY ub.earned_at DESC";
+        } else {
+            $query = "SELECT b.*, sb.earned_at FROM badges b INNER JOIN student_badges sb ON b.id = sb.badge_id WHERE sb.student_id = ? ORDER BY sb.earned_at DESC";
+        }
         $stmt = $pdo->prepare($query);
         $stmt->execute([$studentId]);
         $badges = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -321,11 +313,12 @@ function awardBadge() {
         throw new Exception('Student ID and Badge ID required');
     }
     
-    // Check if student already has this badge
-    $existingBadge = $pdo->prepare("
-        SELECT id FROM student_badges 
-        WHERE student_id = ? AND badge_id = ?
-    ");
+    $useUserBadges = $pdo->query("SHOW TABLES LIKE 'user_badges'")->rowCount() > 0;
+    if ($useUserBadges) {
+        $existingBadge = $pdo->prepare("SELECT id FROM user_badges WHERE user_id = ? AND badge_id = ?");
+    } else {
+        $existingBadge = $pdo->prepare("SELECT id FROM student_badges WHERE student_id = ? AND badge_id = ?");
+    }
     $existingBadge->execute([$studentId, $badgeId]);
     
     if ($existingBadge->fetch()) {
@@ -336,12 +329,11 @@ function awardBadge() {
         return;
     }
     
-    // Award the badge
-    $awardQuery = "
-        INSERT INTO student_badges (student_id, badge_id, quiz_attempt_id) 
-        VALUES (?, ?, ?)
-    ";
-    $pdo->prepare($awardQuery)->execute([$studentId, $badgeId, $attemptId]);
+    if ($useUserBadges) {
+        $pdo->prepare("INSERT INTO user_badges (user_id, badge_id) VALUES (?, ?)")->execute([$studentId, $badgeId]);
+    } else {
+        $pdo->prepare("INSERT INTO student_badges (student_id, badge_id, quiz_attempt_id) VALUES (?, ?, ?)")->execute([$studentId, $badgeId, $attemptId]);
+    }
     
     echo json_encode([
         'success' => true,
