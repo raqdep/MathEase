@@ -2084,12 +2084,12 @@ class QuizManager {
     // Real-Life Problems Quiz problem solving score calculation
     private function calculateRealLifeProblemsProblemSolvingScore($answers) {
         $score = 0;
-        
-        // Problem solving question (5 points) - maximum profit
-        if (isset($answers['q11']) && abs(intval($answers['q11']) - 450) <= 50) {
+        // Frontend may send problem solving as q11 or ps-answer
+        $psVal = isset($answers['q11']) ? $answers['q11'] : ($answers['ps-answer'] ?? null);
+        $psVal = is_string($psVal) ? trim($psVal) : $psVal;
+        if ($psVal !== null && $psVal !== '' && abs(intval($psVal) - 450) <= 50) {
             $score += 5;
         }
-        
         return $score;
     }
     
@@ -2114,7 +2114,7 @@ class QuizManager {
     
     // Real-Life Problems Quiz problem solving storage
     private function storeRealLifeProblemsProblemSolvingAnswers($attemptId, $answers, $totalScore) {
-        $psAnswer = $answers['q11'] ?? '';
+        $psAnswer = $answers['q11'] ?? $answers['ps-answer'] ?? '';
         $correctAnswer = '450';
         $isCorrect = ($totalScore >= 5); // 5 out of 5 points
         
