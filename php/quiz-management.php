@@ -1269,6 +1269,16 @@ class QuizManager {
         $stmt->execute($params);
         $results = $stmt->fetchAll();
         
+        // For 'functions' quiz: show score as questions correct (11/11), not points (15/11)
+        if ($quizType === 'functions') {
+            foreach ($results as &$entry) {
+                $correct = isset($entry['correct_answers']) ? (int)$entry['correct_answers'] : min((int)$entry['score'], (int)$entry['total_questions']);
+                $entry['score'] = $correct;
+                $entry['percentage'] = round(($correct / (int)$entry['total_questions']) * 100, 1);
+            }
+            unset($entry);
+        }
+        
         // Debug: Log the query results
         error_log("Quiz results query executed - Found " . count($results) . " results for teacher ID: $teacherId" . ($classId ? ", class ID: $classId" : ""));
         if (count($results) > 0) {
@@ -1315,7 +1325,10 @@ class QuizManager {
                     qa.quiz_type,
                     COUNT(*) as total_attempts,
                     COUNT(CASE WHEN qa.status = 'completed' THEN 1 END) as completed_attempts,
-                    AVG(CASE WHEN qa.status = 'completed' THEN (qa.score / qa.total_questions) * 100 END) as average_percentage,
+                    AVG(CASE WHEN qa.status = 'completed' THEN
+                        CASE WHEN qa.quiz_type = 'functions' THEN (COALESCE(qa.correct_answers, LEAST(qa.score, qa.total_questions)) / qa.total_questions) * 100
+                        ELSE (qa.score / qa.total_questions) * 100 END
+                    END) as average_percentage,
                     MIN(CASE WHEN qa.status = 'completed' THEN qa.completion_time END) as fastest_time,
                     MAX(CASE WHEN qa.status = 'completed' THEN qa.completion_time END) as slowest_time
                 FROM quiz_attempts qa
@@ -1404,10 +1417,14 @@ class QuizManager {
                 }
             }
             
+            // For 'functions' quiz use correct_answers for percentage (cap at 100%)
+            $pctExpr = $quizType === 'functions'
+                ? "AVG((COALESCE(qa.correct_answers, LEAST(qa.score, qa.total_questions)) / qa.total_questions) * 100)"
+                : "AVG((qa.score / qa.total_questions) * 100)";
             $sql = "
                 SELECT 
                     COUNT(*) as total_attempts,
-                    AVG((qa.score / qa.total_questions) * 100) as average_percentage,
+                    $pctExpr as average_percentage,
                     MIN(qa.completion_time) as fastest_time,
                     MAX(qa.completion_time) as slowest_time
                 FROM quiz_attempts qa
