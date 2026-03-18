@@ -923,6 +923,7 @@ class QuizManager {
                     CONCAT(u.first_name, ' ', u.last_name) as student_name,
                     qa.score,
                     qa.total_questions,
+                    qa.correct_answers,
                     ROUND((qa.score / qa.total_questions) * 100, 1) as percentage,
                     qa.completion_time,
                     TIME_FORMAT(SEC_TO_TIME(qa.completion_time), '%i:%s') as formatted_time,
@@ -980,9 +981,14 @@ class QuizManager {
             $stmt->execute($params);
             $leaderboard = $stmt->fetchAll();
             
-            // Recalculate rank position based on filtered results
+            // For 'functions' quiz: display score as questions correct (11/11), not points (15/11)
             foreach ($leaderboard as $index => $entry) {
                 $leaderboard[$index]['rank_position'] = $index + 1;
+                if ($quizType === 'functions' && (int)$entry['total_questions'] > 0) {
+                    $correct = isset($entry['correct_answers']) ? (int)$entry['correct_answers'] : min((int)$entry['score'], (int)$entry['total_questions']);
+                    $leaderboard[$index]['score'] = $correct;
+                    $leaderboard[$index]['percentage'] = round(($correct / $entry['total_questions']) * 100, 1);
+                }
             }
             
             return [
