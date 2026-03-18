@@ -5520,13 +5520,13 @@
                 if (quizContainer) quizContainer.classList.add('hidden');
                 if (resultsContainer) resultsContainer.classList.remove('hidden');
                 
-                const totalQuestions = result.total_questions || 11; // 11 questions (10 MC + 1 easy application)
+                // Functions quiz always has 11 questions (10 MC + 1 easy application) - show as 11/11, never 15/15
+                const totalQuestions = 11;
                 const totalPoints = result.total_points || 15; // Used for percentage only
                 const percentage = Math.round((result.score / totalPoints) * 100);
-                // Show score as questions correct: 11/11 when all correct (not points 15/15)
                 const correctCount = result.correct_answers ?? 0;
                 
-                // Update score displays
+                // Update score displays (Total Score = questions correct / 11, e.g. 11/11)
                 const totalScoreEl = document.getElementById('totalScore');
                 const correctAnswersEl = document.getElementById('correctAnswers');
                 const incorrectAnswersEl = document.getElementById('incorrectAnswers');
