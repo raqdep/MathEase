@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Flashcards - MathEase</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        .flashcard {
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            min-height: 320px;
+            transform-style: preserve-3d;
+            transition: transform 0.55s cubic-bezier(.2,.8,.2,1);
+        }
+        .flashcard:not(.flipped):hover .flashcard-inner {
+            transform: translateY(-2px);
+        }
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        .flashcard-front,
+        .flashcard-back {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+            border: 1px solid rgba(99,102,241,0.20);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .flashcard-front {
+            background:
+                radial-gradient(1000px 300px at 10% 0%, rgba(99,102,241,0.18), transparent 55%),
+                linear-gradient(135deg, rgba(102,126,234,0.18), rgba(118,75,162,0.10));
+            justify-content: center;
+        }
+
+        .flashcard-front-question {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .flashcard-back {
+            transform: rotateY(180deg);
+            background:
+                radial-gradient(1000px 300px at 10% 0%, rgba(16,185,129,0.18), transparent 55%),
+                linear-gradient(135deg, rgba(16,185,129,0.12), rgba(99,102,241,0.08));
+            border: 1px solid rgba(16,185,129,0.22);
+        }
+
+        .flashcard-text {
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        /* Answer + Explanation layout tuning */
+        .flashcard-answer {
+            font-size: 1.12rem !important;
+            line-height: 1.45 !important;
+        }
+
+        .flashcard-explanation {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            font-size: 1.02rem !important;
+            line-height: 1.6 !important;
+            padding-right: 0.25rem;
+        }
+
+        .flashcard-actions {
+            margin-top: auto;
+            padding-top: 0.25rem;
+            gap: 0.5rem;
+        }
+
+        .flashcard-front .flashcard-text {
+            font-size: 1.05rem !important;
+            line-height: 1.4 !important;
+        }
+
+        .skeleton-card {
+            background: linear-gradient(90deg, #f1f5f9 25%, #e5e7eb 50%, #f1f5f9 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.2s infinite;
+            border-radius: 1rem;
+            height: 320px;
+            border: 1px solid rgba(148,163,184,0.35);
+        }
+
+        @keyframes skeleton-loading {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .flashcard-inner {
+                min-height: 280px;
+            }
+
+            .flashcard-front,
+            .flashcard-back {
+                padding: 1rem;
+            }
+
+            /* Override inline font size for mobile */
+            .flashcard-front .flashcard-text {
+                font-size: 1.25rem !important;
+            }
+
+            .flashcard-answer {
+                font-size: 1.05rem !important;
+            }
+
+            .flashcard-explanation {
+                font-size: 0.95rem !important;
+            }
+
+            .skeleton-card {
+                height: 280px;
+            }
+
+            /* Touch-friendly buttons */
+            button, .flashcard {
+                min-height: 44px;
+                min-width: 44px;
+            }
+
+            /* Better spacing on mobile */
+            #flashcardStage {
+                margin-bottom: 1rem;
+            }
+
+            /* Navigation adjustments */
+            #mobileNavSelect {
+                font-size: 14px;
+                padding: 0.5rem 0.75rem;
+            }
+
+            /* Stack controls vertically on very small screens */
+            @media (max-width: 480px) {
+                .flashcard-inner {
+                    min-height: 260px;
+                }
+
+                .skeleton-card {
+                    height: 260px;
+                }
+
+                .flashcard-front,
+                .flashcard-back {
+                    padding: 0.875rem;
+                }
+
+                .flashcard-front .flashcard-text {
+                    font-size: 1.15rem !important;
+                }
+
+                /* Smaller buttons on very small screens */
+                button {
+                    padding: 0.5rem 0.75rem;
+                    font-size: 0.875rem;
+                }
+
+                /* Enrollment gate mobile adjustments */
+                #enrollmentGate .flex {
+                    flex-direction: column;
+                }
+
+                #enrollmentGate button {
+                    width: 100%;
+                    margin-top: 1rem;
+                }
+            }
+
+            /* Ensure proper spacing on mobile */
+            #dashboardMainContent {
+                padding-top: 1.5rem;
+                padding-bottom: 1.5rem;
+            }
+
+            /* Mobile-friendly card navigation */
+            #prevCardBtn,
+            #nextCardBtn {
+                flex: 1;
+                min-width: 80px;
+            }
+        }
+    </style>
+</head>
+<body class="font-inter bg-slate-50 min-h-screen">
+    <nav class="bg-white/80 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 gap-3">
+                <!-- Logo -->
+                <a href="dashboard.html" class="flex items-center gap-2 min-w-0">
+                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <img src="css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-6 w-6 object-contain">
+                    </div>
+                    <span class="text-xl font-bold text-slate-800 truncate">MathEase</span>
+                </a>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-1">
+                    <a href="dashboard.html" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Dashboard</a>
+                    <a href="dashboard.html#learning-path" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Topics</a>
+                    <a href="quizzes.html" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Quizzes</a>
+                    <a href="flashcards.html" class="bg-indigo-50 text-indigo-600 font-medium px-4 py-2 rounded-lg text-sm transition-all duration-200">Flashcards</a>
+                    <a href="achievements.html" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Achievements</a>
+                    <a href="dashboard.html#progress" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Progress</a>
+                </div>
+
+                <!-- Desktop user menu -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <!-- Notifications -->
+                    <div class="relative group">
+                        <button onclick="toggleNotifications()" id="notificationButton" class="relative p-2 text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition-all duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center">
+                            <i class="fas fa-bell text-lg"></i>
+                            <span id="notificationBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                        </button>
+                        <div id="notificationsDropdown" class="absolute right-0 mt-2 w-80 bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-200/60 py-2 z-50 opacity-0 invisible transition-all duration-200">
+                            <div class="px-4 py-2 border-b border-slate-200/60">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-2">
+                                        <h3 class="text-sm font-semibold text-slate-800">Notifications</h3>
+                                        <span id="dropdownNotificationCount" class="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded-full font-medium">0</span>
+                                    </div>
+                                    <button onclick="markAllNotificationsAsRead()" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">Mark all read</button>
+                                </div>
+                            </div>
+                            <div id="notificationsList" class="max-h-64 overflow-y-auto">
+                                <div class="px-4 py-4 text-sm text-slate-500">Loading...</div>
+                            </div>
+                            <div class="px-4 py-2 border-t border-slate-200/60">
+                                <a href="#" onclick="showAllNotifications()" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">View all notifications</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Dropdown -->
+                    <div class="relative group" id="profileDropdownContainer">
+                        <button onclick="toggleProfileDropdown()" class="flex items-center space-x-2 text-slate-700 hover:text-slate-900 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-50 transition-all duration-200 min-h-[44px]">
+                            <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-full flex items-center justify-center overflow-hidden" id="profileIconContainer">
+                                <img id="profileIconImage" src="" alt="Profile" class="w-full h-full object-cover hidden">
+                                <i class="fas fa-user text-white text-xs" id="profileIconPlaceholder"></i>
+                            </div>
+                            <span id="userName">Student</span>
+                            <i class="fas fa-chevron-down text-xs transition-transform duration-200" id="profileDropdownIcon"></i>
+                        </button>
+                        <div id="profileDropdown" class="absolute right-0 mt-2 w-56 bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-200/60 py-2 z-50 hidden">
+                            <a href="profile.html" class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                                <i class="fas fa-user-circle mr-3 text-indigo-500"></i>
+                                Profile
+                            </a>
+                            <div class="border-t border-slate-200 my-1"></div>
+                            <a href="#" onclick="confirmLogout(event)" class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors" id="logoutLink">
+                                <i class="fas fa-sign-out-alt mr-3 text-red-500"></i>
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile menu (simple select, same behavior as before) -->
+                <div class="md:hidden">
+                    <select id="mobileNavSelect" class="w-44 px-3 py-2 border border-slate-200 rounded-lg bg-white text-slate-700">
+                        <option value="dashboard.html">Dashboard</option>
+                        <option value="dashboard.html#learning-path">Topics</option>
+                        <option value="quizzes.html">Quizzes</option>
+                        <option value="flashcards.html" selected>Flashcards</option>
+                        <option value="achievements.html">Achievements</option>
+                        <option value="dashboard.html#progress">Progress</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="enrollmentStatusBanner" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6"></div>
+
+    <div id="enrollmentGate" class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-10 hidden">
+        <div class="bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/30 p-8 transition-all duration-500">
+            <div class="flex items-start justify-between gap-4 mb-6">
+                <div class="flex items-start space-x-4">
+                    <div class="w-14 h-14 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-book-open text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800 mb-1">Join a class to unlock Flashcards</h2>
+                        <p class="text-slate-600">Your teacher controls topic access. Join a class to generate flashcards for lessons.</p>
+                    </div>
+                </div>
+                <button onclick="openJoinClassModal()" class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl">
+                    <i class="fas fa-plus mr-2"></i>Join Class
+                </button>
+            </div>
+            <div class="text-sm text-slate-500">
+                Tip: Ask your teacher for your class code.
+            </div>
+        </div>
+    </div>
+
+    <div id="dashboardMainContent" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-1">
+                <div class="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 p-6">
+                    <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+                        Flashcards Generator
+                    </h1>
+                    <p class="text-slate-600 mb-6">Pick a topic and a lesson. The AI will generate 10 study flashcards with explanations.</p>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label for="flashcardTopic" class="block text-sm font-semibold text-slate-700 mb-2">
+                                Topic
+                            </label>
+                            <select id="flashcardTopic" class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="flashcardLesson" class="block text-sm font-semibold text-slate-700 mb-2">
+                                Lesson
+                            </label>
+                            <select id="flashcardLesson" class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                            </select>
+                        </div>
+
+                        <button id="generateFlashcardsBtn"
+                                class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-4 py-3 rounded-xl font-bold transition-all duration-200 shadow-lg hover:shadow-xl">
+                            <i class="fas fa-wand-magic-sparkles mr-2"></i>Generate 10 Flashcards
+                        </button>
+
+                        <div id="flashcardLoading" class="hidden">
+                            <div class="flex items-center space-x-3 text-slate-600">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span>Generating flashcards...</span>
+                            </div>
+                        </div>
+
+                        <div id="flashcardLockHint" class="hidden bg-orange-50 border border-orange-200 rounded-2xl p-4 text-sm text-orange-800">
+                            <div class="flex items-start space-x-3">
+                                <i class="fas fa-lock mt-0.5"></i>
+                                <div>
+                                    <div class="font-semibold mb-1">Locked by teacher</div>
+                                    <div id="flashcardLockHintText">This topic is currently locked.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 p-6 mt-8">
+                    <h2 class="text-lg font-bold text-slate-800 mb-2">Study Controls</h2>
+                    <p class="text-slate-600 text-sm mb-4">Flip cards, then mark them as learned for quick review.</p>
+                    <div class="flex flex-col space-y-3">
+                        <button id="shuffleCardsBtn" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-sm font-semibold transition-colors">
+                            <i class="fas fa-random mr-2"></i>Shuffle
+                        </button>
+                        <button id="resetLearnedBtn" class="bg-red-50 hover:bg-red-100 text-red-700 px-4 py-2 rounded-xl text-sm font-semibold transition-colors">
+                            <i class="fas fa-rotate-right mr-2"></i>Reset Learned
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2">
+                <div class="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 p-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-800 mb-1" id="flashcardsHeaderTitle">Your Flashcards</h2>
+                            <p class="text-slate-600 text-sm" id="flashcardsHeaderSubtitle">Generate flashcards to start studying.</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="text-sm font-semibold text-slate-700">
+                                Learned: <span id="learnedCount">0</span>/10
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+                            <span>Progress</span>
+                            <span id="learnedProgressText">0/10</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden border border-slate-200">
+                            <div id="learnedProgressBar"
+                                 class="h-3 w-0 rounded-full bg-gradient-to-r from-emerald-500 to-indigo-600 transition-all duration-500 shadow-sm">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-3 mb-5">
+                        <div class="flex-1">
+                            <div class="text-xs text-slate-500 mb-1">Study Mode</div>
+                            <div class="text-sm font-semibold text-slate-700" id="studyModeLabel">
+                                One card at a time
+                            </div>
+                        </div>
+                        <div class="sm:w-56">
+                            <button id="saveFlashcardsBtn"
+                                    class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-3 rounded-xl font-bold text-sm transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                                    disabled>
+                                <i class="fas fa-save mr-2"></i>Save to Database
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="flashcardStage" class="relative">
+                        <div id="flashcardStageSkeleton" class="skeleton-card"></div>
+                        <div id="flashcardStageInner" class="hidden"></div>
+                    </div>
+
+                    <div class="flex items-center justify-between mt-4 gap-3">
+                        <button id="prevCardBtn"
+                                class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-semibold transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                                disabled>
+                            <i class="fas fa-chevron-left mr-2"></i>Prev
+                        </button>
+
+                        <div class="text-sm font-semibold text-slate-700 text-center">
+                            Card <span id="currentCardNumber">1</span> / <span id="totalCardNumber">10</span>
+                        </div>
+
+                        <button id="nextCardBtn"
+                                class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-semibold transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                                disabled>
+                            Next<i class="fas fa-chevron-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-6 text-sm text-slate-500">
+                    Tip: Click a card to flip. Read the explanation and then try again without looking.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/session-manager.js"></script>
+    <script src="js/join-class-modal.js"></script>
+    <script src="js/student-enrollment-check.js"></script>
+    <script src="js/flashcards-sequential.js"></script>
+
+    <script>
+        const mobileNavSelect = document.getElementById('mobileNavSelect');
+        if (mobileNavSelect) {
+            mobileNavSelect.addEventListener('change', (e) => {
+                const v = e.target.value;
+                if (v) window.location.href = v;
+            });
+        }
+    </script>
+
+    <script>
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationsDropdown');
+            if (!dropdown) return;
+            const isHidden = dropdown.classList.contains('hidden');
+            if (isHidden) {
+                dropdown.classList.remove('hidden');
+                dropdown.classList.remove('opacity-0', 'invisible');
+                dropdown.classList.add('opacity-100', 'visible');
+                loadNotificationsIfNeeded();
+            } else {
+                dropdown.classList.add('hidden');
+                dropdown.classList.remove('opacity-100', 'visible');
+            }
+        }
+
+        let notificationsLoaded = false;
+        async function loadNotificationsIfNeeded() {
+            if (notificationsLoaded) return;
+            notificationsLoaded = true;
+            const list = document.getElementById('notificationsList');
+            if (!list) return;
+
+            try {
+                list.innerHTML = '<div class="px-4 py-4 text-sm text-slate-500">Loading...</div>';
+                const res = await fetch('php/notifications.php?action=get_notifications&limit=5', {
+                    credentials: 'include',
+                    cache: 'no-store'
+                });
+                const data = await res.json();
+                if (!data?.success) {
+                    list.innerHTML = '<div class="px-4 py-4 text-sm text-slate-500">No notifications.</div>';
+                    return;
+                }
+
+                const notifications = Array.isArray(data.notifications) ? data.notifications : [];
+                const badgeCount = notifications.length || 0;
+                const badge = document.getElementById('notificationBadge');
+                const dropdownCount = document.getElementById('dropdownNotificationCount');
+                if (badge) badge.textContent = String(badgeCount);
+                if (dropdownCount) dropdownCount.textContent = String(badgeCount);
+                if (badge) badge.classList.toggle('hidden', badgeCount <= 0);
+
+                if (notifications.length === 0) {
+                    list.innerHTML = '<div class="px-4 py-4 text-sm text-slate-500">No notifications.</div>';
+                    return;
+                }
+
+                list.innerHTML = notifications.map(n => {
+                    const title = n.title || 'Notification';
+                    const message = n.message || '';
+                    const time = n.created_at || n.created_timestamp || '';
+                    return `
+                        <div class="px-4 py-3 hover:bg-slate-50 transition-colors cursor-pointer ${n.is_read ? '' : 'bg-blue-50 border-l-4 border-blue-500'}" onclick="void(0)">
+                            <div class="font-semibold text-sm text-slate-800">${title}</div>
+                            <div class="text-xs text-slate-600 mt-1 line-clamp-2">${message}</div>
+                            ${time ? `<div class="text-[11px] text-slate-400 mt-1">${String(time)}</div>` : ''}
+                        </div>
+                    `;
+                }).join('');
+            } catch (e) {
+                list.innerHTML = '<div class="px-4 py-4 text-sm text-slate-500">Could not load notifications.</div>';
+            }
+        }
+
+        function toggleProfileDropdown() {
+            const dropdown = document.getElementById('profileDropdown');
+            const icon = document.getElementById('profileDropdownIcon');
+            if (!dropdown) return;
+
+            const isHidden = dropdown.classList.contains('hidden');
+            if (isHidden) {
+                dropdown.classList.remove('hidden');
+                if (icon) icon.style.transform = 'rotate(180deg)';
+            } else {
+                dropdown.classList.add('hidden');
+                if (icon) icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function confirmLogout(event) {
+            event.preventDefault();
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = 'php/smart-logout.php?type=student';
+            }
+        }
+
+        document.addEventListener('click', function(event) {
+            const profileContainer = document.getElementById('profileDropdownContainer');
+            const profileDropdown = document.getElementById('profileDropdown');
+            const notificationsDropdown = document.getElementById('notificationsDropdown');
+
+            // Close profile dropdown when clicking outside
+            if (profileContainer && profileDropdown && !profileContainer.contains(event.target)) {
+                profileDropdown.classList.add('hidden');
+                const icon = document.getElementById('profileDropdownIcon');
+                if (icon) icon.style.transform = 'rotate(0deg)';
+            }
+
+            // Close notifications dropdown when clicking outside
+            if (notificationsDropdown && !notificationsDropdown.contains(event.target)) {
+                const bellBtn = document.getElementById('notificationButton');
+                if (bellBtn && !bellBtn.contains(event.target)) {
+                    notificationsDropdown.classList.add('hidden');
+                    notificationsDropdown.classList.remove('opacity-100', 'visible');
+                }
+            }
+        });
+
+        async function loadProfilePicture() {
+            try {
+                const res = await fetch('php/user.php', {
+                    credentials: 'include',
+                    cache: 'no-store'
+                });
+                if (!res.ok) return;
+                const data = await res.json();
+                if (!data?.success || !data?.user) return;
+
+                const user = data.user;
+                const name = [user.first_name, user.last_name].filter(Boolean).join(' ').trim();
+                const userNameEl = document.getElementById('userName');
+                if (userNameEl && name) userNameEl.textContent = name;
+
+                const profileIconImage = document.getElementById('profileIconImage');
+                const profileIconPlaceholder = document.getElementById('profileIconPlaceholder');
+                const profileIconContainer = document.getElementById('profileIconContainer');
+
+                if (profileIconImage && profileIconPlaceholder) {
+                    if (user.profile_picture) {
+                        profileIconImage.src = user.profile_picture + '?t=' + Date.now();
+                        profileIconImage.classList.remove('hidden');
+                        profileIconPlaceholder.classList.add('hidden');
+                        if (profileIconContainer) {
+                            profileIconContainer.classList.remove('bg-gradient-to-br', 'from-indigo-500', 'to-violet-600');
+                            profileIconContainer.classList.add('bg-slate-200');
+                        }
+                    } else {
+                        profileIconImage.classList.add('hidden');
+                        profileIconPlaceholder.classList.remove('hidden');
+                        if (profileIconContainer) {
+                            profileIconContainer.classList.add('bg-gradient-to-br', 'from-indigo-500', 'to-violet-600');
+                            profileIconContainer.classList.remove('bg-slate-200');
+                        }
+                    }
+                }
+            } catch (e) {
+                // Non-fatal
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProfilePicture();
+        });
+    </script>
+</body>
+</html>
+

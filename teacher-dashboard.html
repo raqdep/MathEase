@@ -1012,388 +1012,482 @@
                             </div>
 
                             <!-- Operations on Functions Quiz -->
-                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                                <div class="flex items-center justify-between mb-4">
-                                    <div class="flex items-center">
-                                        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center mr-4">
-                                            <i class="fas fa-plus-minus text-white text-lg"></i>
+                            <div class="bg-white rounded-xl shadow-md border-2 border-gray-200 hover:border-purple-300 transition-all duration-200 overflow-hidden">
+                                <div class="bg-gradient-to-r from-purple-50 to-indigo-100 px-6 py-4 border-b border-gray-200">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-4">
+                                            <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                                                <i class="fas fa-plus-minus text-white text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-lg font-bold text-gray-900">Operations on Functions</h4>
+                                                <p class="text-sm text-gray-600 mt-0.5">14 questions • Addition, subtraction, multiplication, and division of functions</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h4 class="text-lg font-semibold text-gray-900">Operations on Functions</h4>
-                                            <p class="text-sm text-gray-600">14 questions • Addition, subtraction, multiplication, and division of functions</p>
+                                        <div id="operationsOnFunctionsQuizStatusBadge" class="hidden px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700">
+                                            <i class="fas fa-lock mr-1"></i>Closed
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                                            Quiz Deadline
-                                            <span class="text-xs text-gray-500 font-normal">(Local Time)</span>
-                                        </label>
-                                        <input type="datetime-local" id="operationsOnFunctionsQuizDeadline" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
-                                        <div id="operationsOnFunctionsQuizDeadlineStatus" class="mt-2 text-sm">
-                                            <!-- Deadline status will be shown here -->
+                                <div class="p-6">
+                                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-calendar-alt text-purple-500 mr-1.5"></i>
+                                                Quiz Deadline
+                                                <span class="text-xs text-gray-500 font-normal ml-1">(Local Time)</span>
+                                            </label>
+                                            <input type="datetime-local" id="operationsOnFunctionsQuizDeadline" class="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all">
+                                            <div id="operationsOnFunctionsQuizDeadlineStatus" class="mt-2 text-xs">
+                                                <!-- Deadline status will be shown here -->
+                                            </div>
+                                        </div>
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-clock text-purple-500 mr-1.5"></i>
+                                                Time Limit (minutes)
+                                            </label>
+                                            <input type="number" id="operationsOnFunctionsQuizTimeLimit" min="5" max="120" value="30" class="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all">
+                                        </div>
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-toggle-on text-purple-500 mr-1.5"></i>
+                                                Quiz Status
+                                            </label>
+                                            <button id="operationsOnFunctionsQuizToggle" onclick="toggleQuizStatus('operations-on-functions')" class="w-full px-4 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-700">
+                                                <i class="fas fa-lock mr-2"></i>
+                                                <span>Closed</span>
+                                            </button>
                                         </div>
                                     </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Time Limit (minutes)</label>
-                                        <input type="number" id="operationsOnFunctionsQuizTimeLimit" min="5" max="120" value="30" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Quiz Status</label>
-                                        <button id="operationsOnFunctionsQuizToggle" onclick="toggleQuizStatus('operations-on-functions')" class="w-full px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center bg-gray-200 text-gray-700">
-                                            <i class="fas fa-lock mr-2"></i>
-                                            <span>Closed</span>
+                                    <div class="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
+                                        <button onclick="saveQuizSettings('operations-on-functions')" class="flex-1 sm:flex-none bg-purple-600 hover:bg-purple-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg">
+                                            <i class="fas fa-save mr-2"></i>
+                                            Save Settings
                                         </button>
-                                    </div>
-                                    <div class="flex items-end">
-                                        <div class="flex flex-wrap gap-2 w-full">
-                                            <button onclick="saveQuizSettings('operations-on-functions')" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                                                <i class="fas fa-save mr-2"></i>
-                                                Save
-                                            </button>
-                                            <button onclick="viewQuizResults('operations-on-functions')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                                                <i class="fas fa-chart-bar mr-2"></i>
-                                                Results
-                                            </button>
-                                        </div>
+                                        <button onclick="viewQuizResults('operations-on-functions')" class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg">
+                                            <i class="fas fa-chart-bar mr-2"></i>
+                                            View Results
+                                        </button>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Real-Life Problems Quiz -->
-                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                                <div class="flex items-center justify-between mb-4">
-                                    <div class="flex items-center">
-                                        <div class="w-12 h-12 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-lg flex items-center justify-center mr-4">
-                                            <i class="fas fa-globe text-white text-lg"></i>
+                            <div class="bg-white rounded-xl shadow-md border-2 border-gray-200 hover:border-teal-300 transition-all duration-200 overflow-hidden">
+                                <div class="bg-gradient-to-r from-teal-50 to-cyan-100 px-6 py-4 border-b border-gray-200">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-4">
+                                            <div class="w-14 h-14 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg">
+                                                <i class="fas fa-globe text-white text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-lg font-bold text-gray-900">Real-Life Problems</h4>
+                                                <p class="text-sm text-gray-600 mt-0.5">11 questions • Application of functions in real-world scenarios</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h4 class="text-lg font-semibold text-gray-900">Real-Life Problems</h4>
-                                            <p class="text-sm text-gray-600">11 questions • Application of functions in real-world scenarios</p>
+                                        <div id="realLifeProblemsQuizStatusBadge" class="hidden px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700">
+                                            <i class="fas fa-lock mr-1"></i>Closed
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                                            Quiz Deadline
-                                            <span class="text-xs text-gray-500 font-normal">(Local Time)</span>
-                                        </label>
-                                        <input type="datetime-local" id="realLifeProblemsQuizDeadline" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Time Limit (minutes)</label>
-                                        <input type="number" id="realLifeProblemsQuizTimeLimit" min="5" max="120" value="30" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Quiz Status</label>
-                                        <button id="realLifeProblemsQuizToggle" onclick="toggleQuizStatus('real-life-problems')" class="w-full px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center bg-gray-200 text-gray-700">
-                                            <i class="fas fa-lock mr-2"></i>
-                                            <span>Closed</span>
-                                        </button>
-                                    </div>
-                                    <div class="flex items-end">
-                                        <div class="flex flex-wrap gap-2 w-full">
-                                            <button onclick="saveQuizSettings('real-life-problems')" class="flex-1 bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                                                <i class="fas fa-save mr-2"></i>
-                                                Save
-                                            </button>
-                                            <button onclick="viewQuizResults('real-life-problems')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                                                <i class="fas fa-chart-bar mr-2"></i>
-                                                Results
+                                <div class="p-6">
+                                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-calendar-alt text-teal-500 mr-1.5"></i>
+                                                Quiz Deadline
+                                                <span class="text-xs text-gray-500 font-normal ml-1">(Local Time)</span>
+                                            </label>
+                                            <input type="datetime-local" id="realLifeProblemsQuizDeadline" class="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all">
+                                        </div>
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-clock text-teal-500 mr-1.5"></i>
+                                                Time Limit (minutes)
+                                            </label>
+                                            <input type="number" id="realLifeProblemsQuizTimeLimit" min="5" max="120" value="30" class="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all">
+                                        </div>
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-toggle-on text-teal-500 mr-1.5"></i>
+                                                Quiz Status
+                                            </label>
+                                            <button id="realLifeProblemsQuizToggle" onclick="toggleQuizStatus('real-life-problems')" class="w-full px-4 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-700">
+                                                <i class="fas fa-lock mr-2"></i>
+                                                <span>Closed</span>
                                             </button>
                                         </div>
+                                    </div>
+                                    <div class="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
+                                        <button onclick="saveQuizSettings('real-life-problems')" class="flex-1 sm:flex-none bg-teal-600 hover:bg-teal-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg">
+                                            <i class="fas fa-save mr-2"></i>
+                                            Save Settings
+                                        </button>
+                                        <button onclick="viewQuizResults('real-life-problems')" class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg">
+                                            <i class="fas fa-chart-bar mr-2"></i>
+                                            View Results
+                                        </button>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Rational Functions Quiz -->
-                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                                <div class="flex items-center justify-between mb-4">
-                                    <div class="flex items-center">
-                                        <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center mr-4">
-                                            <i class="fas fa-chart-line text-white text-lg"></i>
+                            <div class="bg-white rounded-xl shadow-md border-2 border-gray-200 hover:border-emerald-300 transition-all duration-200 overflow-hidden">
+                                <div class="bg-gradient-to-r from-emerald-50 to-teal-100 px-6 py-4 border-b border-gray-200">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-4">
+                                            <div class="w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg">
+                                                <i class="fas fa-chart-line text-white text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-lg font-bold text-gray-900">Rational Functions</h4>
+                                                <p class="text-sm text-gray-600 mt-0.5">11 questions • Understanding rational function properties and behavior</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h4 class="text-lg font-semibold text-gray-900">Rational Functions</h4>
-                                            <p class="text-sm text-gray-600">11 questions • Understanding rational function properties and behavior</p>
+                                        <div id="rationalFunctionsQuizStatusBadge" class="hidden px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700">
+                                            <i class="fas fa-lock mr-1"></i>Closed
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                                            Quiz Deadline
-                                            <span class="text-xs text-gray-500 font-normal">(Local Time)</span>
-                                        </label>
-                                        <input type="datetime-local" id="rationalFunctionsQuizDeadline" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Time Limit (minutes)</label>
-                                        <input type="number" id="rationalFunctionsQuizTimeLimit" min="5" max="120" value="30" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Quiz Status</label>
-                                        <button id="rationalFunctionsQuizToggle" onclick="toggleQuizStatus('rational-functions')" class="w-full px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center bg-gray-200 text-gray-700">
-                                            <i class="fas fa-lock mr-2"></i>
-                                            <span>Closed</span>
-                                        </button>
-                                    </div>
-                                    <div class="flex items-end">
-                                        <div class="flex flex-wrap gap-2 w-full">
-                                            <button onclick="saveQuizSettings('rational-functions')" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                                                <i class="fas fa-save mr-2"></i>
-                                                Save
-                                            </button>
-                                            <button onclick="viewQuizResults('rational-functions')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                                                <i class="fas fa-chart-bar mr-2"></i>
-                                                Results
+                                <div class="p-6">
+                                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-calendar-alt text-emerald-500 mr-1.5"></i>
+                                                Quiz Deadline
+                                                <span class="text-xs text-gray-500 font-normal ml-1">(Local Time)</span>
+                                            </label>
+                                            <input type="datetime-local" id="rationalFunctionsQuizDeadline" class="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+                                        </div>
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-clock text-emerald-500 mr-1.5"></i>
+                                                Time Limit (minutes)
+                                            </label>
+                                            <input type="number" id="rationalFunctionsQuizTimeLimit" min="5" max="120" value="30" class="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+                                        </div>
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-toggle-on text-emerald-500 mr-1.5"></i>
+                                                Quiz Status
+                                            </label>
+                                            <button id="rationalFunctionsQuizToggle" onclick="toggleQuizStatus('rational-functions')" class="w-full px-4 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-700">
+                                                <i class="fas fa-lock mr-2"></i>
+                                                <span>Closed</span>
                                             </button>
                                         </div>
+                                    </div>
+                                    <div class="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
+                                        <button onclick="saveQuizSettings('rational-functions')" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg">
+                                            <i class="fas fa-save mr-2"></i>
+                                            Save Settings
+                                        </button>
+                                        <button onclick="viewQuizResults('rational-functions')" class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg">
+                                            <i class="fas fa-chart-bar mr-2"></i>
+                                            View Results
+                                        </button>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Solving Rational Equations and Inequalities Quiz -->
-                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                                <div class="flex items-center justify-between mb-4">
-                                    <div class="flex items-center">
-                                        <div class="w-12 h-12 bg-gradient-to-br from-rose-500 to-pink-600 rounded-lg flex items-center justify-center mr-4">
-                                            <i class="fas fa-equals text-white text-lg"></i>
+                            <div class="bg-white rounded-xl shadow-md border-2 border-gray-200 hover:border-rose-300 transition-all duration-200 overflow-hidden">
+                                <div class="bg-gradient-to-r from-rose-50 to-pink-100 px-6 py-4 border-b border-gray-200">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-4">
+                                            <div class="w-14 h-14 bg-gradient-to-br from-rose-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+                                                <i class="fas fa-equals text-white text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-lg font-bold text-gray-900">Solving Rational Equations and Inequalities</h4>
+                                                <p class="text-sm text-gray-600 mt-0.5">11 questions • Solving equations and inequalities involving rational functions</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h4 class="text-lg font-semibold text-gray-900">Solving Rational Equations and Inequalities</h4>
-                                            <p class="text-sm text-gray-600">11 questions • Solving equations and inequalities involving rational functions</p>
+                                        <div id="solvingRationalEquationsInequalitiesQuizStatusBadge" class="hidden px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700">
+                                            <i class="fas fa-lock mr-1"></i>Closed
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                                            Quiz Deadline
-                                            <span class="text-xs text-gray-500 font-normal">(Local Time)</span>
-                                        </label>
-                                        <input type="datetime-local" id="solvingRationalEquationsInequalitiesQuizDeadline" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Time Limit (minutes)</label>
-                                        <input type="number" id="solvingRationalEquationsInequalitiesQuizTimeLimit" min="5" max="120" value="30" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Quiz Status</label>
-                                        <button id="solvingRationalEquationsInequalitiesQuizToggle" onclick="toggleQuizStatus('solving-rational-equations-inequalities')" class="w-full px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center bg-gray-200 text-gray-700">
-                                            <i class="fas fa-lock mr-2"></i>
-                                            <span>Closed</span>
-                                        </button>
-                                    </div>
-                                    <div class="flex items-end">
-                                        <div class="flex flex-wrap gap-2 w-full">
-                                            <button onclick="saveQuizSettings('solving-rational-equations-inequalities')" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                                                <i class="fas fa-save mr-2"></i>
-                                                Save
-                                            </button>
-                                            <button onclick="viewQuizResults('solving-rational-equations-inequalities')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                                                <i class="fas fa-chart-bar mr-2"></i>
-                                                Results
+                                <div class="p-6">
+                                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-calendar-alt text-rose-500 mr-1.5"></i>
+                                                Quiz Deadline
+                                                <span class="text-xs text-gray-500 font-normal ml-1">(Local Time)</span>
+                                            </label>
+                                            <input type="datetime-local" id="solvingRationalEquationsInequalitiesQuizDeadline" class="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all">
+                                        </div>
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-clock text-rose-500 mr-1.5"></i>
+                                                Time Limit (minutes)
+                                            </label>
+                                            <input type="number" id="solvingRationalEquationsInequalitiesQuizTimeLimit" min="5" max="120" value="30" class="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all">
+                                        </div>
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-toggle-on text-rose-500 mr-1.5"></i>
+                                                Quiz Status
+                                            </label>
+                                            <button id="solvingRationalEquationsInequalitiesQuizToggle" onclick="toggleQuizStatus('solving-rational-equations-inequalities')" class="w-full px-4 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-700">
+                                                <i class="fas fa-lock mr-2"></i>
+                                                <span>Closed</span>
                                             </button>
                                         </div>
+                                    </div>
+                                    <div class="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
+                                        <button onclick="saveQuizSettings('solving-rational-equations-inequalities')" class="flex-1 sm:flex-none bg-rose-600 hover:bg-rose-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg">
+                                            <i class="fas fa-save mr-2"></i>
+                                            Save Settings
+                                        </button>
+                                        <button onclick="viewQuizResults('solving-rational-equations-inequalities')" class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg">
+                                            <i class="fas fa-chart-bar mr-2"></i>
+                                            View Results
+                                        </button>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Representations of Rational Functions Quiz -->
-                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                                <div class="flex items-center justify-between mb-4">
-                                    <div class="flex items-center">
-                                        <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center mr-4">
-                                            <i class="fas fa-chart-area text-white text-lg"></i>
+                            <div class="bg-white rounded-xl shadow-md border-2 border-gray-200 hover:border-cyan-300 transition-all duration-200 overflow-hidden">
+                                <div class="bg-gradient-to-r from-cyan-50 to-blue-100 px-6 py-4 border-b border-gray-200">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-4">
+                                            <div class="w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                                                <i class="fas fa-chart-area text-white text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-lg font-bold text-gray-900">Representations of Rational Functions</h4>
+                                                <p class="text-sm text-gray-600 mt-0.5">11 questions • Graphical, tabular, and algebraic representations</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h4 class="text-lg font-semibold text-gray-900">Representations of Rational Functions</h4>
-                                            <p class="text-sm text-gray-600">11 questions • Graphical, tabular, and algebraic representations</p>
+                                        <div id="representationsOfRationalFunctionsQuizStatusBadge" class="hidden px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700">
+                                            <i class="fas fa-lock mr-1"></i>Closed
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                                            Quiz Deadline
-                                            <span class="text-xs text-gray-500 font-normal">(Local Time)</span>
-                                        </label>
-                                        <input type="datetime-local" id="representationsOfRationalFunctionsQuizDeadline" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Time Limit (minutes)</label>
-                                        <input type="number" id="representationsOfRationalFunctionsQuizTimeLimit" min="5" max="120" value="30" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Quiz Status</label>
-                                        <button id="representationsOfRationalFunctionsQuizToggle" onclick="toggleQuizStatus('representations-of-rational-functions')" class="w-full px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center bg-gray-200 text-gray-700">
-                                            <i class="fas fa-lock mr-2"></i>
-                                            <span>Closed</span>
-                                        </button>
-                                    </div>
-                                    <div class="flex items-end">
-                                        <div class="flex flex-wrap gap-2 w-full">
-                                            <button onclick="saveQuizSettings('representations-of-rational-functions')" class="flex-1 bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                                                <i class="fas fa-save mr-2"></i>
-                                                Save
-                                            </button>
-                                            <button onclick="viewQuizResults('representations-of-rational-functions')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                                                <i class="fas fa-chart-bar mr-2"></i>
-                                                Results
+                                <div class="p-6">
+                                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-calendar-alt text-cyan-500 mr-1.5"></i>
+                                                Quiz Deadline
+                                                <span class="text-xs text-gray-500 font-normal ml-1">(Local Time)</span>
+                                            </label>
+                                            <input type="datetime-local" id="representationsOfRationalFunctionsQuizDeadline" class="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all">
+                                        </div>
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-clock text-cyan-500 mr-1.5"></i>
+                                                Time Limit (minutes)
+                                            </label>
+                                            <input type="number" id="representationsOfRationalFunctionsQuizTimeLimit" min="5" max="120" value="30" class="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all">
+                                        </div>
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-toggle-on text-cyan-500 mr-1.5"></i>
+                                                Quiz Status
+                                            </label>
+                                            <button id="representationsOfRationalFunctionsQuizToggle" onclick="toggleQuizStatus('representations-of-rational-functions')" class="w-full px-4 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-700">
+                                                <i class="fas fa-lock mr-2"></i>
+                                                <span>Closed</span>
                                             </button>
                                         </div>
+                                    </div>
+                                    <div class="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
+                                        <button onclick="saveQuizSettings('representations-of-rational-functions')" class="flex-1 sm:flex-none bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg">
+                                            <i class="fas fa-save mr-2"></i>
+                                            Save Settings
+                                        </button>
+                                        <button onclick="viewQuizResults('representations-of-rational-functions')" class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg">
+                                            <i class="fas fa-chart-bar mr-2"></i>
+                                            View Results
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-
+                            
                             <!-- Domain and Range of Rational Functions Quiz -->
-                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                                <div class="flex items-center justify-between mb-4">
-                                    <div class="flex items-center">
-                                        <div class="w-12 h-12 bg-gradient-to-br from-lime-500 to-green-600 rounded-lg flex items-center justify-center mr-4">
-                                            <i class="fas fa-bullseye text-white text-lg"></i>
+                            <div class="bg-white rounded-xl shadow-md border-2 border-gray-200 hover:border-lime-300 transition-all duration-200 overflow-hidden">
+                                <div class="bg-gradient-to-r from-lime-50 to-green-100 px-6 py-4 border-b border-gray-200">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-4">
+                                            <div class="w-14 h-14 bg-gradient-to-br from-lime-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
+                                                <i class="fas fa-bullseye text-white text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-lg font-bold text-gray-900">Domain and Range of Rational Functions</h4>
+                                                <p class="text-sm text-gray-600 mt-0.5">11 questions • Finding domain and range of rational functions</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h4 class="text-lg font-semibold text-gray-900">Domain and Range of Rational Functions</h4>
-                                            <p class="text-sm text-gray-600">11 questions • Finding domain and range of rational functions</p>
+                                        <div id="domainRangeRationalFunctionsQuizStatusBadge" class="hidden px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700">
+                                            <i class="fas fa-lock mr-1"></i>Closed
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                                            Quiz Deadline
-                                            <span class="text-xs text-gray-500 font-normal">(Local Time)</span>
-                                        </label>
-                                        <input type="datetime-local" id="domainRangeRationalFunctionsQuizDeadline" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-lime-500 focus:border-lime-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Time Limit (minutes)</label>
-                                        <input type="number" id="domainRangeRationalFunctionsQuizTimeLimit" min="5" max="120" value="30" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-lime-500 focus:border-lime-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Quiz Status</label>
-                                        <button id="domainRangeRationalFunctionsQuizToggle" onclick="toggleQuizStatus('domain-range-rational-functions')" class="w-full px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center bg-gray-200 text-gray-700">
-                                            <i class="fas fa-lock mr-2"></i>
-                                            <span>Closed</span>
-                                        </button>
-                                    </div>
-                                    <div class="flex items-end">
-                                        <div class="flex flex-wrap gap-2 w-full">
-                                            <button onclick="saveQuizSettings('domain-range-rational-functions')" class="flex-1 bg-lime-600 hover:bg-lime-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                                                <i class="fas fa-save mr-2"></i>
-                                                Save
-                                            </button>
-                                            <button onclick="viewQuizResults('domain-range-rational-functions')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                                                <i class="fas fa-chart-bar mr-2"></i>
-                                                Results
+                                <div class="p-6">
+                                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-calendar-alt text-lime-600 mr-1.5"></i>
+                                                Quiz Deadline
+                                                <span class="text-xs text-gray-500 font-normal ml-1">(Local Time)</span>
+                                            </label>
+                                            <input type="datetime-local" id="domainRangeRationalFunctionsQuizDeadline" class="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-lime-500 focus:border-lime-500 transition-all">
+                                        </div>
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-clock text-lime-600 mr-1.5"></i>
+                                                Time Limit (minutes)
+                                            </label>
+                                            <input type="number" id="domainRangeRationalFunctionsQuizTimeLimit" min="5" max="120" value="30" class="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-lime-500 focus:border-lime-500 transition-all">
+                                        </div>
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-toggle-on text-lime-600 mr-1.5"></i>
+                                                Quiz Status
+                                            </label>
+                                            <button id="domainRangeRationalFunctionsQuizToggle" onclick="toggleQuizStatus('domain-range-rational-functions')" class="w-full px-4 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-700">
+                                                <i class="fas fa-lock mr-2"></i>
+                                                <span>Closed</span>
                                             </button>
                                         </div>
+                                    </div>
+                                    <div class="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
+                                        <button onclick="saveQuizSettings('domain-range-rational-functions')" class="flex-1 sm:flex-none bg-lime-600 hover:bg-lime-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg">
+                                            <i class="fas fa-save mr-2"></i>
+                                            Save Settings
+                                        </button>
+                                        <button onclick="viewQuizResults('domain-range-rational-functions')" class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg">
+                                            <i class="fas fa-chart-bar mr-2"></i>
+                                            View Results
+                                        </button>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Domain and Range of Inverse Functions Quiz -->
-                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                                <div class="flex items-center justify-between mb-4">
-                                    <div class="flex items-center">
-                                        <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-lg flex items-center justify-center mr-4">
-                                            <i class="fas fa-exchange-alt text-white text-lg"></i>
+                            <div class="bg-white rounded-xl shadow-md border-2 border-gray-200 hover:border-amber-300 transition-all duration-200 overflow-hidden">
+                                <div class="bg-gradient-to-r from-amber-50 to-yellow-100 px-6 py-4 border-b border-gray-200">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-4">
+                                            <div class="w-14 h-14 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-lg">
+                                                <i class="fas fa-exchange-alt text-white text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-lg font-bold text-gray-900">Domain and Range of Inverse Functions</h4>
+                                                <p class="text-sm text-gray-600 mt-0.5">11 questions • Understanding inverse function domain and range relationships</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h4 class="text-lg font-semibold text-gray-900">Domain and Range of Inverse Functions</h4>
-                                            <p class="text-sm text-gray-600">11 questions • Understanding inverse function domain and range relationships</p>
+                                        <div id="domainRangeInverseFunctionsQuizStatusBadge" class="hidden px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700">
+                                            <i class="fas fa-lock mr-1"></i>Closed
                                         </div>
                                     </div>
                                 </div>
-                                
-                                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                                            Quiz Deadline
-                                            <span class="text-xs text-gray-500 font-normal">(Local Time)</span>
-                                        </label>
-                                        <input type="datetime-local" id="domainRangeInverseFunctionsQuizDeadline" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Time Limit (minutes)</label>
-                                        <input type="number" id="domainRangeInverseFunctionsQuizTimeLimit" min="5" max="120" value="30" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Quiz Status</label>
-                                        <button id="domainRangeInverseFunctionsQuizToggle" onclick="toggleQuizStatus('domain-range-inverse-functions')" class="w-full px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center bg-gray-200 text-gray-700">
-                                            <i class="fas fa-lock mr-2"></i>
-                                            <span>Closed</span>
-                                        </button>
-                                    </div>
-                                    <div class="flex items-end">
-                                        <div class="flex flex-wrap gap-2 w-full">
-                                            <button onclick="saveQuizSettings('domain-range-inverse-functions')" class="flex-1 bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                                                <i class="fas fa-save mr-2"></i>
-                                                Save
-                                            </button>
-                                            <button onclick="viewQuizResults('domain-range-inverse-functions')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                                                <i class="fas fa-chart-bar mr-2"></i>
-                                                Results
+                                <div class="p-6">
+                                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-calendar-alt text-amber-600 mr-1.5"></i>
+                                                Quiz Deadline
+                                                <span class="text-xs text-gray-500 font-normal ml-1">(Local Time)</span>
+                                            </label>
+                                            <input type="datetime-local" id="domainRangeInverseFunctionsQuizDeadline" class="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all">
+                                        </div>
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-clock text-amber-600 mr-1.5"></i>
+                                                Time Limit (minutes)
+                                            </label>
+                                            <input type="number" id="domainRangeInverseFunctionsQuizTimeLimit" min="5" max="120" value="30" class="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all">
+                                        </div>
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-toggle-on text-amber-600 mr-1.5"></i>
+                                                Quiz Status
+                                            </label>
+                                            <button id="domainRangeInverseFunctionsQuizToggle" onclick="toggleQuizStatus('domain-range-inverse-functions')" class="w-full px-4 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-700">
+                                                <i class="fas fa-lock mr-2"></i>
+                                                <span>Closed</span>
                                             </button>
                                         </div>
+                                    </div>
+                                    <div class="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
+                                        <button onclick="saveQuizSettings('domain-range-inverse-functions')" class="flex-1 sm:flex-none bg-amber-600 hover:bg-amber-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg">
+                                            <i class="fas fa-save mr-2"></i>
+                                            Save Settings
+                                        </button>
+                                        <button onclick="viewQuizResults('domain-range-inverse-functions')" class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg">
+                                            <i class="fas fa-chart-bar mr-2"></i>
+                                            View Results
+                                        </button>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- One-to-One Functions Quiz -->
-                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                                <div class="flex items-center justify-between mb-4">
-                                    <div class="flex items-center">
-                                        <div class="w-12 h-12 bg-gradient-to-br from-violet-500 to-purple-600 rounded-lg flex items-center justify-center mr-4">
-                                            <i class="fas fa-fingerprint text-white text-lg"></i>
+                            <div class="bg-white rounded-xl shadow-md border-2 border-gray-200 hover:border-violet-300 transition-all duration-200 overflow-hidden">
+                                <div class="bg-gradient-to-r from-violet-50 to-purple-100 px-6 py-4 border-b border-gray-200">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-4">
+                                            <div class="w-14 h-14 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                                                <i class="fas fa-fingerprint text-white text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-lg font-bold text-gray-900">One-to-One Functions</h4>
+                                                <p class="text-sm text-gray-600 mt-0.5">11 questions • Understanding one-to-one function properties and testing</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h4 class="text-lg font-semibold text-gray-900">One-to-One Functions</h4>
-                                            <p class="text-sm text-gray-600">11 questions • Understanding one-to-one function properties and testing</p>
+                                        <div id="oneToOneFunctionsQuizStatusBadge" class="hidden px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700">
+                                            <i class="fas fa-lock mr-1"></i>Closed
                                         </div>
                                     </div>
                                 </div>
-                                
-                                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                                            Quiz Deadline
-                                            <span class="text-xs text-gray-500 font-normal">(Local Time)</span>
-                                        </label>
-                                        <input type="datetime-local" id="oneToOneFunctionsQuizDeadline" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Time Limit (minutes)</label>
-                                        <input type="number" id="oneToOneFunctionsQuizTimeLimit" min="5" max="120" value="30" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Quiz Status</label>
-                                        <button id="oneToOneFunctionsQuizToggle" onclick="toggleQuizStatus('one-to-one-functions')" class="w-full px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center bg-gray-200 text-gray-700">
-                                            <i class="fas fa-lock mr-2"></i>
-                                            <span>Closed</span>
-                                        </button>
-                                    </div>
-                                    <div class="flex items-end">
-                                        <div class="flex flex-wrap gap-2 w-full">
-                                            <button onclick="saveQuizSettings('one-to-one-functions')" class="flex-1 bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                                                <i class="fas fa-save mr-2"></i>
-                                                Save
-                                            </button>
-                                            <button onclick="viewQuizResults('one-to-one-functions')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                                                <i class="fas fa-chart-bar mr-2"></i>
-                                                Results
+                                <div class="p-6">
+                                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-calendar-alt text-violet-500 mr-1.5"></i>
+                                                Quiz Deadline
+                                                <span class="text-xs text-gray-500 font-normal ml-1">(Local Time)</span>
+                                            </label>
+                                            <input type="datetime-local" id="oneToOneFunctionsQuizDeadline" class="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-all">
+                                        </div>
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-clock text-violet-500 mr-1.5"></i>
+                                                Time Limit (minutes)
+                                            </label>
+                                            <input type="number" id="oneToOneFunctionsQuizTimeLimit" min="5" max="120" value="30" class="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-all">
+                                        </div>
+                                        <div class="lg:col-span-1">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                                <i class="fas fa-toggle-on text-violet-500 mr-1.5"></i>
+                                                Quiz Status
+                                            </label>
+                                            <button id="oneToOneFunctionsQuizToggle" onclick="toggleQuizStatus('one-to-one-functions')" class="w-full px-4 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-700">
+                                                <i class="fas fa-lock mr-2"></i>
+                                                <span>Closed</span>
                                             </button>
                                         </div>
+                                    </div>
+                                    <div class="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
+                                        <button onclick="saveQuizSettings('one-to-one-functions')" class="flex-1 sm:flex-none bg-violet-600 hover:bg-violet-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg">
+                                            <i class="fas fa-save mr-2"></i>
+                                            Save Settings
+                                        </button>
+                                        <button onclick="viewQuizResults('one-to-one-functions')" class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg">
+                                            <i class="fas fa-chart-bar mr-2"></i>
+                                            View Results
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -1768,45 +1862,74 @@
                     </div>
 
                     <!-- Class Performance Analytics -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                            <div class="flex items-center justify-between mb-4">
-                                <div>
-                                    <h4 class="font-semibold text-gray-900">Overall Trend</h4>
-                                    <p class="text-xs text-gray-600">Average performance over time (by quiz submissions)</p>
+                    <!-- Stacked layout so the visual reading order is: Overall Trend -> Leaderboard -> Score Distribution -> Snapshot -->
+                    <div class="grid grid-cols-1 gap-6 mb-6">
+                        <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 px-6 py-4 border-b border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
+                                            <i class="fas fa-chart-line text-white text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-lg font-bold text-gray-900">Overall Trend</h4>
+                                            <p class="text-sm text-gray-600">Average performance over time (by quiz submissions)</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs px-2 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 flex-shrink-0">
+                                        line
+                                    </span>
                                 </div>
-                                <span class="text-xs px-2 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100">line</span>
                             </div>
-                            <div class="h-56">
-                                <canvas id="classPerformanceTrendChart"></canvas>
+                            <div class="p-6">
+                                <div class="h-72">
+                                    <canvas id="classPerformanceTrendChart"></canvas>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 lg:col-span-2">
-                            <div class="flex items-center justify-between mb-4">
-                                <div>
-                                    <h4 class="font-semibold text-gray-900">Leaderboard & Needs Help</h4>
-                                    <p class="text-xs text-gray-600">Top students and weakest students based on average quiz score</p>
+                        <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                            <div class="bg-gradient-to-r from-emerald-50 to-indigo-50 px-6 py-4 border-b border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
+                                            <i class="fas fa-trophy text-white text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-lg font-bold text-gray-900">Leaderboard & Needs Help</h4>
+                                            <p class="text-sm text-gray-600">Top students and weakest students based on average quiz score</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 flex-shrink-0">
+                                        rank
+                                    </span>
                                 </div>
-                                <span class="text-xs px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">rank</span>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="p-4 bg-emerald-50 rounded-lg border border-emerald-100">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <p class="text-sm font-semibold text-emerald-800">Top Students</p>
-                                        <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">Top 5</span>
+                            <div class="p-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="p-4 bg-emerald-50 rounded-lg border border-emerald-100">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <div class="flex items-center">
+                                                <i class="fas fa-medal text-emerald-600 mr-2"></i>
+                                                <p class="text-sm font-semibold text-emerald-800">Top Students</p>
+                                            </div>
+                                            <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">Top 5</span>
+                                        </div>
+                                        <div id="topStudentsList" class="overflow-x-auto">
+                                            <p class="text-xs text-gray-500">Select a class to load data</p>
+                                        </div>
                                     </div>
-                                    <div id="topStudentsList" class="space-y-2 text-sm">
-                                        <p class="text-xs text-gray-500">Select a class to load data</p>
-                                    </div>
-                                </div>
-                                <div class="p-4 bg-rose-50 rounded-lg border border-rose-100">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <p class="text-sm font-semibold text-rose-800">Needs Support</p>
-                                        <span class="text-xs px-2 py-1 rounded-full bg-rose-100 text-rose-700">Bottom 5</span>
-                                    </div>
-                                    <div id="weakStudentsList2" class="space-y-2 text-sm">
-                                        <p class="text-xs text-gray-500">Select a class to load data</p>
+                                    <div class="p-4 bg-rose-50 rounded-lg border border-rose-100">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <div class="flex items-center">
+                                                <i class="fas fa-hand-holding-heart text-rose-600 mr-2"></i>
+                                                <p class="text-sm font-semibold text-rose-800">Needs Support</p>
+                                            </div>
+                                            <span class="text-xs px-2 py-1 rounded-full bg-rose-100 text-rose-700">Bottom 5</span>
+                                        </div>
+                                        <div id="weakStudentsList2" class="overflow-x-auto">
+                                            <p class="text-xs text-gray-500">Select a class to load data</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1814,43 +1937,66 @@
                     </div>
 
                     <!-- Score Distribution / Snapshot -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                            <div class="flex items-center justify-between mb-4">
-                                <div>
-                                    <h4 class="font-semibold text-gray-900">Score Distribution</h4>
-                                    <p class="text-xs text-gray-600">How many students fall into each band</p>
+                    <div class="grid grid-cols-1 gap-6 mb-6">
+                        <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                            <div class="bg-gradient-to-r from-amber-50 to-orange-50 px-6 py-4 border-b border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
+                                            <i class="fas fa-chart-bar text-white text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-lg font-bold text-gray-900">Score Distribution</h4>
+                                            <p class="text-sm text-gray-600">How many students fall into each band</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-100 flex-shrink-0">
+                                        bars
+                                    </span>
                                 </div>
-                                <span class="text-xs px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-100">bars</span>
                             </div>
-                            <div class="h-56">
-                                <canvas id="scoreDistributionChart"></canvas>
+                            <div class="p-7">
+                                <div class="h-96">
+                                    <canvas id="scoreDistributionChart"></canvas>
+                                </div>
                             </div>
                         </div>
-                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                            <div class="flex items-center justify-between mb-4">
-                                <div>
-                                    <h4 class="font-semibold text-gray-900">Class Snapshot</h4>
-                                    <p class="text-xs text-gray-600">Quick stats to see improvement potential</p>
+
+                            <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
+                                            <i class="fas fa-clipboard-check text-white text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-lg font-bold text-gray-900">Class Snapshot</h4>
+                                            <p class="text-sm text-gray-600">Quick stats to see improvement potential</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100 flex-shrink-0">
+                                        stats
+                                    </span>
                                 </div>
-                                <span class="text-xs px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100">stats</span>
                             </div>
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="classSnapshotCards">
-                                <div class="p-4 rounded-lg bg-gray-50 border border-gray-200">
-                                    <p class="text-xs text-gray-600">Students</p>
-                                    <p class="text-2xl font-bold text-gray-900" id="snapStudents">-</p>
-                                </div>
-                                <div class="p-4 rounded-lg bg-gray-50 border border-gray-200">
-                                    <p class="text-xs text-gray-600">Avg Score</p>
-                                    <p class="text-2xl font-bold text-indigo-700" id="snapAvg">-</p>
-                                </div>
-                                <div class="p-4 rounded-lg bg-gray-50 border border-gray-200">
-                                    <p class="text-xs text-gray-600">Passed ≥70%</p>
-                                    <p class="text-2xl font-bold text-emerald-700" id="snapPassed">-</p>
-                                </div>
-                                <div class="p-4 rounded-lg bg-gray-50 border border-gray-200">
-                                    <p class="text-xs text-gray-600">Needs Help &lt;60%</p>
-                                    <p class="text-2xl font-bold text-rose-700" id="snapNeedsHelp">-</p>
+                            <div class="p-7">
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="classSnapshotCards">
+                                    <div class="p-4 rounded-lg bg-gray-50 border border-gray-200">
+                                        <p class="text-xs text-gray-600">Students</p>
+                                        <p class="text-2xl font-bold text-gray-900" id="snapStudents">-</p>
+                                    </div>
+                                    <div class="p-4 rounded-lg bg-gray-50 border border-gray-200">
+                                        <p class="text-xs text-gray-600">Avg Score</p>
+                                        <p class="text-2xl font-bold text-indigo-700" id="snapAvg">-</p>
+                                    </div>
+                                    <div class="p-4 rounded-lg bg-gray-50 border border-gray-200">
+                                        <p class="text-xs text-gray-600">Passed ≥70%</p>
+                                        <p class="text-2xl font-bold text-emerald-700" id="snapPassed">-</p>
+                                    </div>
+                                    <div class="p-4 rounded-lg bg-gray-50 border border-gray-200">
+                                        <p class="text-xs text-gray-600">Needs Help &lt;60%</p>
+                                        <p class="text-2xl font-bold text-rose-700" id="snapNeedsHelp">-</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -2036,6 +2182,9 @@
                                 </tbody>
                             </table>
                         </div>
+
+                        <!-- Performance Pagination -->
+                        <div id="performancePagination" class="mt-4 px-4 pb-3"></div>
                     </div>
                 </div>
                 <!-- End Class Performance Section -->
@@ -2421,7 +2570,7 @@
         }
 
         // Global functions for topic management
-        async function toggleTopicLock(topicId, isLocked, classId) {
+        async function toggleTopicLock(topicId, isLocked, classId, showAlert = true, reloadTopics = true) {
             try {
                 const formData = new FormData();
                 formData.append('action', 'toggle_topic_lock');
@@ -2437,15 +2586,19 @@
 
                 if (!response.ok) {
                     if (response.status === 401) {
-                        Swal.fire({
-                            title: 'Authentication Required',
-                            text: 'Please log in again to continue.',
-                            icon: 'warning',
-                            confirmButtonText: 'OK',
-                            confirmButtonColor: '#6366f1'
-                        }).then(() => {
+                        if (showAlert) {
+                            Swal.fire({
+                                title: 'Authentication Required',
+                                text: 'Please log in again to continue.',
+                                icon: 'warning',
+                                confirmButtonText: 'OK',
+                                confirmButtonColor: '#6366f1'
+                            }).then(() => {
+                                window.location.href = 'teacher-login.html';
+                            });
+                        } else {
                             window.location.href = 'teacher-login.html';
-                        });
+                        }
                         return;
                     }
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -2454,34 +2607,42 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    Swal.fire({
-                        title: 'Success',
-                        text: result.message,
-                        icon: 'success',
-                        confirmButtonText: 'OK',
-                        confirmButtonColor: '#6366f1'
-                    });
-                    
-                    // Reload topics for the class
-                    loadClassTopics(classId);
+                    if (showAlert) {
+                        Swal.fire({
+                            title: 'Success',
+                            text: result.message,
+                            icon: 'success',
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#6366f1'
+                        });
+                    }
+
+                    // Reload topics for the class (single-topic toggle only)
+                    if (reloadTopics) {
+                        loadClassTopics(classId);
+                    }
                 } else {
+                    if (showAlert) {
+                        Swal.fire({
+                            title: 'Error',
+                            text: result.message || 'Failed to update topic lock status',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: '#ef4444'
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error toggling topic lock:', error);
+                if (showAlert) {
                     Swal.fire({
                         title: 'Error',
-                        text: result.message || 'Failed to update topic lock status',
+                        text: 'An error occurred while updating topic lock status',
                         icon: 'error',
                         confirmButtonText: 'OK',
                         confirmButtonColor: '#ef4444'
                     });
                 }
-            } catch (error) {
-                console.error('Error toggling topic lock:', error);
-                Swal.fire({
-                    title: 'Error',
-                    text: 'An error occurred while updating topic lock status',
-                    icon: 'error',
-                    confirmButtonText: 'OK',
-                    confirmButtonColor: '#ef4444'
-                });
             }
         }
 
@@ -2748,7 +2909,7 @@
                             // Lock all unlocked topics
                             const unlockPromises = data.topics
                                 .filter(topic => !topic.is_locked)
-                                .map(topic => toggleTopicLock(topic.topic_id, false, topic.class_id));
+                                .map(topic => toggleTopicLock(topic.topic_id, false, topic.class_id, false, false));
                             
                             await Promise.all(unlockPromises);
                             
@@ -2803,7 +2964,7 @@
                             // Unlock all locked topics
                             const lockPromises = data.topics
                                 .filter(topic => topic.is_locked)
-                                .map(topic => toggleTopicLock(topic.topic_id, true, topic.class_id));
+                                .map(topic => toggleTopicLock(topic.topic_id, true, topic.class_id, false, false));
                             
                             await Promise.all(lockPromises);
                             
@@ -2857,7 +3018,7 @@
                             // Lock all 1st quarter topics (order <= 10)
                             const firstQuarterPromises = data.topics
                                 .filter(topic => topic.topic_order <= 10 && !topic.is_locked)
-                                .map(topic => toggleTopicLock(topic.topic_id, false, topic.class_id));
+                                .map(topic => toggleTopicLock(topic.topic_id, false, topic.class_id, false, false));
                             
                             await Promise.all(firstQuarterPromises);
                             
@@ -2910,7 +3071,7 @@
                             // Lock all 2nd quarter topics (order > 10)
                             const secondQuarterPromises = data.topics
                                 .filter(topic => topic.topic_order > 10 && !topic.is_locked)
-                                .map(topic => toggleTopicLock(topic.topic_id, false, topic.class_id));
+                                .map(topic => toggleTopicLock(topic.topic_id, false, topic.class_id, false, false));
                             
                             await Promise.all(secondQuarterPromises);
                             
@@ -3190,7 +3351,10 @@
                 }
                 
                 // Get current status from button
-                const isCurrentlyOpen = toggleButton.classList.contains('bg-green-500');
+                // Note: the UI uses `bg-emerald-500` for Open (not `bg-green-500`), so we check emerald first.
+                const isCurrentlyOpen =
+                    toggleButton.classList.contains('bg-emerald-500') ||
+                    toggleButton.classList.contains('bg-green-500');
                 const newStatus = !isCurrentlyOpen;
                 
                 console.log('Current Status:', isCurrentlyOpen ? 'Open' : 'Closed');
@@ -3534,10 +3698,10 @@
         let currentQuizResults = [];
         let currentQuizType = '';
 
-        function showQuizResultsModal(quizType, results, statistics) {
+        function showQuizResultsModal(quizType, results, statistics, page = 1) {
             currentQuizType = quizType;
             currentQuizResults = results || [];
-            currentQuizResultsPage = 1;
+            currentQuizResultsPage = page;
             
             const quizTitle = getQuizTitle(quizType);
             const totalStudents = currentQuizResults.length;
@@ -3717,7 +3881,7 @@
                     Math.max(...currentQuizResults.map(s => parseFloat(s.percentage))) : 0
             };
             
-            showQuizResultsModal(currentQuizType, currentQuizResults, statistics);
+            showQuizResultsModal(currentQuizType, currentQuizResults, statistics, page);
         }
 
         function getQuizTitle(quizType) {
@@ -4231,8 +4395,31 @@
         // Notification System Variables
         let notifications = [];
         let notificationCheckInterval;
+        
+        // IMPORTANT notifications handling (prevents missing toasts and avoids duplicates)
+        const IMPORTANT_NOTIFICATION_TYPES = new Set([
+            'deadline',
+            'quiz_submitted',
+            'enrollment',
+            'performance',
+            'class_update'
+        ]);
+        
+        const IMPORTANT_HANDLED_STORAGE_KEY = 'teacher_dashboard_important_notifications_handled_ids_v1';
+        let handledImportantIds = new Set();
 
         document.addEventListener('DOMContentLoaded', async function() {
+            // Load already-handled important notification IDs so we don't re-toast on reload.
+            try {
+                const raw = localStorage.getItem(IMPORTANT_HANDLED_STORAGE_KEY);
+                if (raw) {
+                    const arr = JSON.parse(raw);
+                    if (Array.isArray(arr)) handledImportantIds = new Set(arr);
+                }
+            } catch (e) {
+                // ignore storage errors
+            }
+            
             // Show loading overlay
             const loadingOverlay = document.getElementById('loadingOverlay');
             if (loadingOverlay) {
@@ -4436,6 +4623,155 @@
                 }
             }
         }
+        
+        function getImportantToastIcon(type) {
+            if (type === 'deadline') return 'warning';
+            if (type === 'quiz_submitted') return 'success';
+            if (type === 'enrollment') return 'info';
+            if (type === 'performance') return 'info';
+            if (type === 'class_update') return 'info';
+            return 'info';
+        }
+        
+        function getImportantToastColor(type) {
+            if (type === 'deadline') return '#f97316'; // orange
+            if (type === 'quiz_submitted') return '#10b981'; // emerald
+            if (type === 'enrollment') return '#6366f1'; // indigo
+            if (type === 'performance') return '#4f46e5'; // indigo
+            if (type === 'class_update') return '#6366f1'; // indigo
+            return '#6366f1';
+        }
+        
+        function navigateToNotification(notif) {
+            const classId = notif && notif.class_id ? String(notif.class_id) : '';
+            
+            if (notif.type === 'enrollment') {
+                showSection('class-management');
+                if (typeof openPendingRequestsModal === 'function') {
+                    openPendingRequestsModal();
+                }
+                return;
+            }
+            
+            if (notif.type === 'quiz_submitted' || notif.type === 'deadline') {
+                showSection('quiz-management');
+                
+                if (classId) {
+                    const quizClassSelector = document.getElementById('quizClassSelector');
+                    if (quizClassSelector) {
+                        quizClassSelector.value = classId;
+                    }
+                    currentClassId = classId;
+                }
+                
+                // Refresh relevant UI if the functions exist.
+                if (typeof loadQuizStatistics === 'function') loadQuizStatistics();
+                if (typeof loadQuizStatus === 'function') loadQuizStatus();
+                if (typeof loadQuizSettings === 'function') loadQuizSettings();
+                return;
+            }
+            
+            if (notif.type === 'performance') {
+                showSection('class-performance');
+                if (classId) {
+                    const classSelector = document.getElementById('classSelector');
+                    if (classSelector) {
+                        classSelector.value = classId;
+                    }
+                }
+                if (typeof loadClassPerformance === 'function') loadClassPerformance();
+                return;
+            }
+            
+            if (notif.type === 'class_update') {
+                showSection('dashboard');
+                return;
+            }
+            
+            // system/unknown -> keep user on current view
+        }
+        
+        function persistHandledImportantIds() {
+            try {
+                const arr = Array.from(handledImportantIds);
+                localStorage.setItem(IMPORTANT_HANDLED_STORAGE_KEY, JSON.stringify(arr.slice(-200)));
+            } catch (e) {
+                // ignore storage errors
+            }
+        }
+        
+        function processImportantNotifications(notifs) {
+            if (!Array.isArray(notifs) || notifs.length === 0) return;
+            
+            // Only consider unread notifications as "important alerts"
+            const importantUnread = notifs.filter(n => {
+                const isUnread = n && (n.is_read === '0' || n.is_read === 0);
+                return isUnread && n && IMPORTANT_NOTIFICATION_TYPES.has(n.type);
+            });
+            
+            if (importantUnread.length === 0) return;
+
+            const importantToToast = importantUnread.filter(n => !handledImportantIds.has(String(n.id)));
+            if (importantToToast.length === 0) return;
+
+            // For enrollment requests (Pending Requests), auto-navigate/open the modal for urgency.
+            const enrollmentNotif = importantToToast.find(n => String(n.type || '') === 'enrollment');
+            if (enrollmentNotif) {
+                handledImportantIds.add(String(enrollmentNotif.id));
+                persistHandledImportantIds();
+                setTimeout(() => {
+                    try {
+                        navigateToNotification(enrollmentNotif);
+                    } catch (e) {
+                        // If navigation fails, at least the toast still informs the user.
+                        console.error('Auto navigation for enrollment notification failed:', e);
+                    }
+                }, 200);
+            }
+            
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 7000,
+                timerProgressBar: true,
+                padding: '0.8rem 1rem',
+                background: '#ffffff',
+                iconColor: getImportantToastColor((importantToToast[0] && importantToToast[0].type) || 'system')
+            });
+            
+            importantToToast.forEach(notif => {
+                const type = notif.type || 'system';
+                const icon = getImportantToastIcon(type);
+                const toastColor = getImportantToastColor(type);
+                
+                Toast.fire({
+                    icon,
+                    title: notif.title || 'Notification',
+                    text: notif.message || '',
+                    customClass: {
+                        popup: 'shadow-xl'
+                    },
+                    didOpen: (toastEl) => {
+                        // Make toast clickable to navigate
+                        toastEl.style.cursor = 'pointer';
+                        toastEl.addEventListener('click', () => {
+                            navigateToNotification(notif);
+                            // Mark as handled immediately so interval reload won't re-toast.
+                            handledImportantIds.add(String(notif.id));
+                            persistHandledImportantIds();
+                            Swal.close();
+                        });
+                    },
+                    // SweetAlert2 doesn't expose button color for toasts consistently,
+                    // so we keep the icon color + timing only.
+                });
+                
+                handledImportantIds.add(String(notif.id));
+            });
+            
+            persistHandledImportantIds();
+        }
 
         async function loadNotifications() {
             try {
@@ -4453,6 +4789,7 @@
                     notifications = result.notifications || [];
                     displayNotifications(notifications);
                     updateNotificationBadge(result.unread_count || 0);
+                    processImportantNotifications(notifications);
                 } else {
                     console.error('Failed to load notifications:', result.message);
                     displayNotificationError();
@@ -4626,14 +4963,141 @@
                 dropdown.classList.add('hidden');
             }
             
-            // Show all notifications in a modal or separate section
+            const modalHtml = `
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <p class="text-sm font-semibold text-gray-900">Notification History</p>
+                        <p class="text-xs text-gray-500 mt-0.5">Latest notifications (click to open)</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button id="markAllReadBtn" class="px-3 py-2 text-xs font-semibold rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition-colors">
+                            Mark all read
+                        </button>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div id="allNotificationsContainer" class="max-h-[60vh] overflow-y-auto">
+                        <div class="flex items-center justify-center py-10">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
             Swal.fire({
-                title: 'All Notifications',
-                html: '<p class="text-gray-600">Full notification history view coming soon!</p>',
+                title: '',
+                html: modalHtml,
                 icon: 'info',
-                confirmButtonText: 'OK',
-                confirmButtonColor: '#6366f1'
+                showConfirmButton: false,
+                showCloseButton: true,
+                confirmButtonColor: '#6366f1',
+                customClass: { popup: 'rounded-2xl' },
+                width: '40rem',
+                didOpen: () => {
+                    const swalContainer = Swal.getHtmlContainer();
+                    if (!swalContainer) return;
+                    
+                    const refreshBtn = document.getElementById('markAllReadBtn');
+                    if (refreshBtn) {
+                        refreshBtn.addEventListener('click', async (e) => {
+                            e.preventDefault();
+                            try {
+                                await markAllAsRead();
+                                // Reload list after marking all as read.
+                                await renderAllNotificationsIntoModal(swalContainer);
+                            } catch (err) {
+                                console.error('Mark all read failed:', err);
+                            }
+                        });
+                    }
+                    
+                    // Initial render
+                    renderAllNotificationsIntoModal(swalContainer);
+                }
             });
+        }
+        
+        async function renderAllNotificationsIntoModal(swalContainerEl) {
+            if (!swalContainerEl) return;
+            
+            const container = swalContainerEl.querySelector('#allNotificationsContainer');
+            if (!container) return;
+            
+            try {
+                const response = await fetch('php/get-notifications.php', {
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                const notifs = result && result.success ? (result.notifications || []) : [];
+                
+                if (!Array.isArray(notifs) || notifs.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-10">
+                            <i class="fas fa-bell-slash text-4xl text-gray-300 mb-3"></i>
+                            <p class="text-sm font-medium text-gray-700">No notifications yet</p>
+                            <p class="text-xs text-gray-500 mt-1">You’re all caught up.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = notifs.map(notif => {
+                    const isUnread = notif && (notif.is_read === '0' || notif.is_read === 0);
+                    const timeAgo = getTimeAgo(notif.created_at);
+                    
+                    return `
+                        <div 
+                            class="notification-item p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer ${isUnread ? 'bg-indigo-50' : ''}"
+                            data-notif-id="${notif.id}"
+                        >
+                            <div class="flex items-start space-x-3">
+                                <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${getNotificationIconBg(notif.type)}">
+                                    <i class="${getNotificationIcon(notif.type)} text-white text-sm"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-start justify-between gap-3">
+                                        <p class="text-sm font-medium text-gray-900">${notif.title || 'Notification'}</p>
+                                        ${isUnread ? '<span class="flex-shrink-0 w-2 h-2 bg-indigo-600 rounded-full mt-2"></span>' : ''}
+                                    </div>
+                                    <p class="text-xs text-gray-600 mt-1 line-clamp-3">${notif.message || ''}</p>
+                                    <div class="flex items-center mt-2 space-x-3">
+                                        <span class="text-xs text-gray-500"><i class="fas fa-clock mr-1"></i>${timeAgo}</span>
+                                        ${notif.class_name ? `<span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded"><i class="fas fa-chalkboard-teacher mr-1"></i>${notif.class_name}</span>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                // Click handlers: navigate + mark read
+                container.querySelectorAll('[data-notif-id]').forEach(el => {
+                    el.addEventListener('click', async () => {
+                        const id = el.getAttribute('data-notif-id');
+                        const notif = notifs.find(n => String(n.id) === String(id));
+                        if (!notif) return;
+                        
+                        // Mark read then navigate.
+                        await markNotificationAsRead(notif.id);
+                        navigateToNotification(notif);
+                        Swal.close();
+                    });
+                });
+            } catch (err) {
+                console.error('Error rendering notifications modal:', err);
+                container.innerHTML = `
+                    <div class="text-center py-10">
+                        <i class="fas fa-exclamation-triangle text-4xl text-red-300 mb-3"></i>
+                        <p class="text-sm font-medium text-gray-700">Failed to load notifications</p>
+                        <p class="text-xs text-gray-500 mt-1">Please try again.</p>
+                    </div>
+                `;
+            }
         }
 
         async function loadQuizStatistics() {
@@ -4913,8 +5377,9 @@
                 statusElement.className = 'text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded-full';
             }
             if (toggleButton) {
-                toggleButton.textContent = 'Open Quiz';
-                toggleButton.className = 'bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors';
+                // Keep the same toggle button layout as Open/Closed states.
+                toggleButton.innerHTML = '<i class="fas fa-unlock mr-2"></i><span>Open</span>';
+                toggleButton.className = 'w-full px-4 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center bg-emerald-500 hover:bg-emerald-600 text-white';
             }
         }
         
@@ -5592,56 +6057,90 @@
                 const renderStudentList = (el, items, tone) => {
                     if (!el) return;
                     if (!items || items.length === 0) {
-                        el.innerHTML = `<p class="text-xs text-gray-500">No data yet</p>`;
+                        el.innerHTML = `<p class="text-xs text-gray-500 p-2">No data yet</p>`;
                         return;
                     }
-                    el.innerHTML = items.map((x, idx) => {
-                        const name = x.student.student_name || `${x.student.first_name || ''} ${x.student.last_name || ''}`.trim() || 'Student';
-                        let badge, icon, urgency;
-                        if (tone === 'top') {
-                            badge = 'bg-emerald-100 text-emerald-800';
-                            icon = '🏆';
-                            urgency = '';
-                        } else {
-                            // Determine urgency level for weak students
-                            if (x.category === 'Critical') {
-                                badge = 'bg-red-100 text-red-800';
-                                icon = '🚨';
-                                urgency = 'Critical';
-                            } else if (x.category === 'Needs Support') {
-                                badge = 'bg-orange-100 text-orange-800';
-                                icon = '⚠️';
-                                urgency = 'Needs Support';
-                            } else {
-                                badge = 'bg-yellow-100 text-yellow-800';
-                                icon = '📊';
-                                urgency = 'At Risk';
-                            }
-                        }
-                        const studentId = x.student.student_id || x.student.id || 0;
-                        if (!studentId) {
-                            console.warn('Student ID missing for:', x.student);
-                            return '';
-                        }
-                        const quizText = x.quizzesTaken === 1 ? 'quiz' : 'quizzes';
-                        const lessonsCompleted = (x.student.functions_lessons_completed || 0) + 
-                                               (x.student.evaluating_functions_lessons_completed || 0) +
-                                               (x.student.operations_lessons_completed || 0);
-                        const scoreDisplay = x.avg > 0 ? `${x.avg.toFixed(1)}%` : 'No quizzes';
-                        return `
-                            <div class="flex items-center justify-between cursor-pointer hover:bg-white hover:bg-opacity-50 rounded-lg p-2 transition-colors border-l-2 ${tone === 'top' ? 'border-emerald-400' : urgency === 'Critical' ? 'border-red-400' : urgency === 'Needs Support' ? 'border-orange-400' : 'border-yellow-400'}" onclick="viewStudentDetails(${studentId})" title="Click to view details">
-                                <div class="min-w-0 flex-1">
-                                    <div class="flex items-center space-x-2">
-                                        <span class="text-sm">${icon}</span>
-                                        <p class="text-sm font-semibold text-gray-900 truncate">${idx + 1}. ${name}</p>
-                                    </div>
-                                    <p class="text-xs text-gray-500 truncate">${x.quizzesTaken || 0} ${quizText} • ${lessonsCompleted} lessons</p>
-                                    ${urgency ? `<p class="text-xs ${urgency === 'Critical' ? 'text-red-600' : urgency === 'Needs Support' ? 'text-orange-600' : 'text-yellow-600'} font-medium mt-1">${urgency}</p>` : ''}
-                                </div>
-                                <span class="text-xs px-2 py-1 rounded-full ${badge} font-semibold">${scoreDisplay}</span>
-                            </div>
-                        `;
-                    }).filter(html => html !== '').join('');
+                    const isTop = tone === 'top';
+
+                    el.innerHTML = `
+                        <div class="min-w-[320px]">
+                            <table class="min-w-full text-sm">
+                                <thead>
+                                    <tr class="text-left text-xs font-bold text-gray-600 uppercase tracking-wider bg-gray-50">
+                                        <th class="px-3 py-2 w-[46px]">#</th>
+                                        <th class="px-3 py-2">Student</th>
+                                        <th class="px-3 py-2 text-center w-[92px]">Quizzes</th>
+                                        <th class="px-3 py-2 text-center w-[92px]">Lessons</th>
+                                        ${isTop ? '' : '<th class="px-3 py-2">Status</th>'}
+                                        <th class="px-3 py-2 text-right w-[92px]">Score</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200 bg-white">
+                                    ${items.map((x, idx) => {
+                                        const name = x.student.student_name || `${x.student.first_name || ''} ${x.student.last_name || ''}`.trim() || 'Student';
+                                        let badge, icon, urgency;
+
+                                        if (isTop) {
+                                            badge = 'bg-emerald-100 text-emerald-800';
+                                            icon = '🏆';
+                                            urgency = '';
+                                        } else {
+                                            // Determine urgency level for weak students
+                                            if (x.category === 'Critical') {
+                                                badge = 'bg-red-100 text-red-800';
+                                                icon = '🚨';
+                                                urgency = 'Critical';
+                                            } else if (x.category === 'Needs Support') {
+                                                badge = 'bg-orange-100 text-orange-800';
+                                                icon = '⚠️';
+                                                urgency = 'Needs Support';
+                                            } else {
+                                                badge = 'bg-yellow-100 text-yellow-800';
+                                                icon = '📊';
+                                                urgency = 'At Risk';
+                                            }
+                                        }
+
+                                        const studentId = x.student.student_id || x.student.id || 0;
+                                        if (!studentId) {
+                                            console.warn('Student ID missing for:', x.student);
+                                            return '';
+                                        }
+
+                                        const lessonsCompleted = (x.student.functions_lessons_completed || 0) +
+                                            (x.student.evaluating_functions_lessons_completed || 0) +
+                                            (x.student.operations_lessons_completed || 0);
+
+                                        const scoreDisplay = x.avg > 0 ? `${x.avg.toFixed(1)}%` : 'No quizzes';
+
+                                        return `
+                                            <tr class="cursor-pointer hover:bg-indigo-50/50 transition-colors" onclick="viewStudentDetails(${studentId})" title="Click to view details">
+                                                <td class="px-3 py-2 text-xs font-semibold text-gray-500">${idx + 1}</td>
+                                                <td class="px-3 py-2">
+                                                    <div class="flex items-center gap-2 min-w-0">
+                                                        <span class="text-base">${icon}</span>
+                                                        <span class="font-semibold text-gray-900 truncate">${name}</span>
+                                                    </div>
+                                                </td>
+                                                <td class="px-3 py-2 text-center text-xs font-semibold text-gray-700">${x.quizzesTaken || 0}</td>
+                                                <td class="px-3 py-2 text-center text-xs font-semibold text-gray-700">${lessonsCompleted}</td>
+                                                ${isTop ? '' : `<td class="px-3 py-2">
+                                                    <span class="inline-flex items-center px-2 py-1 rounded-full ${badge} text-xs font-semibold">
+                                                        ${urgency || ''}
+                                                    </span>
+                                                </td>`}
+                                                <td class="px-3 py-2 text-right">
+                                                    <span class="inline-flex items-center justify-end px-2 py-1 rounded-full ${badge} text-xs font-semibold">
+                                                        ${scoreDisplay}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        `;
+                                    }).filter(html => html !== '').join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
                 };
 
                 renderStudentList(topList, top5, 'top');
@@ -5818,8 +6317,8 @@
                                         'rgba(59, 130, 246, 1)',
                                         'rgba(168, 85, 247, 1)'
                                     ],
-                                    borderWidth: 3,
-                                    borderRadius: 8,
+                                    borderWidth: 0,
+                                    borderRadius: 12,
                                     borderSkipped: false,
                                     hoverBackgroundColor: [
                                         'rgba(239, 68, 68, 1)',
@@ -5828,14 +6327,17 @@
                                         'rgba(59, 130, 246, 1)',
                                         'rgba(168, 85, 247, 1)'
                                     ],
-                                    hoverBorderWidth: 4,
-                                    barThickness: 'flex',
-                                    maxBarThickness: 60
+                                    hoverBorderWidth: 0,
+                                    categoryPercentage: 0.75,
+                                    barPercentage: 0.9,
+                                    barThickness: 46,
+                                    maxBarThickness: 52
                                 }]
                             },
                             options: {
                                 responsive: true,
                                 maintainAspectRatio: false,
+                                indexAxis: 'y', // horizontal bars for a cleaner dashboard look
                                 animation: {
                                     duration: 1500,
                                     easing: 'easeInOutQuart'
@@ -5846,7 +6348,7 @@
                                 },
                                 plugins: {
                                     legend: {
-                                        display: true,
+                                        display: false,
                                         position: 'top',
                                         labels: {
                                             usePointStyle: true,
@@ -5893,11 +6395,7 @@
                                                 return [
                                                     `Students: ${count}`,
                                                     `Percentage: ${percentage}%`,
-                                                    `Status: ${status}`,
-                                                    studentsInBand.length > 0 ? `\nTop students in this range:` : '',
-                                                    ...studentsInBand.slice(0, 3).map((s, i) => 
-                                                        `  ${i + 1}. ${(s.student.student_name || s.student.first_name + ' ' + s.student.last_name).substring(0, 20)} (${s.avg.toFixed(1)}%)`
-                                                    )
+                                                    `Status: ${status}`
                                                 ];
                                             }
                                         }
@@ -5906,60 +6404,32 @@
                                 scales: {
                                     y: {
                                         beginAtZero: true,
+                                        // In horizontal mode, `y` is the category axis.
+                                        grid: {
+                                            display: false
+                                        },
+                                        ticks: { font: { size: 12, weight: '700' }, color: '#374151' }
+                                    },
+                                    x: {
+                                        // `x` becomes the numeric axis in horizontal mode.
+                                        grid: {
+                                            display: true,
+                                            drawBorder: false,
+                                            color: 'rgba(0, 0, 0, 0.07)'
+                                        },
                                         ticks: {
                                             precision: 0,
                                             stepSize: 1,
-                                            font: {
-                                                size: 11,
-                                                weight: '500'
-                                            },
+                                            font: { size: 11, weight: '700' },
                                             color: '#6B7280',
-                                            padding: 8
-                                        },
-                                        grid: {
-                                            color: 'rgba(0, 0, 0, 0.08)',
-                                            drawBorder: false,
-                                            lineWidth: 1
+                                            padding: 6
                                         },
                                         title: {
                                             display: true,
                                             text: 'Number of Students',
-                                            font: {
-                                                size: 12,
-                                                weight: '600'
-                                            },
+                                            font: { size: 12, weight: '700' },
                                             color: '#374151',
-                                            padding: {
-                                                top: 10,
-                                                bottom: 5
-                                            }
-                                        }
-                                    },
-                                    x: {
-                                        grid: {
-                                            display: false,
-                                            drawBorder: false
-                                        },
-                                        ticks: {
-                                            font: {
-                                                size: 12,
-                                                weight: '600'
-                                            },
-                                            color: '#374151',
-                                            padding: 10
-                                        },
-                                        title: {
-                                            display: true,
-                                            text: 'Score Range (%)',
-                                            font: {
-                                                size: 12,
-                                                weight: '600'
-                                            },
-                                            color: '#374151',
-                                            padding: {
-                                                top: 10,
-                                                bottom: 5
-                                            }
+                                            padding: { top: 10, bottom: 5 }
                                         }
                                     }
                                 },
@@ -5971,6 +6441,7 @@
                                 id: 'barLabels',
                                 afterDatasetsDraw: (chart) => {
                                     const ctx = chart.ctx;
+                                    const isHorizontal = chart.options.indexAxis === 'y';
                                     chart.data.datasets.forEach((dataset, i) => {
                                         const meta = chart.getDatasetMeta(i);
                                         meta.data.forEach((bar, index) => {
@@ -5979,16 +6450,42 @@
                                                 const x = bar.x;
                                                 const y = bar.y;
                                                 const percentage = percentages[index];
+                                                    const topY = chart.chartArea ? chart.chartArea.top : 0;
                                                 
                                                 ctx.save();
+                                                    ctx.shadowColor = 'rgba(0,0,0,0.15)';
+                                                    ctx.shadowBlur = 6;
                                                 ctx.fillStyle = '#374151';
                                                 ctx.font = 'bold 11px Inter, sans-serif';
-                                                ctx.textAlign = 'center';
-                                                ctx.textBaseline = 'bottom';
-                                                ctx.fillText(`${value}`, x, y - 4);
-                                                ctx.font = '10px Inter, sans-serif';
+
+                                                if (isHorizontal) {
+                                                    // For horizontal bars, place labels to the right of the bar.
+                                                    const rightX = x + bar.width + 8;
+                                                    const safeRight = chart.chartArea ? (chart.chartArea.right - 6) : rightX;
+                                                    const labelX = Math.min(rightX, safeRight);
+                                                    ctx.textAlign = 'left';
+                                                    ctx.textBaseline = 'middle';
+                                                    ctx.fillText(`${value}`, labelX, y);
+                                                } else {
+                                                    const valueY = y - 4;
+                                                    ctx.textAlign = 'center';
+                                                    ctx.textBaseline = 'bottom';
+                                                    if (valueY > topY + 10) ctx.fillText(`${value}`, x, valueY);
+                                                }
+                                                    ctx.shadowBlur = 0;
+                                                    ctx.font = '10px Inter, sans-serif';
                                                 ctx.fillStyle = '#6B7280';
-                                                ctx.fillText(`(${percentage}%)`, x, y - 18);
+                                                    if (isHorizontal) {
+                                                        const rightX = x + bar.width + 8;
+                                                        const safeRight = chart.chartArea ? (chart.chartArea.right - 6) : rightX;
+                                                        const labelX = Math.min(rightX, safeRight);
+                                                        ctx.textAlign = 'left';
+                                                        ctx.textBaseline = 'middle';
+                                                        ctx.fillText(`(${percentage}%)`, labelX, y + 14);
+                                                    } else {
+                                                        const percentY = y - 18;
+                                                        if (percentY > topY + 10) ctx.fillText(`(${percentage}%)`, x, percentY);
+                                                    }
                                                 ctx.restore();
                                             }
                                         });
@@ -6257,23 +6754,42 @@
         }
 
         // Display performance table using quiz data
-        async function displayClassPerformanceTableFromQuizData(students) {
+        async function displayClassPerformanceTableFromQuizData(students, page = 1, perPage = 10, shouldStore = true) {
             const tableBody = document.getElementById('performanceTableBody');
             if (!tableBody) return;
 
-            storeStudentsData(students);
+            const allStudents = Array.isArray(students) ? students : [];
+            if (shouldStore) {
+                storeStudentsData(allStudents);
+            }
 
-            if (students.length === 0) {
+            const totalStudents = allStudents.length;
+            const totalPages = Math.max(1, Math.ceil(totalStudents / perPage));
+            const safePage = Math.min(Math.max(page, 1), totalPages);
+            // Keep pagination state in sync so Prev/Next works on initial load too.
+            currentPerformanceStudents = allStudents;
+            currentPerformancePage = safePage;
+            const startIndex = (safePage - 1) * perPage;
+            const pagedStudents = allStudents.slice(startIndex, startIndex + perPage);
+
+            if (totalStudents === 0) {
                 tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-gray-500">No students in this class</td></tr>';
+                if (typeof renderPerformancePagination === 'function') {
+                    renderPerformancePagination(0, 1, 1, perPage);
+                }
                 return;
             }
 
-            // Fetch badges count for all students
-            const studentIds = students.map(s => s.student_id);
+            if (typeof renderPerformancePagination === 'function') {
+                renderPerformancePagination(totalStudents, safePage, totalPages, perPage);
+            }
+
+            // Fetch badges count only for the current page to reduce load.
+            const studentIds = pagedStudents.map(s => s.student_id);
             const badgesData = await fetchBadgesForStudents(studentIds);
             
             let tableHTML = '';
-            students.forEach((student, index) => {
+            pagedStudents.forEach((student, index) => {
                 // Get all quiz scores
                 const functionsScore = student.functions_quiz_best_score || 0;
                 const evaluatingScore = student.evaluating_functions_quiz_best_score || 0;
@@ -6359,10 +6875,21 @@
                 
                 // Determine if student needs attention (highlight in yellow)
                 const needsAttention = avgScore < 60 && hasTakenQuizzes;
-                const rowClass = needsAttention ? 'bg-yellow-50 hover:bg-yellow-100' : 'hover:bg-gray-50';
+                const stripeClass = index % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+                const rowClass = needsAttention
+                    ? 'bg-yellow-50 hover:bg-yellow-100'
+                    : `${stripeClass} hover:bg-gray-100`;
                 
-                // Color coding function for quiz scores
-                const getScoreClass = (score) => score >= 70 ? 'text-green-600 font-semibold' : (score > 0 ? 'text-red-600' : 'text-gray-400');
+                // Color coding function for quiz scores (pill-style for clean table scanning)
+                const getScoreClass = (score) => {
+                    if (score >= 70) {
+                        return 'bg-green-50 text-green-700 border border-green-100 font-semibold px-2 py-1 rounded-full inline-flex items-center justify-center w-14';
+                    }
+                    if (score > 0) {
+                        return 'bg-red-50 text-red-700 border border-red-100 font-semibold px-2 py-1 rounded-full inline-flex items-center justify-center w-14';
+                    }
+                    return 'bg-gray-50 text-gray-500 border border-gray-100 font-semibold px-2 py-1 rounded-full inline-flex items-center justify-center w-14';
+                };
                 
                 // Get classes for each quiz
                 const functionsClass = getScoreClass(functionsScore);
@@ -6374,7 +6901,11 @@
                 const representationsClass = getScoreClass(representationsScore);
                 const domainRangeClass = getScoreClass(domainRangeScore);
                 const oneToOneClass = getScoreClass(oneToOneScore);
-                const avgClass = avgScore >= 70 ? 'text-green-600 font-bold' : (avgScore > 0 ? 'text-gray-700 font-semibold' : 'text-gray-400');
+                const avgClass = avgScore >= 70
+                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-200 font-bold px-3 py-1 rounded-full inline-flex items-center justify-center min-w-[78px]'
+                    : (avgScore > 0
+                        ? 'bg-gray-100 text-gray-700 border border-gray-200 font-semibold px-3 py-1 rounded-full inline-flex items-center justify-center min-w-[78px]'
+                        : 'bg-gray-50 text-gray-500 border border-gray-100 font-semibold px-3 py-1 rounded-full inline-flex items-center justify-center min-w-[78px]');
                 
                 // Calculate quiz summary (passed/total)
                 const passedQuizzes = quizScores.filter(score => score >= 70).length;
@@ -6396,7 +6927,7 @@
 
                 tableHTML += `
                 <tr class="${rowClass} cursor-pointer transition-colors" onclick="viewStudentDetails(${student.student_id})">
-                    <td class="px-3 py-3 text-sm text-gray-900 text-center border-r border-gray-200 sticky left-0 bg-inherit">${index + 1}</td>
+                    <td class="px-3 py-3 text-sm text-gray-900 text-center border-r border-gray-200 sticky left-0 bg-inherit">${startIndex + index + 1}</td>
                     <td class="px-4 py-3 text-sm text-gray-900 border-r border-gray-200 sticky left-12 bg-inherit">
                         <div class="font-medium">${firstName} ${lastName}</div>
                     </td>
@@ -6427,10 +6958,10 @@
                     <td class="px-3 py-3 text-sm text-center border-r border-gray-300">
                         <span class="${oneToOneClass}">${oneToOneScore > 0 ? oneToOneScore.toFixed(1) : '-'}</span>
                     </td>
-                    <td class="px-4 py-3 text-sm text-center bg-green-50 border-r border-gray-200">
+                    <td class="px-4 py-3 text-sm text-center border-r border-gray-200">
                         <span class="${avgClass}">${avgScore > 0 ? avgScore.toFixed(1) : '-'}%</span>
                     </td>
-                    <td class="px-4 py-3 text-sm text-center bg-blue-50 border-r border-gray-200">
+                    <td class="px-4 py-3 text-sm text-center border-r border-gray-200">
                         <div class="flex flex-col items-center">
                             <span class="font-semibold text-blue-700">${totalQuizzesTaken > 0 ? `${passedQuizzes}/${totalQuizzesTaken}` : '-'}</span>
                             <span class="text-xs text-blue-600 mt-1">${passedQuizzes > 0 ? 'Passed' : totalQuizzesTaken > 0 ? 'Failed' : 'None'}</span>
@@ -8092,6 +8623,82 @@
             allStudentsData = students;
         }
 
+        // Student performance table pagination (10 rows per page)
+        let currentPerformanceStudents = [];
+        let currentPerformancePage = 1;
+        const performanceRowsPerPage = 10;
+        let isPerformanceTableRendering = false;
+        let pendingPerformanceTableRender = null;
+
+        function changePerformancePage(page) {
+            const totalItems = currentPerformanceStudents.length || 0;
+            const totalPages = Math.max(1, Math.ceil(totalItems / performanceRowsPerPage));
+            const safePage = Math.min(Math.max(page, 1), totalPages);
+            if (safePage === currentPerformancePage) return;
+            currentPerformancePage = safePage;
+            renderPerformanceTablePage(currentPerformanceStudents, currentPerformancePage);
+        }
+
+        function renderPerformancePagination(totalItems, currentPage, totalPages) {
+            const container = document.getElementById('performancePagination');
+            if (!container) return;
+
+            if (!totalItems) {
+                container.innerHTML = `
+                    <div class="text-sm text-gray-600">No students found</div>
+                `;
+                return;
+            }
+
+            const start = (currentPage - 1) * performanceRowsPerPage + 1;
+            const end = Math.min(totalItems, currentPage * performanceRowsPerPage);
+
+            const prevDisabled = currentPage === 1;
+            const nextDisabled = currentPage === totalPages;
+
+            container.innerHTML = `
+                <div class="w-full flex flex-col sm:flex-row items-center justify-between gap-2">
+                    <div class="text-sm text-gray-600">
+                        Showing <span class="font-semibold">${start}</span>-<span class="font-semibold">${end}</span> of <span class="font-semibold">${totalItems}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button
+                            onclick="changePerformancePage(${currentPage - 1})"
+                            class="px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${prevDisabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700 text-white'}"
+                            ${prevDisabled ? 'disabled' : ''}
+                        >
+                            Previous
+                        </button>
+                        <span class="text-sm text-gray-600 font-semibold">Page ${currentPage} of ${totalPages}</span>
+                        <button
+                            onclick="changePerformancePage(${currentPage + 1})"
+                            class="px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${nextDisabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700 text-white'}"
+                            ${nextDisabled ? 'disabled' : ''}
+                        >
+                            Next
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function renderPerformanceTablePage(students, page) {
+            pendingPerformanceTableRender = { students, page };
+            if (isPerformanceTableRendering) return;
+
+            isPerformanceTableRendering = true;
+            try {
+                // Render latest requested view only (prevents race while typing/filtering)
+                while (pendingPerformanceTableRender) {
+                    const { students: pendingStudents, page: pendingPage } = pendingPerformanceTableRender;
+                    pendingPerformanceTableRender = null;
+                    await displayClassPerformanceTableFromQuizData(pendingStudents, pendingPage, performanceRowsPerPage, false);
+                }
+            } finally {
+                isPerformanceTableRendering = false;
+            }
+        }
+
         function filterStudentPerformance() {
             const searchInput = document.getElementById('studentSearchInput');
             const filterSelect = document.getElementById('performanceFilterSelect');
@@ -8163,112 +8770,9 @@
         }
 
         function displayFilteredStudents(students) {
-            const tableBody = document.getElementById('performanceTableBody');
-            if (!tableBody) return;
-
-            if (students.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="12" class="px-4 py-8 text-center text-gray-500"><i class="fas fa-search mr-2"></i>No students found matching your search criteria</td></tr>';
-                return;
-            }
-
-            let tableHTML = '';
-            students.forEach((student, index) => {
-                const functionsScore = student.functions_quiz_best_score || 0;
-                const evaluatingScore = student.evaluating_functions_quiz_best_score || 0;
-                const operationsScore = student.operations_on_functions_quiz_best_score || 0;
-                const realLifeScore = student.real_life_problems_quiz_best_score || 0;
-                const rationalScore = student.rational_functions_quiz_best_score || 0;
-                const solvingScore = student.solving_rational_equations_quiz_best_score || 0;
-                const representationsScore = student.representations_of_rational_functions_quiz_best_score || 0;
-                const domainRangeScore = student.domain_range_rational_functions_quiz_best_score || 0;
-                const oneToOneScore = student.one_to_one_functions_quiz_best_score || 0;
-                
-                const performanceStatus = student.overall_performance_status || 'NEEDS_IMPROVEMENT';
-                
-                const hasTakenQuizzes = functionsScore > 0 || evaluatingScore > 0 || operationsScore > 0 || 
-                                       realLifeScore > 0 || rationalScore > 0 || solvingScore > 0 ||
-                                       representationsScore > 0 || domainRangeScore > 0 || oneToOneScore > 0;
-                
-                const totalScore = functionsScore + evaluatingScore + operationsScore + realLifeScore + 
-                                  rationalScore + solvingScore + representationsScore + domainRangeScore + oneToOneScore;
-                // Calculate average only from quizzes that have been taken
-                const quizScoresArray = [
-                    functionsScore,
-                    evaluatingScore,
-                    operationsScore,
-                    realLifeScore,
-                    rationalScore,
-                    solvingScore,
-                    representationsScore,
-                    domainRangeScore,
-                    oneToOneScore
-                ];
-                const takenQuizzesArray = quizScoresArray.filter(score => score > 0);
-                const avgScore = takenQuizzesArray.length > 0 
-                    ? takenQuizzesArray.reduce((sum, score) => sum + score, 0) / takenQuizzesArray.length 
-                    : 0;
-                
-                const nameParts = student.student_name.split(' ');
-                const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : '';
-                const firstName = nameParts.length > 1 ? nameParts.slice(0, -1).join(' ') : student.student_name;
-                
-                const needsAttention = avgScore < 60 && hasTakenQuizzes;
-                const rowClass = needsAttention ? 'bg-yellow-50 hover:bg-yellow-100' : 'hover:bg-gray-50';
-                
-                const getScoreClass = (score) => score >= 70 ? 'text-green-600 font-semibold' : (score > 0 ? 'text-red-600' : 'text-gray-400');
-                
-                const functionsClass = getScoreClass(functionsScore);
-                const evaluatingClass = getScoreClass(evaluatingScore);
-                const operationsClass = getScoreClass(operationsScore);
-                const realLifeClass = getScoreClass(realLifeScore);
-                const rationalClass = getScoreClass(rationalScore);
-                const solvingClass = getScoreClass(solvingScore);
-                const representationsClass = getScoreClass(representationsScore);
-                const domainRangeClass = getScoreClass(domainRangeScore);
-                const oneToOneClass = getScoreClass(oneToOneScore);
-                const avgClass = avgScore >= 70 ? 'text-green-600 font-bold' : (avgScore > 0 ? 'text-gray-700 font-semibold' : 'text-gray-400');
-
-                tableHTML += `
-                <tr class="${rowClass} cursor-pointer transition-colors" onclick="viewStudentDetails(${student.student_id})">
-                    <td class="px-3 py-3 text-sm text-gray-900 text-center border-r border-gray-200 sticky left-0 bg-inherit">${index + 1}</td>
-                    <td class="px-4 py-3 text-sm text-gray-900 border-r border-gray-200 sticky left-12 bg-inherit">
-                        <div class="font-medium">${firstName} ${lastName}</div>
-                    </td>
-                    <td class="px-3 py-3 text-sm text-center border-r border-gray-200">
-                        <span class="${functionsClass}">${functionsScore > 0 ? functionsScore.toFixed(1) : '-'}</span>
-                    </td>
-                    <td class="px-3 py-3 text-sm text-center border-r border-gray-200">
-                        <span class="${evaluatingClass}">${evaluatingScore > 0 ? evaluatingScore.toFixed(1) : '-'}</span>
-                    </td>
-                    <td class="px-3 py-3 text-sm text-center border-r border-gray-200">
-                        <span class="${operationsClass}">${operationsScore > 0 ? operationsScore.toFixed(1) : '-'}</span>
-                    </td>
-                    <td class="px-3 py-3 text-sm text-center border-r border-gray-200">
-                        <span class="${realLifeClass}">${realLifeScore > 0 ? realLifeScore.toFixed(1) : '-'}</span>
-                    </td>
-                    <td class="px-3 py-3 text-sm text-center border-r border-gray-200">
-                        <span class="${rationalClass}">${rationalScore > 0 ? rationalScore.toFixed(1) : '-'}</span>
-                    </td>
-                    <td class="px-3 py-3 text-sm text-center border-r border-gray-200">
-                        <span class="${solvingClass}">${solvingScore > 0 ? solvingScore.toFixed(1) : '-'}</span>
-                    </td>
-                    <td class="px-3 py-3 text-sm text-center border-r border-gray-200">
-                        <span class="${representationsClass}">${representationsScore > 0 ? representationsScore.toFixed(1) : '-'}</span>
-                    </td>
-                    <td class="px-3 py-3 text-sm text-center border-r border-gray-200">
-                        <span class="${domainRangeClass}">${domainRangeScore > 0 ? domainRangeScore.toFixed(1) : '-'}</span>
-                    </td>
-                    <td class="px-3 py-3 text-sm text-center border-r border-gray-300">
-                        <span class="${oneToOneClass}">${oneToOneScore > 0 ? oneToOneScore.toFixed(1) : '-'}</span>
-                    </td>
-                    <td class="px-4 py-3 text-sm text-center bg-green-50">
-                        <span class="${avgClass}">${avgScore > 0 ? avgScore.toFixed(1) : '-'}%</span>
-                    </td>
-                </tr>
-            `;
-            });
-
-            tableBody.innerHTML = tableHTML;
+            currentPerformanceStudents = Array.isArray(students) ? students : [];
+            currentPerformancePage = 1;
+            renderPerformanceTablePage(currentPerformanceStudents, currentPerformancePage);
         }
 
         function clearStudentSearch() {

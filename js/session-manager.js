@@ -14,13 +14,15 @@ class SessionManager {
 
     // Detect current user type from the page
     detectUserType() {
-        const currentPath = window.location.pathname;
-        
+        const currentPath = (window.location.pathname || '').toLowerCase();
+
         if (currentPath.includes('teacher-')) {
             this.currentUserType = 'teacher';
-        } else if (currentPath.includes('dashboard.html') || 
-                   currentPath.includes('topics/') || 
-                   currentPath.includes('quizzes.html')) {
+        } else if (currentPath.includes('dashboard.html') ||
+                   currentPath.includes('topics/') ||
+                   currentPath.includes('quizzes.html') ||
+                   currentPath.includes('flashcards.html') ||
+                   currentPath.includes('flashcards/')) {
             this.currentUserType = 'student';
         }
         
@@ -220,6 +222,16 @@ class SessionManager {
 
     // Prevent access to wrong user type pages
     async validatePageAccess() {
+        // If we couldn't detect page/user type reliably, probe both endpoints.
+        if (!this.currentUserType) {
+            const studentOk = await this.checkLoginStatusByType('student');
+            if (studentOk) this.currentUserType = 'student';
+            else {
+                const teacherOk = await this.checkLoginStatusByType('teacher');
+                if (teacherOk) this.currentUserType = 'teacher';
+            }
+        }
+
         const isLoggedIn = await this.checkLoginStatus();
         
         if (!isLoggedIn) {
@@ -267,6 +279,33 @@ class SessionManager {
         }
 
         return true;
+    }
+
+    async checkLoginStatusByType(userType) {
+        try {
+            let checkUrl = '';
+
+            if (userType === 'teacher') {
+                checkUrl = 'php/teacher-user.php';
+            } else {
+                checkUrl = 'php/user.php';
+            }
+
+            const response = await fetch(checkUrl, {
+                credentials: 'include',
+                cache: 'no-store'
+            });
+
+            if (response.status === 200) {
+                const result = await response.json();
+                return !!result.success;
+            }
+
+            return false;
+        } catch (error) {
+            console.error('Login status check error:', error);
+            return false;
+        }
     }
 
     // Cleanup on page unload

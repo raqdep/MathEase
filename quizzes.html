@@ -498,7 +498,7 @@
     <div id="quizLeaderboardModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col">
             <!-- Modal Header -->
-            <div class="bg-white rounded-t-2xl p-8 flex-shrink-0">
+            <div class="bg-white rounded-t-2xl p-8 flex-shrink-0 relative">
                 <div class="text-center mb-8">
                     <div class="w-20 h-20 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-trophy text-3xl"></i>
@@ -506,7 +506,7 @@
                     <h2 class="text-3xl font-bold text-gray-800 mb-2" id="leaderboardModalTitle">Class Leaderboard</h2>
                     <p class="text-lg text-gray-600" id="leaderboardModalSubtitle">All students from your class ranked by score and speed</p>
                 </div>
-                <button onclick="closeQuizLeaderboard()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors p-2 hover:bg-gray-100 rounded-full">
+                <button onclick="closeQuizLeaderboard()" class="absolute top-4 right-4 z-10 text-gray-500 hover:text-gray-700 transition-colors p-2 hover:bg-gray-100 rounded-full" aria-label="Close leaderboard">
                     <i class="fas fa-times text-2xl"></i>
                 </button>
             </div>
@@ -528,7 +528,7 @@
     <div id="quizResultsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl max-h-[90vh] flex flex-col">
             <!-- Modal Header -->
-            <div class="bg-white rounded-t-2xl p-8 flex-shrink-0">
+            <div class="bg-white rounded-t-2xl p-8 flex-shrink-0 relative">
                 <div class="text-center mb-8">
                     <div id="resultsCharacter" class="w-24 h-24 mx-auto mb-4 flex items-center justify-center">
                         <img src="Img/Character/tips_approved-removebg-preview.png" 
@@ -539,7 +539,7 @@
                     <h2 class="text-3xl font-bold text-gray-800 mb-2" id="resultsModalTitle">Quiz Complete!</h2>
                     <p class="text-lg text-gray-600" id="resultsModalSubtitle">Here's how you performed</p>
                 </div>
-                <button onclick="closeQuizResults()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors p-2 hover:bg-gray-100 rounded-full">
+                <button onclick="closeQuizResults()" class="absolute top-4 right-4 z-10 text-gray-500 hover:text-gray-700 transition-colors p-2 hover:bg-gray-100 rounded-full" aria-label="Close quiz results">
                     <i class="fas fa-times text-2xl"></i>
                 </button>
             </div>
@@ -1617,11 +1617,17 @@
         // Update quiz cards with status information
         function updateQuizCardsWithStatus(status) {
             console.log('Updating quiz cards with status:', status);
-            
-            // Process all quiz types
-            Object.keys(status).forEach(quizType => {
-                const isOpen = status[quizType];
-                console.log(`Quiz ${quizType} status: ${isOpen ? 'Open' : 'Closed'}`);
+
+            // Update every quiz card present on the page (even if the API doesn't include that key).
+            const quizCards = document.querySelectorAll('[data-quiz-type]');
+            quizCards.forEach((card) => {
+                const quizType = card.getAttribute('data-quiz-type');
+                if (!quizType) return;
+
+                const rawOpen = status ? status[quizType] : undefined;
+                const isOpen = rawOpen === true || rawOpen === 1 || rawOpen === '1';
+
+                console.log(`Quiz ${quizType} status: ${isOpen ? 'Open' : 'Closed'} (raw: ${rawOpen})`);
                 updateQuizStatus(quizType, isOpen);
             });
         }
@@ -2021,26 +2027,20 @@
             const quizType = card.getAttribute('data-quiz-type');
             const buttonContainer = card.querySelector('.flex.flex-col.items-stretch.sm\\:items-end');
             if (buttonContainer) {
-                // Remove existing button
-                const existingButton = buttonContainer.querySelector('button');
-                if (existingButton) {
-                    existingButton.remove();
-                }
-                
-                // Create button group
-                const buttonGroup = document.createElement('div');
-                buttonGroup.className = 'flex flex-col sm:flex-row gap-2 w-full sm:w-auto';
-                buttonGroup.innerHTML = `
-                    <button onclick="showQuizLeaderboard('${quizType}')" class="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white px-4 sm:px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center">
+                // Replace the whole action area to avoid duplicated buttons after refresh cycles.
+                buttonContainer.innerHTML = '';
+    
+                // Insert buttons directly so the parent wrapper's flex/spacing classes control the layout.
+                buttonContainer.innerHTML = `
+                    <button onclick="showQuizLeaderboard('${quizType}')" class="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white px-6 sm:px-8 py-3 rounded-lg text-sm sm:text-base font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center w-full">
                         <i class="fas fa-trophy mr-2"></i>
                         <span>Leader Board</span>
                     </button>
-                    <button onclick="showQuizResults('${quizType}')" class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-4 sm:px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center">
+                    <button onclick="showQuizResults('${quizType}')" class="bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 text-white px-6 sm:px-8 py-3 rounded-lg text-sm sm:text-base font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center w-full">
                         <i class="fas fa-clipboard-check mr-2"></i>
                         <span>Result</span>
                     </button>
                 `;
-                buttonContainer.appendChild(buttonGroup);
             }
             
             // Remove any existing click handlers and add new one
@@ -2049,6 +2049,10 @@
             
             // Add click handler to show completion message
             newCard.addEventListener('click', function(e) {
+                // Don't show the card popup when clicking the action buttons.
+                const clickedButton = e.target && e.target.closest ? e.target.closest('button') : null;
+                if (clickedButton) return;
+
                 e.preventDefault();
                 e.stopPropagation();
                 Swal.fire({
@@ -2084,9 +2088,8 @@
                 'one-to-one-functions': 'quiz/one-to-one-functions-quiz.html'
             };
             
-            if (quizUrls[quizType]) {
-                card.setAttribute('onclick', `checkEnrollmentAndNavigate('${quizUrls[quizType]}')`);
-            }
+            // Avoid inline `onclick` auto-navigation; we will navigate only after user confirms the review modal.
+            card.removeAttribute('onclick');
             card.style.cursor = 'pointer';
             card.style.opacity = '1';
             card.classList.remove('closed');
@@ -2129,33 +2132,32 @@
             // Add Leader Board and Result buttons
             const buttonContainer = card.querySelector('.flex.flex-col.items-stretch.sm\\:items-end');
             if (buttonContainer) {
-                // Remove existing button
-                const existingButton = buttonContainer.querySelector('button');
-                if (existingButton) {
-                    existingButton.remove();
-                }
-                
-                // Create button group
-                const buttonGroup = document.createElement('div');
-                buttonGroup.className = 'flex flex-col sm:flex-row gap-2 w-full sm:w-auto';
-                buttonGroup.innerHTML = `
-                    <button onclick="showQuizLeaderboard('${quizType}')" class="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white px-4 sm:px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center">
+                // Replace the whole action area to avoid duplicated buttons after refresh cycles.
+                buttonContainer.innerHTML = '';
+
+                // Insert buttons directly so the parent wrapper's flex/spacing classes control the layout.
+                buttonContainer.innerHTML = `
+                    <button onclick="showQuizLeaderboard('${quizType}')" class="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white px-6 sm:px-8 py-3 rounded-lg text-sm sm:text-base font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center w-full">
                         <i class="fas fa-trophy mr-2"></i>
                         <span>Leader Board</span>
                     </button>
-                    <button onclick="showQuizResults('${quizType}')" class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-4 sm:px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center">
+                    <button onclick="showQuizResults('${quizType}')" class="bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 text-white px-6 sm:px-8 py-3 rounded-lg text-sm sm:text-base font-medium transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center w-full">
                         <i class="fas fa-clipboard-check mr-2"></i>
                         <span>Result</span>
                     </button>
                 `;
-                buttonContainer.appendChild(buttonGroup);
             }
             
-            // Remove existing handlers by cloning (already done above, so this is just for the message)
-            // Click will navigate to quiz for review via onclick attribute
-            card.addEventListener('click', function(e) {
-                e.preventDefault();
-                Swal.fire({
+            // Bind click handler once per card to avoid duplicate listeners across refreshes.
+            if (!card.dataset.reviewClickBound) {
+                card.dataset.reviewClickBound = '1';
+                card.addEventListener('click', function(e) {
+                    // Don't show the card popup when clicking the action buttons.
+                    const clickedButton = e.target && e.target.closest ? e.target.closest('button') : null;
+                    if (clickedButton) return;
+
+                    e.preventDefault();
+                    Swal.fire({
                     title: 'Review Quiz',
                     html: `
                         <div class="text-center">
@@ -2185,31 +2187,13 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         // Navigate to quiz for review
-                        const quizType = card.getAttribute('data-quiz-type');
-                        if (quizType === 'functions') {
-                            window.location.href = 'quiz/functions-quiz.html';
-                        } else if (quizType === 'evaluating-functions') {
-                            window.location.href = 'quiz/evaluating-functions-quiz.html';
-                        } else if (quizType === 'operations-on-functions') {
-                            window.location.href = 'quiz/operations-on-functions-quiz.html';
-                        } else if (quizType === 'real-life-problems') {
-                            window.location.href = 'quiz/solving-real-life-problems-quiz.html';
-                        } else if (quizType === 'rational-functions') {
-                            window.location.href = 'quiz/rational-functions-quiz.html';
-                        } else if (quizType === 'solving-rational-equations-inequalities') {
-                            window.location.href = 'quiz/solving-rational-equations-inequalities-quiz.html';
-                        } else if (quizType === 'representations-of-rational-functions') {
-                            window.location.href = 'quiz/representations-of-rational-functions-quiz.html';
-                        } else if (quizType === 'domain-range-rational-functions') {
-                            window.location.href = 'quiz/domain-range-rational-functions-quiz.html';
-                        } else if (quizType === 'domain-range-inverse-functions') {
-                            window.location.href = 'quiz/domain-range-inverse-functions-quiz.html';
-                        } else if (quizType === 'one-to-one-functions') {
-                            window.location.href = 'quiz/one-to-one-functions-quiz.html';
-                        }
+                        const qt = card.getAttribute('data-quiz-type');
+                        const targetUrl = quizUrls[qt];
+                        if (targetUrl) window.location.href = targetUrl;
                     }
                 });
-            });
+                });
+            }
         }
         // Enrollment check function
         async function checkEnrollmentAndNavigate(url) {
@@ -2292,8 +2276,12 @@
                     quizType = 'one-to-one-functions';
                 }
                 
-                // Check if quiz is closed
-                if (quizType && statusResult.success && statusResult.status && statusResult.status[quizType] === false) {
+                // Check if quiz is closed (treat missing status key as closed to keep behavior consistent with the card UI).
+                if (quizType && statusResult.success && statusResult.status) {
+                    const rawOpen = statusResult.status[quizType];
+                    const isOpen = rawOpen === true || rawOpen === 1 || rawOpen === '1';
+
+                    if (rawOpen === undefined || !isOpen) {
                     Swal.fire({
                         title: 'Quiz Closed',
                         text: 'This quiz is currently closed by your teacher.',
@@ -2308,6 +2296,7 @@
                         }
                     });
                     return;
+                    }
                 }
                 
                 // Check deadline - allow access even if deadline has passed (for review mode)
@@ -3288,7 +3277,8 @@
             
             try {
                 // Get student class ID
-                const cid = await getStudentClassId();
+                // Reuse already-resolved class id to avoid extra API calls (faster modal load).
+                const cid = studentClassId || await getStudentClassId();
                 const classQuery = cid ? `&class_id=${encodeURIComponent(cid)}` : '';
                 
                 // Fetch leaderboard
@@ -3332,9 +3322,31 @@
                 return;
             }
             
-            // Separate cheating students
-            const cheatingStudents = leaderboardData.filter(s => s.cheating_reason && s.cheating_reason !== null);
-            const regularStudents = leaderboardData.filter(s => !s.cheating_reason || s.cheating_reason === null);
+            // Separate cheating students.
+            // Note: some backends return "null" / "undefined" as strings instead of real nulls.
+            const normalizeCheatingReason = (value) => {
+                if (value === null || value === undefined) return null;
+                if (typeof value === 'string') {
+                    const t = value.trim().toLowerCase();
+                    if (t === '' || t === 'null' || t === 'undefined') return null;
+                }
+                return value;
+            };
+
+            const cheatingStudents = leaderboardData.filter(s => normalizeCheatingReason(s.cheating_reason) !== null);
+            const regularStudents = leaderboardData.filter(s => normalizeCheatingReason(s.cheating_reason) === null);
+
+            // Ensure stable ordering for the podium (top 3 by rank).
+            regularStudents.sort((a, b) => {
+                const ra = parseInt(a.rank_position, 10);
+                const rb = parseInt(b.rank_position, 10);
+                return (isNaN(ra) ? 9999 : ra) - (isNaN(rb) ? 9999 : rb);
+            });
+            cheatingStudents.sort((a, b) => {
+                const ra = parseInt(a.rank_position, 10);
+                const rb = parseInt(b.rank_position, 10);
+                return (isNaN(ra) ? 9999 : ra) - (isNaN(rb) ? 9999 : rb);
+            });
             
             // Calculate stats
             const totalParticipants = leaderboardData.length;
@@ -3359,7 +3371,10 @@
                         <div class="flex justify-center items-end space-x-2 sm:space-x-4 mb-10 px-4" id="podiumContainer">
                             ${positions.map((pos, idx) => {
                                 const student = top3[pos - 1];
-                                const initials = student.student_name.split(' ').map(n => n[0]).join('').toUpperCase();
+                                if (!student) return '';
+
+                                const studentName = student.student_name || 'Student';
+                                const initials = studentName.split(' ').map(n => n[0]).join('').toUpperCase();
                                 const isCurrentUser = student.is_current_user == 1;
                                 return `
                                     <div class="podium-block">
@@ -3371,7 +3386,7 @@
                                             ${pos === 1 ? '<div class="podium-crown">👑</div>' : ''}
                                         </div>
                                         <div class="podium-info">
-                                            <div class="podium-name">${student.student_name}</div>
+                                            <div class="podium-name">${studentName}</div>
                                             <div class="podium-points">${student.score}/${student.total_questions}</div>
                                             ${isCurrentUser ? '<div class="text-xs text-blue-600 font-medium mt-1">You</div>' : ''}
                                         </div>
@@ -3520,12 +3535,36 @@
                 const result = await response.json();
                 
                 if (result.success && result.attempts && result.attempts.length > 0) {
-                    // Get the most recent completed attempt
-                    const completedAttempt = result.attempts.find(a => a.status === 'completed') || result.attempts[0];
-                    
-                    if (completedAttempt && completedAttempt.attempt_id) {
+                    const attempts = result.attempts;
+
+                    const isCompletedStatus = (status) => {
+                        if (status === null || status === undefined) return false;
+                        if (typeof status === 'boolean') return status === true;
+                        if (typeof status === 'number') return status === 1 || status === 2; // tolerate 1/2-coded statuses
+                        if (typeof status === 'string') {
+                            const s = status.trim().toLowerCase();
+                            return s === 'completed' || s === 'complete' || s === 'done' || s === 'finished' || s === '1' || s === 'true';
+                        }
+                        return false;
+                    };
+
+                    // Backend might return attempt id under different keys.
+                    const getAttemptId = (attempt) => {
+                        if (!attempt) return null;
+                        return attempt.attempt_id || attempt.attemptId || attempt.id || attempt.quiz_attempt_id || attempt.quizAttemptId || attempt.history_id || attempt.historyId || null;
+                    };
+
+                    // Prefer completed attempt; otherwise fallback to any attempt with a valid id.
+                    const completedAttempt = attempts.find(a => isCompletedStatus(a.status)) || null;
+                    const candidateAttempt =
+                        (completedAttempt && getAttemptId(completedAttempt)) ? completedAttempt :
+                        attempts.find(a => getAttemptId(a)) || attempts[0];
+
+                    const attemptId = getAttemptId(candidateAttempt);
+
+                    if (attemptId) {
                         // Get quiz answers
-                        const answersResponse = await fetch(`php/quiz-management.php?action=get_quiz_answers&attempt_id=${completedAttempt.attempt_id}`, {
+                        const answersResponse = await fetch(`php/quiz-management.php?action=get_quiz_answers&attempt_id=${encodeURIComponent(attemptId)}`, {
                             credentials: 'include'
                         });
                         
@@ -3533,7 +3572,7 @@
                         
                         if (answersResult.success && answersResult.answers) {
                             // Load quiz data to get correct answers
-                            await loadQuizDataAndDisplayResults(quizType, answersResult.answers, completedAttempt, content);
+                            await loadQuizDataAndDisplayResults(quizType, answersResult.answers, candidateAttempt, content);
                         } else {
                             content.innerHTML = `
                                 <div class="text-center py-16">
@@ -3572,6 +3611,18 @@
 
         async function loadQuizDataAndDisplayResults(quizType, studentAnswers, attempt, container) {
             try {
+                // Cache quizData to avoid expensive repeated fetch/HTML parsing on subsequent "Result" clicks.
+                window.__quizDataCache = window.__quizDataCache || {};
+                if (window.__quizDataCache[quizType]) {
+                    const cached = window.__quizDataCache[quizType];
+                    if (cached && cached.answers) {
+                        displayResultsInModal(cached, studentAnswers, attempt, container);
+                    } else {
+                        displayBasicResults(studentAnswers, attempt, container);
+                    }
+                    return;
+                }
+
                 // Try to get quiz data from API first
                 const response = await fetch(`php/quiz-management.php?action=get_quiz_data&quiz_type=${encodeURIComponent(quizType)}`, {
                     credentials: 'include'
@@ -3654,6 +3705,7 @@
                 }
                 
                 if (quizData && quizData.answers) {
+                    window.__quizDataCache[quizType] = quizData;
                     displayResultsInModal(quizData, studentAnswers, attempt, container);
                 } else {
                     // Fallback: Show basic results without correct answers
@@ -3689,13 +3741,23 @@
             let correctCount = 0;
             let incorrectCount = 0;
             let totalQuestions = 0;
+
+            // Normalize MC answers (backends sometimes store as 'a' vs 'A')
+            const normalizeOption = (value) => {
+                if (value === null || value === undefined) return '';
+                return String(value).trim().toUpperCase();
+            };
             
             // Count correct answers for multiple choice
             for (let i = 1; i <= 10; i++) {
                 totalQuestions++;
                 const correctAnswer = quizData.answers[`q${i}`];
                 const studentAnswer = studentAnswers[`q${i}`] || '';
-                if (studentAnswer === correctAnswer) {
+
+                const correctAnswerNorm = normalizeOption(correctAnswer);
+                const studentAnswerNorm = normalizeOption(studentAnswer);
+
+                if (studentAnswerNorm === correctAnswerNorm) {
                     correctCount++;
                 } else {
                     incorrectCount++;
@@ -3843,7 +3905,15 @@
             for (let i = 1; i <= 10; i++) {
                 const correctAnswer = quizData.answers[`q${i}`];
                 const studentAnswer = studentAnswers[`q${i}`] || '';
-                const isCorrect = studentAnswer === correctAnswer;
+                // Normalize MC answers (backends sometimes store as 'a' vs 'A')
+                const normalizeOption = (value) => {
+                    if (value === null || value === undefined) return '';
+                    return String(value).trim().toUpperCase();
+                };
+
+                const correctAnswerNorm = normalizeOption(correctAnswer);
+                const studentAnswerNorm = normalizeOption(studentAnswer);
+                const isCorrect = studentAnswerNorm === correctAnswerNorm;
                 
                 // Get question text from quiz (we'll need to fetch this or use a placeholder)
                 resultsHTML += `
@@ -3861,10 +3931,10 @@
                 `;
                 
                 // Display options (we'll show all options with correct/incorrect indicators)
-                const options = ['a', 'b', 'c', 'd', 'A', 'B', 'C', 'D'];
+                const options = ['A', 'B', 'C', 'D'];
                 options.forEach(opt => {
-                    const isStudentAnswer = studentAnswer === opt;
-                    const isCorrectOption = correctAnswer === opt;
+                    const isStudentAnswer = studentAnswerNorm === opt;
+                    const isCorrectOption = correctAnswerNorm === opt;
                     let optionClass = 'quiz-option';
                     let indicatorHTML = '';
                     

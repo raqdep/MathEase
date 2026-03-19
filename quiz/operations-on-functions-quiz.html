@@ -2202,14 +2202,44 @@
         // Check quiz deadline and get time limit
         async function checkQuizDeadline() {
             try {
-                const response = await fetch('../php/quiz-management.php?action=get_quiz_settings', {
-                    credentials: 'include'
+                const getStudentClassId = async () => {
+                    try {
+                        const resp = await fetch('../php/student-enrollment.php?action=get_approved_classes', {
+                            credentials: 'include',
+                            cache: 'no-store',
+                            headers: {
+                                'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
+                                'Pragma': 'no-cache',
+                                'Expires': '0'
+                            }
+                        });
+                        const data = await resp.json();
+                        if (data && data.success && data.classes && data.classes.length > 0) {
+                            return data.classes[0].class_id;
+                        }
+                    } catch (e) {
+                        console.warn('Failed to get student class id:', e);
+                    }
+                    return 0; // fallback to global/class 0
+                };
+
+                const cid = await getStudentClassId();
+                const response = await fetch(`../php/quiz-management.php?action=get_quiz_settings&class_id=${encodeURIComponent(cid)}&_t=${Date.now()}`, {
+                    credentials: 'include',
+                    cache: 'no-store'
                 });
                 
                 const result = await response.json();
                 
-                if (result.success && result.settings && result.settings['operations-on-functions']) {
-                    const settings = result.settings['operations-on-functions'];
+                const quizType = 'operations-on-functions';
+                const classSettings =
+                    result?.success &&
+                    result?.settings &&
+                    result.settings?.[quizType] &&
+                    (result.settings[quizType][cid] || result.settings[quizType][String(cid)] || result.settings[quizType]['0']);
+
+                if (classSettings) {
+                    const settings = classSettings;
                     
                     // Get time limit
                     if (settings.time_limit) {

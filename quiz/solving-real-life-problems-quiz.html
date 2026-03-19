@@ -2661,25 +2661,56 @@
         // Check quiz deadline and get time limit
         async function checkQuizDeadline() {
             try {
-                const response = await fetch('../php/quiz-management.php?action=get_quiz_settings&quiz_type=real-life-problems', {
-                    credentials: 'include'
-                });
-                
-                if (response.ok) {
-                    const result = await response.json();
-                    if (result.success) {
-                        quizDeadline = result.deadline ? new Date(result.deadline) : null;
-                        timeLimitMinutes = result.time_limit || 25;
-                        
-                        // Check if deadline has passed
-                        if (quizDeadline && new Date() > quizDeadline) {
-                            isReviewMode = true;
-                            const reviewBanner = document.getElementById('reviewModeBanner');
-                            if (reviewBanner) {
-                                reviewBanner.classList.remove('hidden');
+                const getStudentClassId = async () => {
+                    try {
+                        const resp = await fetch('../php/student-enrollment.php?action=get_approved_classes', {
+                            credentials: 'include',
+                            cache: 'no-store',
+                            headers: {
+                                'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
+                                'Pragma': 'no-cache',
+                                'Expires': '0'
                             }
-                            enableReviewMode();
+                        });
+                        const data = await resp.json();
+                        if (data && data.success && data.classes && data.classes.length > 0) {
+                            return data.classes[0].class_id;
                         }
+                    } catch (e) {
+                        console.warn('Failed to get student class id:', e);
+                    }
+                    return 0; // fallback to global/class 0
+                };
+
+                const cid = await getStudentClassId();
+                const response = await fetch(`../php/quiz-management.php?action=get_quiz_settings&class_id=${encodeURIComponent(cid)}&_t=${Date.now()}`, {
+                    credentials: 'include',
+                    cache: 'no-store'
+                });
+
+                const result = await response.json();
+                const quizType = 'real-life-problems';
+                const classSettings =
+                    result?.success &&
+                    result?.settings &&
+                    result.settings?.[quizType] &&
+                    (result.settings[quizType][cid] || result.settings[quizType][String(cid)] || result.settings[quizType]['0']);
+
+                if (classSettings) {
+                    const settings = classSettings;
+                    quizDeadline = settings.deadline ? new Date(settings.deadline) : null;
+                    if (settings.time_limit) {
+                        timeLimitMinutes = parseInt(settings.time_limit) || timeLimitMinutes;
+                    }
+
+                    // Check if deadline has passed
+                    if (quizDeadline && new Date() > quizDeadline) {
+                        isReviewMode = true;
+                        const reviewBanner = document.getElementById('reviewModeBanner');
+                        if (reviewBanner) {
+                            reviewBanner.classList.remove('hidden');
+                        }
+                        enableReviewMode();
                     }
                 }
             } catch (error) {

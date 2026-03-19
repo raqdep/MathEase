@@ -3,9 +3,10 @@
 require_once __DIR__ . '/load-env.php';
 
 // Database configuration for MathEase
-define('DB_HOST', getenv('DB_HOST') ?: 'mathease-db.crqqmwqm0c6s.ap-southeast-2.rds.amazonaws.com');
-define('DB_USER', getenv('DB_USER') ?: 'admin');
-define('DB_PASS', getenv('DB_PASS') ?: 'mathease123');
+define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+define('DB_USER', getenv('DB_USER') ?: 'root');
+// IMPORTANT: Do not hardcode real DB passwords in repo. Use `.env` instead.
+define('DB_PASS', getenv('DB_PASS') ?: '');
 define('DB_NAME', getenv('DB_NAME') ?: 'mathease_database3');
 
 // Create database connection
@@ -53,7 +54,8 @@ function generate_token() {
 // Email configuration - loaded from .env file
 define('MAIL_HOST', getenv('MAIL_HOST') ?: 'smtp.gmail.com');
 define('MAIL_USERNAME', getenv('MAIL_USERNAME') ?: 'matheasenc2025@gmail.com');
-define('MAIL_PASSWORD', getenv('MAIL_PASSWORD') ?: 'yqgnedvxjmqubfvx');
+// IMPORTANT: Do not hardcode real SMTP passwords in repo. Use `.env` instead.
+define('MAIL_PASSWORD', getenv('MAIL_PASSWORD') ?: '');
 define('MAIL_PORT', getenv('MAIL_PORT') ?: 465);
 define('MAIL_FROM', getenv('MAIL_FROM') ?: 'matheasenc2025@gmail.com');
 define('MAIL_FROM_NAME', getenv('MAIL_FROM_NAME') ?: 'MathEase');
@@ -109,6 +111,12 @@ function send_working_smtp($to, $subject, $htmlBody) {
     $smtp_port = MAIL_PORT;
     $smtp_user = MAIL_USERNAME;
     $smtp_pass = MAIL_PASSWORD;
+    
+    // If SMTP password isn't configured, fail safely instead of using any fallback credentials.
+    if (empty($smtp_pass)) {
+        error_log('SMTP authentication skipped: MAIL_PASSWORD is missing from .env');
+        return false;
+    }
     $from_email = MAIL_FROM;
     $from_name = MAIL_FROM_NAME;
     
