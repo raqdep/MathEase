@@ -1269,26 +1269,18 @@ function syncPerformanceDataForClass($classId) {
                 $quizData['overall_performance_status'] = 'POOR';
             }
             
-            // Update or insert into student_performance_tracking
-            $updateFields = [];
-            $updateValues = [];
-            
-            foreach ($quizData as $field => $value) {
-                if ($value !== null) {
-                    $updateFields[] = "$field = ?";
-                    $updateValues[] = $value;
-                }
-            }
-            
-            if (!empty($updateFields)) {
-                $updateValues[] = $studentId;
-                $updateValues[] = $classId;
-                
-                $sql = "INSERT INTO student_performance_tracking (student_id, class_id, " . 
-                       implode(', ', array_keys($quizData)) . ", updated_at) 
-                       VALUES (?, ?, " . str_repeat('?, ', count($quizData)) . "NOW())
-                       ON DUPLICATE KEY UPDATE " . implode(', ', $updateFields) . ", updated_at = NOW()";
-                
+            // Update or insert into student_performance_tracking.
+            // Use VALUES(col) in ON DUPLICATE to avoid mismatched bound params (HY093).
+            $cols = array_keys($quizData);
+            if (!empty($cols)) {
+                $placeholders = rtrim(str_repeat('?, ', count($cols)), ', ');
+                $updateClause = implode(', ', array_map(fn($c) => "$c = VALUES($c)", $cols));
+
+                $sql = "INSERT INTO student_performance_tracking (student_id, class_id, " .
+                       implode(', ', $cols) . ", updated_at)
+                       VALUES (?, ?, {$placeholders}, NOW())
+                       ON DUPLICATE KEY UPDATE {$updateClause}, updated_at = NOW()";
+
                 $stmt = $pdo->prepare($sql);
                 $stmt->execute(array_merge([$studentId, $classId], array_values($quizData)));
             }
@@ -1467,25 +1459,17 @@ function syncPerformanceDataFromMainSystem() {
                     $quizData['overall_performance_status'] = 'POOR';
                 }
                 
-                // Update or insert into student_performance_tracking
-                $updateFields = [];
-                $updateValues = [];
-                
-                foreach ($quizData as $field => $value) {
-                    if ($value !== null) {
-                        $updateFields[] = "$field = ?";
-                        $updateValues[] = $value;
-                    }
-                }
-                
-                if (!empty($updateFields)) {
-                    $updateValues[] = $studentId;
-                    $updateValues[] = $classId;
+                // Update or insert into student_performance_tracking.
+                // Use VALUES(col) in ON DUPLICATE to avoid mismatched bound params (HY093).
+                $cols = array_keys($quizData);
+                if (!empty($cols)) {
+                    $placeholders = rtrim(str_repeat('?, ', count($cols)), ', ');
+                    $updateClause = implode(', ', array_map(fn($c) => "$c = VALUES($c)", $cols));
                     
-                    $sql = "INSERT INTO student_performance_tracking (student_id, class_id, " . 
-                           implode(', ', array_keys($quizData)) . ", updated_at) 
-                           VALUES (?, ?, " . str_repeat('?, ', count($quizData)) . "NOW())
-                           ON DUPLICATE KEY UPDATE " . implode(', ', $updateFields) . ", updated_at = NOW()";
+                    $sql = "INSERT INTO student_performance_tracking (student_id, class_id, " .
+                           implode(', ', $cols) . ", updated_at)
+                           VALUES (?, ?, {$placeholders}, NOW())
+                           ON DUPLICATE KEY UPDATE {$updateClause}, updated_at = NOW()";
                     
                     $stmt = $pdo->prepare($sql);
                     $stmt->execute(array_merge([$studentId, $classId], array_values($quizData)));
