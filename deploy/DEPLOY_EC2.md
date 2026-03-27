@@ -94,7 +94,7 @@ Open in browser: **http://54.206.4.117/**
 After you’ve pushed changes to GitHub, on the **server**:
 
 ```bash
-sudo -u www-data bash -c 'cd /var/www/MathEase && git pull origin master'
+sudo -u www-data bash -c 'cd /var/www/MathEase && git pull origin main'
 sudo systemctl reload apache2
 ```
 
@@ -127,7 +127,7 @@ sudo systemctl reload apache2
 
 | Task              | Command |
 |-------------------|--------|
-| Pull latest code  | `sudo -u www-data bash -c 'cd /var/www/MathEase && git pull origin master'` |
+| Pull latest code  | `sudo -u www-data bash -c 'cd /var/www/MathEase && git pull origin main'` |
 | Reload Apache     | `sudo systemctl reload apache2` |
 | Edit .env         | `sudo nano /var/www/MathEase/.env` |
 | Apache error log  | `sudo tail -f /var/log/apache2/mathease_error.log` |

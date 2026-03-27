@@ -2,11 +2,11 @@
 // Load environment variables
 require_once __DIR__ . '/load-env.php';
 
-// Database configuration for MathEase
-define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
-define('DB_USER', getenv('DB_USER') ?: 'root');
-// IMPORTANT: Do not hardcode real DB passwords in repo. Use `.env` instead.
-define('DB_PASS', getenv('DB_PASS') ?: '');
+// Database configuration for MathEase (env from `.env` wins; see deploy/.env.example)
+// Local XAMPP: set DB_HOST=localhost (and local user/pass) in project root `.env`.
+define('DB_HOST', getenv('DB_HOST') ?: 'mathease-db.crqqmwqm0c6s.ap-southeast-2.rds.amazonaws.com');
+define('DB_USER', getenv('DB_USER') ?: 'admin');
+define('DB_PASS', getenv('DB_PASS') ?: 'mathease123');
 define('DB_NAME', getenv('DB_NAME') ?: 'mathease_database3');
 
 // Create database connection
