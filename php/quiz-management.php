@@ -257,19 +257,29 @@ class QuizManager {
                 // Check if answer already exists
                 $checkStmt = $this->pdo->prepare("
                     SELECT id FROM quiz_answers 
-                    WHERE attempt_id = ? AND question_number = ?
+                    WHERE attempt_id = ? AND question_number = ? AND question_type = ?
+                    ORDER BY id DESC
                 ");
-                $checkStmt->execute([$attemptId, $questionNumber]);
-                $existing = $checkStmt->fetch();
+                $checkStmt->execute([$attemptId, $questionNumber, $questionType]);
+                $existingIds = $checkStmt->fetchAll(PDO::FETCH_COLUMN, 0);
+                $existing = !empty($existingIds) ? (int)$existingIds[0] : null;
                 
                 if ($existing) {
                     // Update existing answer
                     $stmt = $this->pdo->prepare("
                         UPDATE quiz_answers 
                         SET student_answer = ? 
-                        WHERE attempt_id = ? AND question_number = ?
+                        WHERE id = ?
                     ");
-                    $stmt->execute([$answer, $attemptId, $questionNumber]);
+                    $stmt->execute([$answer, $existing]);
+
+                    // Remove stale duplicates for the same attempt/question/type if any.
+                    if (count($existingIds) > 1) {
+                        $staleIds = array_slice(array_map('intval', $existingIds), 1);
+                        $placeholders = implode(',', array_fill(0, count($staleIds), '?'));
+                        $delStmt = $this->pdo->prepare("DELETE FROM quiz_answers WHERE id IN ($placeholders)");
+                        $delStmt->execute($staleIds);
+                    }
                 } else {
                     // Insert new answer
                     $stmt = $this->pdo->prepare("
@@ -1487,11 +1497,17 @@ class QuizManager {
                 ($hasType ? "question_type" : "NULL as question_type")
             ];
 
+            // Deduplicate historical rows: keep only the latest row per question_number/question_type.
             $stmt = $this->pdo->prepare("
                 SELECT " . implode(", ", $select) . "
-                FROM quiz_answers
-                WHERE attempt_id = ?
-                ORDER BY question_number ASC
+                FROM quiz_answers qa
+                INNER JOIN (
+                    SELECT MAX(id) AS id
+                    FROM quiz_answers
+                    WHERE attempt_id = ?
+                    GROUP BY question_number, COALESCE(question_type, 'multiple_choice')
+                ) latest ON qa.id = latest.id
+                ORDER BY qa.question_number ASC, qa.id ASC
             ");
             $stmt->execute([$attemptId]);
             $answers = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -2658,11 +2674,40 @@ class QuizManager {
         // Ensure is_correct and points_earned are integers (MySQL BOOLEAN/INT reject empty string)
         $isCorrectInt = $isCorrect ? 1 : 0;
         $pointsEarnedInt = (int) $pointsEarned;
-        $stmt = $this->pdo->prepare("
+
+        // Upsert by attempt/question/type to avoid duplicate rows from progress-save + submit flows.
+        $findStmt = $this->pdo->prepare("
+            SELECT id FROM quiz_answers
+            WHERE attempt_id = ? AND question_number = ? AND question_type = ?
+            ORDER BY id DESC
+        ");
+        $findStmt->execute([$attemptId, $questionNumber, $questionType]);
+        $ids = $findStmt->fetchAll(PDO::FETCH_COLUMN, 0);
+
+        if (!empty($ids)) {
+            $keepId = (int)$ids[0];
+            $upd = $this->pdo->prepare("
+                UPDATE quiz_answers
+                SET student_answer = ?, correct_answer = ?, is_correct = ?, points_earned = ?
+                WHERE id = ?
+            ");
+            $upd->execute([$studentAnswer, $correctAnswer, $isCorrectInt, $pointsEarnedInt, $keepId]);
+
+            // Cleanup stale duplicates if they exist.
+            if (count($ids) > 1) {
+                $staleIds = array_slice(array_map('intval', $ids), 1);
+                $placeholders = implode(',', array_fill(0, count($staleIds), '?'));
+                $del = $this->pdo->prepare("DELETE FROM quiz_answers WHERE id IN ($placeholders)");
+                $del->execute($staleIds);
+            }
+            return;
+        }
+
+        $ins = $this->pdo->prepare("
             INSERT INTO quiz_answers (attempt_id, question_number, question_type, student_answer, correct_answer, is_correct, points_earned)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         ");
-        $stmt->execute([$attemptId, $questionNumber, $questionType, $studentAnswer, $correctAnswer, $isCorrectInt, $pointsEarnedInt]);
+        $ins->execute([$attemptId, $questionNumber, $questionType, $studentAnswer, $correctAnswer, $isCorrectInt, $pointsEarnedInt]);
     }
     
     private function storeProblemSolvingAnswers($attemptId, $answers, $totalScore) {
