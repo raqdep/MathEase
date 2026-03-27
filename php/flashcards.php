@@ -41,6 +41,24 @@ function read_json_input(): array {
     return is_array($data) ? $data : [];
 }
 
+function read_str(array $src, array $keys): string {
+    foreach ($keys as $k) {
+        if (isset($src[$k]) && $src[$k] !== null) {
+            return trim((string)$src[$k]);
+        }
+    }
+    return '';
+}
+
+function read_int(array $src, array $keys): int {
+    foreach ($keys as $k) {
+        if (isset($src[$k]) && $src[$k] !== null && $src[$k] !== '') {
+            return (int)$src[$k];
+        }
+    }
+    return 0;
+}
+
 function mapTopicIdToDbName(string $topicId): string {
     $mapping = [
         'functions' => 'Functions',
@@ -192,8 +210,21 @@ if (!isset($_SESSION['user_id'])) {
     respond_error(401, 'Not authenticated');
 }
 
-$topicSlug = (string)($input['topic'] ?? $_GET['topic'] ?? '');
-$lessonNum = (int)($input['lesson'] ?? $_GET['lesson'] ?? 0);
+$topicSlug = read_str($input, ['topic', 'topicSlug', 'topic_slug', 'topic_id']);
+if ($topicSlug === '') {
+    $topicSlug = read_str($_POST, ['topic', 'topicSlug', 'topic_slug', 'topic_id']);
+}
+if ($topicSlug === '') {
+    $topicSlug = read_str($_GET, ['topic', 'topicSlug', 'topic_slug', 'topic_id']);
+}
+
+$lessonNum = read_int($input, ['lesson', 'lessonNum', 'lesson_number']);
+if ($lessonNum <= 0) {
+    $lessonNum = read_int($_POST, ['lesson', 'lessonNum', 'lesson_number']);
+}
+if ($lessonNum <= 0) {
+    $lessonNum = read_int($_GET, ['lesson', 'lessonNum', 'lesson_number']);
+}
 
 if ($topicSlug === '' || $lessonNum <= 0) {
     respond_error(400, 'Missing topic or lesson');

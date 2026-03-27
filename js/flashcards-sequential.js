@@ -416,11 +416,21 @@
         renderSkeletonStage();
 
         try {
+            // Read latest values from controls to avoid stale state.
+            const selectedTopic = (els.topicSelect?.value || state.topic || '').trim();
+            const selectedLesson = parseInt(els.lessonSelect?.value || state.lesson, 10) || 0;
+            state.topic = selectedTopic || state.topic;
+            state.lesson = selectedLesson || state.lesson;
+
             const payload = {
                 action: 'generate',
-                topic: state.topic,
-                lesson: state.lesson
+                topic: selectedTopic,
+                lesson: selectedLesson
             };
+
+            if (!payload.topic || !payload.lesson) {
+                throw new Error('Please select a topic and lesson before generating flashcards.');
+            }
 
             const res = await fetch('php/flashcards.php', {
                 method: 'POST',
@@ -429,7 +439,13 @@
                 body: JSON.stringify(payload)
             });
 
-            const data = await res.json();
+            const raw = await res.text();
+            let data = null;
+            try {
+                data = raw ? JSON.parse(raw) : null;
+            } catch (_e) {
+                throw new Error('Server returned an invalid response while generating flashcards.');
+            }
             if (!data?.success) {
                 throw new Error(data?.message || 'Failed to generate flashcards.');
             }
