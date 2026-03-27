@@ -19,6 +19,12 @@ $html = str_replace(
     ['dashboard.php#', 'dashboard.php', 'quizzes.php', 'flashcards.php', 'achievements.php', 'profile.php'],
     $html
 );
+
+// Defensive cleanup: remove accidental stray quote/text node that can appear
+// before the document/body and render as an orphan `'` in DevTools.
+$html = preg_replace('/\A(?:\xEF\xBB\xBF)?[\'"\s]+(?=<!DOCTYPE html>)/i', '', $html);
+$html = preg_replace('/(<body[^>]*>)\s*[\'"]\s*/i', '$1', $html, 1);
+
 echo $html;
 ?>
 
