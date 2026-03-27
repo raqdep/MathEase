@@ -1159,7 +1159,7 @@
                         </li>
                         <li class="flex items-start">
                             <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
-                            <span>Don't rush through the problem solving section</span>
+                            <span>Answer all multiple-choice questions carefully</span>
                         </li>
                         <li class="flex items-start">
                             <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
@@ -1215,7 +1215,7 @@
                     <ul class="space-y-2 text-gray-700">
                         <li class="flex items-start">
                             <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
-                            <span>Quiz has 11 total questions (10 multiple choice + 1 problem solving)</span>
+                            <span>Quiz has 15 total multiple-choice questions</span>
                         </li>
                         <li class="flex items-start">
                             <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
@@ -1245,7 +1245,7 @@
                             </div>
                         </div>
                         <p class="text-sm text-gray-600 mb-2">Score 100% on this quiz</p>
-                        <p class="text-xs text-gray-500">Perfect score! Master real-life problem solving and earn this prestigious badge!</p>
+                        <p class="text-xs text-gray-500">Perfect score! Master real-life function applications and earn this prestigious badge!</p>
                     </div>
                     <div class="bg-white rounded-lg p-4 border-2 border-blue-200 shadow-sm">
                         <div class="flex items-center mb-3">
@@ -1284,7 +1284,7 @@
                 <div class="flex items-center w-full sm:w-auto justify-between sm:justify-start">
                     <div class="flex items-center">
                         <span class="text-xs sm:text-sm text-gray-600 mr-2 font-medium">Question</span>
-                        <span class="text-xl sm:text-2xl font-bold text-gray-800" id="progressText">0/11</span>
+                        <span class="text-xl sm:text-2xl font-bold text-gray-800" id="progressText">0/15</span>
                     </div>
                     
                     <!-- Mobile: Show timer inline on small screens -->
@@ -1645,83 +1645,16 @@
                 </div>
             </div>
 
-            <!-- Problem Solving Question -->
-            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="11">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold text-gray-800">Problem Solving Question</h3>
-                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">5 points</span>
-                </div>
-                <div class="mb-6">
-                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 mb-6">
-                        <h4 class="text-lg font-semibold text-blue-800 mb-3">
-                            <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>Problem Statement
-                        </h4>
-                        <p class="text-lg text-gray-700 mb-4">
-                            A company's profit function is <span class="font-mono bg-gray-100 px-2 py-1 rounded">P(x) = -2x² + 100x - 800</span>, where:
-                        </p>
-                        <ul class="text-gray-700 space-y-2 mb-4">
-                            <li><strong>x</strong> = number of units sold</li>
-                            <li><strong>P(x)</strong> = profit in thousands of pesos</li>
-                        </ul>
-                        <p class="text-lg font-semibold text-blue-800">
-                            Find the maximum profit (in thousands of pesos).
-                        </p>
-                    </div>
-                    
-                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-6 mb-6">
-                        <h4 class="text-lg font-semibold text-green-800 mb-3">
-                            <i class="fas fa-clipboard-list text-green-600 mr-2"></i>Step-by-Step Guide
-                        </h4>
-                        <div class="space-y-3 text-gray-700">
-                            <div class="flex items-start">
-                                <span class="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5">1</span>
-                                <div>
-                                    <strong>Identify the vertex formula:</strong> For a quadratic function in the form P(x) = ax² + bx + c, the x-coordinate of the vertex (which gives maximum or minimum value) is found using x = -b/(2a)
-                                </div>
-                            </div>
-                            <div class="flex items-start">
-                                <span class="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5">2</span>
-                                <div>
-                                    <strong>Identify the coefficients:</strong> From P(x) = -2x² + 100x - 800, identify:
-                                    <ul class="list-disc list-inside mt-2 ml-4 space-y-1">
-                                        <li>a = -2</li>
-                                        <li>b = 100</li>
-                                        <li>c = -800</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="flex items-start">
-                                <span class="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5">3</span>
-                                <div>
-                                    <strong>Calculate the x-coordinate of the vertex:</strong> Use the formula x = -b/(2a). Substitute the values of a and b, then simplify to find x.
-                                </div>
-                            </div>
-                            <div class="flex items-start">
-                                <span class="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5">4</span>
-                                <div>
-                                    <strong>Substitute x into the function:</strong> Once you have the x-value, substitute it into P(x) = -2x² + 100x - 800. Remember to follow the order of operations (PEMDAS).
-                                </div>
-                            </div>
-                            <div class="flex items-start">
-                                <span class="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5">5</span>
-                                <div>
-                                    <strong>Calculate the maximum profit:</strong> Evaluate the expression step by step. First calculate x², then multiply by -2, then add 100x, and finally subtract 800.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-white rounded-lg p-6 shadow-sm border-2 border-gray-200">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-calculator text-primary mr-2"></i>Enter your answer (in thousands of pesos):
-                        </label>
-                        <input type="number" id="ps-answer" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none text-lg" placeholder="Enter maximum profit in thousands of pesos">
-                        <p class="text-sm text-gray-500 mt-2">
-                            <i class="fas fa-info-circle mr-1"></i>Tip: Remember that since this is a quadratic function with a negative leading coefficient (-2), it opens downward, so the vertex represents the maximum value.
-                        </p>
-                    </div>
-                </div>
-            </div>
+            <!-- Question 11 -->
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="11"><div class="relative z-10 p-6 sm:p-8 mb-6"><h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">If a taxi fare is modeled by f(x)=45+12x, what is f(5)?<span class="text-pink-500 ml-2">?</span></h2></div><div class="relative z-10 space-y-3"><label class="quiz-option"><input type="radio" name="q11" value="a" class="hidden"><div class="option-label">a</div><span class="flex-1">95</span></label><label class="quiz-option"><input type="radio" name="q11" value="b" class="hidden"><div class="option-label">b</div><span class="flex-1">105</span></label><label class="quiz-option"><input type="radio" name="q11" value="c" class="hidden"><div class="option-label">c</div><span class="flex-1">115</span></label><label class="quiz-option"><input type="radio" name="q11" value="d" class="hidden"><div class="option-label">d</div><span class="flex-1">125</span></label></div></div>
+            <!-- Question 12 -->
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="12"><div class="relative z-10 p-6 sm:p-8 mb-6"><h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">A product price after 20% discount is g(x)=0.8x. What is g(500)?<span class="text-pink-500 ml-2">?</span></h2></div><div class="relative z-10 space-y-3"><label class="quiz-option"><input type="radio" name="q12" value="a" class="hidden"><div class="option-label">a</div><span class="flex-1">350</span></label><label class="quiz-option"><input type="radio" name="q12" value="b" class="hidden"><div class="option-label">b</div><span class="flex-1">380</span></label><label class="quiz-option"><input type="radio" name="q12" value="c" class="hidden"><div class="option-label">c</div><span class="flex-1">400</span></label><label class="quiz-option"><input type="radio" name="q12" value="d" class="hidden"><div class="option-label">d</div><span class="flex-1">420</span></label></div></div>
+            <!-- Question 13 -->
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="13"><div class="relative z-10 p-6 sm:p-8 mb-6"><h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">A savings account grows by h(t)=2000(1.05)^t. What does 1.05 represent?<span class="text-pink-500 ml-2">?</span></h2></div><div class="relative z-10 space-y-3"><label class="quiz-option"><input type="radio" name="q13" value="a" class="hidden"><div class="option-label">a</div><span class="flex-1">Initial balance</span></label><label class="quiz-option"><input type="radio" name="q13" value="b" class="hidden"><div class="option-label">b</div><span class="flex-1">5% growth factor</span></label><label class="quiz-option"><input type="radio" name="q13" value="c" class="hidden"><div class="option-label">c</div><span class="flex-1">Time in years</span></label><label class="quiz-option"><input type="radio" name="q13" value="d" class="hidden"><div class="option-label">d</div><span class="flex-1">Interest only</span></label></div></div>
+            <!-- Question 14 -->
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="14"><div class="relative z-10 p-6 sm:p-8 mb-6"><h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">If C(x)=350+15x models total cost, what is the fixed cost?<span class="text-pink-500 ml-2">?</span></h2></div><div class="relative z-10 space-y-3"><label class="quiz-option"><input type="radio" name="q14" value="a" class="hidden"><div class="option-label">a</div><span class="flex-1">15</span></label><label class="quiz-option"><input type="radio" name="q14" value="b" class="hidden"><div class="option-label">b</div><span class="flex-1">350</span></label><label class="quiz-option"><input type="radio" name="q14" value="c" class="hidden"><div class="option-label">c</div><span class="flex-1">365</span></label><label class="quiz-option"><input type="radio" name="q14" value="d" class="hidden"><div class="option-label">d</div><span class="flex-1">x</span></label></div></div>
+            <!-- Question 15 -->
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="15"><div class="relative z-10 p-6 sm:p-8 mb-6"><h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">If R(x)=90x and C(x)=600+50x, what is the break-even x?<span class="text-pink-500 ml-2">?</span></h2></div><div class="relative z-10 space-y-3"><label class="quiz-option"><input type="radio" name="q15" value="a" class="hidden"><div class="option-label">a</div><span class="flex-1">10</span></label><label class="quiz-option"><input type="radio" name="q15" value="b" class="hidden"><div class="option-label">b</div><span class="flex-1">12</span></label><label class="quiz-option"><input type="radio" name="q15" value="c" class="hidden"><div class="option-label">c</div><span class="flex-1">15</span></label><label class="quiz-option"><input type="radio" name="q15" value="d" class="hidden"><div class="option-label">d</div><span class="flex-1">20</span></label></div></div>
 
             <!-- Submit Button -->
             <div class="text-center mb-8" id="submitButtonContainer" style="display: none;">
@@ -1781,7 +1714,7 @@
                             <div class="space-y-2">
                                 <div class="flex justify-between">
                                     <span class="text-gray-600">Questions:</span>
-                                    <span class="font-semibold">10</span>
+                                    <span class="font-semibold">15</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="text-gray-600">Points per question:</span>
@@ -1789,24 +1722,7 @@
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="text-gray-600">Total possible:</span>
-                                    <span class="font-semibold">10 points</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-white rounded-lg p-4">
-                            <h4 class="font-semibold text-gray-800 mb-3">Problem Solving</h4>
-                            <div class="space-y-2">
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Questions:</span>
-                                    <span class="font-semibold">1</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Points per question:</span>
-                                    <span class="font-semibold">5 points</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Total possible:</span>
-                                    <span class="font-semibold">5 points</span>
+                                    <span class="font-semibold">15 points</span>
                                 </div>
                             </div>
                         </div>
@@ -2174,6 +2090,8 @@
         const maxAllowedTabSwitches = 2; // Allow 2 tab switches before termination
         const maxAllowedFocusLoss = 30000; // 30 seconds focus loss limit
 
+        const TOTAL_MCQ = 15;
+
         // Quiz data with correct answers
         const quizData = {
             questionOrder: [], // Store shuffled question order
@@ -2187,10 +2105,12 @@
                 q7: 'b', // Ambient temperature
                 q8: 'c', // Gravity effect (pulling down)
                 q9: 'a', // ₱200
-                q10: 'c' // Piecewise function
-            },
-            problemSolving: {
-                answer: 450 // Maximum profit: P(25) = -2(25)² + 100(25) - 800 = 450
+                q10: 'c', // Piecewise function
+                q11: 'b',
+                q12: 'c',
+                q13: 'b',
+                q14: 'b',
+                q15: 'c'
             }
         };
 
@@ -2228,13 +2148,7 @@
                 });
             });
             
-            // Add event listener for problem solving input
-            const psInput = document.getElementById('ps-answer');
-            if (psInput) {
-                psInput.addEventListener('input', function() {
-                    updateProgress(); // Update progress when typing in problem solving
-                });
-            }
+            // No standalone problem-solving input in this version
         }
 
         // Update option styles when selected
@@ -2521,20 +2435,16 @@
             let answered = 0;
             
             // Count answered multiple choice questions
-            for (let i = 1; i <= 10; i++) {
+            for (let i = 1; i <= TOTAL_MCQ; i++) {
                 if (document.querySelector(`input[name="q${i}"]:checked`)) {
                     answered++;
                 }
             }
             
-            // Check problem solving question
-            const psAnswer = document.getElementById('ps-answer');
-            if (psAnswer && psAnswer.value.trim()) answered++;
-            
             // Update progress text
             const progressText = document.getElementById('progressText');
             if (progressText) {
-                progressText.textContent = `${answered}/11`;
+                progressText.textContent = `${answered}/${TOTAL_MCQ}`;
             }
             
             // Update progress bar
@@ -2551,9 +2461,7 @@
             const quizContainer = document.getElementById('quizContainer');
             if (!quizContainer) return;
             
-            // Get all question cards (1-10, exclude problem solving 11)
-            const questions = Array.from(quizContainer.querySelectorAll('[data-question]'))
-                .filter(q => q.getAttribute('data-question') !== '11');
+            const questions = Array.from(quizContainer.querySelectorAll('[data-question]'));
             
             // Shuffle using Fisher-Yates algorithm
             for (let i = questions.length - 1; i > 0; i--) {
@@ -2565,13 +2473,11 @@
             quizData.questionOrder = questions.map(q => parseInt(q.getAttribute('data-question')));
             console.log('✅ Question order:', quizData.questionOrder);
             
-            // Reorder questions in DOM (but keep problem solving at the end)
-            const problemSolving = quizContainer.querySelector('[data-question="11"]');
+            // Reorder questions in DOM
             const submitButton = document.getElementById('submitButtonContainer');
             
             // Remove all questions from container
             questions.forEach(q => q.remove());
-            if (problemSolving) problemSolving.remove();
             
             // Add shuffled questions back
             const fragment = document.createDocumentFragment();
@@ -2582,15 +2488,6 @@
                 quizContainer.insertBefore(fragment, submitButton);
             } else {
                 quizContainer.appendChild(fragment);
-            }
-            
-            // Add problem solving question back at the end
-            if (problemSolving) {
-                if (submitButton && quizContainer.contains(submitButton)) {
-                    quizContainer.insertBefore(problemSolving, submitButton);
-                } else {
-                    quizContainer.appendChild(problemSolving);
-                }
             }
             
             console.log('✅ Questions shuffled successfully');
@@ -2647,15 +2544,7 @@
                 });
             });
             
-            // Add listener to problem solving input
-            const psInput = document.getElementById('ps-answer');
-            if (psInput) {
-                psInput.addEventListener('input', function() {
-                    if (!isReviewMode && !isQuizCompleted) {
-                        updateProgress();
-                    }
-                });
-            }
+            // No standalone problem-solving input in this version
         }
 
         // Check quiz deadline and get time limit
@@ -2744,18 +2633,14 @@
                 }
                 
                 // Check if all questions are answered
-                const totalQuestions = 11; // 10 multiple choice + 1 problem solving question
+                const totalQuestions = TOTAL_MCQ;
                 let answered = 0;
                 
-                for (let i = 1; i <= 10; i++) {
+                for (let i = 1; i <= TOTAL_MCQ; i++) {
                     if (document.querySelector(`input[name="q${i}"]:checked`)) {
                         answered++;
                     }
                 }
-                
-                const psAnswerInput = document.getElementById('ps-answer');
-                const psAnswerTrimmed = psAnswerInput ? psAnswerInput.value.trim() : '';
-                if (psAnswerTrimmed) answered++;
                 
                 // Show confirmation dialog
                 const result = await Swal.fire({
@@ -2816,17 +2701,12 @@
             
                 // Collect all answers
                 const answers = {};
-                for (let i = 1; i <= 10; i++) {
+                for (let i = 1; i <= TOTAL_MCQ; i++) {
                     const selected = document.querySelector(`input[name="q${i}"]:checked`);
                     answers[`q${i}`] = selected ? selected.value : null;
                     // Update userAnswers for review display
                     userAnswers[`q${i}`] = selected ? selected.value : null;
                 }
-                
-                // Collect problem solving answer
-                const psAnswer = psAnswerInput ? psAnswerInput.value : '';
-                answers['ps-answer'] = psAnswer;
-                userAnswers['ps-answer'] = psAnswer;
                 
                 // Submit to database
                 const dbResult = await saveQuizResults(answers, quizDuration);
@@ -2893,14 +2773,10 @@
             const answers = {};
             
             // Multiple choice questions
-            for (let i = 1; i <= 10; i++) {
+            for (let i = 1; i <= TOTAL_MCQ; i++) {
                 const selected = document.querySelector(`input[name="q${i}"]:checked`);
                 answers[`q${i}`] = selected ? selected.value : null;
             }
-            
-            // Problem solving question
-            const psAnswer = document.getElementById('ps-answer').value;
-            answers['q11'] = psAnswer;
             
             return answers;
         }
@@ -2910,7 +2786,7 @@
             let score = 0;
             
             // Check multiple choice questions (1 point each)
-            for (let i = 1; i <= 10; i++) {
+            for (let i = 1; i <= TOTAL_MCQ; i++) {
                 const questionKey = `q${i}`;
                 const studentAnswer = answers[questionKey];
                 const correctAnswer = quizData.answers[questionKey];
@@ -2918,14 +2794,6 @@
                 if (studentAnswer && studentAnswer.toString().toLowerCase() === correctAnswer.toString().toLowerCase()) {
                     score++;
                 }
-            }
-            
-            // Check problem solving question (5 points)
-            const psAnswer = answers['q11'];
-            const psCorrect = quizData.problemSolving.answer;
-            
-            if (psAnswer && psAnswer.toString().toLowerCase() === psCorrect.toString().toLowerCase()) {
-                score += 5; // 5 points for problem solving
             }
             
             return score;
@@ -3096,7 +2964,7 @@
                 
                 // Collect student answers for review display
                 const studentAnswers = {};
-                for (let i = 1; i <= 10; i++) {
+                for (let i = 1; i <= TOTAL_MCQ; i++) {
                     // Use userAnswers if available, otherwise try to get from DOM
                     if (userAnswers[`q${i}`]) {
                         studentAnswers[`q${i}`] = userAnswers[`q${i}`];
@@ -3106,15 +2974,7 @@
                     }
                 }
                 
-                // Get problem solving answer
-                if (userAnswers['ps-answer']) {
-                    studentAnswers['ps-answer'] = userAnswers['ps-answer'];
-                } else {
-                    const psInput = document.getElementById('ps-answer');
-                    studentAnswers['ps-answer'] = psInput ? psInput.value.trim() : '';
-                }
-                
-                const totalQuestions = result.total_questions || 11; // Default to 11 (10 MC + 1 PS) if not provided
+                const totalQuestions = result.total_questions || TOTAL_MCQ;
                 const percentage = Math.round((result.score / totalQuestions) * 100);
                 
                 // Calculate correct/incorrect answers if not provided
@@ -3174,10 +3034,15 @@
                     7: { title: 'Newton\'s Law of Cooling', concept: 'Applying exponential decay models' },
                     8: { title: 'Projectile motion', concept: 'Understanding quadratic functions in physics' },
                     9: { title: 'Interest calculation', concept: 'Applying percentage calculations' },
-                    10: { title: 'Real-world applications', concept: 'Connecting functions to practical problems' }
+                    10: { title: 'Real-world applications', concept: 'Connecting functions to practical problems' },
+                    11: { title: 'Taxi fare evaluation', concept: 'Evaluating linear fare models from given distance' },
+                    12: { title: 'Discount functions', concept: 'Applying percentage discount functions correctly' },
+                    13: { title: 'Growth factor meaning', concept: 'Interpreting parameters in exponential growth models' },
+                    14: { title: 'Fixed vs variable cost', concept: 'Identifying fixed cost in linear cost models' },
+                    15: { title: 'Break-even solving', concept: 'Solving equality of revenue and cost functions' }
                 };
                 
-                for (let i = 1; i <= 10; i++) {
+                for (let i = 1; i <= TOTAL_MCQ; i++) {
                     const userAnswer = studentAnswers[`q${i}`];
                     const correctAnswer = quizData.answers[`q${i}`];
                     const isCorrect = userAnswer === correctAnswer;
@@ -3191,32 +3056,23 @@
                     });
                 }
                 
-                // Check problem solving
-                const psAnswer = studentAnswers['ps-answer'] || '';
-                const psCorrectAnswer = quizData.problemSolving.answer;
-                const isPsCorrect = psAnswer && parseInt(psAnswer.trim()) === psCorrectAnswer;
-                
-                // Calculate MC correct/incorrect
-                const mcCorrect = correctCount - (isPsCorrect ? 1 : 0);
-                const mcIncorrect = incorrectCount - (isPsCorrect ? 0 : 1);
+                const mcCorrect = correctCount;
+                const mcIncorrect = incorrectCount;
                 
                 // Store quiz results for AI analysis with detailed question analysis
                 window.quizResultsForAI = {
+                    quizType: 'real-life-problems',
                     score: result.score || 0,
                     totalQuestions: totalQuestions,
-                    totalPoints: 15,
+                    totalPoints: TOTAL_MCQ,
                     correct: correctCount,
                     incorrect: incorrectCount,
                     percentage: percentage,
                     timeTaken: formatTime(quizDuration),
                     mcCorrect: mcCorrect,
                     mcIncorrect: mcIncorrect,
-                    psCorrect: isPsCorrect ? 1 : 0,
-                    psIncorrect: isPsCorrect ? 0 : 1,
                     studentAnswers: studentAnswers,
-                    questionAnalysis: questionAnalysis,
-                    problemSolvingAnswer: psAnswer,
-                    problemSolvingCorrect: isPsCorrect
+                    questionAnalysis: questionAnalysis
                 };
 
                 // Show quiz review with correct/incorrect answers and explanations
@@ -3389,9 +3245,7 @@
             
             const percentage = metrics.percentage || 0;
             const mcPercentage = metrics.mcPercentage || 0;
-            const psPercentage = metrics.psPercentage || 0;
             const mcCorrect = metrics.mcCorrect || 0;
-            const psCorrect = metrics.psCorrect || 0;
             
             // Determine performance level and color for overall score
             let overallColorClass, overallIcon, overallLevel, overallStatus;
@@ -3435,19 +3289,6 @@
                 mcStatus = 'Needs improvement in Multiple Choice';
             }
             
-            // Determine PS performance
-            let psColorClass, psStatus;
-            if (psPercentage >= 80) {
-                psColorClass = 'from-purple-500 to-pink-600';
-                psStatus = 'Strong in Problem Solving';
-            } else if (psPercentage >= 50) {
-                psColorClass = 'from-yellow-500 to-orange-500';
-                psStatus = 'Moderate performance in Problem Solving';
-            } else {
-                psColorClass = 'from-red-500 to-pink-500';
-                psStatus = 'Needs improvement in Problem Solving';
-            }
-            
             metricsDiv.innerHTML = `
                 <div class="bg-gradient-to-br ${overallColorClass} rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-transform">
                     <div class="flex items-center justify-between mb-3">
@@ -3471,21 +3312,8 @@
                     <div class="w-full bg-white/20 rounded-full h-3 mb-2">
                         <div class="bg-white rounded-full h-3 transition-all duration-1000 shadow-lg" style="width: ${mcPercentage}%"></div>
                     </div>
-                    <div class="text-sm font-semibold mb-1">${mcCorrect}/10 Questions</div>
+                    <div class="text-sm font-semibold mb-1">${mcCorrect}/${TOTAL_MCQ} Questions</div>
                     <div class="text-xs opacity-90 italic">${mcStatus}</div>
-                </div>
-                
-                <div class="bg-gradient-to-br ${psColorClass} rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-transform">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-sm font-semibold uppercase tracking-wide">Problem Solving</span>
-                        <i class="fas fa-calculator text-2xl"></i>
-                    </div>
-                    <div class="text-4xl font-bold mb-2">${psPercentage}%</div>
-                    <div class="w-full bg-white/20 rounded-full h-3 mb-2">
-                        <div class="bg-white rounded-full h-3 transition-all duration-1000 shadow-lg" style="width: ${psPercentage}%"></div>
-                    </div>
-                    <div class="text-sm font-semibold mb-1">${psCorrect > 0 ? 'Correct' : 'Incorrect'}</div>
-                    <div class="text-xs opacity-90 italic">${psStatus}</div>
                 </div>
             `;
         }
@@ -3591,8 +3419,8 @@
 
             reviewContainer.innerHTML = '';
 
-            // Display multiple choice questions (1-10) - use original order or shuffled order
-            const questionOrder = quizData.questionOrder.length > 0 ? quizData.questionOrder : [1,2,3,4,5,6,7,8,9,10];
+            // Display multiple choice questions (1-15)
+            const questionOrder = quizData.questionOrder.length > 0 ? quizData.questionOrder : [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
             
             questionOrder.forEach((questionNum, index) => {
                 const i = questionNum;
@@ -3656,51 +3484,7 @@
                 reviewContainer.appendChild(reviewCard);
             });
 
-            // Display problem solving question
-            const psQuestionCard = document.querySelector('[data-question="11"]');
-            if (psQuestionCard) {
-                const psAnswer = studentAnswers['ps-answer'] || '';
-                const correctAnswer = quizData.problemSolving.answer;
-                const isCorrect = psAnswer.toString().trim() === correctAnswer.toString().trim();
-
-                const reviewCard = psQuestionCard.cloneNode(true);
-                reviewCard.classList.add('review-question-card', 'mb-6');
-                
-                if (isCorrect) {
-                    reviewCard.classList.add('border-4', 'border-green-400');
-                } else {
-                    reviewCard.classList.add('border-4', 'border-red-400');
-                }
-
-                // Mark the answer input
-                const psInput = reviewCard.querySelector('#ps-answer');
-                if (psInput) {
-                    psInput.value = psAnswer;
-                    psInput.disabled = true;
-                    
-                    // Add visual indicator
-                    const indicator = document.createElement('div');
-                    indicator.className = `mt-4 p-4 rounded-lg ${isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`;
-                    if (isCorrect) {
-                        indicator.innerHTML = '<i class="fas fa-check-circle text-green-500 mr-2"></i><span class="text-green-700 font-semibold">Correct Answer!</span>';
-                    } else {
-                        indicator.innerHTML = `
-                            <div class="mb-2">
-                                <i class="fas fa-times-circle text-red-500 mr-2"></i><span class="text-red-700 font-semibold">Your Answer: ${psAnswer || 'No answer'}</span>
-                            </div>
-                            <div class="text-sm text-gray-600">
-                                <strong>Correct Answer:</strong> ${correctAnswer}
-                            </div>
-                        `;
-                    }
-                    psInput.parentElement.appendChild(indicator);
-                }
-
-                // Add explanation
-                addProblemSolvingExplanationToReview(reviewCard, isCorrect);
-
-                reviewContainer.appendChild(reviewCard);
-            }
+            // No standalone problem-solving review card in 15-MCQ mode
         }
 
         // Add explanation to review question card
@@ -3738,32 +3522,8 @@
             reviewCard.appendChild(explanationDiv);
         }
 
-        // Add explanation to problem solving question
-        function addProblemSolvingExplanationToReview(reviewCard, isCorrect) {
-            const explanationDiv = document.createElement('div');
-            explanationDiv.className = 'explanation-added mt-4 p-4 rounded-lg bg-blue-50 border-l-4 border-blue-500';
-            explanationDiv.innerHTML = `
-                <div class="flex items-start">
-                    <i class="fas fa-info-circle text-blue-500 mr-2 mt-1"></i>
-                    <div class="flex-1">
-                        <h4 class="font-semibold text-blue-800 mb-2">
-                            ${isCorrect ? '<i class="fas fa-check-circle text-green-500 mr-1"></i>Correct!' : '<i class="fas fa-times-circle text-red-500 mr-1"></i>Incorrect'}
-                        </h4>
-                        <p class="text-gray-700 mb-2">
-                            To find the maximum profit for a quadratic function P(x) = -2x² + 100x - 800, use the vertex formula: x = -b/(2a) = -100/(2×(-2)) = 25.
-                        </p>
-                        <p class="text-gray-700 mb-2">
-                            Then substitute x = 25 into the function: P(25) = -2(25)² + 100(25) - 800 = -1250 + 2500 - 800 = 450.
-                        </p>
-                        <p class="text-gray-700">
-                            Therefore, the maximum profit is <strong>450 thousand pesos</strong> when 25 units are sold.
-                        </p>
-                    </div>
-                </div>
-            `;
-            
-            reviewCard.appendChild(explanationDiv);
-        }
+        // Legacy no-op kept for compatibility
+        function addProblemSolvingExplanationToReview() {}
 
         // Display student's rank
         async function displayStudentRank() {
@@ -4004,7 +3764,7 @@
                         </div>
                         <div class="podium-info">
                             <div class="podium-name">${student.student_name || 'Unknown Student'}</div>
-                            <div class="podium-points">${student.score}/${student.total_questions || 11} points</div>
+                            <div class="podium-points">${student.score}/${student.total_questions || TOTAL_MCQ} points</div>
                             <div class="text-xs text-gray-500 mt-1">${formatTime(student.completion_time || student.time_taken)}</div>
                         </div>
                     `;
@@ -4119,7 +3879,7 @@
             
             // For cheating students, always show score as 0
             const displayScore = isCheating ? 0 : (student.score || 0);
-            const totalQuestions = student.total_questions || 11; // Default to 11 if not provided
+            const totalQuestions = student.total_questions || TOTAL_MCQ;
             const scoreDisplay = isCheating ? `0/${totalQuestions}` : `${displayScore}/${totalQuestions}`;
             
             entry.innerHTML = `
@@ -4305,15 +4065,12 @@
             
             // Collect current answers
             const answers = {};
-            for (let i = 1; i <= 10; i++) {
+            for (let i = 1; i <= TOTAL_MCQ; i++) {
                 const selected = document.querySelector(`input[name="q${i}"]:checked`);
                 answers[`q${i}`] = selected ? selected.value : null;
                 // Update userAnswers for review display
                 userAnswers[`q${i}`] = selected ? selected.value : null;
             }
-            const psAnswer = document.getElementById('ps-answer')?.value || '';
-            answers['ps-answer'] = psAnswer;
-            userAnswers['ps-answer'] = psAnswer;
             
             // Submit quiz
             const dbResult = await saveQuizResults(answers, quizDuration);

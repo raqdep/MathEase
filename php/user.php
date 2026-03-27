@@ -1,6 +1,31 @@
 <?php
 require_once 'config.php';
 
+function normalizeStudentProfilePicture(?string $rawPath): ?string {
+    $path = trim((string)($rawPath ?? ''));
+    if ($path === '') {
+        return null;
+    }
+
+    if (strpos($path, '../') === 0) {
+        $path = substr($path, 3);
+    }
+
+    if (preg_match('#^https?://#i', $path)) {
+        return $path;
+    }
+
+    if (strpos($path, 'uploads/profiles/') === 0) {
+        return $path;
+    }
+
+    if (strpos($path, 'profiles/') === 0) {
+        return 'uploads/' . $path;
+    }
+
+    return 'uploads/profiles/' . ltrim(basename($path), '/\\');
+}
+
 header('Content-Type: application/json');
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');
@@ -53,12 +78,9 @@ try {
         throw new Exception('User not found');
     }
 
-    // Format profile picture as full path for frontend
-    if (!empty($user['profile_picture'])) {
-        $user['profile_picture'] = 'uploads/profiles/' . $user['profile_picture'];
-    } else {
-        $user['profile_picture'] = null;
-    }
+    $normalizedProfilePicture = normalizeStudentProfilePicture($user['profile_picture'] ?? null);
+    $user['profile_picture'] = $normalizedProfilePicture;
+    $user['profile_picture_url'] = $normalizedProfilePicture;
 
     // Fetch or initialize user_progress
     $stmt = $pdo->prepare("SELECT total_score, completed_lessons, current_topic FROM user_progress WHERE user_id = ?");

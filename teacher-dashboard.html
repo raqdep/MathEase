@@ -394,13 +394,503 @@
                 -webkit-user-select: none;
                 user-select: none;
             }
+
+        :root {
+            --teacher-sidebar-bg: #0d1330;
+            --teacher-sidebar-text: #b8c2ef;
+            --teacher-sidebar-title: #ffffff;
+            --teacher-accent: #5f66f5;
+            --teacher-accent-2: #8a3ffc;
+            --teacher-border: #dfe4ff;
+            --teacher-shadow: 0 10px 32px rgba(30, 41, 59, 0.08);
+        }
+
+        body.teacher-shell {
+            background: #edf0fa;
+            color: #0f172a;
+        }
+
+        body.teacher-shell .sidebar {
+            background: linear-gradient(180deg, var(--teacher-sidebar-bg) 0%, #11193c 100%);
+            border-right: 0;
+            box-shadow: 8px 0 24px rgba(13, 19, 48, 0.35);
+        }
+
+        body.teacher-shell .sidebar .border-b {
+            border-color: rgba(184, 194, 239, 0.2);
+        }
+
+        body.teacher-shell .sidebar h1 {
+            color: var(--teacher-sidebar-title) !important;
+        }
+
+        body.teacher-shell .sidebar p {
+            color: #c8d1ff !important;
+        }
+
+        body.teacher-shell .nav-item {
+            color: var(--teacher-sidebar-text) !important;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        body.teacher-shell .nav-item i {
+            color: #9dabec !important;
+        }
+
+        body.teacher-shell .nav-item:hover {
+            background: rgba(143, 157, 235, 0.15) !important;
+            color: #ffffff !important;
+        }
+
+        body.teacher-shell .nav-item.active {
+            background: linear-gradient(135deg, var(--teacher-accent), var(--teacher-accent-2)) !important;
+            color: #ffffff !important;
+            box-shadow: 0 8px 18px rgba(95, 102, 245, 0.35);
+        }
+
+        body.teacher-shell .nav-item.active i {
+            color: #ffffff !important;
+        }
+
+        body.teacher-shell .main-content,
+        body.teacher-shell .main-content-wrapper {
+            background: #f3f5fc;
+        }
+
+        body.teacher-shell header.mobile-header {
+            background: #fff;
+            border-bottom: 1px solid var(--teacher-border);
+            box-shadow: 0 6px 16px rgba(30, 41, 59, 0.05);
+        }
+
+        body.teacher-shell #pageTitle {
+            color: #1f2a5a !important;
+            font-weight: 800;
+        }
+
+        body.teacher-shell #pageDescription {
+            color: #64748b !important;
+            font-weight: 500;
+        }
+
+        body.teacher-shell .content-section .bg-white.rounded-lg,
+        body.teacher-shell .content-section .bg-white.rounded-xl,
+        body.teacher-shell .content-section > .bg-white {
+            border: 1px solid var(--teacher-border) !important;
+            box-shadow: var(--teacher-shadow) !important;
+            border-radius: 16px !important;
+        }
+
+        body.teacher-shell .content-section button.bg-indigo-600,
+        body.teacher-shell .content-section button.bg-blue-600,
+        body.teacher-shell .content-section button.bg-violet-600 {
+            background: linear-gradient(135deg, var(--teacher-accent), var(--teacher-accent-2)) !important;
+            border: 0 !important;
+            box-shadow: 0 10px 18px rgba(95, 102, 245, 0.25);
+        }
+
+        body.teacher-shell .content-section .bg-indigo-50,
+        body.teacher-shell .content-section .bg-emerald-50,
+        body.teacher-shell .content-section .bg-amber-50,
+        body.teacher-shell .content-section .bg-rose-50,
+        body.teacher-shell .content-section .bg-yellow-50 {
+            background: #f6f8ff !important;
+            border-color: var(--teacher-border) !important;
+        }
+
+        body.teacher-shell .content-section input,
+        body.teacher-shell .content-section select,
+        body.teacher-shell .content-section textarea {
+            border-color: #d8def8 !important;
+            border-radius: 10px !important;
+            background: #ffffff !important;
+        }
+
+        body.teacher-shell .content-section input:focus,
+        body.teacher-shell .content-section select:focus,
+        body.teacher-shell .content-section textarea:focus {
+            border-color: var(--teacher-accent) !important;
+            box-shadow: 0 0 0 3px rgba(95, 102, 245, 0.14) !important;
+        }
+
+        body.teacher-shell table thead {
+            background: #eef1ff !important;
+        }
+
+        body.teacher-shell table thead th {
+            color: #30406b !important;
+            font-weight: 700 !important;
+            border-bottom: 1px solid #dbe3ff !important;
+        }
+
+        body.teacher-shell .mobile-bottom-nav {
+            background: #0d1330;
+            border-top: 1px solid rgba(148, 163, 184, 0.25);
+        }
+
+        body.teacher-shell .mobile-bottom-nav-item {
+            color: #b8c2ef;
+        }
+
+        body.teacher-shell .mobile-bottom-nav-item.active {
+            color: #fff;
+            background: linear-gradient(135deg, var(--teacher-accent), var(--teacher-accent-2));
+            border-radius: 12px;
+            margin: 0 4px;
+        }
+
+        /* Quiz management unified palette and icon system */
+        body.teacher-shell #quiz-management-section #allQuizzes > div {
+            border-color: #dfe4ff !important;
+            box-shadow: var(--teacher-shadow) !important;
+        }
+
+        body.teacher-shell #quiz-management-section #allQuizzes > div:hover {
+            border-color: #a9b6ff !important;
+        }
+
+        body.teacher-shell #quiz-management-section #allQuizzes > div > div:first-child {
+            background: linear-gradient(135deg, #eef2ff, #e9e7ff) !important;
+            border-bottom-color: #d9e0ff !important;
+        }
+
+        body.teacher-shell #quiz-management-section #allQuizzes .w-14.h-14 {
+            background: linear-gradient(135deg, var(--teacher-accent), var(--teacher-accent-2)) !important;
+            box-shadow: 0 10px 18px rgba(95, 102, 245, 0.25) !important;
+            position: relative;
+        }
+
+        body.teacher-shell #quiz-management-section #allQuizzes .w-14.h-14 i {
+            display: none !important;
+        }
+
+        body.teacher-shell #quiz-management-section #allQuizzes .w-14.h-14::before {
+            content: "\f15c";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            color: #ffffff;
+            font-size: 1.05rem;
+            line-height: 1;
+        }
+
+        body.teacher-shell #quiz-management-section #allQuizzes label i {
+            color: #6366f1 !important;
+        }
+
+        body.teacher-shell #quiz-management-section #allQuizzes button[onclick^="saveQuizSettings"] {
+            background: linear-gradient(135deg, var(--teacher-accent), var(--teacher-accent-2)) !important;
+            border: 0 !important;
+        }
+
+        body.teacher-shell #quiz-management-section #allQuizzes button[onclick^="viewQuizResults"] {
+            background: #eef2ff !important;
+            color: #4338ca !important;
+            border: 1px solid #c7d2fe !important;
+            box-shadow: none !important;
+        }
+
+        body.teacher-shell #quiz-management-section #allQuizzes button[onclick^="viewQuizResults"]:hover {
+            background: #e0e7ff !important;
+        }
+
+        /* Class performance unified palette and icon system */
+        body.teacher-shell #class-performance-section .bg-white {
+            border-color: #dfe4ff !important;
+            box-shadow: var(--teacher-shadow) !important;
+        }
+
+        body.teacher-shell #class-performance-section .bg-gradient-to-r.from-indigo-50,
+        body.teacher-shell #class-performance-section .bg-gradient-to-r.from-emerald-50,
+        body.teacher-shell #class-performance-section .bg-gradient-to-r.from-amber-50,
+        body.teacher-shell #class-performance-section .bg-gradient-to-r.from-blue-50 {
+            background: linear-gradient(135deg, #eef2ff, #e9e7ff) !important;
+            border-bottom-color: #d9e0ff !important;
+        }
+
+        body.teacher-shell #class-performance-section .w-12.h-12,
+        body.teacher-shell #class-performance-section .w-10.h-10 {
+            background: linear-gradient(135deg, var(--teacher-accent), var(--teacher-accent-2)) !important;
+            box-shadow: 0 10px 18px rgba(95, 102, 245, 0.22) !important;
+        }
+
+        body.teacher-shell #class-performance-section .w-12.h-12 i,
+        body.teacher-shell #class-performance-section .w-10.h-10 i {
+            color: #fff !important;
+        }
+
+        body.teacher-shell #class-performance-section #classSelector,
+        body.teacher-shell #class-performance-section #performanceFilterSelect,
+        body.teacher-shell #class-performance-section #studentSearchInput {
+            border-color: #cdd6ff !important;
+            background: #ffffff !important;
+        }
+
+        body.teacher-shell #class-performance-section button.bg-indigo-600,
+        body.teacher-shell #class-performance-section button.bg-blue-500 {
+            background: linear-gradient(135deg, var(--teacher-accent), var(--teacher-accent-2)) !important;
+            border: 0 !important;
+            color: #fff !important;
+        }
+
+        body.teacher-shell #class-performance-section table thead tr:first-child th,
+        body.teacher-shell #class-performance-section table thead tr:nth-child(2) th {
+            background: #eef2ff !important;
+            color: #334155 !important;
+            border-color: #dbe3ff !important;
+        }
+
+        body.teacher-shell #class-performance-section #selectedClassInfo {
+            background: linear-gradient(135deg, #eef2ff, #f4f3ff) !important;
+            border-color: #cfd8ff !important;
+        }
+
+        /* Stronger student-row hover highlight in class performance table */
+        body.teacher-shell #class-performance-section #performanceTableBody tr {
+            transition: background-color 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        body.teacher-shell #class-performance-section #performanceTableBody tr:hover td {
+            background: #eef2ff !important;
+        }
+
+        body.teacher-shell #class-performance-section #performanceTableBody tr:hover {
+            box-shadow: inset 4px 0 0 #6366f1;
+        }
+
+        body.teacher-shell #class-performance-section .cp-badge-top {
+            background: #eef2ff;
+            color: #3730a3;
+            border: 1px solid #c7d2fe;
+        }
+
+        body.teacher-shell #class-performance-section .cp-badge-normal {
+            background: #ecfdf5;
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+
+        body.teacher-shell #class-performance-section .cp-badge-low {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        body.teacher-shell #class-performance-section .cp-badge-critical {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        body.teacher-shell #class-performance-section .cp-badge-support {
+            background: #fff7ed;
+            color: #9a3412;
+            border: 1px solid #fed7aa;
+        }
+
+        body.teacher-shell #class-performance-section .cp-badge-risk {
+            background: #fffbeb;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+
+        /* Unified modal palette + icon styling (all modals) */
+        body.teacher-shell #studentDetailsModal,
+        body.teacher-shell #topicManagementModal {
+            background: rgba(15, 23, 42, 0.58) !important;
+            backdrop-filter: blur(2px);
+        }
+
+        body.teacher-shell #studentDetailsModal > div,
+        body.teacher-shell #topicManagementModal > div {
+            border: 1px solid #dbe3ff !important;
+            box-shadow: 0 24px 48px rgba(15, 23, 42, 0.22) !important;
+            border-radius: 16px !important;
+            overflow: hidden;
+        }
+
+        body.teacher-shell #studentDetailsModal .bg-gradient-to-r,
+        body.teacher-shell #topicManagementModal .bg-gradient-to-r {
+            background: linear-gradient(135deg, #eef2ff, #e9e7ff) !important;
+            border-bottom: 1px solid #dbe3ff !important;
+        }
+
+        body.teacher-shell #studentDetailsModal .bg-gradient-to-r i,
+        body.teacher-shell #topicManagementModal .bg-gradient-to-r i {
+            color: #5b5ff5 !important;
+        }
+
+        /* Student details modal: keep hero header readable */
+        body.teacher-shell #studentDetailsModal #studentDetailsContent > .bg-gradient-to-r {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+            color: #ffffff !important;
+            border: 0 !important;
+        }
+
+        body.teacher-shell #studentDetailsModal #studentDetailsContent > .bg-gradient-to-r h2,
+        body.teacher-shell #studentDetailsModal #studentDetailsContent > .bg-gradient-to-r p,
+        body.teacher-shell #studentDetailsModal #studentDetailsContent > .bg-gradient-to-r span,
+        body.teacher-shell #studentDetailsModal #studentDetailsContent > .bg-gradient-to-r div {
+            color: #ffffff !important;
+        }
+
+        body.teacher-shell #studentDetailsModal #studentDetailsContent > .bg-gradient-to-r i {
+            color: #ffffff !important;
+        }
+
+        /* Student details stat cards consistency */
+        body.teacher-shell #studentDetailsModal #studentDetailsContent .bg-blue-50,
+        body.teacher-shell #studentDetailsModal #studentDetailsContent .bg-green-50,
+        body.teacher-shell #studentDetailsModal #studentDetailsContent .bg-purple-50,
+        body.teacher-shell #studentDetailsModal #studentDetailsContent .bg-yellow-50 {
+            background: #f6f8ff !important;
+            border: 1px solid #dbe3ff !important;
+            border-radius: 12px !important;
+        }
+
+        body.teacher-shell #studentDetailsModal #studentDetailsContent .bg-blue-50 i,
+        body.teacher-shell #studentDetailsModal #studentDetailsContent .bg-green-50 i,
+        body.teacher-shell #studentDetailsModal #studentDetailsContent .bg-purple-50 i,
+        body.teacher-shell #studentDetailsModal #studentDetailsContent .bg-yellow-50 i {
+            color: #5b5ff5 !important;
+        }
+
+        /* Student details modal: spacing + typography polish */
+        body.teacher-shell #studentDetailsModal #studentDetailsTitle {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #1f2a5a;
+            letter-spacing: 0.01em;
+        }
+
+        body.teacher-shell #studentDetailsModal #studentDetailsSubtitle {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        body.teacher-shell #studentDetailsModal #studentDetailsContent > .bg-gradient-to-r {
+            padding: 1.5rem !important;
+            border-radius: 14px !important;
+            margin-bottom: 1.25rem !important;
+        }
+
+        body.teacher-shell #studentDetailsModal #studentDetailsContent > .grid.grid-cols-1.md\:grid-cols-3 {
+            gap: 0.85rem !important;
+            margin-bottom: 1.1rem !important;
+        }
+
+        body.teacher-shell #studentDetailsModal #studentDetailsContent > .grid.grid-cols-1.md\:grid-cols-3 > div {
+            padding: 0.95rem !important;
+        }
+
+        body.teacher-shell #studentDetailsModal #studentDetailsContent h3 {
+            color: #1f2a5a;
+            font-weight: 700;
+            letter-spacing: 0.005em;
+        }
+
+        body.teacher-shell #studentDetailsModal #studentDetailsContent .text-2xl {
+            font-size: 1.55rem !important;
+            line-height: 1.15 !important;
+            font-weight: 800 !important;
+        }
+
+        body.teacher-shell #studentDetailsModal #studentDetailsContent .text-xl {
+            font-size: 1.2rem !important;
+            line-height: 1.25 !important;
+            font-weight: 700 !important;
+        }
+
+        body.teacher-shell #studentDetailsModal #studentDetailsContent .bg-white.border {
+            border-color: #dfe4ff !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 20px rgba(30, 41, 59, 0.06) !important;
+        }
+
+        body.teacher-shell #studentDetailsModal #studentDetailsContent .h-80 {
+            height: 18.5rem !important;
+        }
+
+        body.teacher-shell #studentDetailsModal button,
+        body.teacher-shell #topicManagementModal button {
+            border-radius: 10px !important;
+        }
+
+        body.teacher-shell #studentDetailsModal button[class*="bg-indigo"],
+        body.teacher-shell #studentDetailsModal button[class*="bg-blue"],
+        body.teacher-shell #topicManagementModal button[class*="bg-indigo"],
+        body.teacher-shell #topicManagementModal button[class*="bg-blue"] {
+            background: linear-gradient(135deg, var(--teacher-accent), var(--teacher-accent-2)) !important;
+            border: 0 !important;
+            color: #fff !important;
+        }
+
+        body.teacher-shell #studentDetailsModal button[class*="bg-gray"],
+        body.teacher-shell #topicManagementModal button[class*="bg-gray"] {
+            background: #eef2ff !important;
+            border: 1px solid #c7d2fe !important;
+            color: #4338ca !important;
+        }
+
+        body.teacher-shell .swal2-popup {
+            border: 1px solid #dbe3ff !important;
+            border-radius: 16px !important;
+            box-shadow: 0 20px 44px rgba(15, 23, 42, 0.24) !important;
+        }
+
+        body.teacher-shell .swal2-title {
+            color: #1f2a5a !important;
+        }
+
+        body.teacher-shell .swal2-confirm {
+            background: linear-gradient(135deg, var(--teacher-accent), var(--teacher-accent-2)) !important;
+            border: 0 !important;
+            border-radius: 10px !important;
+            box-shadow: 0 8px 18px rgba(95, 102, 245, 0.25) !important;
+        }
+
+        body.teacher-shell .swal2-cancel {
+            background: #eef2ff !important;
+            color: #4338ca !important;
+            border: 1px solid #c7d2fe !important;
+            border-radius: 10px !important;
+        }
+
+        body.teacher-shell .swal2-close {
+            color: #5b5ff5 !important;
+        }
+
+        .loading-logo {
+            animation: spin 1.8s linear infinite, logoPulse 2.4s ease-in-out infinite;
+            filter: drop-shadow(0 0 14px rgba(95, 102, 245, 0.35));
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes logoPulse {
+            0%, 100% {
+                transform: scale(1);
+                filter: drop-shadow(0 0 10px rgba(95, 102, 245, 0.28));
+            }
+            50% {
+                transform: scale(1.05);
+                filter: drop-shadow(0 0 18px rgba(138, 63, 252, 0.42));
+            }
+        }
     </style>
 </head>
-<body class="font-inter bg-gray-50 min-h-screen">
+<body class="font-inter bg-gray-50 min-h-screen teacher-shell">
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="fixed inset-0 bg-white z-50 flex items-center justify-center">
         <div class="text-center">
-            <div class="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
+            <img src="css/nav-logo/logo-mid.png" alt="MathEase Loading" class="w-20 h-20 loading-logo mx-auto mb-4">
             <div class="text-xl font-semibold text-gray-700 mb-2">Loading Dashboard</div>
             <div class="text-sm text-gray-500">Please wait while we fetch your data...</div>
         </div>
@@ -411,7 +901,7 @@
     <!-- Sidebar -->
     <div class="flex h-screen">
         <!-- Sidebar -->
-        <div id="sidebar" class="sidebar w-64 bg-white shadow-lg border-r border-gray-200 flex flex-col">
+        <div id="sidebar" class="sidebar w-64 flex flex-col">
             <!-- Logo Section -->
             <div class="p-6 border-b border-gray-200">
                 <div class="flex items-center space-x-3">
@@ -452,13 +942,18 @@
                     <i class="fas fa-chart-bar mr-3 text-gray-400"></i>
                     Class Performance
                 </button>
+                
+                <button onclick="showSection('profile'); closeMobileSidebar();" class="nav-item w-full flex items-center px-4 py-3 text-sm font-medium text-gray-700 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-200" data-section="profile">
+                    <i class="fas fa-user-cog mr-3 text-gray-400"></i>
+                    Profile
+                </button>
             </nav>
         </div>
 
         <!-- Main Content Area -->
         <div class="flex-1 flex flex-col overflow-hidden main-content">
             <!-- Top Header -->
-            <header class="bg-white shadow-sm border-b border-gray-200 mobile-header">
+            <header class="mobile-header">
                 <div class="px-4 sm:px-6 py-3 sm:py-4">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
@@ -478,7 +973,8 @@
                             <div class="relative" id="profileDropdownContainer">
                                 <button onclick="toggleProfileDropdown()" class="flex items-center space-x-3 px-4 py-2.5 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg border border-indigo-200 hover:shadow-lg hover:border-indigo-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                                     <div class="w-11 h-11 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center shadow-md flex-shrink-0">
-                                        <i class="fas fa-user text-white text-base"></i>
+                                        <img id="headerTeacherAvatar" src="" alt="Teacher avatar" class="hidden w-full h-full object-cover rounded-full">
+                                        <i id="headerTeacherAvatarFallback" class="fas fa-user text-white text-base"></i>
                                     </div>
                                     <div class="text-left min-w-0 flex-1">
                                         <p class="text-sm font-semibold text-gray-900 truncate" id="headerTeacherName">Loading...</p>
@@ -493,7 +989,8 @@
                                     <div class="bg-gradient-to-r from-indigo-500 to-purple-600 px-5 py-5">
                                         <div class="flex items-center space-x-3">
                                             <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
-                                                <i class="fas fa-user text-indigo-600 text-xl"></i>
+                                                <img id="dropdownTeacherAvatar" src="" alt="Teacher avatar" class="hidden w-full h-full object-cover rounded-full">
+                                                <i id="dropdownTeacherAvatarFallback" class="fas fa-user text-indigo-600 text-xl"></i>
                                             </div>
                                             <div class="flex-1 min-w-0">
                                                 <p class="text-base font-bold text-white truncate" id="dropdownTeacherName">Teacher Name</p>
@@ -580,7 +1077,7 @@
                 </div>
                 
                 <!-- Bottom section with Quick Stats -->
-                <div class="px-6 py-3 bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200">
+                <div class="px-6 py-3 bg-gradient-to-r from-indigo-50 to-violet-50 border-t border-indigo-100">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-6">
                         <div class="text-center">
@@ -605,7 +1102,7 @@
             </header>
 
             <!-- Content Area -->
-            <main class="flex-1 overflow-y-auto bg-gray-50 p-4 sm:p-6 main-content-wrapper">
+            <main class="flex-1 overflow-y-auto p-4 sm:p-6 main-content-wrapper">
                 <!-- Dashboard Section -->
                 <div id="dashboard-section" class="content-section">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
@@ -637,81 +1134,6 @@
                             </div>
                         </div>
 
-                        <!-- My lesson progress (topics you've viewed) -->
-                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 lg:col-span-2">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center">
-                                    <div class="w-10 h-10 bg-gradient-to-br from-violet-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
-                                        <i class="fas fa-book-open text-white"></i>
-                                    </div>
-                                    <div>
-                                        <h3 class="text-lg font-semibold text-gray-900">My lesson progress</h3>
-                                        <p class="text-sm text-gray-600">Topics you've opened for preview</p>
-                                    </div>
-                                </div>
-                                <button type="button" onclick="loadTeacherLessonProgress()" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium" title="Refresh">
-                                    <i class="fas fa-sync-alt"></i>
-                                </button>
-                            </div>
-                            <div id="teacherLessonProgressList" class="space-y-2 min-h-[80px]">
-                                <div class="flex items-center justify-center py-6 text-gray-400">
-                                    <i class="fas fa-spinner fa-spin mr-2"></i> Loading...
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Learning Analytics Snapshot -->
-                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                            <div class="flex items-center justify-between mb-4">
-                                <div>
-                                    <h3 class="text-lg font-semibold text-gray-900">Learning Analytics</h3>
-                                    <p class="text-sm text-gray-600">Time on task and weak spots (auto-updates)</p>
-                                </div>
-                                <button onclick="refreshLearningAnalytics()" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
-                                    <i class="fas fa-sync-alt mr-2"></i>Refresh
-                                </button>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-100">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <p class="text-sm font-semibold text-indigo-800">Avg time per topic</p>
-                                        <span class="text-xs px-2 py-1 rounded-full bg-indigo-100 text-indigo-700">minutes</span>
-                                    </div>
-                                    <div id="timeByTopicList" class="space-y-2 text-sm text-indigo-900">
-                                        <!-- Filled by JS -->
-                                    </div>
-                                </div>
-                                <div class="p-4 bg-rose-50 rounded-lg border border-rose-100">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <p class="text-sm font-semibold text-rose-800">Weak areas</p>
-                                        <span class="text-xs px-2 py-1 rounded-full bg-rose-100 text-rose-700">lowest scores</span>
-                                    </div>
-                                    <div id="weakAreasList" class="space-y-2 text-sm text-rose-900">
-                                        <!-- Filled by JS -->
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                                <div class="p-4 bg-amber-50 rounded-lg border border-amber-100">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <p class="text-sm font-semibold text-amber-800">Time per lesson</p>
-                                        <span class="text-xs px-2 py-1 rounded-full bg-amber-100 text-amber-700">minutes</span>
-                                    </div>
-                                    <div id="timeByLessonList" class="space-y-2 text-sm text-amber-900">
-                                        <!-- Filled by JS -->
-                                    </div>
-                                </div>
-                                <div class="p-4 bg-yellow-50 rounded-lg border border-yellow-100">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <p class="text-sm font-semibold text-yellow-800">Weak students</p>
-                                        <span class="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-700">needs support</span>
-                                    </div>
-                                    <div id="weakStudentsList" class="space-y-2 text-sm text-yellow-900">
-                                        <!-- Filled by JS -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -1084,7 +1506,7 @@
                                             </div>
                                             <div>
                                                 <h4 class="text-lg font-bold text-gray-900">Real-Life Problems</h4>
-                                                <p class="text-sm text-gray-600 mt-0.5">11 questions • Application of functions in real-world scenarios</p>
+                                                <p class="text-sm text-gray-600 mt-0.5">15 questions • Application of functions in real-world scenarios</p>
                                             </div>
                                         </div>
                                         <div id="realLifeProblemsQuizStatusBadge" class="hidden px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700">
@@ -1144,7 +1566,7 @@
                                             </div>
                                             <div>
                                                 <h4 class="text-lg font-bold text-gray-900">Rational Functions</h4>
-                                                <p class="text-sm text-gray-600 mt-0.5">11 questions • Understanding rational function properties and behavior</p>
+                                                <p class="text-sm text-gray-600 mt-0.5">15 questions • Understanding rational function properties and behavior</p>
                                             </div>
                                         </div>
                                         <div id="rationalFunctionsQuizStatusBadge" class="hidden px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700">
@@ -1204,7 +1626,7 @@
                                             </div>
                                             <div>
                                                 <h4 class="text-lg font-bold text-gray-900">Solving Rational Equations and Inequalities</h4>
-                                                <p class="text-sm text-gray-600 mt-0.5">11 questions • Solving equations and inequalities involving rational functions</p>
+                                                <p class="text-sm text-gray-600 mt-0.5">15 questions • Solving equations and inequalities involving rational functions</p>
                                             </div>
                                         </div>
                                         <div id="solvingRationalEquationsInequalitiesQuizStatusBadge" class="hidden px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700">
@@ -1264,7 +1686,7 @@
                                             </div>
                                             <div>
                                                 <h4 class="text-lg font-bold text-gray-900">Representations of Rational Functions</h4>
-                                                <p class="text-sm text-gray-600 mt-0.5">11 questions • Graphical, tabular, and algebraic representations</p>
+                                                <p class="text-sm text-gray-600 mt-0.5">15 questions • Graphical, tabular, and algebraic representations</p>
                                             </div>
                                         </div>
                                         <div id="representationsOfRationalFunctionsQuizStatusBadge" class="hidden px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700">
@@ -1324,7 +1746,7 @@
                                             </div>
                                             <div>
                                                 <h4 class="text-lg font-bold text-gray-900">Domain and Range of Rational Functions</h4>
-                                                <p class="text-sm text-gray-600 mt-0.5">11 questions • Finding domain and range of rational functions</p>
+                                                <p class="text-sm text-gray-600 mt-0.5">15 questions • Finding domain and range of rational functions</p>
                                             </div>
                                         </div>
                                         <div id="domainRangeRationalFunctionsQuizStatusBadge" class="hidden px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700">
@@ -1384,7 +1806,7 @@
                                             </div>
                                             <div>
                                                 <h4 class="text-lg font-bold text-gray-900">Domain and Range of Inverse Functions</h4>
-                                                <p class="text-sm text-gray-600 mt-0.5">11 questions • Understanding inverse function domain and range relationships</p>
+                                                <p class="text-sm text-gray-600 mt-0.5">15 questions • Understanding inverse function domain and range relationships</p>
                                             </div>
                                         </div>
                                         <div id="domainRangeInverseFunctionsQuizStatusBadge" class="hidden px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700">
@@ -1443,7 +1865,7 @@
                                             </div>
                                             <div>
                                                 <h4 class="text-lg font-bold text-gray-900">One-to-One Functions</h4>
-                                                <p class="text-sm text-gray-600 mt-0.5">11 questions • Understanding one-to-one function properties and testing</p>
+                                                <p class="text-sm text-gray-600 mt-0.5">15 questions • Understanding one-to-one function properties and testing</p>
                                             </div>
                                         </div>
                                         <div id="oneToOneFunctionsQuizStatusBadge" class="hidden px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700">
@@ -1896,41 +2318,37 @@
                                             <i class="fas fa-trophy text-white text-lg"></i>
                                         </div>
                                         <div>
-                                            <h4 class="text-lg font-bold text-gray-900">Leaderboard & Needs Help</h4>
-                                            <p class="text-sm text-gray-600">Top students and weakest students based on average quiz score</p>
+                                            <h4 class="text-lg font-bold text-gray-900">Class Leaderboard</h4>
+                                            <p class="text-sm text-gray-600">All students ranked by average quiz score (highest to lowest)</p>
                                         </div>
                                     </div>
-                                    <span class="text-xs px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 flex-shrink-0">
-                                        rank
+                                    <span class="text-xs px-2 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 flex-shrink-0">
+                                        ranked
                                     </span>
                                 </div>
                             </div>
                             <div class="p-6">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div class="p-4 bg-emerald-50 rounded-lg border border-emerald-100">
-                                        <div class="flex items-center justify-between mb-2">
-                                            <div class="flex items-center">
-                                                <i class="fas fa-medal text-emerald-600 mr-2"></i>
-                                                <p class="text-sm font-semibold text-emerald-800">Top Students</p>
-                                            </div>
-                                            <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">Top 5</span>
-                                        </div>
-                                        <div id="topStudentsList" class="overflow-x-auto">
-                                            <p class="text-xs text-gray-500">Select a class to load data</p>
-                                        </div>
+                                <div class="p-4 bg-indigo-50/60 rounded-lg border border-indigo-100">
+                                    <div class="overflow-x-auto">
+                                        <table class="min-w-full text-sm" id="classLeaderboardTable">
+                                            <thead class="bg-white">
+                                                <tr class="text-left text-xs font-bold text-gray-600 uppercase tracking-wider">
+                                                    <th class="px-3 py-2 w-[56px]">Rank</th>
+                                                    <th class="px-3 py-2">Student</th>
+                                                    <th class="px-3 py-2 text-center w-[88px]">Quizzes</th>
+                                                    <th class="px-3 py-2 text-center w-[88px]">Lessons</th>
+                                                    <th class="px-3 py-2 text-center w-[140px]">Level</th>
+                                                    <th class="px-3 py-2 text-right w-[110px]">Average</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="classLeaderboardTableBody" class="divide-y divide-indigo-100 bg-white">
+                                                <tr>
+                                                    <td colspan="6" class="px-3 py-6 text-center text-gray-500">Select a class to load ranking</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
-                                    <div class="p-4 bg-rose-50 rounded-lg border border-rose-100">
-                                        <div class="flex items-center justify-between mb-2">
-                                            <div class="flex items-center">
-                                                <i class="fas fa-hand-holding-heart text-rose-600 mr-2"></i>
-                                                <p class="text-sm font-semibold text-rose-800">Needs Support</p>
-                                            </div>
-                                            <span class="text-xs px-2 py-1 rounded-full bg-rose-100 text-rose-700">Bottom 5</span>
-                                        </div>
-                                        <div id="weakStudentsList2" class="overflow-x-auto">
-                                            <p class="text-xs text-gray-500">Select a class to load data</p>
-                                        </div>
-                                    </div>
+                                    <div id="classLeaderboardPagination" class="mt-4"></div>
                                 </div>
                             </div>
                         </div>
@@ -2188,6 +2606,110 @@
                     </div>
                 </div>
                 <!-- End Class Performance Section -->
+
+                <!-- Profile Section -->
+                <div id="profile-section" class="content-section hidden">
+                    <div class="mb-6">
+                        <h3 class="text-xl font-bold text-gray-900">Teacher Profile</h3>
+                        <p class="text-sm text-gray-600 mt-1">View your teacher information and manage your account details.</p>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+                        <h4 class="text-base font-semibold text-gray-900 mb-4">Teacher Information</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">Department</p>
+                                <p id="profileTeacherDepartment" class="text-sm font-medium text-gray-900 mt-1">-</p>
+                            </div>
+                            <div>
+                                <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">Subject</p>
+                                <p id="profileTeacherSubject" class="text-sm font-medium text-gray-900 mt-1">-</p>
+                            </div>
+                            <div>
+                                <p class="text-xs uppercase tracking-wide text-gray-500 font-semibold">Account Type</p>
+                                <p class="text-sm font-medium text-gray-900 mt-1">Teacher</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                        <div class="bg-white rounded-xl border border-gray-200 p-6">
+                            <h4 class="text-base font-semibold text-gray-900 mb-4">Profile Image</h4>
+                            <div class="flex flex-col items-center">
+                                <div class="w-28 h-28 rounded-full bg-indigo-100 border-4 border-indigo-200 flex items-center justify-center overflow-hidden mb-4">
+                                    <img id="profileImagePreview" src="" alt="Profile image preview" class="hidden w-full h-full object-cover">
+                                    <i id="profileImagePreviewFallback" class="fas fa-user text-indigo-600 text-3xl"></i>
+                                </div>
+                                <input type="file" id="profileImageInput" accept="image/*" class="hidden" onchange="uploadTeacherProfileImage()">
+                                <button type="button" onclick="triggerTeacherProfileImageUpload()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-all">
+                                    <i class="fas fa-upload mr-2"></i>Upload
+                                </button>
+                                <p class="text-xs text-gray-500 mt-3 text-center">JPG, PNG, WEBP up to 3MB</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl border border-gray-200 p-6 xl:col-span-2">
+                            <h4 class="text-base font-semibold text-gray-900 mb-4">Profile Information</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">First Name</label>
+                                    <input type="text" id="profileFirstName" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Last Name</label>
+                                    <input type="text" id="profileLastName" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Email (Read-only)</label>
+                                    <input type="email" id="profileEmailReadonly" readonly class="w-full px-3 py-2.5 border border-gray-200 rounded-lg bg-gray-50 text-gray-600 cursor-not-allowed">
+                                </div>
+                            </div>
+                            <div class="mt-5">
+                                <button type="button" onclick="saveTeacherProfile()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-all">
+                                    <i class="fas fa-save mr-2"></i>Save Profile
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-gray-200 p-6 mt-6 max-w-3xl">
+                        <h4 class="text-base font-semibold text-gray-900 mb-4">Change Password</h4>
+                        <div class="grid grid-cols-1 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Current Password</label>
+                                <div class="relative">
+                                    <input type="password" id="profileCurrentPassword" class="w-full px-3 py-2.5 pr-11 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    <button type="button" onclick="togglePasswordVisibility('profileCurrentPassword', this)" class="absolute inset-y-0 right-0 px-3 text-gray-500 hover:text-indigo-600 transition-colors" aria-label="Toggle current password visibility">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">New Password</label>
+                                <div class="relative">
+                                    <input type="password" id="profileNewPassword" class="w-full px-3 py-2.5 pr-11 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    <button type="button" onclick="togglePasswordVisibility('profileNewPassword', this)" class="absolute inset-y-0 right-0 px-3 text-gray-500 hover:text-indigo-600 transition-colors" aria-label="Toggle new password visibility">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1.5">Confirm New Password</label>
+                                <div class="relative">
+                                    <input type="password" id="profileConfirmPassword" class="w-full px-3 py-2.5 pr-11 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    <button type="button" onclick="togglePasswordVisibility('profileConfirmPassword', this)" class="absolute inset-y-0 right-0 px-3 text-gray-500 hover:text-indigo-600 transition-colors" aria-label="Toggle confirm password visibility">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-5">
+                            <button type="button" onclick="changeTeacherPassword()" class="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-all">
+                                <i class="fas fa-key mr-2"></i>Update Password
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </main>
         </div>
     </div>
@@ -2405,14 +2927,14 @@
                 // Update navigation
                 const navItems = document.querySelectorAll('.nav-item');
                 navItems.forEach(item => {
-                    item.classList.remove('bg-indigo-50', 'text-indigo-700');
+                    item.classList.remove('active', 'bg-indigo-50', 'text-indigo-700');
                     item.classList.add('text-gray-700');
                 });
                 
                 const activeItem = document.querySelector('[data-section="class-performance"]');
                 if (activeItem) {
-                    activeItem.classList.remove('text-gray-700');
-                    activeItem.classList.add('bg-indigo-50', 'text-indigo-700');
+                    activeItem.classList.remove('text-gray-700', 'bg-indigo-50', 'text-indigo-700');
+                    activeItem.classList.add('active');
                 }
                 
                 // Initialize the section
@@ -2449,10 +2971,6 @@
                 if (sectionName === 'lesson-creation' && typeof loadMyLessons === 'function') {
                     loadMyLessons();
                 }
-                if (sectionName === 'dashboard' && typeof loadTeacherLessonProgress === 'function') {
-                    loadTeacherLessonProgress();
-                }
-                
                 // Verify the section is actually visible
                 setTimeout(() => {
                     const isVisible = targetSection.offsetParent !== null;
@@ -2498,14 +3016,14 @@
             // Update navigation active state
             const navItems = document.querySelectorAll('.nav-item');
             navItems.forEach(item => {
-                item.classList.remove('bg-indigo-50', 'text-indigo-700');
+                item.classList.remove('active', 'bg-indigo-50', 'text-indigo-700');
                 item.classList.add('text-gray-700');
             });
 
             const activeItem = document.querySelector(`[data-section="${sectionName}"]`);
             if (activeItem) {
-                activeItem.classList.remove('text-gray-700');
-                activeItem.classList.add('bg-indigo-50', 'text-indigo-700');
+                activeItem.classList.remove('text-gray-700', 'bg-indigo-50', 'text-indigo-700');
+                activeItem.classList.add('active');
                 console.log('Navigation updated for:', sectionName);
             } else {
                 console.error('Navigation item not found for:', sectionName);
@@ -2537,6 +3055,8 @@
                 currentClassId = null;
                 currentClassFilter = 'all';
                 initializeClassPerformance();
+            } else if (sectionName === 'profile') {
+                loadTeacherProfileSettings();
             }
         }
 
@@ -2557,6 +3077,10 @@
                 'class-performance': {
                     title: 'Class Performance',
                     description: 'Track overall class performance across different topics'
+                },
+                'profile': {
+                    title: 'Teacher Profile',
+                    description: 'View teacher info and manage account details'
                 }
             };
 
@@ -2566,6 +3090,167 @@
             if (titles[sectionName]) {
                 pageTitle.textContent = titles[sectionName].title;
                 pageDescription.textContent = titles[sectionName].description;
+            }
+        }
+
+        let teacherProfileData = null;
+
+        function applyTeacherAvatar(imagePath) {
+            const hasImage = !!imagePath;
+            const normalizedPath = hasImage
+                ? `${String(imagePath).replace(/\\/g, '/').replace(/^\.\//, '')}${String(imagePath).includes('?') ? '&' : '?'}v=${Date.now()}`
+                : '';
+            const ids = [
+                ['headerTeacherAvatar', 'headerTeacherAvatarFallback'],
+                ['dropdownTeacherAvatar', 'dropdownTeacherAvatarFallback'],
+                ['profileImagePreview', 'profileImagePreviewFallback']
+            ];
+            ids.forEach(([imgId, fallbackId]) => {
+                const imgEl = document.getElementById(imgId);
+                const fallbackEl = document.getElementById(fallbackId);
+                if (!imgEl || !fallbackEl) return;
+                if (hasImage) {
+                    imgEl.src = normalizedPath;
+                    imgEl.classList.remove('hidden');
+                    fallbackEl.classList.add('hidden');
+                } else {
+                    imgEl.classList.add('hidden');
+                    fallbackEl.classList.remove('hidden');
+                }
+            });
+        }
+
+        function populateProfileSection(teacher) {
+            if (!teacher) return;
+            const first = teacher.first_name || '';
+            const last = teacher.last_name || '';
+            const email = teacher.email || '';
+            const firstEl = document.getElementById('profileFirstName');
+            const lastEl = document.getElementById('profileLastName');
+            const emailEl = document.getElementById('profileEmailReadonly');
+            const deptEl = document.getElementById('profileTeacherDepartment');
+            const subjectEl = document.getElementById('profileTeacherSubject');
+            if (firstEl) firstEl.value = first;
+            if (lastEl) lastEl.value = last;
+            if (emailEl) emailEl.value = email;
+            if (deptEl) deptEl.textContent = teacher.department || '-';
+            if (subjectEl) subjectEl.textContent = teacher.subject || '-';
+            applyTeacherAvatar(teacher.profile_image_url || teacher.profile_image || '');
+        }
+
+        function triggerTeacherProfileImageUpload() {
+            const input = document.getElementById('profileImageInput');
+            if (!input) return;
+            input.value = '';
+            input.click();
+        }
+
+        async function loadTeacherProfileSettings() {
+            try {
+                const response = await fetch('php/get-teacher-profile.php', { credentials: 'include', cache: 'no-store' });
+                const result = await response.json();
+                if (!result.success || !result.teacher) return;
+                teacherProfileData = result.teacher;
+                populateProfileSection(result.teacher);
+            } catch (error) {
+                console.error('Failed to load profile settings:', error);
+            }
+        }
+
+        async function saveTeacherProfile() {
+            const firstName = (document.getElementById('profileFirstName')?.value || '').trim();
+            const lastName = (document.getElementById('profileLastName')?.value || '').trim();
+            if (!firstName || !lastName) {
+                Swal.fire({ icon: 'warning', title: 'Missing fields', text: 'First name and last name are required.' });
+                return;
+            }
+            try {
+                const response = await fetch('php/update-teacher-profile.php', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ first_name: firstName, last_name: lastName })
+                });
+                const result = await response.json();
+                if (!result.success) throw new Error(result.message || 'Failed to update profile');
+                await loadTeacherProfileSettings();
+                const teacherName = `${result.teacher.first_name || ''} ${result.teacher.last_name || ''}`.trim() || 'Teacher';
+                ['headerTeacherName', 'dropdownTeacherName'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = teacherName;
+                });
+                Swal.fire({ icon: 'success', title: 'Profile updated', text: 'Your profile has been updated.' });
+            } catch (error) {
+                Swal.fire({ icon: 'error', title: 'Update failed', text: error.message || 'Could not update profile.' });
+            }
+        }
+
+        async function uploadTeacherProfileImage() {
+            const input = document.getElementById('profileImageInput');
+            if (!input || !input.files || !input.files.length) {
+                return;
+            }
+            const formData = new FormData();
+            formData.append('profile_image', input.files[0]);
+            try {
+                const response = await fetch('php/upload-teacher-profile-image.php', {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                });
+                const result = await response.json();
+                if (!result.success) throw new Error(result.message || 'Failed to upload image');
+                applyTeacherAvatar(result.profile_image_url || result.profile_image || '');
+                Swal.fire({ icon: 'success', title: 'Image updated', text: 'Profile image uploaded successfully.' });
+            } catch (error) {
+                Swal.fire({ icon: 'error', title: 'Upload failed', text: error.message || 'Could not upload image.' });
+            }
+        }
+
+        function togglePasswordVisibility(inputId, buttonEl) {
+            const input = document.getElementById(inputId);
+            if (!input || !buttonEl) return;
+            const icon = buttonEl.querySelector('i');
+            const isHidden = input.type === 'password';
+            input.type = isHidden ? 'text' : 'password';
+            if (icon) {
+                icon.classList.toggle('fa-eye', !isHidden);
+                icon.classList.toggle('fa-eye-slash', isHidden);
+            }
+        }
+
+        async function changeTeacherPassword() {
+            const currentPassword = document.getElementById('profileCurrentPassword')?.value || '';
+            const newPassword = document.getElementById('profileNewPassword')?.value || '';
+            const confirmPassword = document.getElementById('profileConfirmPassword')?.value || '';
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                Swal.fire({ icon: 'warning', title: 'Missing fields', text: 'Please complete all password fields.' });
+                return;
+            }
+            if (newPassword !== confirmPassword) {
+                Swal.fire({ icon: 'warning', title: 'Password mismatch', text: 'New password and confirmation do not match.' });
+                return;
+            }
+            try {
+                const response = await fetch('php/change-teacher-password.php', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        current_password: currentPassword,
+                        new_password: newPassword,
+                        confirm_password: confirmPassword
+                    })
+                });
+                const result = await response.json();
+                if (!result.success) throw new Error(result.message || 'Failed to change password');
+                ['profileCurrentPassword', 'profileNewPassword', 'profileConfirmPassword'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = '';
+                });
+                Swal.fire({ icon: 'success', title: 'Password changed', text: 'Your password has been updated.' });
+            } catch (error) {
+                Swal.fire({ icon: 'error', title: 'Password update failed', text: error.message || 'Could not change password.' });
             }
         }
 
@@ -2797,7 +3482,7 @@
                                     </div>
                                 </div>
                                 <div class="flex items-center space-x-3">
-                                    ${topic.topic_slug ? `<a href="topics/${topic.topic_slug}.html" target="_blank" rel="noopener" class="p-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700" title="View topic page"><i class="fas fa-external-link-alt text-xs"></i></a>` : ''}
+                                    ${topic.topic_slug ? `<a href="topics/${topic.topic_slug}.html?teacher_view=1" target="_blank" rel="noopener" class="p-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700" title="View topic page"><i class="fas fa-external-link-alt text-xs"></i></a>` : ''}
                                     <!-- Topic lock switch -->
                                     <button onclick="toggleTopicLock('${topic.topic_id}', ${topic.is_locked}, '${topic.class_id}')"
                                             class="flex items-center px-2 py-1 rounded-full text-xs font-medium border transition-colors ${topic.is_locked ? 'bg-red-100 border-red-300 text-red-700' : 'bg-green-100 border-green-300 text-green-700'}"
@@ -2842,7 +3527,7 @@
                                     </div>
                                 </div>
                                 <div class="flex items-center space-x-3">
-                                    ${topic.topic_slug ? `<a href="topics/${topic.topic_slug}.html" target="_blank" rel="noopener" class="p-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700" title="View topic page"><i class="fas fa-external-link-alt text-xs"></i></a>` : ''}
+                                    ${topic.topic_slug ? `<a href="topics/${topic.topic_slug}.html?teacher_view=1" target="_blank" rel="noopener" class="p-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700" title="View topic page"><i class="fas fa-external-link-alt text-xs"></i></a>` : ''}
                                     <!-- Topic lock switch -->
                                     <button onclick="toggleTopicLock('${topic.topic_id}', ${topic.is_locked}, '${topic.class_id}')"
                                             class="flex items-center px-2 py-1 rounded-full text-xs font-medium border transition-colors ${topic.is_locked ? 'bg-red-100 border-red-300 text-red-700' : 'bg-green-100 border-green-300 text-green-700'}"
@@ -3350,9 +4035,9 @@
                     return;
                 }
                 
-                // Get current status from button
-                // Note: the UI uses `bg-emerald-500` for Open (not `bg-green-500`), so we check emerald first.
-                const isCurrentlyOpen =
+                // Get current status from button state (fallback to class check for old markup)
+                const stateAttr = toggleButton.getAttribute('data-open');
+                const isCurrentlyOpen = stateAttr === '1' ||
                     toggleButton.classList.contains('bg-emerald-500') ||
                     toggleButton.classList.contains('bg-green-500');
                 const newStatus = !isCurrentlyOpen;
@@ -3441,13 +4126,18 @@
         
         // Update toggle button UI
         function updateToggleButtonUI(button, isOpen) {
-            if (isOpen) {
-                button.className = 'w-full px-4 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center bg-emerald-500 hover:bg-emerald-600 text-white';
-                button.innerHTML = '<i class="fas fa-unlock mr-2"></i><span>Open</span>';
-            } else {
-                button.className = 'w-full px-4 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-700';
-                button.innerHTML = '<i class="fas fa-lock mr-2"></i><span>Closed</span>';
-            }
+            // Switch-style toggle for clearer UX
+            button.setAttribute('data-open', isOpen ? '1' : '0');
+            button.className = `w-full px-3 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-sm hover:shadow flex items-center justify-between border ${isOpen ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-200 text-slate-700'}`;
+            button.innerHTML = `
+                <span class="inline-flex items-center gap-2">
+                    <i class="fas ${isOpen ? 'fa-unlock text-emerald-600' : 'fa-lock text-slate-500'}"></i>
+                    <span>${isOpen ? 'Open' : 'Closed'}</span>
+                </span>
+                <span class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isOpen ? 'bg-emerald-500' : 'bg-slate-300'}">
+                    <span class="inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${isOpen ? 'translate-x-5' : 'translate-x-1'}"></span>
+                </span>
+            `;
         }
         
         async function saveQuizSettings(quizType) {
@@ -3697,60 +4387,37 @@
         let quizResultsPerPage = 10;
         let currentQuizResults = [];
         let currentQuizType = '';
+let currentQuizResultsSearch = '';
 
-        function showQuizResultsModal(quizType, results, statistics, page = 1) {
-            currentQuizType = quizType;
-            currentQuizResults = results || [];
-            currentQuizResultsPage = page;
-            
-            const quizTitle = getQuizTitle(quizType);
-            const totalStudents = currentQuizResults.length;
-            const averageScore = totalStudents > 0 ? Math.round(currentQuizResults.reduce((sum, student) => sum + parseFloat(student.percentage), 0) / totalStudents) : 0;
-            const highestScore = totalStudents > 0 ? Math.max(...currentQuizResults.map(student => parseFloat(student.percentage))) : 0;
-            
-            // Calculate pagination
-            const totalPages = Math.ceil(totalStudents / quizResultsPerPage);
+        function getFilteredQuizResultsData(quizType = currentQuizType) {
+            const normalizedSearch = (currentQuizResultsSearch || '').trim().toLowerCase();
+            const filteredResults = normalizedSearch
+                ? currentQuizResults.filter(student => {
+                    const name = String(student.student_name || '').toLowerCase();
+                    const email = String(student.student_email || '').toLowerCase();
+                    const className = String(student.class_name || '').toLowerCase();
+                    return name.includes(normalizedSearch) || email.includes(normalizedSearch) || className.includes(normalizedSearch);
+                })
+                : currentQuizResults;
+
+            const totalStudents = filteredResults.length;
+            const averageScore = totalStudents > 0 ? Math.round(filteredResults.reduce((sum, student) => sum + parseFloat(student.percentage), 0) / totalStudents) : 0;
+            const highestScore = totalStudents > 0 ? Math.max(...filteredResults.map(student => parseFloat(student.percentage))) : 0;
+            const totalPages = Math.max(1, Math.ceil(totalStudents / quizResultsPerPage));
+            currentQuizResultsPage = Math.min(Math.max(1, currentQuizResultsPage), totalPages);
+
             const startIndex = (currentQuizResultsPage - 1) * quizResultsPerPage;
             const endIndex = startIndex + quizResultsPerPage;
-            const paginatedResults = currentQuizResults.slice(startIndex, endIndex);
-            
-            // Build table rows - always show table structure
-            let tableRows = '';
-            if (paginatedResults.length > 0) {
-                tableRows = paginatedResults.map((student, index) => {
-                    const globalRank = startIndex + index + 1;
-                    return `
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-4 py-3 font-medium text-gray-900">${globalRank}</td>
-                            <td class="px-4 py-3 text-gray-900 font-medium">${student.student_name || 'N/A'}</td>
-                            <td class="px-4 py-3 text-gray-600">${student.class_name || 'N/A'}</td>
-                            <td class="px-4 py-3">
-                                <div class="flex items-center space-x-2">
-                                    <span class="font-semibold text-gray-900">${student.score || 0}/${student.total_questions || 0}</span>
-                                    <span class="px-2 py-1 rounded text-xs font-medium ${
-                                        parseFloat(student.percentage) >= 80 ? 'bg-green-100 text-green-700' :
-                                        parseFloat(student.percentage) >= 60 ? 'bg-yellow-100 text-yellow-700' :
-                                        'bg-red-100 text-red-700'
-                                    }">${student.percentage || 0}%</span>
-                                </div>
-                            </td>
-                            <td class="px-4 py-3 text-gray-600">${student.formatted_time || 'N/A'}</td>
-                            <td class="px-4 py-3 text-gray-500 text-sm">${student.quiz_date || 'N/A'}</td>
-                            <td class="px-4 py-3">
-                                <button onclick="resetStudentQuiz('${student.student_id}', '${quizType}', '${student.student_name}')" 
-                                        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-200 shadow-sm hover:shadow-md">
-                                    <i class="fas fa-redo mr-1"></i>
-                                    Reset
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                }).join('');
-            } else {
-                // Empty state - show empty row
-                tableRows = `
+            const paginatedResults = filteredResults.slice(startIndex, endIndex);
+
+            return { filteredResults, totalStudents, averageScore, highestScore, totalPages, startIndex, endIndex, paginatedResults, quizType };
+        }
+
+        function buildQuizResultsRows(paginatedResults, startIndex, quizType) {
+            if (!paginatedResults.length) {
+                return `
                     <tr>
-                        <td colspan="7" class="px-4 py-12 text-center">
+                        <td colspan="10" class="px-4 py-12 text-center">
                             <div class="flex flex-col items-center justify-center">
                                 <i class="fas fa-inbox text-4xl text-gray-300 mb-3"></i>
                                 <p class="text-gray-500 font-medium">No students have completed this quiz yet</p>
@@ -3760,11 +4427,72 @@
                     </tr>
                 `;
             }
-            
-            // Build pagination controls
-            let paginationHTML = '';
+            return paginatedResults.map((student, index) => {
+                const globalRank = startIndex + index + 1;
+                return `
+                    <tr class="hover:bg-gray-50 transition-colors align-top">
+                        <td class="px-3 py-2.5 font-semibold text-gray-900 whitespace-nowrap">${globalRank}</td>
+                        <td class="px-3 py-2.5 text-gray-900 font-medium min-w-[170px]">${student.student_name || 'N/A'}</td>
+                        <td class="px-3 py-2.5 text-gray-600 min-w-[110px]">${student.class_name || 'N/A'}</td>
+                        <td class="px-3 py-2.5 whitespace-nowrap">
+                            <div class="flex items-center space-x-2">
+                                <span class="font-semibold text-gray-900">${student.score || 0}/${student.total_questions || 0}</span>
+                                <span class="px-2 py-1 rounded text-xs font-medium ${
+                                    parseFloat(student.percentage) >= 80 ? 'bg-green-100 text-green-700' :
+                                    parseFloat(student.percentage) >= 60 ? 'bg-yellow-100 text-yellow-700' :
+                                    'bg-red-100 text-red-700'
+                                }">${student.percentage || 0}%</span>
+                            </div>
+                        </td>
+                        <td class="px-3 py-2.5 text-gray-600 whitespace-nowrap">${student.formatted_time || 'N/A'}</td>
+                        <td class="px-3 py-2.5 text-gray-500 text-sm whitespace-nowrap">${student.quiz_date || 'N/A'}</td>
+                        <td class="px-3 py-2.5 text-gray-700 whitespace-nowrap">
+                            ${student.tab_switch_count !== null && student.tab_switch_count !== undefined
+                                ? `<span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-slate-100 text-slate-700">${Number(student.tab_switch_count) || 0}</span>`
+                                : `<span class="text-xs text-gray-400">N/A</span>`}
+                        </td>
+                        <td class="px-3 py-2.5 min-w-[150px]">
+                            ${student.cheating_reason
+                                ? `
+                                    <div class="space-y-1">
+                                        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-red-100 text-red-700 border border-red-200">
+                                            <i class="fas fa-shield-alt mr-1"></i>Yes
+                                        </span>
+                                        <div class="text-[11px] text-red-700" title="${String(student.cheating_reason || '').replace(/"/g, '&quot;')}">
+                                            Reason: ${String(student.cheating_reason || '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+                                        </div>
+                                    </div>
+                                  `
+                                : `<span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-200"><i class="fas fa-check-circle mr-1"></i>No</span>`}
+                        </td>
+                        <td class="px-3 py-2.5 whitespace-nowrap">
+                            ${String(student.timer_expired) === '1'
+                                ? `<span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200"><i class="fas fa-hourglass-end mr-1"></i>Expired</span>`
+                                : `<span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">Within time</span>`}
+                        </td>
+                        <td class="px-3 py-2.5 whitespace-nowrap">
+                            <div class="flex items-center gap-1.5">
+                                <button type="button" onclick="viewStudentQuizAnswers('${student.id}', '${quizType}', '${student.student_name}')" 
+                                        class="bg-indigo-500 hover:bg-indigo-600 text-white px-2.5 py-1.5 rounded-md text-xs font-medium transition-all duration-200 shadow-sm hover:shadow-md"
+                                        title="View correct and wrong answers">
+                                    <i class="fas fa-clipboard-check mr-1"></i>
+                                    View
+                                </button>
+                                <button type="button" onclick="resetStudentQuiz('${student.student_id}', '${quizType}', '${student.student_name}')" 
+                                        class="bg-red-500 hover:bg-red-600 text-white px-2.5 py-1.5 rounded-md text-xs font-medium transition-all duration-200 shadow-sm hover:shadow-md">
+                                    <i class="fas fa-redo mr-1"></i>
+                                    Reset
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function buildQuizResultsPagination(totalPages, totalStudents, startIndex, endIndex) {
             if (totalPages > 1) {
-                paginationHTML = `
+                return `
                     <div class="flex items-center justify-between border-t border-gray-200 px-4 py-3 bg-gray-50">
                         <div class="flex items-center text-sm text-gray-700">
                             <span>Showing <span class="font-medium">${totalStudents > 0 ? startIndex + 1 : 0}</span> to <span class="font-medium">${Math.min(endIndex, totalStudents)}</span> of <span class="font-medium">${totalStudents}</span> results</span>
@@ -3786,8 +4514,9 @@
                         </div>
                     </div>
                 `;
-            } else if (totalStudents > 0) {
-                paginationHTML = `
+            }
+            if (totalStudents > 0) {
+                return `
                     <div class="flex items-center justify-between border-t border-gray-200 px-4 py-3 bg-gray-50">
                         <div class="flex items-center text-sm text-gray-700">
                             <span>Showing all <span class="font-medium">${totalStudents}</span> result${totalStudents !== 1 ? 's' : ''}</span>
@@ -3795,84 +4524,144 @@
                     </div>
                 `;
             }
+            return '';
+        }
+
+        function renderQuizResultsModalInPlace() {
+            const vm = getFilteredQuizResultsData(currentQuizType);
+            const totalEl = document.getElementById('quiz-results-total-students');
+            const avgEl = document.getElementById('quiz-results-average-score');
+            const highEl = document.getElementById('quiz-results-highest-score');
+            const tbody = document.getElementById('quiz-results-table-body');
+            const pagi = document.getElementById('quiz-results-pagination');
+
+            if (totalEl) totalEl.textContent = vm.totalStudents;
+            if (avgEl) avgEl.textContent = `${vm.averageScore}%`;
+            if (highEl) highEl.textContent = `${vm.highestScore}%`;
+            if (tbody) tbody.innerHTML = buildQuizResultsRows(vm.paginatedResults, vm.startIndex, vm.quizType);
+            if (pagi) pagi.innerHTML = buildQuizResultsPagination(vm.totalPages, vm.totalStudents, vm.startIndex, vm.endIndex);
+        }
+
+        function showQuizResultsModal(quizType, results, statistics, page = 1) {
+            currentQuizType = quizType;
+            currentQuizResults = results || [];
+            currentQuizResultsPage = page;
+            
+            const quizTitle = getQuizTitle(quizType);
+            const vm = getFilteredQuizResultsData(quizType);
+            const tableRows = buildQuizResultsRows(vm.paginatedResults, vm.startIndex, quizType);
+            const paginationHTML = buildQuizResultsPagination(vm.totalPages, vm.totalStudents, vm.startIndex, vm.endIndex);
 
             Swal.fire({
                 title: `<div class="flex items-center space-x-2"><i class="fas fa-chart-line text-indigo-600"></i><span>${quizTitle} Results</span></div>`,
                 html: `
                     <div class="text-left">
+                        <div class="flex justify-end mb-4">
+                            <button type="button" onclick="resetAllStudentsQuiz('${quizType}')" 
+                                    class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-semibold transition-all duration-200 shadow-sm hover:shadow-md">
+                                <i class="fas fa-rotate-left mr-2"></i>
+                                Reset All Students
+                            </button>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Search student</label>
+                            <div class="relative">
+                                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                                <input id="quiz-results-search-input" type="text" placeholder="Search by name, email, or class..."
+                                       value="${(currentQuizResultsSearch || '').replace(/"/g, '&quot;')}"
+                                       class="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                        </div>
                         <!-- Statistics Cards -->
                         <div class="grid grid-cols-3 gap-4 mb-6">
                             <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-5 text-center border border-blue-200 shadow-sm">
                                 <div class="flex items-center justify-center mb-2">
                                     <i class="fas fa-users text-blue-600 text-xl"></i>
                                 </div>
-                                <div class="text-3xl font-bold text-blue-700 mb-1">${totalStudents}</div>
+                                <div id="quiz-results-total-students" class="text-3xl font-bold text-blue-700 mb-1">${vm.totalStudents}</div>
                                 <div class="text-sm font-medium text-blue-600">Total Students</div>
                             </div>
                             <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-5 text-center border border-green-200 shadow-sm">
                                 <div class="flex items-center justify-center mb-2">
                                     <i class="fas fa-chart-bar text-green-600 text-xl"></i>
                                 </div>
-                                <div class="text-3xl font-bold text-green-700 mb-1">${averageScore}%</div>
+                                <div id="quiz-results-average-score" class="text-3xl font-bold text-green-700 mb-1">${vm.averageScore}%</div>
                                 <div class="text-sm font-medium text-green-600">Average Score</div>
                             </div>
                             <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-5 text-center border border-purple-200 shadow-sm">
                                 <div class="flex items-center justify-center mb-2">
                                     <i class="fas fa-trophy text-purple-600 text-xl"></i>
                                 </div>
-                                <div class="text-3xl font-bold text-purple-700 mb-1">${highestScore}%</div>
+                                <div id="quiz-results-highest-score" class="text-3xl font-bold text-purple-700 mb-1">${vm.highestScore}%</div>
                                 <div class="text-sm font-medium text-purple-600">Highest Score</div>
                             </div>
                         </div>
                         
                         <!-- Results Table -->
                         <div class="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-sm">
-                                    <thead class="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+                            <!-- Only the table area scrolls -->
+                            <div class="overflow-x-auto overflow-y-auto max-h-[52vh]">
+                                <table class="min-w-[1280px] w-full text-sm">
+                                    <thead class="sticky top-0 z-10 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
                                         <tr>
-                                            <th class="px-4 py-3 text-left font-semibold text-gray-700">Rank</th>
-                                            <th class="px-4 py-3 text-left font-semibold text-gray-700">Student Name</th>
-                                            <th class="px-4 py-3 text-left font-semibold text-gray-700">Class</th>
-                                            <th class="px-4 py-3 text-left font-semibold text-gray-700">Score</th>
-                                            <th class="px-4 py-3 text-left font-semibold text-gray-700">Time Taken</th>
-                                            <th class="px-4 py-3 text-left font-semibold text-gray-700">Date Completed</th>
-                                            <th class="px-4 py-3 text-left font-semibold text-gray-700">Actions</th>
+                                            <th class="px-3 py-2.5 text-left text-xs uppercase tracking-wide font-semibold text-gray-700 whitespace-nowrap">Rank</th>
+                                            <th class="px-3 py-2.5 text-left text-xs uppercase tracking-wide font-semibold text-gray-700 whitespace-nowrap">Student Name</th>
+                                            <th class="px-3 py-2.5 text-left text-xs uppercase tracking-wide font-semibold text-gray-700 whitespace-nowrap">Class</th>
+                                            <th class="px-3 py-2.5 text-left text-xs uppercase tracking-wide font-semibold text-gray-700 whitespace-nowrap">Score</th>
+                                            <th class="px-3 py-2.5 text-left text-xs uppercase tracking-wide font-semibold text-gray-700 whitespace-nowrap">Time Taken</th>
+                                            <th class="px-3 py-2.5 text-left text-xs uppercase tracking-wide font-semibold text-gray-700 whitespace-nowrap">Date Completed</th>
+                                            <th class="px-3 py-2.5 text-left text-xs uppercase tracking-wide font-semibold text-gray-700 whitespace-nowrap">Tab Switch</th>
+                                            <th class="px-3 py-2.5 text-left text-xs uppercase tracking-wide font-semibold text-gray-700 whitespace-nowrap">Cheating</th>
+                                            <th class="px-3 py-2.5 text-left text-xs uppercase tracking-wide font-semibold text-gray-700 whitespace-nowrap">Timer</th>
+                                            <th class="px-3 py-2.5 text-left text-xs uppercase tracking-wide font-semibold text-gray-700 whitespace-nowrap">Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-gray-200 bg-white">
+                                    <tbody id="quiz-results-table-body" class="divide-y divide-gray-200 bg-white">
                                         ${tableRows}
                                     </tbody>
                                 </table>
                             </div>
-                            ${paginationHTML}
+                            <div id="quiz-results-pagination">${paginationHTML}</div>
                         </div>
                     </div>
                 `,
                 width: '1000px',
+                heightAuto: false,
+                showCloseButton: true,
+                closeButtonAriaLabel: 'Close',
                 showConfirmButton: true,
                 confirmButtonText: 'Close',
                 confirmButtonColor: '#6366f1',
                 customClass: {
-                    popup: 'rounded-2xl',
+                    popup: 'rounded-2xl overflow-hidden',
                     title: 'text-slate-800 text-xl',
                     content: 'text-slate-600'
                 },
                 didOpen: () => {
                     // Store reference for pagination
                     window.currentQuizResultsModal = Swal.getPopup();
+                    const input = document.getElementById('quiz-results-search-input');
+                    if (input) {
+                        input.addEventListener('input', (e) => {
+                            currentQuizResultsSearch = e.target.value || '';
+                            currentQuizResultsPage = 1;
+                            renderQuizResultsModalInPlace();
+                        });
+                    }
                 }
             });
         }
 
         // Pagination function for quiz results
         function changeQuizResultsPage(page) {
-            const totalPages = Math.ceil(currentQuizResults.length / quizResultsPerPage);
+            const { totalPages } = getFilteredQuizResultsData(currentQuizType);
             if (page < 1 || page > totalPages) return;
             
             currentQuizResultsPage = page;
-            
-            // Re-render the modal with new page
+            if (document.getElementById('quiz-results-table-body')) {
+                renderQuizResultsModalInPlace();
+                return;
+            }
             const statistics = {
                 total: currentQuizResults.length,
                 average: currentQuizResults.length > 0 ? 
@@ -3880,8 +4669,75 @@
                 highest: currentQuizResults.length > 0 ? 
                     Math.max(...currentQuizResults.map(s => parseFloat(s.percentage))) : 0
             };
-            
             showQuizResultsModal(currentQuizType, currentQuizResults, statistics, page);
+        }
+
+        async function resetAllStudentsQuiz(quizType) {
+            try {
+                const confirm = await Swal.fire({
+                    title: 'Reset all student attempts?',
+                    html: `
+                        <div class="text-left">
+                            <p class="text-sm text-gray-700 mb-2">This will reset <strong>all students</strong> for:</p>
+                            <div class="bg-gray-50 rounded-lg border border-gray-200 p-3 text-sm font-semibold text-gray-800">${getQuizTitle(quizType)}</div>
+                            <p class="text-xs text-gray-500 mt-3">Students will be able to retake the quiz.</p>
+                            <p class="text-xs text-red-600 mt-2">Type <strong>RESET</strong> to confirm.</p>
+                        </div>
+                    `,
+                    input: 'text',
+                    inputPlaceholder: 'Type RESET',
+                    inputAttributes: { autocapitalize: 'off', autocorrect: 'off' },
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, Reset All',
+                    cancelButtonText: 'Cancel',
+                    confirmButtonColor: '#dc2626',
+                    cancelButtonColor: '#6b7280',
+                    preConfirm: (value) => {
+                        if (String(value || '').trim() !== 'RESET') {
+                            Swal.showValidationMessage('Please type RESET to continue.');
+                            return false;
+                        }
+                        return true;
+                    }
+                });
+                if (!confirm.isConfirmed) return;
+
+                const formData = new FormData();
+                formData.append('action', 'reset_all_student_quiz');
+                formData.append('quiz_type', quizType);
+                if (currentClassId) formData.append('class_id', currentClassId);
+
+                const response = await fetch('php/quiz-management.php', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.message || 'Failed to reset all attempts');
+                }
+
+                await Swal.fire({
+                    title: 'Success',
+                    text: `Reset complete. ${data.reset_count || 0} attempt(s) were reset.`,
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#10b981'
+                });
+
+                await viewQuizResults(quizType);
+            } catch (error) {
+                console.error('Error resetting all students quiz:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: error.message || 'Failed to reset all student attempts.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#ef4444'
+                });
+            }
         }
 
         function getQuizTitle(quizType) {
@@ -4033,6 +4889,212 @@
                         title: 'text-slate-800',
                         content: 'text-slate-600'
                     }
+                });
+            }
+        }
+
+        // View a student's per-question correct/wrong answers
+        async function viewStudentQuizAnswers(attemptId, quizType, studentName) {
+            try {
+                Swal.fire({
+                    title: 'Loading answers...',
+                    text: 'Please wait while we fetch the quiz answers.',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: () => Swal.showLoading()
+                });
+
+                const response = await fetch(`php/quiz-management.php?action=get_attempt_answer_details&attempt_id=${encodeURIComponent(attemptId)}`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    cache: 'no-store'
+                });
+
+                const rawText = await response.text();
+                let data = null;
+                try {
+                    data = rawText ? JSON.parse(rawText) : null;
+                } catch (_) {
+                    data = null;
+                }
+                if (!data || typeof data !== 'object') {
+                    throw new Error(
+                        response.status === 500
+                            ? 'Server error while loading quiz answers. Please try again.'
+                            : 'Invalid response from server. Please try again.'
+                    );
+                }
+                if (!data.success) {
+                    throw new Error(data.message || 'Failed to load answers');
+                }
+
+                const attempt = data.attempt || {};
+                const answers = Array.isArray(data.answers) ? data.answers : [];
+
+                const cardsHtml = answers.length
+                    ? answers.map(a => {
+                        const qn = a.question_number ?? '';
+                        const questionText = (a.question_text ?? '').toString().trim();
+                        const options = a.options && typeof a.options === 'object' ? a.options : null;
+
+                        const studentKey = (a.student_answer ?? '').toString();
+                        const correctKey = (a.correct_answer ?? '').toString();
+                        const isCorrect = String(a.is_correct ?? '0') === '1';
+
+                        const studentText = (a.student_answer_text ?? '').toString();
+                        const correctText = (a.correct_answer_text ?? '').toString();
+
+                        const kStudent = studentKey ? studentKey.toUpperCase() : '';
+                        const kCorrect = correctKey ? correctKey.toUpperCase() : '';
+
+                        const headerBadge = isCorrect
+                            ? `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700"><i class="fas fa-check mr-1"></i>Correct</span>`
+                            : `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700"><i class="fas fa-times mr-1"></i>Wrong</span>`;
+
+                        const hasOptions = !!options;
+                        const optionsList = options
+                            ? `<div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                ${['a','b','c','d'].filter(k => options[k]).map(k => {
+                                    const isStudent = String(studentKey).toLowerCase() === k;
+                                    const isCorrectOpt = String(correctKey).toLowerCase() === k;
+
+                                    const icon = isCorrectOpt
+                                        ? `<i class="fas fa-check-circle text-emerald-600 mr-2"></i>`
+                                        : isStudent && !isCorrectOpt
+                                            ? `<i class="fas fa-times-circle text-rose-600 mr-2"></i>`
+                                            : `<i class="fas fa-circle text-slate-300 mr-2 text-[10px]"></i>`;
+
+                                    const base = 'flex items-start px-3 py-2 rounded-lg text-xs border';
+                                    const cls = isCorrectOpt
+                                        ? `${base} bg-emerald-50 text-emerald-900 border-emerald-200`
+                                        : isStudent && !isCorrectOpt
+                                            ? `${base} bg-rose-50 text-rose-900 border-rose-200`
+                                            : `${base} bg-white text-slate-700 border-slate-200`;
+
+                                    const tag = isCorrectOpt
+                                        ? `<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-700">Correct</span>`
+                                        : isStudent && !isCorrectOpt
+                                            ? `<span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rose-100 text-rose-700">Student</span>`
+                                            : '';
+
+                                    return `<div class="${cls}">
+                                        <div class="mt-0.5">${icon}</div>
+                                        <div class="min-w-0">
+                                            <div class="font-semibold text-slate-900">${k.toUpperCase()}.${tag}</div>
+                                            <div class="mt-1 text-slate-700">${escapeHtml(String(options[k]))}</div>
+                                        </div>
+                                    </div>`;
+                                }).join('')}
+                               </div>`
+                            : '';
+
+                        const normalizeAnswerText = (key, text) => {
+                            const k = (key || '').toString().trim();
+                            const t = (text || '').toString().trim();
+                            if (!k || !t) return t;
+                            // Avoid "B — B" when option text is just the letter (common in some quizzes)
+                            const tLower = t.toLowerCase();
+                            const kLower = k.toLowerCase();
+                            if (tLower === kLower) return '';
+                            if (tLower === `${kLower}.`) return '';
+                            if (tLower.startsWith(`${kLower} `)) return t.slice(k.length).trim();
+                            if (tLower.startsWith(`${kLower}. `)) return t.slice(k.length + 1).trim();
+                            return t;
+                        };
+
+                        const studentDesc = normalizeAnswerText(studentKey, studentText);
+                        const correctDesc = normalizeAnswerText(correctKey, correctText);
+
+                        const studentLine = studentKey
+                            ? `<span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold border ${isCorrect ? 'bg-green-50 text-green-800 border-green-200' : 'bg-rose-50 text-rose-800 border-rose-200'}">${kStudent}${studentDesc ? ` — ${escapeHtml(studentDesc)}` : ''}</span>`
+                            : `<span class="text-gray-400 text-xs">—</span>`;
+
+                        const correctLine = correctKey
+                            ? `<span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold border bg-emerald-50 text-emerald-900 border-emerald-200">${kCorrect}${correctDesc ? ` — ${escapeHtml(correctDesc)}` : ''}</span>`
+                            : `<span class="text-gray-400 text-xs">—</span>`;
+
+                        const answerSummary = hasOptions
+                            ? `
+                                <div class="mt-3 bg-white/70 border border-slate-200 rounded-lg p-3">
+                                    <div class="text-xs font-semibold text-slate-600">Student answer</div>
+                                    <div class="mt-1">${studentLine}</div>
+                                </div>
+                              `
+                            : `
+                                <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <div class="bg-white/70 border border-slate-200 rounded-lg p-3">
+                                        <div class="text-xs font-semibold text-slate-600">Student answer</div>
+                                        <div class="mt-1">${studentLine}</div>
+                                    </div>
+                                    <div class="bg-white/70 border border-emerald-200 rounded-lg p-3">
+                                        <div class="text-xs font-semibold text-emerald-800">Correct answer</div>
+                                        <div class="mt-1">${correctLine}</div>
+                                    </div>
+                                </div>
+                              `;
+
+                        return `
+                            <div class="border rounded-xl p-4 ${isCorrect ? 'bg-green-50/40 border-green-200' : 'bg-rose-50/40 border-rose-200'}">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="min-w-0">
+                                        <div class="text-xs text-slate-500 font-semibold">Question ${escapeHtml(qn)}</div>
+                                        <div class="text-sm font-semibold text-slate-900 mt-1">${escapeHtml(questionText || `Q${qn}`)}</div>
+                                    </div>
+                                    <div class="shrink-0">${headerBadge}</div>
+                                </div>
+
+                                ${optionsList}
+
+                                ${answerSummary}
+                            </div>
+                        `;
+                    }).join('')
+                    : `<div class="px-4 py-10 text-center text-gray-500">No answers found for this attempt.</div>`;
+
+                const quizTitle = getQuizTitle(quizType);
+                Swal.fire({
+                    title: `<div class="flex items-center space-x-2"><i class="fas fa-clipboard-check text-indigo-600"></i><span>Answer Review</span></div>`,
+                    html: `
+                        <div class="text-left">
+                            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
+                                <div class="text-sm text-gray-700"><span class="font-semibold">Student:</span> ${studentName || attempt.student_name || 'N/A'}</div>
+                                <div class="text-sm text-gray-700 mt-1"><span class="font-semibold">Quiz:</span> ${quizTitle}</div>
+                                <div class="text-sm text-gray-500 mt-1"><span class="font-semibold text-gray-600">Class:</span> ${attempt.class_name || 'N/A'}</div>
+                            </div>
+
+                            <div class="flex items-center justify-between gap-3 bg-white border border-gray-200 rounded-lg p-3 mb-3">
+                                <div class="text-xs text-slate-600">
+                                    <span class="inline-flex items-center mr-3"><i class="fas fa-check-circle text-emerald-600 mr-1"></i>Correct answer</span>
+                                    <span class="inline-flex items-center"><i class="fas fa-times-circle text-rose-600 mr-1"></i>Student wrong answer</span>
+                                </div>
+                                <div class="text-xs text-slate-500">Tip: the green card always shows the real correct answer.</div>
+                            </div>
+
+                            <div class="space-y-3">
+                                ${cardsHtml}
+                            </div>
+                        </div>
+                    `,
+                    width: '980px',
+                    showCloseButton: true,
+                    closeButtonAriaLabel: 'Close',
+                    confirmButtonText: 'Close',
+                    confirmButtonColor: '#6366f1',
+                    customClass: {
+                        popup: 'rounded-2xl',
+                        title: 'text-slate-800 text-xl',
+                        content: 'text-slate-600'
+                    }
+                });
+            } catch (error) {
+                console.error('Error viewing student quiz answers:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: error.message || 'Failed to load answers.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#ef4444'
                 });
             }
         }
@@ -4199,41 +5261,6 @@
             loadTeacherClasses();
         }
 
-        async function loadTeacherLessonProgress() {
-            const container = document.getElementById('teacherLessonProgressList');
-            if (!container) return;
-            try {
-                const response = await fetch('php/teacher-lesson-progress.php?action=get_my_progress', { credentials: 'include' });
-                const data = await response.json();
-                if (data.success && Array.isArray(data.topics)) {
-                    if (data.topics.length === 0) {
-                        container.innerHTML = `
-                            <p class="text-sm text-gray-500 py-4">You haven't opened any topic yet. Use <strong>Topic Management</strong> (in a class) and click the <i class="fas fa-external-link-alt text-xs"></i> icon on a topic to preview it. Your viewed topics will appear here.</p>
-                        `;
-                    } else {
-                        container.innerHTML = data.topics.map(function(t) {
-                            const date = t.last_viewed_at ? new Date(t.last_viewed_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : '';
-                            return `
-                                <a href="topics/${t.topic_slug}.html" target="_blank" rel="noopener" class="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-violet-50 hover:border-violet-200 transition-colors group">
-                                    <div class="flex items-center min-w-0">
-                                        <i class="fas fa-book text-violet-500 mr-3 flex-shrink-0"></i>
-                                        <span class="font-medium text-gray-900 truncate group-hover:text-violet-700">${escapeHtml(t.topic_name)}</span>
-                                    </div>
-                                    <div class="flex items-center flex-shrink-0 ml-2">
-                                        ${date ? `<span class="text-xs text-gray-500 mr-2">${date}</span>` : ''}
-                                        <i class="fas fa-external-link-alt text-gray-400 text-xs"></i>
-                                    </div>
-                                </a>
-                            `;
-                        }).join('');
-                    }
-                } else {
-                    container.innerHTML = '<p class="text-sm text-gray-500 py-4">Unable to load progress.</p>';
-                }
-            } catch (e) {
-                container.innerHTML = '<p class="text-sm text-gray-500 py-4">Unable to load progress.</p>';
-            }
-        }
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
@@ -4405,20 +5432,11 @@
             'class_update'
         ]);
         
-        const IMPORTANT_HANDLED_STORAGE_KEY = 'teacher_dashboard_important_notifications_handled_ids_v1';
         let handledImportantIds = new Set();
 
         document.addEventListener('DOMContentLoaded', async function() {
-            // Load already-handled important notification IDs so we don't re-toast on reload.
-            try {
-                const raw = localStorage.getItem(IMPORTANT_HANDLED_STORAGE_KEY);
-                if (raw) {
-                    const arr = JSON.parse(raw);
-                    if (Array.isArray(arr)) handledImportantIds = new Set(arr);
-                }
-            } catch (e) {
-                // ignore storage errors
-            }
+            // Don't use localStorage/sessionStorage for important notification handling.
+            // Dedupe is per-page-load only so state stays database-driven.
             
             // Show loading overlay
             const loadingOverlay = document.getElementById('loadingOverlay');
@@ -4441,6 +5459,7 @@
                     
                     if (result.success && result.teacher) {
                         const teacher = result.teacher;
+                        teacherProfileData = teacher;
                         console.log('👨‍🏫 Teacher found:', teacher);
                         
                         // Build name safely
@@ -4469,6 +5488,8 @@
                                 console.error(`❌ Element not found: ${id}`);
                             }
                         }
+                        applyTeacherAvatar(teacher.profile_image_url || teacher.profile_image || '');
+                        populateProfileSection(teacher);
                         
                         console.log('🎉 Teacher profile loaded successfully!');
                         
@@ -4510,15 +5531,10 @@
                 // Load class performance data
                 await loadClassPerformanceData();
 
-                // Render learning analytics snapshot
-                renderLearningAnalytics();
-                renderEngagementBreakdown();
+                // (Learning analytics snapshot removed)
                 
                 // Load notifications
                 await loadNotifications();
-                
-                // Load teacher's own lesson progress (topics they've viewed)
-                await loadTeacherLessonProgress();
                 
                 // Check for new notifications every 30 seconds
                 notificationCheckInterval = setInterval(loadNotifications, 30000);
@@ -4547,71 +5563,6 @@
                 });
             }
         });
-
-        // Lightweight engagement/weakness renderer (uses API if available, else fallback)
-        async function renderEngagementBreakdown() {
-            const timeLessonEl = document.getElementById('timeByLessonList');
-            const weakStudentsEl = document.getElementById('weakStudentsList');
-            const timeTopicEl = document.getElementById('timeByTopicList');
-            const weakAreasEl = document.getElementById('weakAreasList');
-
-            // Helper to render list rows
-            const renderList = (el, rows, colorClass = 'text-gray-700') => {
-                if (!el) return;
-                if (!rows || rows.length === 0) {
-                    el.innerHTML = `<p class="text-xs text-gray-500">No data yet</p>`;
-                    return;
-                }
-                el.innerHTML = rows.map(r => `
-                    <div class="flex items-center justify-between">
-                        <span class="font-medium ${colorClass}">${r.label}</span>
-                        <span class="text-xs text-gray-600">${r.value}</span>
-                    </div>
-                `).join('');
-            };
-
-            // Try fetch real analytics (optional)
-            try {
-                const res = await fetch('php/analytics-learning.php?action=engagement', { credentials: 'include', cache: 'no-store' });
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.success) {
-                        renderList(timeTopicEl, data.time_by_topic || [], 'text-indigo-800');
-                        renderList(weakAreasEl, data.weak_areas || [], 'text-rose-800');
-                        renderList(timeLessonEl, data.time_by_lesson || [], 'text-amber-800');
-                        renderList(weakStudentsEl, data.weak_students || [], 'text-yellow-800');
-                        return;
-                    }
-                }
-            } catch (e) {
-                // fall back to sample data
-            }
-
-            // Fallback sample data
-            renderList(timeTopicEl, [
-                { label: 'Functions', value: '12.4 min' },
-                { label: 'Domain & Range', value: '15.2 min' },
-                { label: 'Operations', value: '11.0 min' },
-            ], 'text-indigo-800');
-
-            renderList(weakAreasEl, [
-                { label: 'Domain restrictions', value: '58% avg' },
-                { label: 'Composition steps', value: '62% avg' },
-            ], 'text-rose-800');
-
-            renderList(timeLessonEl, [
-                { label: 'Lesson 1', value: '8.5 min' },
-                { label: 'Lesson 2', value: '13.1 min' },
-                { label: 'Lesson 3', value: '10.6 min' },
-                { label: 'Lesson 4', value: '12.2 min' },
-            ], 'text-amber-800');
-
-            renderList(weakStudentsEl, [
-                { label: 'Student A', value: 'Avg 55% • struggles: Domain' },
-                { label: 'Student B', value: 'Avg 60% • struggles: Composition' },
-                { label: 'Student C', value: 'Avg 63% • slow pace' },
-            ], 'text-yellow-800');
-        }
 
         // Notification Functions
         function toggleNotifications() {
@@ -4692,12 +5643,7 @@
         }
         
         function persistHandledImportantIds() {
-            try {
-                const arr = Array.from(handledImportantIds);
-                localStorage.setItem(IMPORTANT_HANDLED_STORAGE_KEY, JSON.stringify(arr.slice(-200)));
-            } catch (e) {
-                // ignore storage errors
-            }
+            // Intentionally no-op: do not persist to localStorage/sessionStorage.
         }
         
         function processImportantNotifications(notifs) {
@@ -4776,15 +5722,30 @@
         async function loadNotifications() {
             try {
                 const response = await fetch('php/get-notifications.php', {
-                    credentials: 'include'
+                    credentials: 'include',
+                    cache: 'no-store'
                 });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+
+                if (response.status === 401) {
+                    window.location.href = 'teacher-login.html';
+                    return;
                 }
-                
-                const result = await response.json();
-                
+
+                const text = await response.text();
+                let result;
+                try {
+                    result = text ? JSON.parse(text) : {};
+                } catch (parseErr) {
+                    console.error('Invalid JSON from notifications:', parseErr);
+                    displayNotificationError();
+                    return;
+                }
+
+                if (!response.ok) {
+                    displayNotificationError();
+                    return;
+                }
+
                 if (result.success) {
                     notifications = result.notifications || [];
                     displayNotifications(notifications);
@@ -4928,7 +5889,12 @@
                     credentials: 'include',
                     body: `action=mark_read&notification_id=${notificationId}`
                 });
-                
+
+                if (response.status === 401) {
+                    window.location.href = 'teacher-login.html';
+                    return;
+                }
+
                 if (response.ok) {
                     await loadNotifications();
                 }
@@ -4947,7 +5913,12 @@
                     credentials: 'include',
                     body: 'action=mark_all_read'
                 });
-                
+
+                if (response.status === 401) {
+                    window.location.href = 'teacher-login.html';
+                    return;
+                }
+
                 if (response.ok) {
                     await loadNotifications();
                 }
@@ -5025,14 +5996,27 @@
             
             try {
                 const response = await fetch('php/get-notifications.php', {
-                    credentials: 'include'
+                    credentials: 'include',
+                    cache: 'no-store'
                 });
-                
+
+                if (response.status === 401) {
+                    window.location.href = 'teacher-login.html';
+                    return;
+                }
+
+                const text = await response.text();
+                let result;
+                try {
+                    result = text ? JSON.parse(text) : {};
+                } catch (parseErr) {
+                    throw new Error('Invalid JSON from notifications');
+                }
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                
-                const result = await response.json();
+
                 const notifs = result && result.success ? (result.notifications || []) : [];
                 
                 if (!Array.isArray(notifs) || notifs.length === 0) {
@@ -5345,24 +6329,16 @@
             const statusBadge = document.getElementById(`${elementId}QuizStatusBadge`);
             
             if (toggleButton) {
-                if (isOpen) {
-                    // Quiz is open
-                    toggleButton.innerHTML = '<i class="fas fa-unlock mr-2"></i><span>Open</span>';
-                    toggleButton.className = 'w-full px-4 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center bg-emerald-500 hover:bg-emerald-600 text-white';
-                    if (statusBadge) {
+                updateToggleButtonUI(toggleButton, !!isOpen);
+                if (statusBadge) {
+                    if (isOpen) {
                         statusBadge.innerHTML = '<i class="fas fa-unlock mr-1"></i>Open';
                         statusBadge.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-200';
-                        statusBadge.classList.remove('hidden');
-                    }
-                } else {
-                    // Quiz is closed
-                    toggleButton.innerHTML = '<i class="fas fa-lock mr-2"></i><span>Closed</span>';
-                    toggleButton.className = 'w-full px-4 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-700';
-                    if (statusBadge) {
+                    } else {
                         statusBadge.innerHTML = '<i class="fas fa-lock mr-1"></i>Closed';
                         statusBadge.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200';
-                        statusBadge.classList.remove('hidden');
                     }
+                    statusBadge.classList.remove('hidden');
                 }
             }
         }
@@ -5377,9 +6353,7 @@
                 statusElement.className = 'text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded-full';
             }
             if (toggleButton) {
-                // Keep the same toggle button layout as Open/Closed states.
-                toggleButton.innerHTML = '<i class="fas fa-unlock mr-2"></i><span>Open</span>';
-                toggleButton.className = 'w-full px-4 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-md hover:shadow-lg flex items-center justify-center bg-emerald-500 hover:bg-emerald-600 text-white';
+                updateToggleButtonUI(toggleButton, false);
             }
         }
         
@@ -5933,6 +6907,79 @@
         // ===== Class Performance Analytics (Charts + Leaderboards) =====
         let _classTrendChart = null;
         let _scoreDistributionChart = null;
+        let classLeaderboardRows = [];
+        let classLeaderboardPage = 1;
+        const CLASS_LEADERBOARD_PAGE_SIZE = 10;
+
+        function getLeaderboardTier(avg) {
+            if (avg >= 85) return { label: 'High', badge: 'cp-badge-top' };
+            if (avg >= 60) return { label: 'Normal', badge: 'cp-badge-normal' };
+            return { label: 'Low', badge: 'cp-badge-low' };
+        }
+
+        function renderClassLeaderboardPage(page = 1) {
+            const tbody = document.getElementById('classLeaderboardTableBody');
+            const pagination = document.getElementById('classLeaderboardPagination');
+            if (!tbody || !pagination) return;
+
+            if (!classLeaderboardRows.length) {
+                tbody.innerHTML = '<tr><td colspan="6" class="px-3 py-6 text-center text-gray-500">No ranking data available</td></tr>';
+                pagination.innerHTML = '';
+                return;
+            }
+
+            const totalPages = Math.max(1, Math.ceil(classLeaderboardRows.length / CLASS_LEADERBOARD_PAGE_SIZE));
+            classLeaderboardPage = Math.min(Math.max(1, page), totalPages);
+            const start = (classLeaderboardPage - 1) * CLASS_LEADERBOARD_PAGE_SIZE;
+            const rows = classLeaderboardRows.slice(start, start + CLASS_LEADERBOARD_PAGE_SIZE);
+
+            tbody.innerHTML = rows.map((x, idx) => {
+                const rank = start + idx + 1;
+                const name = x.student.student_name || `${x.student.first_name || ''} ${x.student.last_name || ''}`.trim() || 'Student';
+                const studentId = x.student.student_id || x.student.id || 0;
+                const lessonsCompleted = (x.student.functions_lessons_completed || 0) +
+                    (x.student.evaluating_functions_lessons_completed || 0) +
+                    (x.student.operations_lessons_completed || 0) +
+                    (x.student.rational_functions_lessons_completed || 0) +
+                    (x.student.real_life_lessons_completed || 0);
+                const tier = getLeaderboardTier(x.avg);
+                const scoreDisplay = x.quizzesTaken > 0 ? `${x.avg.toFixed(1)}%` : 'No quiz';
+                return `
+                    <tr class="cursor-pointer hover:bg-indigo-50/60 transition-colors" onclick="${studentId ? `viewStudentDetails(${studentId})` : ''}">
+                        <td class="px-3 py-2 text-xs font-bold text-indigo-700">#${rank}</td>
+                        <td class="px-3 py-2">
+                            <span class="font-semibold text-gray-900">${name}</span>
+                        </td>
+                        <td class="px-3 py-2 text-center text-xs font-semibold text-gray-700">${x.quizzesTaken || 0}</td>
+                        <td class="px-3 py-2 text-center text-xs font-semibold text-gray-700">${lessonsCompleted}</td>
+                        <td class="px-3 py-2 text-center">
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${tier.badge}">${tier.label}</span>
+                        </td>
+                        <td class="px-3 py-2 text-right">
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${tier.badge}">${scoreDisplay}</span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+
+            pagination.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <p class="text-xs text-gray-600">Showing ${start + 1}-${Math.min(start + CLASS_LEADERBOARD_PAGE_SIZE, classLeaderboardRows.length)} of ${classLeaderboardRows.length}</p>
+                    <div class="flex items-center gap-2">
+                        <button class="px-3 py-1.5 rounded-md border border-indigo-200 text-indigo-700 text-xs font-semibold ${classLeaderboardPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-indigo-50'}"
+                            ${classLeaderboardPage === 1 ? 'disabled' : `onclick="renderClassLeaderboardPage(${classLeaderboardPage - 1})"`}>Prev</button>
+                        <span class="px-2 text-xs font-semibold text-gray-600">Page ${classLeaderboardPage} of ${totalPages}</span>
+                        <button class="px-3 py-1.5 rounded-md border border-indigo-200 text-indigo-700 text-xs font-semibold ${classLeaderboardPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-indigo-50'}"
+                            ${classLeaderboardPage === totalPages ? 'disabled' : `onclick="renderClassLeaderboardPage(${classLeaderboardPage + 1})"`}>Next</button>
+                    </div>
+                </div>
+            `;
+        }
 
         function renderClassPerformanceAnalytics(students, allQuizResults) {
             try {
@@ -6044,107 +7091,18 @@
                 if (snapPassed) snapPassed.textContent = String(passedCount);
                 if (snapNeedsHelp) snapNeedsHelp.textContent = String(needsHelpCount);
 
-                // Leaderboards
-                const topList = document.getElementById('topStudentsList');
-                const weakList = document.getElementById('weakStudentsList2');
-
-                // Top students: Sort all by average descending, take top 5 (only those with quizzes)
-                const sortedByAvg = [...averages].sort((a, b) => b.avg - a.avg);
-                const top5 = sortedByAvg
-                    .filter(x => x.avg > 0) // Only students who have taken quizzes
-                    .slice(0, 5);
-                
-                const renderStudentList = (el, items, tone) => {
-                    if (!el) return;
-                    if (!items || items.length === 0) {
-                        el.innerHTML = `<p class="text-xs text-gray-500 p-2">No data yet</p>`;
-                        return;
-                    }
-                    const isTop = tone === 'top';
-
-                    el.innerHTML = `
-                        <div class="min-w-[320px]">
-                            <table class="min-w-full text-sm">
-                                <thead>
-                                    <tr class="text-left text-xs font-bold text-gray-600 uppercase tracking-wider bg-gray-50">
-                                        <th class="px-3 py-2 w-[46px]">#</th>
-                                        <th class="px-3 py-2">Student</th>
-                                        <th class="px-3 py-2 text-center w-[92px]">Quizzes</th>
-                                        <th class="px-3 py-2 text-center w-[92px]">Lessons</th>
-                                        ${isTop ? '' : '<th class="px-3 py-2">Status</th>'}
-                                        <th class="px-3 py-2 text-right w-[92px]">Score</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200 bg-white">
-                                    ${items.map((x, idx) => {
-                                        const name = x.student.student_name || `${x.student.first_name || ''} ${x.student.last_name || ''}`.trim() || 'Student';
-                                        let badge, icon, urgency;
-
-                                        if (isTop) {
-                                            badge = 'bg-emerald-100 text-emerald-800';
-                                            icon = '🏆';
-                                            urgency = '';
-                                        } else {
-                                            // Determine urgency level for weak students
-                                            if (x.category === 'Critical') {
-                                                badge = 'bg-red-100 text-red-800';
-                                                icon = '🚨';
-                                                urgency = 'Critical';
-                                            } else if (x.category === 'Needs Support') {
-                                                badge = 'bg-orange-100 text-orange-800';
-                                                icon = '⚠️';
-                                                urgency = 'Needs Support';
-                                            } else {
-                                                badge = 'bg-yellow-100 text-yellow-800';
-                                                icon = '📊';
-                                                urgency = 'At Risk';
-                                            }
-                                        }
-
-                                        const studentId = x.student.student_id || x.student.id || 0;
-                                        if (!studentId) {
-                                            console.warn('Student ID missing for:', x.student);
-                                            return '';
-                                        }
-
-                                        const lessonsCompleted = (x.student.functions_lessons_completed || 0) +
-                                            (x.student.evaluating_functions_lessons_completed || 0) +
-                                            (x.student.operations_lessons_completed || 0);
-
-                                        const scoreDisplay = x.avg > 0 ? `${x.avg.toFixed(1)}%` : 'No quizzes';
-
-                                        return `
-                                            <tr class="cursor-pointer hover:bg-indigo-50/50 transition-colors" onclick="viewStudentDetails(${studentId})" title="Click to view details">
-                                                <td class="px-3 py-2 text-xs font-semibold text-gray-500">${idx + 1}</td>
-                                                <td class="px-3 py-2">
-                                                    <div class="flex items-center gap-2 min-w-0">
-                                                        <span class="text-base">${icon}</span>
-                                                        <span class="font-semibold text-gray-900 truncate">${name}</span>
-                                                    </div>
-                                                </td>
-                                                <td class="px-3 py-2 text-center text-xs font-semibold text-gray-700">${x.quizzesTaken || 0}</td>
-                                                <td class="px-3 py-2 text-center text-xs font-semibold text-gray-700">${lessonsCompleted}</td>
-                                                ${isTop ? '' : `<td class="px-3 py-2">
-                                                    <span class="inline-flex items-center px-2 py-1 rounded-full ${badge} text-xs font-semibold">
-                                                        ${urgency || ''}
-                                                    </span>
-                                                </td>`}
-                                                <td class="px-3 py-2 text-right">
-                                                    <span class="inline-flex items-center justify-end px-2 py-1 rounded-full ${badge} text-xs font-semibold">
-                                                        ${scoreDisplay}
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        `;
-                                    }).filter(html => html !== '').join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                    `;
-                };
-
-                renderStudentList(topList, top5, 'top');
-                renderStudentList(weakList, allNeedingHelp, 'weak');
+                // Unified leaderboard table (all students) with pagination
+                classLeaderboardRows = [...averages]
+                    .filter(x => x.student && (x.student.student_id || x.student.id))
+                    .sort((a, b) => {
+                        if (b.avg !== a.avg) return b.avg - a.avg;
+                        if (b.quizzesTaken !== a.quizzesTaken) return b.quizzesTaken - a.quizzesTaken;
+                        const an = (a.student.student_name || `${a.student.first_name || ''} ${a.student.last_name || ''}`).trim().toLowerCase();
+                        const bn = (b.student.student_name || `${b.student.first_name || ''} ${b.student.last_name || ''}`).trim().toLowerCase();
+                        return an.localeCompare(bn);
+                    });
+                classLeaderboardPage = 1;
+                renderClassLeaderboardPage(classLeaderboardPage);
 
                 // Score distribution (bands) - use only students with at least one quiz taken
                 const bands = [
@@ -6154,7 +7112,8 @@
                     { label: '80–89', min: 80, max: 89.999 },
                     { label: '90–100', min: 90, max: 100.001 }
                 ];
-                const counts = bands.map(b => averages.filter(x => x.quizzesTaken > 0 && x.avg >= b.min && x.avg <= b.max).length);
+                // Include all approved students in distribution; non-takers remain in low band (0-59).
+                const counts = bands.map(b => averages.filter(x => x.avg >= b.min && x.avg <= b.max).length);
 
                 // Trend: aggregate average percentage by date from all quiz submissions
                 const submissions = [];
@@ -6196,17 +7155,17 @@
                                 datasets: [{
                                     label: 'Average Score',
                                     data: trendLabels.length ? trendValues : [0],
-                                    borderColor: '#4f46e5',
-                                    backgroundColor: 'rgba(79,70,229,0.15)',
+                                    borderColor: '#6d28d9',
+                                    backgroundColor: 'rgba(109,40,217,0.14)',
                                     tension: 0.4,
                                     fill: true,
                                     pointRadius: 5,
                                     pointHoverRadius: 7,
-                                    pointBackgroundColor: '#4f46e5',
+                                    pointBackgroundColor: '#6d28d9',
                                     pointBorderColor: '#fff',
                                     pointBorderWidth: 2,
                                     pointHoverBackgroundColor: '#fff',
-                                    pointHoverBorderColor: '#4f46e5',
+                                    pointHoverBorderColor: '#6d28d9',
                                     pointHoverBorderWidth: 3,
                                     borderWidth: 3
                                 }]
@@ -6215,7 +7174,8 @@
                                 responsive: true,
                                 maintainAspectRatio: false,
                                 interaction: {
-                                    mode: 'index',
+                                    mode: 'nearest',
+                                    axis: 'x',
                                     intersect: false
                                 },
                                 plugins: {
@@ -6233,10 +7193,12 @@
                                     },
                                     tooltip: {
                                         enabled: true,
+                                        mode: 'nearest',
+                                        intersect: false,
                                         backgroundColor: 'rgba(0, 0, 0, 0.8)',
                                         titleColor: '#fff',
                                         bodyColor: '#fff',
-                                        borderColor: '#4f46e5',
+                                        borderColor: '#6d28d9',
                                         borderWidth: 1,
                                         padding: 12,
                                         displayColors: true,
@@ -6286,220 +7248,134 @@
                                         }
                                     }
                                 }
+                                ,
+                                hover: {
+                                    mode: 'nearest',
+                                    intersect: false
+                                }
                             }
                         });
                     }
 
                     if (distCtx) {
                         if (_scoreDistributionChart) _scoreDistributionChart.destroy();
-                        
+
                         const totalStudents = counts.reduce((a, b) => a + b, 0);
-                        const percentages = counts.map(count => totalStudents > 0 ? ((count / totalStudents) * 100).toFixed(1) : 0);
-                        
+                        const percentages = counts.map(count => totalStudents > 0 ? ((count / totalStudents) * 100).toFixed(1) : '0.0');
+                        const yMax = Math.max(5, ...counts) + 1;
+
                         _scoreDistributionChart = new Chart(distCtx, {
                             type: 'bar',
                             data: {
                                 labels: bands.map(b => b.label),
                                 datasets: [{
-                                    label: 'Number of Students',
+                                    label: 'Students',
                                     data: counts,
                                     backgroundColor: [
-                                        'rgba(239, 68, 68, 0.8)',      // Red for 0-59 (Critical)
-                                        'rgba(251, 191, 36, 0.8)',     // Yellow for 60-69 (Needs Support)
-                                        'rgba(34, 197, 94, 0.8)',      // Green for 70-79 (Good)
-                                        'rgba(59, 130, 246, 0.8)',     // Blue for 80-89 (Very Good)
-                                        'rgba(168, 85, 247, 0.8)'      // Purple for 90-100 (Excellent)
+                                        'rgba(239, 68, 68, 0.85)',
+                                        'rgba(239, 68, 68, 0.68)',
+                                        'rgba(34, 197, 94, 0.80)',
+                                        'rgba(34, 197, 94, 0.92)',
+                                        'rgba(147, 51, 234, 0.88)'
                                     ],
                                     borderColor: [
-                                        'rgba(239, 68, 68, 1)',
-                                        'rgba(251, 191, 36, 1)',
-                                        'rgba(34, 197, 94, 1)',
-                                        'rgba(59, 130, 246, 1)',
-                                        'rgba(168, 85, 247, 1)'
+                                        'rgba(220, 38, 38, 1)',
+                                        'rgba(220, 38, 38, 0.9)',
+                                        'rgba(22, 163, 74, 1)',
+                                        'rgba(22, 163, 74, 1)',
+                                        'rgba(126, 34, 206, 1)'
                                     ],
-                                    borderWidth: 0,
-                                    borderRadius: 12,
-                                    borderSkipped: false,
-                                    hoverBackgroundColor: [
-                                        'rgba(239, 68, 68, 1)',
-                                        'rgba(251, 191, 36, 1)',
-                                        'rgba(34, 197, 94, 1)',
-                                        'rgba(59, 130, 246, 1)',
-                                        'rgba(168, 85, 247, 1)'
-                                    ],
-                                    hoverBorderWidth: 0,
-                                    categoryPercentage: 0.75,
-                                    barPercentage: 0.9,
-                                    barThickness: 46,
-                                    maxBarThickness: 52
+                                    borderWidth: 1,
+                                    borderRadius: 10,
+                                    maxBarThickness: 64,
+                                    minBarLength: 8
                                 }]
                             },
                             options: {
                                 responsive: true,
                                 maintainAspectRatio: false,
-                                indexAxis: 'y', // horizontal bars for a cleaner dashboard look
-                                animation: {
-                                    duration: 1500,
-                                    easing: 'easeInOutQuart'
-                                },
                                 interaction: {
                                     mode: 'index',
+                                    axis: 'x',
                                     intersect: false
+                                },
+                                animation: {
+                                    duration: 900,
+                                    easing: 'easeOutQuart'
                                 },
                                 plugins: {
                                     legend: {
-                                        display: false,
-                                        position: 'top',
-                                        labels: {
-                                            usePointStyle: true,
-                                            padding: 15,
-                                            font: {
-                                                size: 12,
-                                                weight: '600'
-                                            },
-                                            color: '#374151'
-                                        }
+                                        display: false
                                     },
                                     tooltip: {
-                                        enabled: true,
-                                        backgroundColor: 'rgba(0, 0, 0, 0.85)',
-                                        titleColor: '#fff',
-                                        bodyColor: '#fff',
-                                        borderColor: '#4f46e5',
-                                        borderWidth: 2,
-                                        padding: 14,
-                                        displayColors: true,
-                                        cornerRadius: 8,
+                                        mode: 'index',
+                                        intersect: false,
+                                        backgroundColor: 'rgba(15, 23, 42, 0.92)',
+                                        borderColor: '#6366f1',
+                                        borderWidth: 1,
+                                        padding: 12,
+                                        displayColors: false,
                                         callbacks: {
-                                            title: function(context) {
-                                                return 'Score Range: ' + context[0].label;
-                                            },
-                                            label: function(context) {
+                                            title: (context) => `Score Range: ${context[0].label}`,
+                                            label: (context) => {
                                                 const count = context.parsed.y;
-                                                const index = context.dataIndex;
-                                                const percentage = percentages[index];
-                                                const band = bands[index];
-                                                
-                                                // Get students in this band
-                                                const studentsInBand = averages.filter(x => 
-                                                    x.avg >= band.min && x.avg <= band.max
-                                                );
-                                                
-                                                let status = '';
-                                                if (band.label === '90–100') status = '⭐ Excellent Performance';
-                                                else if (band.label === '80–89') status = '✓ Very Good';
-                                                else if (band.label === '70–79') status = '✓ Good';
-                                                else if (band.label === '60–69') status = '⚠ Fair - Needs Support';
-                                                else status = '🚨 Critical - Immediate Help Required';
-                                                
-                                                return [
-                                                    `Students: ${count}`,
-                                                    `Percentage: ${percentage}%`,
-                                                    `Status: ${status}`
-                                                ];
+                                                const idx = context.dataIndex;
+                                                const status = idx === 4 ? 'High (Purple)' : (idx >= 2 ? 'Normal (Green)' : 'Low (Red)');
+                                                return [`Students: ${count}`, `Percent: ${percentages[idx]}%`, `Tier: ${status}`];
                                             }
                                         }
-                                    },
+                                    }
                                 },
                                 scales: {
+                                    x: {
+                                        grid: {
+                                            display: false,
+                                            drawBorder: false
+                                        },
+                                        ticks: {
+                                            color: '#334155',
+                                            font: { size: 12, weight: '700' }
+                                        },
+                                        title: {
+                                            display: true,
+                                            text: 'Score Range',
+                                            color: '#475569',
+                                            font: { size: 12, weight: '700' }
+                                        }
+                                    },
                                     y: {
                                         beginAtZero: true,
-                                        // In horizontal mode, `y` is the category axis.
+                                        max: yMax,
                                         grid: {
-                                            display: false
-                                        },
-                                        ticks: { font: { size: 12, weight: '700' }, color: '#374151' }
-                                    },
-                                    x: {
-                                        // `x` becomes the numeric axis in horizontal mode.
-                                        grid: {
-                                            display: true,
-                                            drawBorder: false,
-                                            color: 'rgba(0, 0, 0, 0.07)'
+                                            color: 'rgba(148, 163, 184, 0.2)',
+                                            drawBorder: false
                                         },
                                         ticks: {
                                             precision: 0,
                                             stepSize: 1,
-                                            font: { size: 11, weight: '700' },
-                                            color: '#6B7280',
-                                            padding: 6
+                                            color: '#475569',
+                                            font: { size: 11, weight: '700' }
                                         },
                                         title: {
                                             display: true,
                                             text: 'Number of Students',
-                                            font: { size: 12, weight: '700' },
-                                            color: '#374151',
-                                            padding: { top: 10, bottom: 5 }
+                                            color: '#475569',
+                                            font: { size: 12, weight: '700' }
                                         }
                                     }
                                 },
+                                hover: {
+                                    mode: 'index',
+                                    axis: 'x',
+                                    intersect: false
+                                },
                                 onHover: (event, activeElements) => {
-                                    event.native.target.style.cursor = activeElements.length > 0 ? 'pointer' : 'default';
+                                    if (event && event.native && event.native.target) {
+                                        event.native.target.style.cursor = activeElements.length > 0 ? 'pointer' : 'default';
+                                    }
                                 }
-                            },
-                            plugins: [{
-                                id: 'barLabels',
-                                afterDatasetsDraw: (chart) => {
-                                    const ctx = chart.ctx;
-                                    const isHorizontal = chart.options.indexAxis === 'y';
-                                    chart.data.datasets.forEach((dataset, i) => {
-                                        const meta = chart.getDatasetMeta(i);
-                                        meta.data.forEach((bar, index) => {
-                                            const value = dataset.data[index];
-                                            if (value > 0) {
-                                                const x = bar.x;
-                                                const y = bar.y;
-                                                const percentage = percentages[index];
-                                                    const topY = chart.chartArea ? chart.chartArea.top : 0;
-                                                
-                                                ctx.save();
-                                                    ctx.shadowColor = 'rgba(0,0,0,0.15)';
-                                                    ctx.shadowBlur = 6;
-                                                ctx.fillStyle = '#374151';
-                                                ctx.font = 'bold 11px Inter, sans-serif';
-
-                                                if (isHorizontal) {
-                                                    // For horizontal bars, place labels to the right of the bar.
-                                                    const rightX = x + bar.width + 8;
-                                                    const safeRight = chart.chartArea ? (chart.chartArea.right - 6) : rightX;
-                                                    const labelX = Math.min(rightX, safeRight);
-                                                    ctx.textAlign = 'left';
-                                                    ctx.textBaseline = 'middle';
-                                                    ctx.fillText(`${value}`, labelX, y);
-                                                } else {
-                                                    const valueY = y - 4;
-                                                    ctx.textAlign = 'center';
-                                                    ctx.textBaseline = 'bottom';
-                                                    if (valueY > topY + 10) ctx.fillText(`${value}`, x, valueY);
-                                                }
-                                                    ctx.shadowBlur = 0;
-                                                    ctx.font = '10px Inter, sans-serif';
-                                                ctx.fillStyle = '#6B7280';
-                                                    if (isHorizontal) {
-                                                        const rightX = x + bar.width + 8;
-                                                        const safeRight = chart.chartArea ? (chart.chartArea.right - 6) : rightX;
-                                                        const labelX = Math.min(rightX, safeRight);
-                                                        ctx.textAlign = 'left';
-                                                        ctx.textBaseline = 'middle';
-                                                        ctx.fillText(`(${percentage}%)`, labelX, y + 14);
-                                                    } else {
-                                                        const percentY = y - 18;
-                                                        if (percentY > topY + 10) ctx.fillText(`(${percentage}%)`, x, percentY);
-                                                    }
-                                                ctx.restore();
-                                            }
-                                        });
-                                    });
-                                }
-                            }]
-                        });
-                        
-                        // Add animation delay for better visual effect
-                        setTimeout(() => {
-                            if (_scoreDistributionChart) {
-                                _scoreDistributionChart.update('active');
                             }
-                        }, 100);
+                        });
                     }
                 }
             } catch (e) {
@@ -7955,27 +8831,31 @@
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 ${[
-                                    { name: 'Functions', score: student.functions_quiz_best_score || 0, attempts: student.functions_quiz_attempts || 0 },
-                                    { name: 'Evaluating Functions', score: student.evaluating_functions_quiz_best_score || 0, attempts: student.evaluating_functions_quiz_attempts || 0 },
-                                    { name: 'Operations on Functions', score: student.operations_on_functions_quiz_best_score || 0, attempts: student.operations_on_functions_quiz_attempts || 0 },
-                                    { name: 'Real-Life Problems', score: student.real_life_problems_quiz_best_score || 0, attempts: student.real_life_problems_quiz_attempts || 0 },
-                                    { name: 'Rational Functions', score: student.rational_functions_quiz_best_score || 0, attempts: student.rational_functions_quiz_attempts || 0 },
-                                    { name: 'Solving Rational Equations', score: student.solving_rational_equations_quiz_best_score || 0, attempts: student.solving_rational_equations_quiz_attempts || 0 },
-                                    { name: 'Representations of Rational Functions', score: student.representations_of_rational_functions_quiz_best_score || 0, attempts: student.representations_of_rational_functions_quiz_attempts || 0 },
-                                    { name: 'Domain & Range Rational Functions', score: student.domain_range_rational_functions_quiz_best_score || 0, attempts: student.domain_range_rational_functions_quiz_attempts || 0 },
-                                    { name: 'One-to-One Functions', score: student.one_to_one_functions_quiz_best_score || 0, attempts: student.one_to_one_functions_quiz_attempts || 0 }
+                                    { name: 'Functions', score: student.functions_quiz_best_score, attempts: student.functions_quiz_attempts },
+                                    { name: 'Evaluating Functions', score: student.evaluating_functions_quiz_best_score, attempts: student.evaluating_functions_quiz_attempts },
+                                    { name: 'Operations on Functions', score: student.operations_on_functions_quiz_best_score, attempts: student.operations_on_functions_quiz_attempts },
+                                    { name: 'Real-Life Problems', score: student.real_life_problems_quiz_best_score, attempts: student.real_life_problems_quiz_attempts },
+                                    { name: 'Rational Functions', score: student.rational_functions_quiz_best_score, attempts: student.rational_functions_quiz_attempts },
+                                    { name: 'Solving Rational Equations', score: student.solving_rational_equations_quiz_best_score, attempts: student.solving_rational_equations_quiz_attempts },
+                                    { name: 'Representations of Rational Functions', score: student.representations_of_rational_functions_quiz_best_score, attempts: student.representations_of_rational_functions_quiz_attempts },
+                                    { name: 'Domain & Range Rational Functions', score: student.domain_range_rational_functions_quiz_best_score, attempts: student.domain_range_rational_functions_quiz_attempts },
+                                    { name: 'One-to-One Functions', score: student.one_to_one_functions_quiz_best_score, attempts: student.one_to_one_functions_quiz_attempts }
                                 ].map(quiz => {
-                                    const status = quiz.score >= 70 ? 'PASSED' : (quiz.score > 0 ? 'FAILED' : 'NOT ATTEMPTED');
-                                    const statusClass = quiz.score >= 70 ? 'bg-green-100 text-green-800' : (quiz.score > 0 ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-600');
-                                    const scoreClass = quiz.score >= 70 ? 'text-green-600 font-bold' : (quiz.score > 0 ? 'text-red-600' : 'text-gray-400');
+                                    const scoreNum = Number(quiz.score);
+                                    const attemptsNum = Number(quiz.attempts);
+                                    const safeScore = Number.isFinite(scoreNum) ? scoreNum : 0;
+                                    const safeAttempts = Number.isFinite(attemptsNum) ? attemptsNum : 0;
+                                    const status = safeScore >= 70 ? 'PASSED' : (safeScore > 0 ? 'FAILED' : 'NOT ATTEMPTED');
+                                    const statusClass = safeScore >= 70 ? 'bg-green-100 text-green-800' : (safeScore > 0 ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-600');
+                                    const scoreClass = safeScore >= 70 ? 'text-green-600 font-bold' : (safeScore > 0 ? 'text-red-600' : 'text-gray-400');
                                     return `
                                         <tr class="hover:bg-gray-50">
                                             <td class="px-4 py-3 text-sm font-medium text-gray-900">${quiz.name}</td>
-                                            <td class="px-4 py-3 text-sm text-center ${scoreClass}">${quiz.score > 0 ? quiz.score.toFixed(1) + '%' : '-'}</td>
+                                            <td class="px-4 py-3 text-sm text-center ${scoreClass}">${safeScore > 0 ? safeScore.toFixed(1) + '%' : '-'}</td>
                                             <td class="px-4 py-3 text-center">
                                                 <span class="px-2 py-1 text-xs font-semibold rounded-full ${statusClass}">${status}</span>
                                             </td>
-                                            <td class="px-4 py-3 text-sm text-center text-gray-600">${quiz.attempts}</td>
+                                            <td class="px-4 py-3 text-sm text-center text-gray-600">${safeAttempts}</td>
                                         </tr>
                                     `;
                                 }).join('')}
@@ -9658,16 +10538,17 @@
     <script src="js/create-class-modal.js"></script>
 
     <!-- Topic Management Modal -->
-    <div id="topicManagementModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col mx-4">
+    <div id="topicManagementModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="min-h-full w-full flex items-start sm:items-center justify-center p-4 sm:p-6">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[85vh] sm:max-h-[90vh] flex flex-col">
             <!-- Modal Header -->
-            <div class="flex items-center justify-between p-6 border-b border-gray-200">
+            <div class="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 bg-gradient-to-r from-indigo-50 to-purple-50 sticky top-0 z-10">
                 <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
                         <i class="fas fa-book-open text-white text-lg"></i>
                     </div>
                     <div>
-                        <h2 class="text-2xl font-bold text-gray-900" id="topicManagementTitle">Topic Management</h2>
+                        <h2 class="text-xl sm:text-2xl font-bold text-gray-900" id="topicManagementTitle">Topic Management</h2>
                         <p class="text-sm text-gray-600" id="topicManagementSubtitle">Control which topics students can access for the selected class</p>
                     </div>
                 </div>
@@ -9677,42 +10558,43 @@
             </div>
 
             <!-- Modal Content -->
-            <div class="flex-1 overflow-y-auto p-6">
+            <div class="flex-1 overflow-y-auto p-4 sm:p-6">
                 <div class="space-y-4" id="topicManagementList">
                     <!-- Topic management will be populated by JavaScript -->
                 </div>
             </div>
 
             <!-- Modal Footer -->
-            <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
-                <div class="flex items-center justify-between">
-                    <div class="text-sm text-gray-600">
+            <div class="px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-200 bg-gray-50 rounded-b-2xl sticky bottom-0 z-10">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div class="text-xs sm:text-sm text-gray-600">
                         <span id="topicCount">0</span> topics available for management
                     </div>
-                    <div class="flex space-x-2">
-                        <button onclick="lockAllTopics()" class="bg-red-100 hover:bg-red-200 text-red-700 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
+                    <div class="flex flex-wrap gap-2 sm:justify-end">
+                        <button onclick="lockAllTopics()" class="bg-red-100 hover:bg-red-200 text-red-700 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200">
                             <i class="fas fa-lock mr-2"></i>
                             Lock All
                         </button>
-                        <button onclick="unlockAllTopics()" class="bg-green-100 hover:bg-green-200 text-green-700 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
+                        <button onclick="unlockAllTopics()" class="bg-green-100 hover:bg-green-200 text-green-700 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200">
                             <i class="fas fa-unlock mr-2"></i>
                             Unlock All
                         </button>
-                        <button onclick="lockFirstQuarter()" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
+                        <button onclick="lockFirstQuarter()" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200">
                             <i class="fas fa-lock mr-2"></i>
                             Lock 1st Q
                         </button>
-                        <button onclick="lockSecondQuarter()" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
+                        <button onclick="lockSecondQuarter()" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-700 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200">
                             <i class="fas fa-lock mr-2"></i>
                             Lock 2nd Q
                         </button>
-                        <button onclick="hideTopicManagement()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">
+                        <button onclick="hideTopicManagement()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200">
                             <i class="fas fa-check mr-2"></i>
                             Done
                         </button>
                     </div>
                 </div>
             </div>
+        </div>
         </div>
     </div>
 
@@ -9737,6 +10619,10 @@
         <a href="#" onclick="showSection('class-performance'); closeMobileSidebar(); return false;" class="mobile-bottom-nav-item" data-section="class-performance">
             <i class="fas fa-chart-bar"></i>
             <span>Performance</span>
+        </a>
+        <a href="#" onclick="showSection('profile'); closeMobileSidebar(); return false;" class="mobile-bottom-nav-item" data-section="profile">
+            <i class="fas fa-user-cog"></i>
+            <span>Profile</span>
         </a>
     </nav>
 </body>

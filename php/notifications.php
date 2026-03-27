@@ -27,11 +27,20 @@ class NotificationManager {
             if ($limit <= 0) $limit = 50;
             
             $sql = "
-                SELECT id, type, title, message, is_read, read_at, 
-                       DATE_FORMAT(created_at, '%Y-%m-%d %H:%i:%s') as created_at,
-                       UNIX_TIMESTAMP(created_at) as created_timestamp
-                FROM notifications 
-                WHERE user_id = ?
+                SELECT n.id, n.type, n.title, n.message, n.is_read, n.read_at,
+                       DATE_FORMAT(n.created_at, '%Y-%m-%d %H:%i:%s') as created_at,
+                       UNIX_TIMESTAMP(n.created_at) as created_timestamp
+                FROM notifications n
+                WHERE n.user_id = ?
+                  AND NOT EXISTS (
+                      SELECT 1
+                      FROM notifications nx
+                      WHERE nx.user_id = n.user_id
+                        AND nx.type = n.type
+                        AND nx.title = n.title
+                        AND nx.message = n.message
+                        AND nx.id > n.id
+                  )
             ";
             
             if ($unreadOnly) {
@@ -117,15 +126,25 @@ class NotificationManager {
         try {
             $stmt = $this->pdo->prepare("
                 SELECT COUNT(*) as unread_count
-                FROM notifications 
-                WHERE user_id = ? AND is_read = FALSE
+                FROM notifications n
+                WHERE n.user_id = ?
+                  AND n.is_read = FALSE
+                  AND NOT EXISTS (
+                      SELECT 1
+                      FROM notifications nx
+                      WHERE nx.user_id = n.user_id
+                        AND nx.type = n.type
+                        AND nx.title = n.title
+                        AND nx.message = n.message
+                        AND nx.id > n.id
+                  )
             ");
             $stmt->execute([$userId]);
             $result = $stmt->fetch();
             
             return [
                 'success' => true,
-                'unread_count' => $result['unread_count']
+                'unread_count' => (int) ($result['unread_count'] ?? 0)
             ];
         } catch (Exception $e) {
             return [

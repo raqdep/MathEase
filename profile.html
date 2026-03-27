@@ -71,25 +71,81 @@
 </head>
 <body class="font-inter bg-gray-50 min-h-screen">
     <!-- Navigation -->
-    <nav class="bg-white shadow-lg sticky top-0 z-50">
+    <nav class="bg-white/80 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center">
-                    <a href="dashboard.html" class="flex items-center space-x-2">
-                        <img src="css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-8 w-8">
-                        <span class="text-xl font-bold text-primary">MathEase</span>
-                    </a>
+            <div class="flex items-center justify-between h-16 gap-3">
+                <a href="dashboard.php" class="flex items-center gap-2 min-w-0">
+                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <img src="css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-6 w-6 object-contain">
+                    </div>
+                    <span class="text-xl font-bold text-slate-800 truncate">MathEase</span>
+                </a>
+
+                <div class="hidden md:flex items-center space-x-1">
+                    <a href="dashboard.php" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Dashboard</a>
+                    <a href="dashboard.php#learning-path" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Topics</a>
+                    <a href="quizzes.php" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Quizzes</a>
+                    <a href="flashcards.php" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Flashcards</a>
+                    <a href="achievements.php" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Achievements</a>
+                    <a href="dashboard.php#progress" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Progress</a>
+                    <a href="profile.php" class="bg-indigo-50 text-indigo-600 font-medium px-4 py-2 rounded-lg text-sm transition-all duration-200">Profile</a>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <a href="dashboard.html" class="text-gray-700 hover:text-primary transition-colors">
-                        <i class="fas fa-home mr-2"></i>Dashboard
-                    </a>
-                    <a href="profile.html" class="text-gray-700 hover:text-primary transition-colors">
-                        <i class="fas fa-user mr-2"></i>Profile
-                    </a>
-                    <a href="php/logout.php" class="text-gray-700 hover:text-red-600 transition-colors">
-                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
-                    </a>
+
+                <div class="hidden md:flex items-center space-x-4">
+                    <div class="relative group">
+                        <button type="button" onclick="toggleNotifications()" id="notificationButton" class="relative p-2 text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition-all duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center">
+                            <i class="fas fa-bell text-lg"></i>
+                            <span id="notificationBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                        </button>
+                        <div id="notificationsDropdown" class="absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-200/60 py-2 z-50 opacity-0 invisible transition-all duration-200 hidden">
+                            <div class="px-4 py-2 border-b border-slate-200/60">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-2">
+                                        <h3 class="text-sm font-semibold text-slate-800">Notifications</h3>
+                                        <span id="dropdownNotificationCount" class="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded-full font-medium">0</span>
+                                    </div>
+                                    <button type="button" onclick="markAllNotificationsAsRead()" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">Mark all read</button>
+                                </div>
+                            </div>
+                            <div id="notificationsList" class="max-h-64 overflow-y-auto">
+                                <div class="px-4 py-4 text-sm text-slate-500">Loading...</div>
+                            </div>
+                            <div class="px-4 py-2 border-t border-slate-200/60">
+                                <a href="#" onclick="showAllNotifications(); return false;" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">View all notifications</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative group" id="profileDropdownContainer">
+                        <button onclick="toggleProfileDropdown()" class="flex items-center space-x-2 text-slate-700 hover:text-slate-900 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-50 transition-all duration-200 min-h-[44px]">
+                            <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-full flex items-center justify-center overflow-hidden" id="profileIconContainer">
+                                <img id="profileIconImage" src="" alt="Profile" class="w-full h-full object-cover hidden">
+                                <i class="fas fa-user text-white text-xs" id="profileIconPlaceholder"></i>
+                            </div>
+                            <span id="userName">Student</span>
+                            <i class="fas fa-chevron-down text-xs transition-transform duration-200" id="profileDropdownIcon"></i>
+                        </button>
+                        <div id="profileDropdown" class="absolute right-0 mt-2 w-56 bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-200/60 py-2 z-50 hidden">
+                            <a href="profile.php" class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                                <i class="fas fa-user-circle mr-3 text-indigo-500"></i>Profile
+                            </a>
+                            <div class="border-t border-slate-200 my-1"></div>
+                            <a href="#" onclick="confirmLogout(event)" class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors" id="logoutLink">
+                                <i class="fas fa-sign-out-alt mr-3 text-red-500"></i>Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md:hidden">
+                    <select id="mobileNavSelect" class="w-44 px-3 py-2 border border-slate-200 rounded-lg bg-white text-slate-700">
+                        <option value="dashboard.php">Dashboard</option>
+                        <option value="dashboard.php#learning-path">Topics</option>
+                        <option value="quizzes.php">Quizzes</option>
+                        <option value="flashcards.php">Flashcards</option>
+                        <option value="achievements.php">Achievements</option>
+                        <option value="dashboard.php#progress">Progress</option>
+                        <option value="profile.php" selected>Profile</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -182,9 +238,15 @@
                     <div class="space-y-4">
                         <div class="flex items-center p-4 bg-gray-50 rounded-lg">
                             <i class="fas fa-user text-primary w-8"></i>
-                            <div class="ml-4">
+                            <div class="ml-4 w-full">
                                 <p class="text-sm text-gray-500">Full Name</p>
                                 <p class="font-semibold text-gray-800" id="displayFullName">Loading...</p>
+                                <div class="hidden mt-3" id="editNameRow">
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <input type="text" id="editFirstName" maxlength="80" placeholder="First name" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                        <input type="text" id="editLastName" maxlength="80" placeholder="Last name" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="flex items-center p-4 bg-gray-50 rounded-lg">
@@ -196,17 +258,25 @@
                         </div>
                         <div class="flex items-center p-4 bg-gray-50 rounded-lg">
                             <i class="fas fa-graduation-cap text-primary w-8"></i>
-                            <div class="ml-4">
+                            <div class="ml-4 w-full">
                                 <p class="text-sm text-gray-500">Grade Level</p>
                                 <p class="font-semibold text-gray-800" id="displayGradeLevel">Loading...</p>
                             </div>
                         </div>
                         <div class="flex items-center p-4 bg-gray-50 rounded-lg">
                             <i class="fas fa-book text-primary w-8"></i>
-                            <div class="ml-4">
+                            <div class="ml-4 w-full">
                                 <p class="text-sm text-gray-500">Strand</p>
                                 <p class="font-semibold text-gray-800" id="displayStrand">Loading...</p>
                             </div>
+                        </div>
+                        <div id="editActions" class="hidden pt-2 flex flex-wrap gap-3">
+                            <button type="button" onclick="savePersonalInfo()" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors">
+                                <i class="fas fa-save mr-2"></i>Save
+                            </button>
+                            <button type="button" onclick="cancelEditPersonalInfo()" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors">
+                                Cancel
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -261,18 +331,34 @@
                     <form id="changePasswordForm" class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
-                            <input type="password" id="currentPassword" required
-                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <div class="relative">
+                                <input type="password" id="currentPassword" required
+                                       class="w-full px-4 py-2 pr-11 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <button type="button" onclick="togglePasswordVisibility('currentPassword', this)" class="absolute inset-y-0 right-0 px-3 text-gray-500 hover:text-gray-700" aria-label="Toggle current password visibility">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
-                            <input type="password" id="newPassword" required minlength="6"
-                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <div class="relative">
+                                <input type="password" id="newPassword" required minlength="8" maxlength="30"
+                                       class="w-full px-4 py-2 pr-11 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <button type="button" onclick="togglePasswordVisibility('newPassword', this)" class="absolute inset-y-0 right-0 px-3 text-gray-500 hover:text-gray-700" aria-label="Toggle new password visibility">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">Use 8-30 chars with uppercase, lowercase, number, and special character.</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
-                            <input type="password" id="confirmPassword" required minlength="6"
-                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <div class="relative">
+                                <input type="password" id="confirmPassword" required minlength="8" maxlength="30"
+                                       class="w-full px-4 py-2 pr-11 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <button type="button" onclick="togglePasswordVisibility('confirmPassword', this)" class="absolute inset-y-0 right-0 px-3 text-gray-500 hover:text-gray-700" aria-label="Toggle confirm password visibility">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
                         </div>
                         <button type="submit" 
                                 class="w-full bg-gradient-to-r from-primary to-secondary text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300">
@@ -305,6 +391,8 @@
         </div>
     </div>
 
+    <script src="js/student-notifications.js"></script>
+    <script src="js/session-manager.js"></script>
     <script src="js/profile.js"></script>
 </body>
 </html>

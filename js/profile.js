@@ -1,11 +1,13 @@
 // Profile Page JavaScript
 
 let profileData = null;
+let isEditingPersonalInfo = false;
 
 // Initialize profile page
 document.addEventListener('DOMContentLoaded', async function() {
     await loadProfileData();
     setupEventListeners();
+    startProfileIconSync();
 });
 
 // Setup event listeners
@@ -14,6 +16,14 @@ function setupEventListeners() {
     const changePasswordForm = document.getElementById('changePasswordForm');
     if (changePasswordForm) {
         changePasswordForm.addEventListener('submit', handleChangePassword);
+    }
+
+    const mobileNavSelect = document.getElementById('mobileNavSelect');
+    if (mobileNavSelect && !mobileNavSelect.dataset.bound) {
+        mobileNavSelect.dataset.bound = '1';
+        mobileNavSelect.addEventListener('change', function (e) {
+            if (e.target.value) window.location.href = e.target.value;
+        });
     }
 }
 
@@ -38,6 +48,7 @@ async function loadProfileData() {
         if (!userData.success) {
             throw new Error('Failed to load user data');
         }
+        applyNavProfile(userData.user);
         
         const userId = userData.user.id;
         
@@ -59,7 +70,8 @@ async function loadProfileData() {
         
         // Display all data
         displayPersonalInfo(profileResult.user);
-        displayProfilePicture(profileResult.user.profile_picture);
+        displayProfilePicture(profileResult.user.profile_picture_url || profileResult.user.profile_picture);
+        applyNavProfile(profileResult.user);
         displayBadges(profileResult.badges);
         displayLessons(profileResult.lessons);
         displayQuizzes(profileResult.quizzes);
@@ -97,6 +109,11 @@ function displayPersonalInfo(user) {
     // Student ID field removed - no longer needed
     document.getElementById('displayGradeLevel').textContent = user.grade_level ? `Grade ${user.grade_level}` : 'N/A';
     document.getElementById('displayStrand').textContent = user.strand || 'N/A';
+
+    const editFirstName = document.getElementById('editFirstName');
+    const editLastName = document.getElementById('editLastName');
+    if (editFirstName) editFirstName.value = user.first_name || '';
+    if (editLastName) editLastName.value = user.last_name || '';
 }
 
 // Display profile picture (path from API: uploads/profiles/filename or null)
@@ -113,6 +130,41 @@ function displayProfilePicture(profilePicture) {
         img.src = '';
         img.classList.add('hidden');
         placeholder.classList.remove('hidden');
+    }
+}
+
+function applyNavProfile(user, bustCache = false) {
+    if (!user) return;
+    const userName = `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Student';
+    const rawPicture = user.profile_picture_url || user.profile_picture || '';
+    const profilePicture = rawPicture && rawPicture.trim() !== ''
+        ? rawPicture + (bustCache ? `?t=${Date.now()}` : '')
+        : '';
+
+    const userNameElement = document.getElementById('userName');
+    if (userNameElement) userNameElement.textContent = userName;
+
+    const profileIconImage = document.getElementById('profileIconImage');
+    const profileIconPlaceholder = document.getElementById('profileIconPlaceholder');
+    const profileIconContainer = document.getElementById('profileIconContainer');
+
+    if (!profileIconImage || !profileIconPlaceholder) return;
+
+    if (profilePicture) {
+        profileIconImage.src = profilePicture;
+        profileIconImage.classList.remove('hidden');
+        profileIconPlaceholder.classList.add('hidden');
+        if (profileIconContainer) {
+            profileIconContainer.classList.remove('bg-gradient-to-br', 'from-indigo-500', 'to-violet-600');
+            profileIconContainer.classList.add('bg-slate-200');
+        }
+    } else {
+        profileIconImage.classList.add('hidden');
+        profileIconPlaceholder.classList.remove('hidden');
+        if (profileIconContainer) {
+            profileIconContainer.classList.add('bg-gradient-to-br', 'from-indigo-500', 'to-violet-600');
+            profileIconContainer.classList.remove('bg-slate-200');
+        }
     }
 }
 
@@ -308,13 +360,17 @@ async function uploadProfilePicture(event) {
         
         if (result.success) {
             // Update profile picture display (path from server: uploads/profiles/filename)
-            if (result.profile_picture) {
-                displayProfilePicture(result.profile_picture + '?t=' + Date.now());
+            const uploadedProfilePicture = result.profile_picture_url || result.profile_picture;
+            if (uploadedProfilePicture) {
+                displayProfilePicture(uploadedProfilePicture + '?t=' + Date.now());
+                profileData = profileData || {};
+                profileData.user = profileData.user || {};
+                profileData.user.profile_picture = uploadedProfilePicture;
+                profileData.user.profile_picture_url = uploadedProfilePicture;
+                applyNavProfile(profileData.user, true);
             }
             // Reset file input so same file can be selected again
             event.target.value = '';
-            // Notify other pages (dashboard, topics) to refresh profile icons
-            localStorage.setItem('mathease-profile-updated', Date.now().toString());
             
             Swal.fire({
                 title: 'Success!',
@@ -345,10 +401,20 @@ async function handleChangePassword(event) {
     const confirmPassword = document.getElementById('confirmPassword').value;
     
     // Validate passwords
-    if (newPassword.length < 6) {
+    if (!isStrongPassword(newPassword)) {
         Swal.fire({
             title: 'Invalid Password',
-            text: 'Password must be at least 6 characters long.',
+            text: 'Use 8-30 chars with uppercase, lowercase, number, and special character.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+        return;
+    }
+
+    if (currentPassword === newPassword) {
+        Swal.fire({
+            title: 'Invalid Password',
+            text: 'New password must be different from current password.',
             icon: 'error',
             confirmButtonText: 'OK'
         });
@@ -418,12 +484,61 @@ async function handleChangePassword(event) {
 
 // Edit personal info (placeholder - can be expanded)
 function editPersonalInfo() {
-    Swal.fire({
-        title: 'Edit Personal Information',
-        text: 'This feature is coming soon! Contact your administrator to update your information.',
-        icon: 'info',
-        confirmButtonText: 'OK'
-    });
+    isEditingPersonalInfo = true;
+    togglePersonalInfoEdit(true);
+}
+
+function cancelEditPersonalInfo() {
+    isEditingPersonalInfo = false;
+    togglePersonalInfoEdit(false);
+    if (profileData && profileData.user) {
+        displayPersonalInfo(profileData.user);
+    }
+}
+
+async function savePersonalInfo() {
+    const firstName = (document.getElementById('editFirstName')?.value || '').trim();
+    const lastName = (document.getElementById('editLastName')?.value || '').trim();
+
+    if (!firstName || !lastName) {
+        Swal.fire({ icon: 'warning', title: 'Missing fields', text: 'First name and last name are required.' });
+        return;
+    }
+
+    try {
+        const response = await fetch('php/update-profile.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+                first_name: firstName,
+                last_name: lastName
+            })
+        });
+        const result = await response.json();
+        if (!result.success) throw new Error(result.message || 'Failed to update profile');
+
+        profileData = profileData || {};
+        profileData.user = result.user;
+        displayPersonalInfo(result.user);
+        applyNavProfile(result.user);
+        isEditingPersonalInfo = false;
+        togglePersonalInfoEdit(false);
+
+        Swal.fire({
+            title: 'Saved',
+            text: 'Personal information updated successfully.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        });
+    } catch (error) {
+        Swal.fire({
+            title: 'Update Failed',
+            text: error.message || 'Could not update profile.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    }
 }
 
 // Format date
@@ -448,3 +563,85 @@ function formatQuizType(quizType) {
     
     return formatted;
 }
+
+function togglePasswordVisibility(inputId, buttonEl) {
+    const input = document.getElementById(inputId);
+    if (!input || !buttonEl) return;
+    const icon = buttonEl.querySelector('i');
+    const hidden = input.type === 'password';
+    input.type = hidden ? 'text' : 'password';
+    if (icon) {
+        icon.classList.toggle('fa-eye', !hidden);
+        icon.classList.toggle('fa-eye-slash', hidden);
+    }
+}
+
+function isStrongPassword(password) {
+    if (!password || password.length < 8 || password.length > 30) return false;
+    const hasLower = /[a-z]/.test(password);
+    const hasUpper = /[A-Z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecial = /[^a-zA-Z0-9]/.test(password);
+    return hasLower && hasUpper && hasNumber && hasSpecial;
+}
+
+function togglePersonalInfoEdit(show) {
+    const ids = ['editNameRow', 'editActions'];
+    ids.forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.toggle('hidden', !show);
+    });
+}
+
+function toggleProfileDropdown() {
+    const dropdown = document.getElementById('profileDropdown');
+    const icon = document.getElementById('profileDropdownIcon');
+    if (!dropdown) return;
+    const isHidden = dropdown.classList.contains('hidden');
+    dropdown.classList.toggle('hidden', !isHidden);
+    if (icon) icon.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+}
+
+function confirmLogout(event) {
+    if (event) event.preventDefault();
+    Swal.fire({
+        title: 'Logout?',
+        text: 'Are you sure you want to logout?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Logout',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: '#ef4444'
+    }).then((result) => {
+        if (result.isConfirmed) window.location.href = 'php/smart-logout.php?type=student';
+    });
+}
+
+function startProfileIconSync() {
+    setInterval(async () => {
+        try {
+            const response = await fetch('php/user.php', {
+                credentials: 'include',
+                cache: 'no-store'
+            });
+            if (!response.ok) return;
+            const data = await response.json();
+            if (!data.success || !data.user) return;
+            applyNavProfile(data.user, true);
+        } catch (e) {
+            console.error('Profile icon sync failed:', e);
+        }
+    }, 15000);
+}
+
+window.addEventListener('click', function (e) {
+    const container = document.getElementById('profileDropdownContainer');
+    const dropdown = document.getElementById('profileDropdown');
+    if (!container || !dropdown) return;
+    if (!container.contains(e.target)) {
+        dropdown.classList.add('hidden');
+        const icon = document.getElementById('profileDropdownIcon');
+        if (icon) icon.style.transform = 'rotate(0deg)';
+    }
+});

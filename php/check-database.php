@@ -91,8 +91,8 @@ try {
 
 echo "<h3>Next Steps:</h3>";
 echo "<ol>";
-echo "<li>If users table doesn't exist, run: <code>mysql -u root -p mathease_db < database/mathease_schema.sql</code></li>";
-echo "<li>If quiz_attempts table doesn't exist, run: <code>mysql -u root -p mathease_db < database/quiz_system_migration_fixed.sql</code></li>";
+echo "<li>If users table doesn't exist, run: <code>mysql -u root -p mathease_database3 < database/mathease_schema.sql</code></li>";
+echo "<li>If quiz_attempts table doesn't exist, run: <code>mysql -u root -p mathease_database3 < database/quiz_system_migration_fixed.sql</code></li>";
 echo "<li>Make sure you're logged in as a student before taking the quiz</li>";
 echo "<li>Test the quiz functionality</li>";
 echo "</ol>";

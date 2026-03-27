@@ -17,7 +17,7 @@ INSERT INTO lessons (topic_id, title, content, duration_minutes, order_index) VA
 
 -- Insert a comprehensive quiz for the topic
 INSERT INTO quizzes (topic_id, title, description, time_limit_minutes, total_questions, passing_score) VALUES
-(@topic_id, 'Domain and Range of Inverse Functions Quiz', 'Test your understanding of inverse functions, domain-range relationships, and real-world applications.', 30, 10, 70);
+(@topic_id, 'Domain and Range of Inverse Functions Quiz', 'Test your understanding of inverse functions, domain-range relationships, and real-world applications.', 30, 15, 70);
 
 -- Get the quiz ID
 SET @quiz_id = LAST_INSERT_ID();

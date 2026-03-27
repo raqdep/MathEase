@@ -125,7 +125,7 @@
                             <i class="fas fa-bell text-lg"></i>
                             <span id="notificationBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
                         </button>
-                        <div id="notificationsDropdown" class="notifications-dropdown absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-200/60 py-2 z-50 opacity-0 invisible transition-all duration-200">
+                        <div id="notificationsDropdown" class="notifications-dropdown absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-200/60 py-2 z-50 opacity-0 invisible transition-all duration-200 hidden">
                             <div class="px-4 py-2 border-b border-slate-200/60">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center space-x-2">
@@ -139,7 +139,7 @@
                                 <!-- Notifications will be loaded here -->
                             </div>
                             <div class="px-4 py-2 border-t border-slate-200/60">
-                                <a href="#" onclick="showAllNotifications()" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">View all notifications</a>
+                                <a href="#" onclick="showAllNotifications(); return false;" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">View all notifications</a>
                             </div>
                         </div>
                     </div>
@@ -686,7 +686,7 @@
                             </div>
 
                             <!-- Evaluating Functions Topic - Available -->
-                            <div class="group bg-purple-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800" onclick="checkEnrollmentAndNavigate('topics/evaluating-functions.html')">
+                            <div class="group bg-purple-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800" data-topic-card="evaluating-functions" onclick="checkEnrollmentAndNavigate('topics/evaluating-functions.html')">
                                 <div class="flex items-start justify-between">
                                     <!-- Left side: Topic info -->
                                     <div class="flex-1 pr-8">
@@ -700,17 +700,18 @@
                                         </p>
                                     </div>
                                     
-                                    <!-- Right side: Button -->
+                                    <!-- Right side: Button and Student Icons -->
                                     <div class="flex flex-col items-end space-y-4 ml-8">
                                         <button class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg text-sm font-medium transition-colors">
                                             Start Learning
                                         </button>
+                                        <div class="flex items-center space-x-2 mt-2" data-topic="evaluating-functions" data-student-icons></div>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Operations on Functions Topic - Available -->
-                            <div class="group bg-purple-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800" onclick="checkEnrollmentAndNavigate('topics/operations-on-functions.html')">
+                            <div class="group bg-purple-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800" data-topic-card="operations-on-functions" onclick="checkEnrollmentAndNavigate('topics/operations-on-functions.html')">
                                 <div class="flex items-start justify-between">
                                     <!-- Left side: Topic info -->
                                     <div class="flex-1 pr-8">
@@ -724,17 +725,18 @@
                                         </p>
                                     </div>
                                     
-                                    <!-- Right side: Button -->
+                                    <!-- Right side: Button and Student Icons -->
                                     <div class="flex flex-col items-end space-y-4 ml-8">
                                         <button class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg text-sm font-medium transition-colors">
                                             Start Learning
                                         </button>
+                                        <div class="flex items-center space-x-2 mt-2" data-topic="operations-on-functions" data-student-icons></div>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Solving Real-Life Problems Topic - Available -->
-                            <div class="group bg-purple-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800" onclick="checkEnrollmentAndNavigate('topics/solving-real-life-problems.html')">
+                            <div class="group bg-purple-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800" data-topic-card="solving-real-life-problems" onclick="checkEnrollmentAndNavigate('topics/solving-real-life-problems.html')">
                                 <div class="flex items-start justify-between">
                                     <!-- Left side: Topic info -->
                                     <div class="flex-1 pr-8">
@@ -748,11 +750,12 @@
                                         </p>
                                     </div>
                                     
-                                    <!-- Right side: Button -->
+                                    <!-- Right side: Button and Student Icons -->
                                     <div class="flex flex-col items-end space-y-4 ml-8">
                                         <button class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg text-sm font-medium transition-colors">
                                             Start Learning
                                         </button>
+                                        <div class="flex items-center space-x-2 mt-2" data-topic="solving-real-life-problems" data-student-icons></div>
                                     </div>
                                 </div>
                             </div>
@@ -778,7 +781,7 @@
                                         Start Learning
                                     </button>
                                     <!-- Student Profile Icons -->
-                                    <div class="flex items-center space-x-2 mt-2" data-student-icons></div>
+                                    <div class="flex items-center space-x-2 mt-2" data-topic="rational-functions" data-student-icons></div>
                                 </div>
                             </div>
                         </div>
@@ -804,7 +807,7 @@
                                         Start Learning
                                     </button>
                                     <!-- Student Profile Icons -->
-                                    <div class="flex items-center space-x-2 mt-2" data-student-icons></div>
+                                    <div class="flex items-center space-x-2 mt-2" data-topic="solving-rational-equations-inequalities" data-student-icons></div>
                                 </div>
                             </div>
                         </div>
@@ -830,7 +833,7 @@
                                         Start Learning
                                     </button>
                                     <!-- Student Profile Icons -->
-                                    <div class="flex items-center space-x-2 mt-2" data-student-icons></div>
+                                    <div class="flex items-center space-x-2 mt-2" data-topic="representations-of-rational-functions" data-student-icons></div>
                                 </div>
                             </div>
                         </div>
@@ -856,7 +859,7 @@
                                         Start Learning
                                     </button>
                                     <!-- Student Profile Icons -->
-                                    <div class="flex items-center space-x-2 mt-2" data-student-icons></div>
+                                    <div class="flex items-center space-x-2 mt-2" data-topic="domain-range-rational-functions" data-student-icons></div>
                                 </div>
                             </div>
                         </div>
@@ -882,7 +885,7 @@
                                         Start Learning
                                     </button>
                                     <!-- Student Profile Icons -->
-                                    <div class="flex items-center space-x-2 mt-2" data-student-icons></div>
+                                    <div class="flex items-center space-x-2 mt-2" data-topic="one-to-one-functions" data-student-icons></div>
                                 </div>
                             </div>
                         </div>
@@ -908,7 +911,7 @@
                                         Start Learning
                                     </button>
                                     <!-- Student Profile Icons -->
-                                    <div class="flex items-center space-x-2 mt-2" data-student-icons></div>
+                                    <div class="flex items-center space-x-2 mt-2" data-topic="domain-range-inverse-functions" data-student-icons></div>
                                 </div>
                             </div>
                         </div>
@@ -977,7 +980,7 @@
                         
                         <div class="space-y-8">
                             <!-- Simple Interest Topic - Available -->
-                            <div class="group bg-purple-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800" onclick="checkEnrollmentAndNavigate('topics/simple-interest.html')">
+                            <div class="group bg-purple-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800" data-topic-card="simple-interest" onclick="checkEnrollmentAndNavigate('topics/simple-interest.html')">
                                 <div class="flex items-start justify-between">
                                     <!-- Left side: Topic info -->
                                     <div class="flex-1 pr-8">
@@ -991,17 +994,18 @@
                                         </p>
                                     </div>
                                     
-                                    <!-- Right side: Button -->
+                                    <!-- Right side: Button and Student Icons -->
                                     <div class="flex flex-col items-end space-y-4 ml-8">
                                         <button class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg text-sm font-medium transition-colors">
                                             Start Learning
                                         </button>
+                                        <div class="flex items-center space-x-2 mt-2" data-topic="simple-interest" data-student-icons></div>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Compound Interest Topic - Available -->
-                            <div class="group bg-purple-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800" onclick="checkEnrollmentAndNavigate('topics/compound-interest.html')">
+                            <div class="group bg-purple-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800" data-topic-card="compound-interest" onclick="checkEnrollmentAndNavigate('topics/compound-interest.html')">
                                 <div class="flex items-start justify-between">
                                     <!-- Left side: Topic info -->
                                     <div class="flex-1 pr-8">
@@ -1015,17 +1019,18 @@
                                         </p>
                                     </div>
                                     
-                                    <!-- Right side: Button -->
+                                    <!-- Right side: Button and Student Icons -->
                                     <div class="flex flex-col items-end space-y-4 ml-8">
                                         <button class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg text-sm font-medium transition-colors">
                                             Start Learning
                                         </button>
+                                        <div class="flex items-center space-x-2 mt-2" data-topic="compound-interest" data-student-icons></div>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Interest, Maturity, Future, and Present Values (Simple & Compound) - Available -->
-                            <div class="group bg-purple-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800" onclick="checkEnrollmentAndNavigate('topics/simple-and-compound-values.html')">
+                            <div class="group bg-purple-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800" data-topic-card="simple-and-compound-values" onclick="checkEnrollmentAndNavigate('topics/simple-and-compound-values.html')">
                                 <div class="flex items-start justify-between">
                                     <!-- Left side: Topic info -->
                                     <div class="flex-1 pr-8">
@@ -1039,17 +1044,18 @@
                                         </p>
                                     </div>
                                     
-                                    <!-- Right side: Button -->
+                                    <!-- Right side: Button and Student Icons -->
                                     <div class="flex flex-col items-end space-y-4 ml-8">
                                         <button class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg text-sm font-medium transition-colors">
                                             Start Learning
                                         </button>
+                                        <div class="flex items-center space-x-2 mt-2" data-topic="simple-and-compound-values" data-student-icons></div>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Solving Problems Involving Simple and Compound Interest - Available -->
-                            <div class="group bg-purple-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800" onclick="checkEnrollmentAndNavigate('topics/solving-interest-problems.html')">
+                            <div class="group bg-purple-100 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-800" data-topic-card="solving-interest-problems" onclick="checkEnrollmentAndNavigate('topics/solving-interest-problems.html')">
                                 <div class="flex items-start justify-between">
                                     <!-- Left side: Topic info -->
                                     <div class="flex-1 pr-8">
@@ -1063,11 +1069,12 @@
                                         </p>
                                     </div>
                                     
-                                    <!-- Right side: Button -->
+                                    <!-- Right side: Button and Student Icons -->
                                     <div class="flex flex-col items-end space-y-4 ml-8">
                                         <button class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-lg text-sm font-medium transition-colors">
                                             Start Learning
                                         </button>
+                                        <div class="flex items-center space-x-2 mt-2" data-topic="solving-interest-problems" data-student-icons></div>
                                     </div>
                                 </div>
                             </div>
@@ -1173,7 +1180,7 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white mt-20 relative overflow-hidden">
+    <footer class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white mt-20 overflow-hidden w-screen relative left-1/2 -translate-x-1/2">
         <!-- Background Pattern -->
         <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.03"%3E%3Ccircle cx="30" cy="30" r="1.5"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-60"></div>
         
@@ -1244,9 +1251,14 @@
 
             <!-- Bottom Bar -->
             <div class="border-t border-slate-700/50 pt-8 mt-8">
-                <div class="text-center">
-                    <p class="text-slate-400 text-sm mb-2">&copy; 2025 <span class="text-white font-semibold">MathEase</span>. All rights reserved.</p>
-                    <p class="text-slate-500 text-xs">Developed with <i class="fas fa-heart text-red-500 animate-pulse"></i> by Computer Science Students from <span class="text-indigo-400 font-medium">Norzagaray College</span></p>
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 text-center md:text-left">
+                    <p class="text-slate-400 text-sm">
+                        &copy; 2025 <span class="text-white font-semibold">MathEase</span>. All rights reserved.
+                    </p>
+                    <p class="text-slate-500 text-xs md:text-right">
+                        Developed with <i class="fas fa-heart text-red-500 animate-pulse"></i> by Computer Science Students from
+                        <span class="text-indigo-400 font-medium">Norzagaray College</span>
+                    </p>
                 </div>
             </div>
         </div>
@@ -1256,6 +1268,7 @@
     <script src="js/dashboard.js"></script>
     <script src="js/join-class-modal.js"></script>
     <script src="js/student-enrollment-check.js"></script>
+    <script src="js/student-notifications.js"></script>
     <script src="js/session-manager.js"></script>
     
     <script>
@@ -1407,7 +1420,7 @@
     </script>
     
     <script>
-        // Notification System
+        /* Notification System (disabled - handled by `js/student-notifications.js` loaded via shared nav)
         class NotificationSystem {
             constructor() {
                 this.notifications = [];
@@ -2047,8 +2060,9 @@
                 return labels[type] || 'Notification';
             }
         }
+        */
 
-        // Global notification functions
+        // Global notification functions (override `js/student-notifications.js` for enrollment-aware UX)
         function toggleNotifications() {
             // Check enrollment status before allowing access to notifications
             if (window.studentEnrollmentCheck) {
@@ -2099,13 +2113,11 @@
                 });
 
                 if (response.ok) {
-                    const data = await response.json();
-                    if (data.success) {
-                        // Reload notifications and unread count
-                        if (window.notificationSystem) {
-                            await window.notificationSystem.loadNotifications();
-                            await window.notificationSystem.loadUnreadCount();
-                        }
+                    // Reload notifications and unread count (avoid brittle JSON parsing).
+                    if (window.notificationSystem) {
+                        const limit = window.notificationSystem.limit;
+                        await window.notificationSystem.loadNotifications(limit);
+                        await window.notificationSystem.loadUnreadCount();
                     }
                 }
             } catch (error) {
@@ -2125,13 +2137,11 @@
                 });
 
                 if (response.ok) {
-                    const data = await response.json();
-                    if (data.success) {
-                        // Reload notifications and unread count
-                        if (window.notificationSystem) {
-                            await window.notificationSystem.loadNotifications();
-                            await window.notificationSystem.loadUnreadCount();
-                        }
+                    // Reload notifications and unread count (avoid brittle JSON parsing).
+                    if (window.notificationSystem) {
+                        const limit = window.notificationSystem.limit;
+                        await window.notificationSystem.loadNotifications(limit);
+                        await window.notificationSystem.loadUnreadCount();
                     }
                 }
             } catch (error) {
@@ -2145,7 +2155,11 @@
                 if (window.studentEnrollmentCheck.enrollmentStatus && window.studentEnrollmentCheck.enrollmentStatus.has_approved_enrollment) {
                     // Student is enrolled, allow access to notifications
             if (window.notificationSystem) {
-                window.notificationSystem.showAllNotificationsModal();
+                window.notificationSystem.loadNotifications(100).then(function () {
+                    if (!window.notificationSystem.isDropdownOpen) {
+                        window.notificationSystem.toggleDropdown();
+                    }
+                });
                     }
                 } else {
                     // Student is not enrolled, show enrollment required modal
@@ -2175,7 +2189,6 @@
                 });
             }
         }
-
 
         // Function to update navigation state based on enrollment
         function updateNavigationState() {
@@ -2252,8 +2265,8 @@
             // Wait for enrollment check to complete before initializing notification system
             const initNotificationSystem = () => {
                 if (window.studentEnrollmentCheck && window.studentEnrollmentCheck.enrollmentStatus !== undefined) {
-                    console.log('Enrollment check completed, initializing notification system');
-                    window.notificationSystem = new NotificationSystem();
+                    console.log('Enrollment check completed, updating navigation state');
+                    // Notifications are handled globally by `js/student-notifications.js` (loaded via shared nav).
                     updateNotificationButtonState();
                     updateNavigationState();
                 } else {
@@ -2293,7 +2306,10 @@
             });
             
             // Load student profile icons for each topic
-            setTimeout(() => { loadTopicStudentData(); }, 2000);
+            setTimeout(() => {
+                const canLoad = window.studentEnrollmentCheck?.enrollmentStatus?.has_approved_enrollment;
+                if (canLoad) loadTopicStudentData();
+            }, 2000);
         });
 
         // Function to load student profile icons for each topic
@@ -2335,8 +2351,9 @@
 
         // Function to display student profile icons
         function displayStudentsForTopic(topic, students, totalCount) {
-            // Find the topic card by onclick attribute
-            const topicCard = document.querySelector(`[onclick*="topics/${topic}.html"]`);
+            // Find the topic card by explicit data-topic first, then fallback.
+            const topicCard = document.querySelector(`[data-topic-card="${topic}"]`) ||
+                             document.querySelector(`[onclick*="topics/${topic}.html"]`);
             if (!topicCard) {
                 console.log(`Topic card not found for: ${topic}`);
                 return;
@@ -2349,7 +2366,8 @@
             };
             
             // Find or create the student icons container
-            let iconsContainer = topicCard.querySelector('[data-student-icons]');
+            let iconsContainer = topicCard.querySelector(`[data-student-icons][data-topic="${topic}"]`) ||
+                                topicCard.querySelector('[data-student-icons]');
             if (!iconsContainer) {
                 // Find the button container
                 const buttonContainer = topicCard.querySelector('.flex.flex-col.items-end.space-y-4.ml-8');
@@ -2404,9 +2422,10 @@
                 avatar.style.zIndex = maxIcons - index;
                 avatar.title = `${student.first_name} ${student.last_name}`;
                 
-                if (student.profile_picture && student.profile_picture.trim() !== '') {
+                const studentProfilePicture = student.profile_picture_url || student.profile_picture;
+                if (studentProfilePicture && studentProfilePicture.trim() !== '') {
                     const img = document.createElement('img');
-                    img.src = student.profile_picture + '?t=' + Date.now();
+                    img.src = studentProfilePicture + '?t=' + Date.now();
                     img.alt = `${student.first_name} ${student.last_name}`;
                     img.className = 'w-full h-full object-cover';
                     img.onerror = function() {
@@ -2474,39 +2493,35 @@
             studentListContent.innerHTML = '<div class="px-6 py-8 text-center text-gray-500"><i class="fas fa-spinner fa-spin text-2xl mb-2"></i><p>Loading students...</p></div>';
             modal.classList.remove('hidden');
             
-            // Get students data - try from cache first, then fetch if needed
+            // Always fetch fresh data from DB first so uploaded profile photos appear immediately.
             let studentsData = topicStudentsData[topic];
-            
-            // If no cached data or want to refresh, fetch from server
-            if (!studentsData || studentsData.students.length === 0) {
-                try {
-                    const response = await fetch(`php/get-topic-students.php?topic=${topic}`, {
-                        credentials: 'include'
-                    });
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.success && data.students) {
-                            studentsData = {
-                                students: data.students,
-                                totalCount: data.total_count || data.students.length,
-                                class_id: data.class_id,
-                                class_name: data.class_name
-                            };
-                            topicStudentsData[topic] = studentsData;
-                            
-                            // Update subtitle with class name if available
-                            if (data.class_name && modalSubtitle) {
-                                modalSubtitle.textContent = `Classmates from ${data.class_name} who accessed this lesson`;
-                            }
+            try {
+                const response = await fetch(`php/get-topic-students.php?topic=${topic}`, {
+                    credentials: 'include',
+                    cache: 'no-store'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.students) {
+                        studentsData = {
+                            students: data.students,
+                            totalCount: data.total_count || data.students.length,
+                            class_id: data.class_id,
+                            class_name: data.class_name
+                        };
+                        topicStudentsData[topic] = studentsData;
+                        
+                        if (data.class_name && modalSubtitle) {
+                            modalSubtitle.textContent = `Classmates from ${data.class_name} who accessed this lesson`;
                         }
                     }
-                } catch (error) {
-                    console.error(`Error loading students for ${topic}:`, error);
                 }
-            } else if (studentsData.class_name && modalSubtitle) {
-                // Update subtitle with cached class name
-                modalSubtitle.textContent = `Classmates from ${studentsData.class_name} who accessed this lesson`;
+            } catch (error) {
+                console.error(`Error loading students for ${topic}:`, error);
+                if (studentsData && studentsData.class_name && modalSubtitle) {
+                    modalSubtitle.textContent = `Classmates from ${studentsData.class_name} who accessed this lesson`;
+                }
             }
             
             if (!studentsData || !studentsData.students || studentsData.students.length === 0) {
@@ -2545,8 +2560,8 @@
                 html += `
                     <div class="px-6 py-3 hover:bg-gray-50 transition-colors flex items-center space-x-3 student-item" data-name="${fullName.toLowerCase()}">
                         <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-                            ${student.profile_picture && student.profile_picture.trim() !== '' 
-                                ? `<img src="${student.profile_picture}?t=${Date.now()}" alt="${fullName}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            ${((student.profile_picture_url || student.profile_picture) && (student.profile_picture_url || student.profile_picture).trim() !== '')
+                                ? `<img src="${student.profile_picture_url || student.profile_picture}?t=${Date.now()}" alt="${fullName}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                    <div class="w-full h-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-sm font-semibold hidden">${initials}</div>`
                                 : `<div class="w-full h-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-sm font-semibold">${initials}</div>`
                             }
@@ -4088,8 +4103,9 @@
                 const userId = user.id;
                 const userName = (user.first_name + ' ' + (user.last_name || '')).trim();
                 const userEmail = user.email || '';
-                // Profile picture from DB: uploads/profiles/filename
-                const profilePicture = user.profile_picture && user.profile_picture.trim() !== '' ? user.profile_picture : null;
+                // Profile picture from DB (normalized URL preferred)
+                const rawProfilePicture = user.profile_picture_url || user.profile_picture;
+                const profilePicture = rawProfilePicture && rawProfilePicture.trim() !== '' ? rawProfilePicture : null;
                 
                 // Update user name in header
                 const userNameElement = document.getElementById('userName');
@@ -4169,6 +4185,10 @@
             // Check session status first
             const currentUserId = await checkSessionStatus();
             console.log('Current user ID from session check:', currentUserId);
+            if (!currentUserId) {
+                window.location.href = 'login.html';
+                return;
+            }
             
             // Load profile picture
             await loadProfilePicture();
@@ -4186,7 +4206,20 @@
             await loadTeacherLessons();
             
             // Load student profile icons for each topic
-            setTimeout(() => { loadTopicStudentData(); }, 1000);
+            setTimeout(() => {
+                const canLoad = window.studentEnrollmentCheck?.enrollmentStatus?.has_approved_enrollment;
+                if (canLoad) loadTopicStudentData();
+            }, 1000);
+            setInterval(() => {
+                const canLoad = window.studentEnrollmentCheck?.enrollmentStatus?.has_approved_enrollment;
+                if (canLoad) loadTopicStudentData();
+            }, 20000);
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') {
+                    const canLoad = window.studentEnrollmentCheck?.enrollmentStatus?.has_approved_enrollment;
+                    if (canLoad) loadTopicStudentData();
+                }
+            });
             
             // Start real-time updates
             realTimeUpdater.start();

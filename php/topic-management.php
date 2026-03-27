@@ -6,6 +6,7 @@ ini_set('log_errors', 1); // Log errors instead
 
 session_start();
 require_once 'config.php';
+require_once __DIR__ . '/student-notification-helper.php';
 
 // Set content type to JSON
 header('Content-Type: application/json');
@@ -161,12 +162,18 @@ function toggleTopicLock() {
     }
     
     // Check if topic exists
-    $stmt = $pdo->prepare("SELECT id FROM topics WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT id, name FROM topics WHERE id = ? LIMIT 1");
     $stmt->execute([$topicId]);
-    
-    if ($stmt->rowCount() === 0) {
+    $topicRow = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$topicRow) {
         throw new Exception('Topic not found');
     }
+
+    $classStmt = $pdo->prepare("SELECT class_name FROM classes WHERE id = ? LIMIT 1");
+    $classStmt->execute([$classId]);
+    $classRow = $classStmt->fetch(PDO::FETCH_ASSOC);
+    $className = $classRow['class_name'] ?? 'your class';
     
     $newLockStatus = $isLocked === 'true' ? 0 : 1; // Toggle the status
     
@@ -182,6 +189,18 @@ function toggleTopicLock() {
         // Insert new record
         $stmt = $pdo->prepare("INSERT INTO class_topic_locks (topic_id, class_id, is_locked, created_at, updated_at) VALUES (?, ?, ?, NOW(), NOW())");
         $stmt->execute([$topicId, $classId, $newLockStatus]);
+    }
+
+    // Notify approved students: topic opened/closed (lesson access)
+    try {
+        $topicName = (string)($topicRow['name'] ?? 'Topic');
+        if ($newLockStatus) {
+            notifyApprovedStudents($pdo, (int)$classId, 'topic_closed', 'Topic Closed', "$topicName was closed by your teacher in \"$className\".");
+        } else {
+            notifyApprovedStudents($pdo, (int)$classId, 'topic_opened', 'Topic Opened', "$topicName is now open in \"$className\". You can continue learning.");
+        }
+    } catch (Throwable $e) {
+        error_log('topic-management notify students failed: ' . $e->getMessage());
     }
     
     echo json_encode([

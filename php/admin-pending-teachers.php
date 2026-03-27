@@ -35,13 +35,16 @@ try {
         $selectFields .= ", NULL as email_verified, 0 as is_email_verified";
     }
     
+    $orderSql = 'created_at ASC';
+    if ($hasEmailVerified) {
+        $orderSql = 'CASE WHEN COALESCE(email_verified, 0) = 1 THEN 0 ELSE 1 END, created_at ASC';
+    }
+
     $stmt = $pdo->prepare("
         SELECT {$selectFields}
         FROM teachers 
         WHERE {$whereClause}
-        ORDER BY 
-            CASE WHEN email_verified = 1 THEN 0 ELSE 1 END,
-            created_at ASC
+        ORDER BY {$orderSql}
     ");
     $stmt->execute();
     $teachers = $stmt->fetchAll(PDO::FETCH_ASSOC);

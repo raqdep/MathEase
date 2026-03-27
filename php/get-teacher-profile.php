@@ -18,7 +18,7 @@ if (file_exists('config.php')) {
     require_once 'config.php';
 } else {
     $host = 'localhost';
-    $dbname = 'mathease';
+    $dbname = 'mathease_database3';
     $username = 'root';
     $password = '';
     
@@ -35,9 +35,26 @@ if (file_exists('config.php')) {
 }
 
 try {
+    $profileImageColumn = null;
+    try {
+        $colStmt = $pdo->query("SHOW COLUMNS FROM teachers");
+        $columns = $colStmt ? $colStmt->fetchAll(PDO::FETCH_COLUMN, 0) : [];
+        $preferred = ['profile_image', 'profile_image_path', 'avatar', 'photo'];
+        foreach ($preferred as $candidate) {
+            if (in_array($candidate, $columns, true)) {
+                $profileImageColumn = $candidate;
+                break;
+            }
+        }
+    } catch (Exception $ignore) {
+        $profileImageColumn = null;
+    }
+
+    $imageSelect = $profileImageColumn ? ", {$profileImageColumn} AS profile_image" : ", NULL AS profile_image";
+
     // Get teacher information
     $stmt = $pdo->prepare("
-        SELECT id, first_name, last_name, email, teacher_id as teacher_id_number, department, subject
+        SELECT id, first_name, last_name, email, teacher_id as teacher_id_number, department, subject {$imageSelect}
         FROM teachers
         WHERE id = ?
     ");
@@ -45,6 +62,17 @@ try {
     $teacher = $stmt->fetch(PDO::FETCH_ASSOC);
     
     if ($teacher) {
+        if (!empty($teacher['profile_image'])) {
+            $path = (string)$teacher['profile_image'];
+            if (strpos($path, '../') === 0) {
+                $path = substr($path, 3);
+            }
+            $teacher['profile_image'] = $path;
+            $teacher['profile_image_url'] = $path;
+        } else {
+            $teacher['profile_image'] = null;
+            $teacher['profile_image_url'] = null;
+        }
         echo json_encode([
             'success' => true,
             'teacher' => $teacher

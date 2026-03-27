@@ -19,15 +19,15 @@ class PendingRequestsModal {
                 <div class="flex items-center justify-center min-h-screen p-4 overflow-y-auto">
                     <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] transform transition-all duration-300 scale-95 opacity-0 flex flex-col" id="pendingRequestsModalContent">
                         <!-- Modal Header -->
-                        <div class="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 p-6 rounded-t-2xl text-white">
+                        <div class="bg-purple-600 p-6 rounded-t-2xl text-white">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
                                     <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                                        <i class="fas fa-user-plus text-2xl"></i>
+                                        <i class="fas fa-user-check text-2xl"></i>
                                     </div>
                                     <div>
                                         <h3 class="text-xl font-bold">Pending Enrollment Requests</h3>
-                                        <p class="text-amber-100 text-sm">Review and approve student requests to join your classes</p>
+                                        <p class="text-purple-100 text-sm">Review and approve student requests to join your classes</p>
                                     </div>
                                 </div>
                                 <button id="closePendingRequestsModal" class="text-white/80 hover:text-white hover:bg-white/20 p-2 rounded-lg transition-all duration-200">
@@ -41,7 +41,7 @@ class PendingRequestsModal {
                             <!-- Loading State -->
                             <div id="pendingRequestsLoading" class="hidden">
                                 <div class="flex items-center justify-center space-x-3 py-8">
-                                    <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-amber-500"></div>
+                                    <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
                                     <span class="text-slate-600 font-medium">Loading requests...</span>
                                 </div>
                             </div>
@@ -49,8 +49,8 @@ class PendingRequestsModal {
                             <!-- Empty State -->
                             <div id="pendingRequestsEmpty" class="hidden">
                                 <div class="text-center py-8">
-                                    <div class="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                        <i class="fas fa-check-circle text-amber-500 text-2xl"></i>
+                                    <div class="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                        <i class="fas fa-check-circle text-purple-600 text-2xl"></i>
                                     </div>
                                     <h3 class="text-lg font-semibold text-slate-700 mb-2">No Pending Requests</h3>
                                     <p class="text-slate-500 text-sm">All enrollment requests have been processed</p>
@@ -72,7 +72,7 @@ class PendingRequestsModal {
                                 </button>
                                 <button 
                                     id="refreshPendingRequests" 
-                                    class="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
+                                    class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
                                 >
                                     <i class="fas fa-refresh mr-2"></i>
                                     Refresh
@@ -93,7 +93,7 @@ class PendingRequestsModal {
         style.textContent = `
             #pendingRequestsList {
                 scrollbar-width: thin;
-                scrollbar-color: #f59e0b #f3f4f6;
+                scrollbar-color: #6366f1 #f3f4f6;
             }
             
             #pendingRequestsList::-webkit-scrollbar {
@@ -106,12 +106,12 @@ class PendingRequestsModal {
             }
             
             #pendingRequestsList::-webkit-scrollbar-thumb {
-                background: #f59e0b;
+                background: #9333ea;
                 border-radius: 3px;
             }
             
             #pendingRequestsList::-webkit-scrollbar-thumb:hover {
-                background: #d97706;
+                background: #4f46e5;
             }
         `;
         document.head.appendChild(style);
@@ -192,11 +192,11 @@ class PendingRequestsModal {
 
         this.pendingEnrollments.forEach((enrollment, index) => {
             const requestCard = document.createElement('div');
-            requestCard.className = 'bg-gradient-to-r from-slate-50 to-gray-50 rounded-xl p-4 border border-slate-200/60 hover:shadow-lg transition-all duration-300';
+            requestCard.className = 'bg-white rounded-xl p-4 border border-purple-200/60 hover:shadow-lg transition-all duration-300';
             requestCard.innerHTML = `
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg flex items-center justify-center">
+                        <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
                             <i class="fas fa-user text-white text-sm"></i>
                         </div>
                         <div>
@@ -205,7 +205,7 @@ class PendingRequestsModal {
                         </div>
                     </div>
                     <div class="text-right">
-                        <div class="text-xs font-semibold text-amber-600 bg-amber-100 px-2 py-1 rounded-full">
+                        <div class="text-xs font-semibold text-purple-800 bg-purple-100 px-2 py-1 rounded-full">
                             Pending
                         </div>
                         <div class="text-xs text-slate-500 mt-1">
@@ -216,10 +216,10 @@ class PendingRequestsModal {
                 
                 <div class="mb-3">
                     <div class="flex items-center space-x-2 mb-1">
-                        <i class="fas fa-chalkboard text-slate-400 text-xs"></i>
+                        <i class="fas fa-chalkboard-teacher text-purple-600 text-xs"></i>
                         <span class="text-xs font-medium text-slate-700">Requesting to join:</span>
                     </div>
-                    <div class="bg-white rounded-lg p-3 border border-slate-200">
+                    <div class="bg-white rounded-lg p-3 border border-purple-100">
                         <h5 class="text-sm font-semibold text-slate-800">${enrollment.class_name}</h5>
                         <p class="text-xs text-slate-600">Code: <span class="font-mono font-medium">${enrollment.class_code}</span></p>
                     </div>
@@ -229,14 +229,14 @@ class PendingRequestsModal {
                     <div class="flex items-center space-x-2">
                         <button 
                             onclick="approveEnrollment(${enrollment.enrollment_id})"
-                            class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
+                            class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
                         >
                             <i class="fas fa-check mr-1"></i>
                             Approve
                         </button>
                         <button 
                             onclick="rejectEnrollment(${enrollment.enrollment_id})"
-                            class="bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
+                            class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
                         >
                             <i class="fas fa-times mr-1"></i>
                             Reject

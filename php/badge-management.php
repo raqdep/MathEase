@@ -1,4 +1,8 @@
 <?php
+// Force badge operations to use the main MathEase database.
+putenv('DB_NAME=mathease_database3');
+$_ENV['DB_NAME'] = 'mathease_database3';
+$_SERVER['DB_NAME'] = 'mathease_database3';
 require_once 'config.php';
 
 header('Content-Type: application/json');
@@ -61,6 +65,12 @@ function checkAndAwardBadges() {
     // Get all badges that could be awarded
     $badgesQuery = "SELECT * FROM badges WHERE is_active = 1";
     $badges = $pdo->query($badgesQuery)->fetchAll(PDO::FETCH_ASSOC);
+    $availableBadgeNames = array_map(function($badge) {
+        return $badge['name'];
+    }, $badges);
+    $hasFunctionsMasterBadge = in_array('Functions Master', $availableBadgeNames, true);
+    $hasFunctionsExpertBadge = in_array('Functions Expert', $availableBadgeNames, true);
+    $hasOperationsChampionBadge = in_array('Operations on Functions Champion', $availableBadgeNames, true);
     
     $awardedBadges = [];
     $useUserBadges = $pdo->query("SHOW TABLES LIKE 'user_badges'")->rowCount() > 0;
@@ -127,17 +137,24 @@ function checkAndAwardBadges() {
                 $shouldAward = true;
                 error_log("✅ Functions Master badge qualified: $percentage% >= 100%");
             }
-            // Check for Functions Expert badge (60%+ but less than 100%)
-            // Only award if they don't qualify for Functions Master
-            elseif ($badge['name'] === 'Functions Expert' && $percentage >= 60 && $percentage < 100) {
+            // Fallback behavior:
+            // If Master badge does not exist in DB, allow Expert at 100%.
+            elseif (
+                $badge['name'] === 'Functions Expert' &&
+                $percentage >= 60 &&
+                ($percentage < 100 || !$hasFunctionsMasterBadge)
+            ) {
                 $shouldAward = true;
-                error_log("✅ Functions Expert badge qualified: $percentage% >= 60% and < 100%");
+                error_log("✅ Functions Expert badge qualified with fallback: $percentage%");
             }
-            // Check for Functions Achiever badge (50%+ but less than 60%)
-            // Only award if they don't qualify for higher badges
-            elseif ($badge['name'] === 'Functions Achiever' && $percentage >= 50 && $percentage < 60) {
+            // If neither Master nor Expert exists, Achiever can still be awarded above 60%.
+            elseif (
+                $badge['name'] === 'Functions Achiever' &&
+                $percentage >= 50 &&
+                ($percentage < 60 || (!$hasFunctionsMasterBadge && !$hasFunctionsExpertBadge))
+            ) {
                 $shouldAward = true;
-                error_log("✅ Functions Achiever badge qualified: $percentage% >= 50% and < 60%");
+                error_log("✅ Functions Achiever badge qualified with fallback: $percentage%");
             }
         }
         // Skip all other badge checks if not functions quiz
@@ -153,10 +170,15 @@ function checkAndAwardBadges() {
                 $shouldAward = true;
                 error_log("✅ Operations on Functions Champion badge qualified: $percentage% >= 100%");
             }
-            // Check for Operations on Functions Expert badge (60%+ but less than 100%)
-            elseif ($badge['name'] === 'Operations on Functions Expert' && $percentage >= 60 && $percentage < 100) {
+            // Fallback behavior:
+            // If Champion badge does not exist in DB, allow Expert at 100%.
+            elseif (
+                $badge['name'] === 'Operations on Functions Expert' &&
+                $percentage >= 60 &&
+                ($percentage < 100 || !$hasOperationsChampionBadge)
+            ) {
                 $shouldAward = true;
-                error_log("✅ Operations on Functions Expert badge qualified: $percentage% >= 60% and < 100%");
+                error_log("✅ Operations on Functions Expert badge qualified with fallback: $percentage%");
             }
         }
         // Skip all other badge checks if not operations-on-functions quiz
@@ -197,6 +219,17 @@ function checkAndAwardBadges() {
                         $pdo->prepare("INSERT INTO student_badges (student_id, badge_id) VALUES (?, ?)")->execute([$studentId, $badge['id']]);
                     }
                 }
+
+                // Verify that badge was actually persisted
+                if ($useUserBadges) {
+                    $verifyStmt = $pdo->prepare("SELECT id FROM user_badges WHERE user_id = ? AND badge_id = ? LIMIT 1");
+                } else {
+                    $verifyStmt = $pdo->prepare("SELECT id FROM student_badges WHERE student_id = ? AND badge_id = ? LIMIT 1");
+                }
+                $verifyStmt->execute([$studentId, $badge['id']]);
+                if (!$verifyStmt->fetch()) {
+                    throw new Exception("Badge insert verification failed for {$badge['name']}");
+                }
                 
                 error_log("✅ Badge awarded: {$badge['name']} (ID: {$badge['id']}) to student $studentId for quiz $quizType");
                 
@@ -227,8 +260,27 @@ function checkAndAwardBadges() {
                     // Don't fail badge awarding if notification fails
                 }
             } catch (PDOException $e) {
+                // If duplicate happened because of race condition, confirm persistence and treat as success
+                if (strpos($e->getMessage(), 'Duplicate') !== false || $e->getCode() === '23000') {
+                    try {
+                        if ($useUserBadges) {
+                            $verifyStmt = $pdo->prepare("SELECT id FROM user_badges WHERE user_id = ? AND badge_id = ? LIMIT 1");
+                        } else {
+                            $verifyStmt = $pdo->prepare("SELECT id FROM student_badges WHERE student_id = ? AND badge_id = ? LIMIT 1");
+                        }
+                        $verifyStmt->execute([$studentId, $badge['id']]);
+                        if ($verifyStmt->fetch()) {
+                            error_log("ℹ️ Badge already persisted (duplicate insert): {$badge['name']}");
+                            continue;
+                        }
+                    } catch (Exception $verifyError) {
+                        error_log("❌ Duplicate handling verification failed for {$badge['name']}: " . $verifyError->getMessage());
+                    }
+                }
                 error_log("❌ Error awarding badge {$badge['name']} to student $studentId: " . $e->getMessage());
                 // Continue with other badges even if one fails
+            } catch (Exception $e) {
+                error_log("❌ Error verifying badge {$badge['name']} persistence for student $studentId: " . $e->getMessage());
             }
         }
     }
@@ -254,12 +306,16 @@ function checkAndAwardBadges() {
     
     error_log("Badge check completed: Student $studentId, Quiz: $quizType, Score: $score/$totalQuestions ($percentage%), Awarded: " . count($awardedBadges) . " badges");
     
+    $connectedDatabase = $pdo->query("SELECT DATABASE()")->fetchColumn();
+
     echo json_encode([
         'success' => true,
         'awarded_badges' => $awardedBadges,
+        'persisted_count' => count($awardedBadges),
         'message' => count($awardedBadges) > 0 ? 'New badges earned!' : 'No new badges earned',
         'quiz_type' => $quizType,
-        'percentage' => round($percentage, 2)
+        'percentage' => round($percentage, 2),
+        'connected_database' => $connectedDatabase
     ]);
 }
 
@@ -288,9 +344,12 @@ function getStudentBadges() {
         
         error_log("Retrieved " . count($badges) . " badges for student $studentId");
         
+        $connectedDatabase = $pdo->query("SELECT DATABASE()")->fetchColumn();
+
         echo json_encode([
             'success' => true,
-            'badges' => $badges
+            'badges' => $badges,
+            'connected_database' => $connectedDatabase
         ]);
     } catch (PDOException $e) {
         error_log("Error fetching student badges: " . $e->getMessage());

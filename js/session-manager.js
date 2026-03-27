@@ -3,6 +3,8 @@ class SessionManager {
     constructor() {
         this.currentUserType = null;
         this.sessionCheckInterval = null;
+        this.maintenanceLogoutTimer = null;
+        this.maintenanceCountdownTimer = null;
         this.init();
     }
 
@@ -40,6 +42,22 @@ class SessionManager {
     // Check if session is still valid
     async checkSessionStatus() {
         try {
+            if (this.currentUserType === 'teacher' || this.currentUserType === 'student') {
+                const mRes = await fetch(this.maintenanceStatusUrl(), {
+                    credentials: 'same-origin',
+                    cache: 'no-store'
+                });
+                const mData = await mRes.json();
+                if (mData && mData.success) {
+                    if (mData.maintenance) {
+                        this.handleMaintenanceActive(mData);
+                        // continue normal session checks during grace period
+                    } else {
+                        this.clearMaintenanceGrace();
+                    }
+                }
+            }
+
             let checkUrl = '';
             
             if (this.currentUserType === 'teacher') {
@@ -68,6 +86,156 @@ class SessionManager {
         }
     }
 
+    maintenanceGraceKey(name) {
+        return `mathease_maintenance_${name}`;
+    }
+
+    getMaintenanceLogoutAtMs() {
+        try {
+            const raw = sessionStorage.getItem(this.maintenanceGraceKey('logout_at'));
+            const n = raw ? parseInt(raw, 10) : 0;
+            return Number.isFinite(n) ? n : 0;
+        } catch (e) {
+            return 0;
+        }
+    }
+
+    setMaintenanceLogoutAtMs(ts) {
+        try {
+            sessionStorage.setItem(this.maintenanceGraceKey('logout_at'), String(ts));
+        } catch (e) {}
+    }
+
+    getMaintenanceNoticeShown() {
+        try {
+            return sessionStorage.getItem(this.maintenanceGraceKey('notice_shown')) === '1';
+        } catch (e) {
+            return false;
+        }
+    }
+
+    setMaintenanceNoticeShown() {
+        try {
+            sessionStorage.setItem(this.maintenanceGraceKey('notice_shown'), '1');
+        } catch (e) {}
+    }
+
+    clearMaintenanceGrace() {
+        try {
+            sessionStorage.removeItem(this.maintenanceGraceKey('logout_at'));
+            sessionStorage.removeItem(this.maintenanceGraceKey('notice_shown'));
+        } catch (e) {}
+
+        if (this.maintenanceLogoutTimer) {
+            clearTimeout(this.maintenanceLogoutTimer);
+            this.maintenanceLogoutTimer = null;
+        }
+        if (this.maintenanceCountdownTimer) {
+            clearInterval(this.maintenanceCountdownTimer);
+            this.maintenanceCountdownTimer = null;
+        }
+    }
+
+    formatCountdown(msRemaining) {
+        const totalSeconds = Math.max(0, Math.floor(msRemaining / 1000));
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        const pad = (n) => String(n).padStart(2, '0');
+        return `${pad(minutes)}:${pad(seconds)}`;
+    }
+
+    startMaintenanceLogoutTimer(logoutAtMs) {
+        // Reset timer if deadline changed (e.g., tab restored with older timer).
+        if (this.maintenanceLogoutTimer) {
+            clearTimeout(this.maintenanceLogoutTimer);
+            this.maintenanceLogoutTimer = null;
+        }
+        const delay = Math.max(0, logoutAtMs - Date.now());
+        this.maintenanceLogoutTimer = setTimeout(() => {
+            window.location.href = this.maintenanceKickUrl();
+        }, delay);
+    }
+
+    showMaintenanceGraceNotice(mData, logoutAtMs) {
+        if (typeof Swal === 'undefined') return;
+
+        const title = mData.title || 'System update in progress';
+        const message = mData.message || 'Some services may be temporarily unavailable.';
+        const countdownId = 'maintenance-countdown';
+
+        Swal.fire({
+            icon: 'warning',
+            title: title,
+            html: `
+                <div style="text-align:left;">
+                    <p style="margin:0 0 10px; color:#475569;">${message}</p>
+                    <div style="display:flex; gap:10px; align-items:center; padding:10px 12px; border:1px solid #e2e8f0; border-radius:12px; background:#f8fafc;">
+                        <i class="fas fa-hourglass-half" style="color:#6366f1;"></i>
+                        <div style="flex:1;">
+                            <div style="font-weight:700; color:#0f172a;">Auto-logout in</div>
+                            <div style="font-size:14px; color:#475569;"><span id="${countdownId}"></span></div>
+                        </div>
+                    </div>
+                    <p style="margin:10px 0 0; font-size:12px; color:#64748b;">You can continue using the system for 10 minutes. After that, you’ll be logged out automatically.</p>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Continue',
+            cancelButtonText: 'Logout now',
+            confirmButtonColor: '#6366f1',
+            cancelButtonColor: '#ef4444',
+            focusConfirm: true,
+            allowOutsideClick: true,
+            allowEscapeKey: true,
+            didOpen: () => {
+                const el = document.getElementById(countdownId);
+                const tick = () => {
+                    const remaining = logoutAtMs - Date.now();
+                    if (el) el.textContent = this.formatCountdown(remaining);
+                    if (remaining <= 0) {
+                        Swal.close();
+                        window.location.href = this.maintenanceKickUrl();
+                    }
+                };
+                tick();
+                this.maintenanceCountdownTimer = setInterval(tick, 1000);
+            },
+            didClose: () => {
+                if (this.maintenanceCountdownTimer) {
+                    clearInterval(this.maintenanceCountdownTimer);
+                    this.maintenanceCountdownTimer = null;
+                }
+            }
+        }).then((result) => {
+            if (result.dismiss === Swal.DismissReason.cancel) {
+                window.location.href = this.maintenanceKickUrl();
+            }
+        });
+    }
+
+    handleMaintenanceActive(mData) {
+        // If already expired, kick immediately.
+        const now = Date.now();
+        let logoutAtMs = this.getMaintenanceLogoutAtMs();
+        if (logoutAtMs && logoutAtMs <= now) {
+            window.location.href = this.maintenanceKickUrl();
+            return;
+        }
+        if (!logoutAtMs) {
+            logoutAtMs = now + (10 * 60 * 1000);
+            this.setMaintenanceLogoutAtMs(logoutAtMs);
+        }
+
+        // Ensure redirect happens at deadline.
+        this.startMaintenanceLogoutTimer(logoutAtMs);
+
+        // Show notice once per maintenance activation (per tab).
+        if (!this.getMaintenanceNoticeShown()) {
+            this.setMaintenanceNoticeShown();
+            this.showMaintenanceGraceNotice(mData, logoutAtMs);
+        }
+    }
+
     // Handle session expiration
     handleSessionExpired() {
         clearInterval(this.sessionCheckInterval);
@@ -89,6 +257,22 @@ class SessionManager {
             alert('Your session has expired. Please log in again.');
             this.redirectToLogin();
         }
+    }
+
+    maintenanceStatusUrl() {
+        const p = window.location.pathname || '';
+        if (p.includes('/topics/') || p.includes('/quiz/')) {
+            return '../php/maintenance-status.php';
+        }
+        return 'php/maintenance-status.php';
+    }
+
+    maintenanceKickUrl() {
+        const p = window.location.pathname || '';
+        if (p.includes('/topics/') || p.includes('/quiz/')) {
+            return '../php/maintenance-kick.php';
+        }
+        return 'php/maintenance-kick.php';
     }
 
     // Redirect to appropriate login page
@@ -312,6 +496,14 @@ class SessionManager {
     cleanup() {
         if (this.sessionCheckInterval) {
             clearInterval(this.sessionCheckInterval);
+        }
+        if (this.maintenanceLogoutTimer) {
+            clearTimeout(this.maintenanceLogoutTimer);
+            this.maintenanceLogoutTimer = null;
+        }
+        if (this.maintenanceCountdownTimer) {
+            clearInterval(this.maintenanceCountdownTimer);
+            this.maintenanceCountdownTimer = null;
         }
     }
 }

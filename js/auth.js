@@ -431,6 +431,15 @@ async function handleLogin(e) {
                 window.location.href = redirectUrl;
             }, 500);
         } else {
+            if (data.error_type === 'maintenance') {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'System update',
+                    text: data.message || 'MathEase is temporarily unavailable.',
+                    confirmButtonColor: '#6366f1'
+                });
+                return;
+            }
             // Show specific error on the correct field
             const errorField = data.field || 'email';
             const fieldElement = form.querySelector(`#${errorField}`);

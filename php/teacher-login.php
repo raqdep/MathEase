@@ -244,6 +244,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode($response);
             exit;
         }
+
+        require_once __DIR__ . '/maintenance-helper.php';
+        if (isMaintenanceMode($pdo)) {
+            $p = getMaintenancePayload($pdo);
+            $msg = trim((string) ($p['message'] ?? '')) !== ''
+                ? $p['message']
+                : 'MathEase is temporarily unavailable while we apply updates. Teacher login is disabled until maintenance ends.';
+            header('Content-Type: application/json');
+            http_response_code(503);
+            echo json_encode([
+                'success' => false,
+                'message' => $msg,
+                'error_type' => 'maintenance',
+                'field' => 'email',
+            ]);
+            exit;
+        }
         
         // If not admin, check if teacher exists - include email_verified and approval_status
         $stmt = $pdo->prepare("SHOW COLUMNS FROM teachers LIKE 'email_verified'");

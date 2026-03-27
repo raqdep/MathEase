@@ -428,14 +428,23 @@ async function handleTeacherLogin(e) {
                 window.location.href = redirectUrl;
             }, 500);
         } else {
+            if (data.error_type === 'maintenance') {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'System update',
+                    text: data.message || 'MathEase is temporarily unavailable.',
+                    confirmButtonColor: '#6366f1'
+                });
+                return;
+            }
             // Show specific error on the correct field
             const errorField = data.field || 'email';
             const fieldElement = form.querySelector(`#${errorField}`);
-            
+
             if (fieldElement && data.error_type) {
                 // Show error on specific field
                 showFieldError(fieldElement, data.message || 'Please check this field.');
-                
+
                 // Focus on the error field
                 fieldElement.focus();
                 

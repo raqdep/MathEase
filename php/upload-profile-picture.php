@@ -11,6 +11,31 @@ if (session_status() == PHP_SESSION_NONE) {
 
 require_once 'config.php';
 
+function normalizeStudentProfilePicture(?string $rawPath): ?string {
+    $path = trim((string)($rawPath ?? ''));
+    if ($path === '') {
+        return null;
+    }
+
+    if (strpos($path, '../') === 0) {
+        $path = substr($path, 3);
+    }
+
+    if (preg_match('#^https?://#i', $path)) {
+        return $path;
+    }
+
+    if (strpos($path, 'uploads/profiles/') === 0) {
+        return $path;
+    }
+
+    if (strpos($path, 'profiles/') === 0) {
+        return 'uploads/' . $path;
+    }
+
+    return 'uploads/profiles/' . ltrim(basename($path), '/\\');
+}
+
 header('Content-Type: application/json');
 
 // Check if user is logged in
@@ -121,10 +146,13 @@ try {
     
     error_log("SUCCESS: Profile picture saved to database for user_id: $user_id, filename: $filename");
     
+    $normalizedPath = normalizeStudentProfilePicture($filename);
+
     echo json_encode([
         'success' => true,
         'message' => 'Profile picture uploaded and saved to database successfully',
-        'profile_picture' => 'uploads/profiles/' . $filename,
+        'profile_picture' => $normalizedPath,
+        'profile_picture_url' => $normalizedPath,
         'verified' => true
     ]);
     

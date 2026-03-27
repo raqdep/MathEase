@@ -2,6 +2,15 @@
 let currentTeacherId = null;
 let pendingTeachers = [];
 
+function escapeHtml(s) {
+    if (s == null || s === undefined) return '';
+    return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
 document.addEventListener('DOMContentLoaded', async function() {
     // Check admin authentication (async)
     const isAuthenticated = await checkAdminAuth();
@@ -39,8 +48,10 @@ function loadAdminInfo() {
     const adminName = sessionStorage.getItem('admin_name');
     const adminRole = sessionStorage.getItem('admin_role');
     
-    document.getElementById('admin-name').textContent = adminName || 'Admin User';
-    document.getElementById('admin-role').textContent = adminRole || 'Super Admin';
+    const nameEl = document.getElementById('admin-name');
+    if (nameEl) nameEl.textContent = adminName || 'Admin User';
+    const roleEl = document.getElementById('admin-role');
+    if (roleEl) roleEl.textContent = adminRole || 'Super Admin';
 }
 
 function updateCurrentTime() {
@@ -57,35 +68,19 @@ function updateCurrentTime() {
 let currentSection = 'dashboard';
 
 function showSection(sectionName) {
-    console.log('Showing section:', sectionName); // Debug log
-    
-    // Hide all sections
     const sections = document.querySelectorAll('.dashboard-section');
-    console.log('Found sections:', sections.length); // Debug log
     sections.forEach(section => {
         section.classList.add('hidden');
-        console.log('Hiding section:', section.id); // Debug log
     });
-    
-    // Show the selected section
+
     const targetSection = document.getElementById(sectionName + '-section') || document.getElementById(sectionName);
-    console.log('Target section:', targetSection); // Debug log
-    
+
     if (targetSection) {
         targetSection.classList.remove('hidden');
         currentSection = sectionName;
-        console.log('Showing section:', sectionName, 'Element:', targetSection.id); // Debug log
-            
-            // Update page title
         updatePageTitle(getSectionTitle(sectionName));
-        
-        // Load section-specific data
         loadSectionData(sectionName);
-        
-        // Update navigation active state
         updateNavigationActive(sectionName);
-    } else {
-        console.error('Section not found:', sectionName); // Debug log
     }
 }
 
@@ -98,23 +93,20 @@ function getSectionTitle(sectionName) {
         'pending-teachers': 'Pending Teachers',
         'all-teachers': 'All Teachers',
         'students': 'Student Management',
-        'activity-log': 'Activity Log'
+        'activity-log': 'Activity Log',
+        'teacher-archive': 'Archived Teachers',
+        'system-update': 'System maintenance'
     };
     return titles[sectionName] || 'Admin Dashboard';
 }
 
 function updateNavigationActive(sectionName) {
-    const navItems = document.querySelectorAll('.nav-item');
-    navItems.forEach(item => {
-        item.classList.remove('active', 'bg-indigo-50', 'text-indigo-700');
-        item.classList.add('text-gray-700');
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
     });
-    
-    // Find and activate the corresponding nav item
     const navItem = document.querySelector(`[href="#${sectionName}"]`);
     if (navItem) {
-        navItem.classList.add('active', 'bg-indigo-50', 'text-indigo-700');
-        navItem.classList.remove('text-gray-700');
+        navItem.classList.add('active');
     }
 }
 
@@ -129,11 +121,17 @@ function loadSectionData(sectionName) {
         case 'all-teachers':
                 loadAllTeachers();
             break;
+        case 'teacher-archive':
+                loadArchivedTeachers();
+            break;
         case 'students':
                 loadStudents();
             break;
         case 'activity-log':
                 loadActivityLog();
+            break;
+        case 'system-update':
+                loadMaintenancePanel();
             break;
     }
 }
@@ -144,11 +142,8 @@ function setupNavigation() {
     navItems.forEach(item => {
         item.addEventListener('click', function(e) {
             e.preventDefault();
-            
             const href = this.getAttribute('href');
             const sectionName = href.replace('#', '');
-            
-            console.log('Navigation clicked:', sectionName); // Debug log
             showSection(sectionName);
         });
     });
@@ -225,39 +220,42 @@ function displayPendingTeachers(teachers) {
     
     tableBody.innerHTML = teachers.map(teacher => {
         const isEmailVerified = teacher.email_verified === 1 || teacher.is_email_verified === 1;
-        const emailStatusBadge = isEmailVerified 
-            ? '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Verified</span>'
-            : '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"><i class="fas fa-exclamation-circle mr-1"></i>Not Verified</span>';
-        
+        const emailStatusBadge = isEmailVerified
+            ? '<span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200"><i class="fas fa-check-circle mr-1"></i>Email verified</span>'
+            : '<span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-amber-50 text-amber-900 border border-amber-200"><i class="fas fa-exclamation-circle mr-1"></i>Email not verified</span>';
+        const approveTitle = isEmailVerified
+            ? 'Approve teacher account'
+            : 'Approve (email not verified — you can still approve)';
+
         return `
-        <tr class="hover:bg-gray-50 ${!isEmailVerified ? 'bg-yellow-50' : ''}">
-            <td class="px-6 py-4 whitespace-nowrap">
+        <tr class="hover:bg-slate-50 border-b border-slate-100 ${!isEmailVerified ? 'bg-amber-50/40' : ''}">
+            <td class="px-4 py-3 whitespace-nowrap align-top">
                 <div class="flex items-center">
-                    <div class="h-10 w-10 ${isEmailVerified ? 'bg-indigo-500' : 'bg-yellow-500'} rounded-full flex items-center justify-center">
-                        <span class="text-white font-medium text-sm">${teacher.first_name.charAt(0)}${teacher.last_name.charAt(0)}</span>
+                    <div class="h-10 w-10 ${isEmailVerified ? 'bg-slate-700' : 'bg-amber-600'} rounded-full flex items-center justify-center flex-shrink-0">
+                        <span class="text-white font-medium text-sm">${escapeHtml(String(teacher.first_name || '').charAt(0))}${escapeHtml(String(teacher.last_name || '').charAt(0))}</span>
                     </div>
-                    <div class="ml-4">
-                        <div class="text-sm font-medium text-gray-900">${teacher.first_name} ${teacher.last_name}</div>
-                        ${teacher.teacher_id ? `<div class="text-sm text-gray-500">ID: ${teacher.teacher_id}</div>` : ''}
+                    <div class="ml-3 min-w-0">
+                        <div class="text-sm font-semibold text-slate-900">${escapeHtml(teacher.first_name)} ${escapeHtml(teacher.last_name)}</div>
+                        ${teacher.teacher_id ? `<div class="text-xs text-slate-500">ID: ${escapeHtml(String(teacher.teacher_id))}</div>` : ''}
                     </div>
                 </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">${teacher.email}</div>
+            <td class="px-4 py-3 whitespace-nowrap align-top">
+                <div class="text-sm text-slate-800">${escapeHtml(teacher.email)}</div>
                 <div class="mt-1">${emailStatusBadge}</div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${teacher.department}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${teacher.subject}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatDate(teacher.created_at)}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <button onclick="viewTeacherDetails(${teacher.id})" class="text-indigo-600 hover:text-indigo-900 mr-3" title="View Details">
-                    <i class="fas fa-eye"></i> View
+            <td class="px-4 py-3 text-sm text-slate-700 align-top">${escapeHtml(teacher.department || '—')}</td>
+            <td class="px-4 py-3 text-sm text-slate-700 align-top">${escapeHtml(teacher.subject || '—')}</td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-slate-600 align-top">${formatDate(teacher.created_at)}</td>
+            <td class="px-4 py-3 whitespace-nowrap text-sm text-right align-top">
+                <button type="button" onclick="viewTeacherDetails(${teacher.id})" class="inline-flex items-center px-2 py-1 rounded text-indigo-700 hover:bg-indigo-50 font-medium" title="View details">
+                    <i class="fas fa-eye mr-1"></i> View
                 </button>
-                <button onclick="approveTeacher(${teacher.id})" class="text-green-600 hover:text-green-900 mr-3" title="Approve Teacher" ${!isEmailVerified ? 'disabled class="opacity-50 cursor-not-allowed"' : ''}>
-                    <i class="fas fa-check"></i> Approve
+                <button type="button" onclick="approveTeacher(${teacher.id})" class="inline-flex items-center px-2 py-1 rounded text-emerald-700 hover:bg-emerald-50 font-medium ml-1" title="${approveTitle}">
+                    <i class="fas fa-check mr-1"></i> Approve
                 </button>
-                <button onclick="showRejectionModal(${teacher.id})" class="text-red-600 hover:text-red-900" title="Reject Application">
-                    <i class="fas fa-times"></i> Reject
+                <button type="button" onclick="showRejectionModal(${teacher.id})" class="inline-flex items-center px-2 py-1 rounded text-red-700 hover:bg-red-50 font-medium ml-1" title="Reject application">
+                    <i class="fas fa-times mr-1"></i> Reject
                 </button>
             </td>
         </tr>
@@ -289,70 +287,87 @@ async function viewTeacherDetails(teacherId) {
 function displayTeacherDetails(teacher) {
     const content = document.getElementById('teacher-details-content');
     content.innerHTML = `
-        <div class="mb-6">
-            <div class="flex items-center justify-between mb-4">
-                <h4 class="text-lg font-semibold text-gray-900">Teacher Information</h4>
-                <button onclick="viewTeacherActivity(${teacher.id})" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200">
-                    <i class="fas fa-chart-line mr-2"></i>
-                    View Activity
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
+            <div class="flex items-start gap-4">
+                <div class="h-12 w-12 rounded-xl bg-slate-900 flex items-center justify-center flex-shrink-0">
+                    <span class="text-white font-semibold">${escapeHtml(String(teacher.first_name || '').charAt(0))}${escapeHtml(String(teacher.last_name || '').charAt(0))}</span>
+                </div>
+                <div class="min-w-0">
+                    <h4 class="text-lg font-semibold text-slate-900 truncate">${escapeHtml(teacher.first_name)} ${escapeHtml(teacher.last_name)}</h4>
+                    <p class="text-sm text-slate-600 truncate">${escapeHtml(teacher.email || '—')}</p>
+                    <div class="mt-2 flex flex-wrap gap-2">
+                        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold border ${
+                            teacher.status === 'approved' ? 'bg-emerald-50 text-emerald-800 border-emerald-200' :
+                            teacher.status === 'rejected' ? 'bg-red-50 text-red-800 border-red-200' :
+                            'bg-amber-50 text-amber-900 border-amber-200'
+                        }">
+                            <i class="fas ${teacher.status === 'approved' ? 'fa-check-circle' : teacher.status === 'rejected' ? 'fa-times-circle' : 'fa-hourglass-half'} mr-1"></i>
+                            ${escapeHtml(teacher.status || 'pending')}
+                        </span>
+                        ${teacher.teacher_id ? `
+                            <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-slate-50 text-slate-700 border border-slate-200">
+                                <i class="fas fa-id-badge mr-1 text-slate-500"></i>
+                                ID: ${escapeHtml(String(teacher.teacher_id))}
+                            </span>
+                        ` : ''}
+                        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-slate-50 text-slate-700 border border-slate-200">
+                            <i class="fas fa-calendar-alt mr-1 text-slate-500"></i>
+                            Registered: ${escapeHtml(formatDate(teacher.created_at))}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-2">
+                <button type="button" onclick="viewTeacherActivity(${teacher.id})" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-slate-900 rounded-lg hover:bg-slate-950 transition-colors">
+                    <i class="fas fa-history mr-2"></i>
+                    View activity
                 </button>
             </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div>
-                <h4 class="text-lg font-semibold text-gray-900 mb-4">Personal Information</h4>
-                <div class="space-y-3">
-                    <div>
-                        <label class="text-sm font-medium text-gray-500">Full Name</label>
-                        <p class="text-gray-900">${teacher.first_name} ${teacher.last_name}</p>
-                    </div>
-                    <div>
-                        <label class="text-sm font-medium text-gray-500">Email</label>
-                        <p class="text-gray-900">${teacher.email}</p>
-                    </div>
-                    ${teacher.teacher_id ? `
-                    <div>
-                        <label class="text-sm font-medium text-gray-500">Teacher ID</label>
-                        <p class="text-gray-900">${teacher.teacher_id}</p>
-                    </div>
-                    ` : ''}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div class="border border-slate-200 rounded-xl p-4 bg-white">
+                <div class="flex items-center gap-2 mb-3">
+                    <i class="fas fa-user text-indigo-600"></i>
+                    <h5 class="text-sm font-semibold text-slate-900">Personal</h5>
                 </div>
+                <dl class="space-y-3">
+                    <div>
+                        <dt class="text-xs font-medium text-slate-500">Full name</dt>
+                        <dd class="text-sm text-slate-900">${escapeHtml(teacher.first_name)} ${escapeHtml(teacher.last_name)}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs font-medium text-slate-500">Email</dt>
+                        <dd class="text-sm text-slate-900 break-all">${escapeHtml(teacher.email || '—')}</dd>
+                    </div>
+                </dl>
             </div>
-            
-            <div>
-                <h4 class="text-lg font-semibold text-gray-900 mb-4">Professional Information</h4>
-                <div class="space-y-3">
-                    <div>
-                        <label class="text-sm font-medium text-gray-500">Department</label>
-                        <p class="text-gray-900">${teacher.department}</p>
-                    </div>
-                    <div>
-                        <label class="text-sm font-medium text-gray-500">Subject</label>
-                        <p class="text-gray-900">${teacher.subject}</p>
-                    </div>
-                    <div>
-                        <label class="text-sm font-medium text-gray-500">Status</label>
-                        <p class="text-gray-900">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                teacher.status === 'approved' ? 'bg-green-100 text-green-800' : 
-                                teacher.status === 'rejected' ? 'bg-red-100 text-red-800' : 
-                                'bg-yellow-100 text-yellow-800'
-                            }">
-                                ${teacher.status || 'pending'}
-                            </span>
-                        </p>
-                    </div>
-                    <div>
-                        <label class="text-sm font-medium text-gray-500">Registration Date</label>
-                        <p class="text-gray-900">${formatDate(teacher.created_at)}</p>
-                    </div>
+
+            <div class="border border-slate-200 rounded-xl p-4 bg-white">
+                <div class="flex items-center gap-2 mb-3">
+                    <i class="fas fa-briefcase text-indigo-600"></i>
+                    <h5 class="text-sm font-semibold text-slate-900">Professional</h5>
                 </div>
+                <dl class="space-y-3">
+                    <div>
+                        <dt class="text-xs font-medium text-slate-500">Department</dt>
+                        <dd class="text-sm text-slate-900">${escapeHtml(teacher.department || '—')}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-xs font-medium text-slate-500">Subject</dt>
+                        <dd class="text-sm text-slate-900">${escapeHtml(teacher.subject || '—')}</dd>
+                    </div>
+                </dl>
             </div>
         </div>
         <div id="teacher-activity-section" class="hidden mt-6">
-            <h4 class="text-lg font-semibold text-gray-900 mb-4">Activity Log</h4>
+            <div class="flex items-center gap-2 mb-4">
+                <i class="fas fa-history text-slate-700"></i>
+                <h4 class="text-sm font-semibold text-slate-900">Activity log</h4>
+            </div>
             <div id="teacher-activity-content" class="space-y-2">
-                <div class="text-center py-4 text-gray-500">
+                <div class="text-center py-6 text-slate-500 border border-dashed border-slate-200 rounded-xl bg-slate-50">
                     <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
                     <p>Loading activity...</p>
                 </div>
@@ -408,30 +423,84 @@ function displayTeacherActivity(data) {
     
     if (!data.activities || data.activities.length === 0) {
         activityContent.innerHTML = `
-            <div class="text-center py-8 text-gray-500">
-                <i class="fas fa-history text-4xl mb-4"></i>
-                <p>No activity recorded yet</p>
+            <div class="text-center py-10 text-slate-500 border border-dashed border-slate-200 rounded-xl bg-slate-50">
+                <i class="fas fa-history text-3xl mb-3 text-slate-400"></i>
+                <p class="font-semibold text-slate-700">No activity yet</p>
+                <p class="text-sm mt-1">This teacher has no recorded events.</p>
             </div>
         `;
         return;
     }
     
+    const actionMeta = (action) => {
+        const a = String(action || '').toLowerCase();
+        const map = {
+            login: { label: 'Logins', icon: 'fa-right-to-bracket', color: 'indigo' },
+            logout: { label: 'Logouts', icon: 'fa-right-from-bracket', color: 'slate' },
+            email_verified: { label: 'Email verified', icon: 'fa-envelope-circle-check', color: 'emerald' },
+            account_approved: { label: 'Account approved', icon: 'fa-user-check', color: 'emerald' },
+            class_created: { label: 'Classes created', icon: 'fa-chalkboard', color: 'violet' },
+            lesson_created: { label: 'Lessons created', icon: 'fa-book', color: 'violet' },
+            student_enrollment_approved: { label: 'Students approved', icon: 'fa-user-check', color: 'emerald' },
+            student_enrollment_rejected: { label: 'Students rejected', icon: 'fa-user-xmark', color: 'red' }
+        };
+        return map[a] || { label: a ? a.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Activity', icon: 'fa-circle', color: 'slate' };
+    };
+
+    const colorClasses = (c) => {
+        switch (c) {
+            case 'emerald':
+                return { badge: 'bg-emerald-50 border-emerald-100 text-emerald-700', icon: 'bg-emerald-50 border-emerald-100 text-emerald-700' };
+            case 'violet':
+                return { badge: 'bg-violet-50 border-violet-100 text-violet-700', icon: 'bg-violet-50 border-violet-100 text-violet-700' };
+            case 'red':
+                return { badge: 'bg-red-50 border-red-100 text-red-700', icon: 'bg-red-50 border-red-100 text-red-700' };
+            case 'indigo':
+                return { badge: 'bg-indigo-50 border-indigo-100 text-indigo-700', icon: 'bg-indigo-50 border-indigo-100 text-indigo-700' };
+            default:
+                return { badge: 'bg-slate-50 border-slate-200 text-slate-700', icon: 'bg-slate-50 border-slate-200 text-slate-700' };
+        }
+    };
+
     let html = `
-        <div class="mb-4 p-4 bg-indigo-50 rounded-lg">
-            <h5 class="font-semibold text-gray-900 mb-2">Activity Statistics</h5>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div>
-                    <p class="text-sm text-gray-600">Total Activities</p>
-                    <p class="text-2xl font-bold text-indigo-600">${data.total_activities || 0}</p>
+        <div class="mb-4 border border-slate-200 rounded-xl bg-slate-50 p-4">
+            <div class="flex items-center gap-2 mb-3">
+                <i class="fas fa-chart-bar text-indigo-600"></i>
+                <h5 class="text-sm font-semibold text-slate-900">Activity statistics</h5>
+            </div>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                <div class="bg-white border border-slate-200 rounded-xl p-3">
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Total</p>
+                            <p class="text-2xl font-bold text-slate-900 mt-1">${data.total_activities || 0}</p>
+                        </div>
+                        <span class="h-9 w-9 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-center text-slate-700">
+                            <i class="fas fa-list"></i>
+                        </span>
+                    </div>
                 </div>
     `;
     
     if (data.statistics && data.statistics.length > 0) {
-        data.statistics.forEach(stat => {
+        const top = [...data.statistics]
+            .sort((a, b) => (b.count || 0) - (a.count || 0))
+            .slice(0, 3);
+
+        top.forEach(stat => {
+            const meta = actionMeta(stat.action);
+            const cls = colorClasses(meta.color);
             html += `
-                <div>
-                    <p class="text-sm text-gray-600">${stat.action.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</p>
-                    <p class="text-2xl font-bold text-indigo-600">${stat.count}</p>
+                <div class="bg-white border border-slate-200 rounded-xl p-3">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="min-w-0">
+                            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide truncate">${escapeHtml(meta.label)}</p>
+                            <p class="text-2xl font-bold text-slate-900 mt-1">${stat.count}</p>
+                        </div>
+                        <span class="h-9 w-9 rounded-xl border ${cls.badge} flex items-center justify-center flex-shrink-0">
+                            <i class="fas ${meta.icon}"></i>
+                        </span>
+                    </div>
                 </div>
             `;
         });
@@ -444,32 +513,24 @@ function displayTeacherActivity(data) {
     `;
     
     data.activities.forEach(activity => {
-        const actionIcon = {
-            'email_verified': 'fa-envelope-check',
-            'account_approved': 'fa-user-check',
-            'login': 'fa-sign-in-alt',
-            'logout': 'fa-sign-out-alt',
-            'lesson_created': 'fa-book',
-            'class_created': 'fa-chalkboard',
-            'default': 'fa-circle'
-        }[activity.action] || 'fa-circle';
+        const meta = actionMeta(activity.action);
+        const cls = colorClasses(meta.color);
         
         html += `
-            <div class="flex items-start p-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">
-                <div class="flex-shrink-0 mr-3">
-                    <div class="h-10 w-10 bg-indigo-100 rounded-full flex items-center justify-center">
-                        <i class="fas ${actionIcon} text-indigo-600"></i>
+            <div class="flex items-start gap-3 p-4 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
+                <div class="flex-shrink-0">
+                    <div class="h-10 w-10 rounded-xl border ${cls.icon} flex items-center justify-center">
+                        <i class="fas ${meta.icon}"></i>
                     </div>
                 </div>
                 <div class="flex-1 min-w-0">
-                    <p class="text-sm font-medium text-gray-900">
-                        ${activity.action.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                    </p>
-                    ${activity.details ? `<p class="text-sm text-gray-600 mt-1">${activity.details}</p>` : ''}
-                    <div class="flex items-center mt-2 text-xs text-gray-500">
-                        <i class="fas fa-clock mr-1"></i>
-                        <span>${formatDate(activity.created_at)}</span>
-                        ${activity.ip_address ? `<span class="ml-4"><i class="fas fa-network-wired mr-1"></i>${activity.ip_address}</span>` : ''}
+                    <div class="flex items-start justify-between gap-3">
+                        <p class="text-sm font-semibold text-slate-900">${escapeHtml(meta.label)}</p>
+                        <span class="text-xs text-slate-500 whitespace-nowrap">${escapeHtml(formatDate(activity.created_at))}</span>
+                    </div>
+                    ${activity.details ? `<p class="text-sm text-slate-600 mt-1">${escapeHtml(String(activity.details))}</p>` : ''}
+                    <div class="flex items-center mt-2 text-xs text-slate-500 gap-3">
+                        ${activity.ip_address ? `<span class="inline-flex items-center"><i class="fas fa-network-wired mr-1 text-slate-400"></i>${escapeHtml(String(activity.ip_address))}</span>` : ''}
                     </div>
                 </div>
             </div>
@@ -489,19 +550,22 @@ function closeTeacherDetailsModal() {
 async function approveTeacher(teacherId = null) {
     const id = teacherId || currentTeacherId;
     if (!id) return;
-    
-    // Check if teacher email is verified
-    const teacher = pendingTeachers.find(t => t.id == id);
-    if (teacher && (teacher.email_verified !== 1 && teacher.is_email_verified !== 1)) {
-        Swal.fire({
-            title: 'Email Not Verified',
-            text: 'This teacher has not verified their email address yet. Please ask them to verify their email before approval.',
+
+    const teacher = pendingTeachers.find(t => String(t.id) === String(id));
+    const verified = teacher && (teacher.email_verified === 1 || teacher.is_email_verified === 1);
+    if (teacher && !verified) {
+        const proceed = await Swal.fire({
+            title: 'Email not verified',
+            text: 'This teacher has not verified their email. You can still approve the account.',
             icon: 'warning',
-            confirmButtonText: 'OK'
+            showCancelButton: true,
+            confirmButtonText: 'Approve anyway',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#059669'
         });
-        return;
+        if (!proceed.isConfirmed) return;
     }
-    
+
     // Confirm approval
     const result = await Swal.fire({
         title: 'Approve Teacher Account?',
@@ -803,6 +867,355 @@ async function debugDatabase() {
 // All Teachers Management Functions
 let allTeachers = [];
 let currentFilter = 'all'; // 'all', 'approved', 'rejected'
+let teacherDirectoryPage = 1;
+const teacherDirectoryPageSize = 10;
+let teacherDirectoryView = 'approved'; // 'approved' | 'rejected' | 'all'
+let teacherDirectoryTeachers = [];
+
+// Archived teachers view (separate list + pagination)
+let archivedTeachers = [];
+let archivedTeachersPage = 1;
+const archivedTeachersPageSize = 10;
+
+function clamp(n, min, max) {
+    return Math.max(min, Math.min(max, n));
+}
+
+function setTeacherDirectoryPage(page) {
+    teacherDirectoryPage = page;
+    renderTeacherDirectory();
+}
+
+window.setTeacherDirectoryPage = setTeacherDirectoryPage;
+
+function setArchivedTeachersPage(page) {
+    archivedTeachersPage = page;
+    renderArchivedTeachers();
+}
+
+window.setArchivedTeachersPage = setArchivedTeachersPage;
+
+async function loadArchivedTeachers() {
+    try {
+        const response = await fetch('php/admin-all-teachers.php?archived=1', {
+            method: 'GET',
+            credentials: 'same-origin',
+            cache: 'no-store'
+        });
+        const data = await response.json();
+        if (data.success) {
+            archivedTeachers = data.teachers || [];
+            archivedTeachersPage = 1;
+            renderArchivedTeachers();
+        } else {
+            throw new Error(data.message || 'Failed to load archived teachers');
+        }
+    } catch (error) {
+        console.error('Error loading archived teachers:', error);
+        if (typeof Swal !== 'undefined') {
+            Swal.fire('Error', 'An error occurred while loading archived teachers', 'error');
+        }
+    }
+}
+
+function refreshArchivedTeachers() {
+    loadArchivedTeachers();
+    loadDashboardStats();
+}
+
+window.refreshArchivedTeachers = refreshArchivedTeachers;
+
+function renderArchivedTeachersPagination(total) {
+    const wrap = document.getElementById('archived-teachers-pagination');
+    if (!wrap) return;
+
+    if (total <= archivedTeachersPageSize) {
+        wrap.innerHTML = '';
+        return;
+    }
+
+    const totalPages = Math.max(1, Math.ceil(total / archivedTeachersPageSize));
+    const page = clamp(archivedTeachersPage, 1, totalPages);
+    archivedTeachersPage = page;
+    const startIdx = (page - 1) * archivedTeachersPageSize;
+    const endIdx = Math.min(total, startIdx + archivedTeachersPageSize);
+
+    const btn = (label, target, disabled, active = false) => `
+        <button type="button"
+            class="px-3 py-2 text-sm font-medium rounded-lg border ${active ? 'bg-slate-800 text-white border-slate-800 hover:bg-slate-900' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'} disabled:opacity-50 disabled:cursor-not-allowed"
+            ${disabled ? 'disabled' : ''}
+            onclick="setArchivedTeachersPage(${target})">
+            ${label}
+        </button>
+    `;
+
+    const pages = [];
+    const windowSize = 2;
+    const addEllipsis = () => pages.push(`<span class="px-2 text-slate-400 select-none">…</span>`);
+    const addPage = (p) => pages.push(btn(String(p), p, false, p === page));
+
+    if (totalPages <= 7) {
+        for (let p = 1; p <= totalPages; p++) addPage(p);
+    } else {
+        addPage(1);
+        if (page > 1 + windowSize + 1) addEllipsis();
+        for (let p = Math.max(2, page - windowSize); p <= Math.min(totalPages - 1, page + windowSize); p++) addPage(p);
+        if (page < totalPages - windowSize - 1) addEllipsis();
+        addPage(totalPages);
+    }
+
+    wrap.innerHTML = `
+        <div class="text-sm text-slate-600">
+            Showing <span class="font-semibold text-slate-800">${startIdx + 1}</span>–<span class="font-semibold text-slate-800">${endIdx}</span>
+            of <span class="font-semibold text-slate-800">${total}</span>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap justify-start sm:justify-end">
+            ${btn('Prev', page - 1, page <= 1)}
+            <div class="flex items-center gap-1">${pages.join('')}</div>
+            ${btn('Next', page + 1, page >= totalPages)}
+        </div>
+    `;
+}
+
+function renderArchivedTeachers() {
+    const tableBody = document.getElementById('archived-teachers-table');
+    const empty = document.getElementById('no-archived-teachers');
+    if (!tableBody || !empty) return;
+
+    const total = Array.isArray(archivedTeachers) ? archivedTeachers.length : 0;
+    if (total === 0) {
+        tableBody.innerHTML = '';
+        empty.classList.remove('hidden');
+        renderArchivedTeachersPagination(0);
+        return;
+    }
+
+    empty.classList.add('hidden');
+    const totalPages = Math.max(1, Math.ceil(total / archivedTeachersPageSize));
+    const page = clamp(archivedTeachersPage, 1, totalPages);
+    archivedTeachersPage = page;
+    const startIdx = (page - 1) * archivedTeachersPageSize;
+    const endIdx = Math.min(total, startIdx + archivedTeachersPageSize);
+    const pageItems = archivedTeachers.slice(startIdx, endIdx);
+
+    tableBody.innerHTML = pageItems.map(t => `
+        <tr class="hover:bg-slate-50">
+            <td class="px-4 py-3 whitespace-nowrap">
+                <div class="flex items-center">
+                    <div class="h-10 w-10 bg-slate-700 rounded-full flex items-center justify-center">
+                        <span class="text-white font-medium text-sm">${escapeHtml(String(t.first_name || '').charAt(0))}${escapeHtml(String(t.last_name || '').charAt(0))}</span>
+                    </div>
+                    <div class="ml-3 min-w-0">
+                        <div class="text-sm font-semibold text-slate-900">${escapeHtml(t.first_name || '')} ${escapeHtml(t.last_name || '')}</div>
+                        <div class="text-xs text-slate-500 truncate">${escapeHtml(t.email || '')}</div>
+                    </div>
+                </div>
+            </td>
+            <td class="px-4 py-3 text-sm text-slate-700 align-top">${escapeHtml(t.department || '—')}</td>
+            <td class="px-4 py-3 text-sm text-slate-700 align-top">${escapeHtml(t.subject || '—')}</td>
+            <td class="px-4 py-3 text-sm text-slate-600 whitespace-nowrap">${escapeHtml(formatDate(t.archived_at || t.created_at || ''))}</td>
+            <td class="px-4 py-3 text-sm whitespace-nowrap">
+                <button type="button" onclick="restoreTeacherAccount(${t.id})" class="inline-flex items-center px-3 py-2 text-sm font-medium text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-lg hover:bg-emerald-100/70">
+                    <i class="fas fa-rotate-left mr-2"></i> Restore
+                </button>
+            </td>
+        </tr>
+    `).join('');
+
+    renderArchivedTeachersPagination(total);
+}
+
+async function archiveTeacherAccount(teacherId) {
+    const teacher = (Array.isArray(allTeachers) ? allTeachers : []).find(t => String(t.id) === String(teacherId));
+    const teacherName = teacher ? `${teacher.first_name || ''} ${teacher.last_name || ''}`.trim() : 'this teacher';
+    const teacherEmail = teacher ? (teacher.email || '') : '';
+
+    if (typeof Swal === 'undefined') {
+        const ok = window.confirm(`Remove ${teacherName}? Type DELETE in the next prompt to confirm.`);
+        if (!ok) return;
+        const typed = window.prompt('Type DELETE to confirm');
+        if (typed !== 'DELETE') return;
+    }
+
+    const result = await Swal.fire({
+        title: 'Remove teacher account?',
+        icon: 'warning',
+        html: `
+            <div style="text-align:left;">
+                <p class="text-sm text-slate-600">This will move the teacher to <strong>Archive</strong> and remove access.</p>
+                <p class="text-sm text-slate-600 mt-2"><strong>${escapeHtml(teacherName)}</strong> ${teacherEmail ? `(${escapeHtml(teacherEmail)})` : ''}</p>
+                <p class="text-sm text-slate-600 mt-4">Type <strong>DELETE</strong> to confirm.</p>
+            </div>
+        `,
+        input: 'text',
+        inputPlaceholder: 'Type DELETE',
+        inputAttributes: { autocapitalize: 'off', autocorrect: 'off' },
+        showCancelButton: true,
+        confirmButtonText: 'Remove',
+        confirmButtonColor: '#dc2626',
+        cancelButtonText: 'Cancel',
+        preConfirm: (value) => {
+            if (String(value || '').trim() !== 'DELETE') {
+                Swal.showValidationMessage('Please type DELETE to confirm.');
+                return false;
+            }
+            return true;
+        }
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+        const res = await fetch('php/admin-teacher-archive.php', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'archive', teacher_id: teacherId })
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message || 'Failed to archive');
+        await Swal.fire({ icon: 'success', title: 'Removed', text: 'Teacher account moved to archive.' });
+        await loadAllTeachers();
+        await loadArchivedTeachers();
+        await loadDashboardStats();
+    } catch (error) {
+        console.error('archiveTeacherAccount', error);
+        Swal.fire('Error', String(error.message || error), 'error');
+    }
+}
+
+window.archiveTeacherAccount = archiveTeacherAccount;
+
+async function restoreTeacherAccount(teacherId) {
+    if (typeof Swal === 'undefined') return;
+    const confirm = await Swal.fire({
+        title: 'Restore teacher account?',
+        text: 'This will restore access for this teacher.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Restore',
+        confirmButtonColor: '#059669',
+        cancelButtonText: 'Cancel'
+    });
+    if (!confirm.isConfirmed) return;
+
+    try {
+        const res = await fetch('php/admin-teacher-archive.php', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'restore', teacher_id: teacherId })
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message || 'Failed to restore');
+        await Swal.fire({ icon: 'success', title: 'Restored', text: 'Teacher account restored.' });
+        await loadArchivedTeachers();
+        await loadAllTeachers();
+        await loadDashboardStats();
+    } catch (error) {
+        console.error('restoreTeacherAccount', error);
+        Swal.fire('Error', String(error.message || error), 'error');
+    }
+}
+
+window.restoreTeacherAccount = restoreTeacherAccount;
+
+function getTeacherDirectoryPaginationMeta(total) {
+    const totalPages = Math.max(1, Math.ceil(total / teacherDirectoryPageSize));
+    const page = clamp(teacherDirectoryPage, 1, totalPages);
+    teacherDirectoryPage = page;
+    const startIdx = (page - 1) * teacherDirectoryPageSize;
+    const endIdx = Math.min(total, startIdx + teacherDirectoryPageSize);
+    return { page, totalPages, startIdx, endIdx };
+}
+
+function renderTeacherDirectoryPagination(total) {
+    const wrap = document.getElementById('all-teachers-pagination');
+    if (!wrap) return;
+
+    if (total <= teacherDirectoryPageSize) {
+        wrap.innerHTML = '';
+        return;
+    }
+
+    const { page, totalPages, startIdx, endIdx } = getTeacherDirectoryPaginationMeta(total);
+
+    const info = `
+        <div class="text-sm text-slate-600">
+            Showing <span class="font-semibold text-slate-800">${startIdx + 1}</span>–<span class="font-semibold text-slate-800">${endIdx}</span>
+            of <span class="font-semibold text-slate-800">${total}</span>
+        </div>
+    `;
+
+    const makeBtn = (label, targetPage, disabled, extraClass = '') => `
+        <button type="button"
+            class="px-3 py-2 text-sm font-medium rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed ${extraClass}"
+            ${disabled ? 'disabled' : ''}
+            onclick="setTeacherDirectoryPage(${targetPage})">
+            ${label}
+        </button>
+    `;
+
+    const prevBtn = makeBtn('Prev', page - 1, page <= 1);
+    const nextBtn = makeBtn('Next', page + 1, page >= totalPages);
+
+    // Page number buttons (compact)
+    const pages = [];
+    const windowSize = 2;
+    const addPage = (p) => pages.push(makeBtn(String(p), p, false, p === page ? 'bg-slate-800 text-white border-slate-800 hover:bg-slate-900' : ''));
+    const addEllipsis = () => pages.push(`<span class="px-2 text-slate-400 select-none">…</span>`);
+
+    if (totalPages <= 7) {
+        for (let p = 1; p <= totalPages; p++) addPage(p);
+    } else {
+        addPage(1);
+        if (page > 1 + windowSize + 1) addEllipsis();
+        for (let p = Math.max(2, page - windowSize); p <= Math.min(totalPages - 1, page + windowSize); p++) addPage(p);
+        if (page < totalPages - windowSize - 1) addEllipsis();
+        addPage(totalPages);
+    }
+
+    wrap.innerHTML = `
+        ${info}
+        <div class="flex items-center gap-2 flex-wrap justify-start sm:justify-end">
+            ${prevBtn}
+            <div class="flex items-center gap-1">
+                ${pages.join('')}
+            </div>
+            ${nextBtn}
+        </div>
+    `;
+}
+
+function renderTeacherDirectory() {
+    const list = Array.isArray(teacherDirectoryTeachers) ? teacherDirectoryTeachers : [];
+    const total = list.length;
+    const tableBody = document.getElementById('all-teachers-table');
+    const noTeachersDiv = document.getElementById('no-all-teachers');
+
+    if (!tableBody || !noTeachersDiv) return;
+
+    if (total === 0) {
+        tableBody.innerHTML = '';
+        noTeachersDiv.classList.remove('hidden');
+        renderTeacherDirectoryPagination(0);
+        return;
+    }
+
+    noTeachersDiv.classList.add('hidden');
+
+    const { startIdx, endIdx } = getTeacherDirectoryPaginationMeta(total);
+    const pageItems = list.slice(startIdx, endIdx);
+
+    // Use the existing row templates, but on sliced items.
+    if (teacherDirectoryView === 'approved') {
+        displayApprovedTeachers(pageItems, { skipPagination: true });
+    } else {
+        displayAllTeachers(pageItems, { skipPagination: true });
+    }
+
+    renderTeacherDirectoryPagination(total);
+}
 
 async function loadAllTeachers() {
     try {
@@ -828,7 +1241,10 @@ async function loadAllTeachers() {
             });
             
             console.log('Approved teachers:', approvedTeachers.length); // Debug log
-            displayApprovedTeachers(approvedTeachers);
+            teacherDirectoryView = 'approved';
+            teacherDirectoryTeachers = approvedTeachers;
+            teacherDirectoryPage = 1;
+            renderTeacherDirectory();
         } else {
             console.error('Failed to load teachers:', data);
             console.error('Error details:', data.debug || 'No debug info');
@@ -840,13 +1256,14 @@ async function loadAllTeachers() {
     }
 }
 
-function displayApprovedTeachers(teachers) {
+function displayApprovedTeachers(teachers, opts = {}) {
     const tableBody = document.getElementById('all-teachers-table');
     const noTeachersDiv = document.getElementById('no-all-teachers');
     
     if (teachers.length === 0) {
         tableBody.innerHTML = '';
         noTeachersDiv.classList.remove('hidden');
+        if (!opts.skipPagination) renderTeacherDirectoryPagination(0);
         return;
     }
     
@@ -883,14 +1300,6 @@ function displayApprovedTeachers(teachers) {
                     </span>
                 </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 w-16 bg-gray-200 rounded-full h-2">
-                        <div class="bg-green-600 h-2 rounded-full" style="width: ${teacher.performance_score || 0}%"></div>
-                    </div>
-                    <span class="ml-2 text-sm text-gray-600">${teacher.performance_score || 0}%</span>
-                </div>
-            </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <button onclick="viewTeacherDetails(${teacher.id})" class="text-indigo-600 hover:text-indigo-900 mr-3">
                     <i class="fas fa-eye"></i> View
@@ -898,17 +1307,22 @@ function displayApprovedTeachers(teachers) {
                 <button onclick="manageTeacherClasses(${teacher.id})" class="text-blue-600 hover:text-blue-900 mr-3">
                     <i class="fas fa-chalkboard-teacher"></i> Classes
                 </button>
-                <button onclick="viewStudentProgress(${teacher.id})" class="text-green-600 hover:text-green-900">
-                    <i class="fas fa-chart-line"></i> Progress
+                <button type="button" onclick="archiveTeacherAccount(${teacher.id})" class="text-red-600 hover:text-red-900">
+                    <i class="fas fa-trash"></i> Remove
                 </button>
             </td>
         </tr>
     `).join('');
+
+    if (!opts.skipPagination) renderTeacherDirectoryPagination(teachers.length);
 }
 
 function viewAllTeachers() {
     console.log('Viewing all teachers:', allTeachers.length); // Debug log
-    displayAllTeachers(allTeachers);
+    teacherDirectoryView = 'approved';
+    teacherDirectoryTeachers = allTeachers.filter(t => t.status === 'approved' || t.status_text === 'Approved');
+    teacherDirectoryPage = 1;
+    renderTeacherDirectory();
     updatePageTitle('All Teachers');
 }
 
@@ -920,7 +1334,10 @@ function viewRejectedTeachers() {
         return isRejected;
     });
     console.log('Rejected teachers found:', rejectedTeachers.length); // Debug log
-    displayAllTeachers(rejectedTeachers);
+    teacherDirectoryView = 'rejected';
+    teacherDirectoryTeachers = rejectedTeachers;
+    teacherDirectoryPage = 1;
+    renderTeacherDirectory();
     updatePageTitle('Rejected Teachers');
 }
 
@@ -929,7 +1346,10 @@ async function viewApprovedTeachers() {
     const approvedTeachers = allTeachers.filter(teacher => {
         return teacher.status === 'approved' || teacher.status_text === 'Approved';
     });
-    displayAllTeachers(approvedTeachers);
+    teacherDirectoryView = 'approved';
+    teacherDirectoryTeachers = approvedTeachers;
+    teacherDirectoryPage = 1;
+    renderTeacherDirectory();
     updatePageTitle('Approved Teachers');
 }
 
@@ -940,7 +1360,7 @@ function refreshAllTeachers() {
     updatePageTitle('All Teachers');
 }
 
-function displayAllTeachers(teachers) {
+function displayAllTeachers(teachers, opts = {}) {
     const tableBody = document.getElementById('all-teachers-table');
     const noTeachersDiv = document.getElementById('no-all-teachers');
     
@@ -949,6 +1369,7 @@ function displayAllTeachers(teachers) {
     if (teachers.length === 0) {
         tableBody.innerHTML = '';
         noTeachersDiv.classList.remove('hidden');
+        if (!opts.skipPagination) renderTeacherDirectoryPagination(0);
         return;
     }
     
@@ -985,14 +1406,6 @@ function displayAllTeachers(teachers) {
                     </span>
                 </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 w-16 bg-gray-200 rounded-full h-2">
-                        <div class="bg-green-600 h-2 rounded-full" style="width: ${teacher.performance_score || 0}%"></div>
-                    </div>
-                    <span class="ml-2 text-sm text-gray-600">${teacher.performance_score || 0}%</span>
-                </div>
-            </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <button onclick="viewTeacherDetails(${teacher.id})" class="text-indigo-600 hover:text-indigo-900 mr-3">
                     <i class="fas fa-eye"></i> View
@@ -1001,8 +1414,8 @@ function displayAllTeachers(teachers) {
                     <button onclick="manageTeacherClasses(${teacher.id})" class="text-blue-600 hover:text-blue-900 mr-3">
                         <i class="fas fa-chalkboard-teacher"></i> Classes
                     </button>
-                    <button onclick="viewStudentProgress(${teacher.id})" class="text-green-600 hover:text-green-900">
-                        <i class="fas fa-chart-line"></i> Progress
+                    <button type="button" onclick="archiveTeacherAccount(${teacher.id})" class="text-red-600 hover:text-red-900">
+                        <i class="fas fa-trash"></i> Remove
                     </button>
                 ` : teacher.status === 'pending' ? `
                     <button onclick="approveTeacher(${teacher.id})" class="text-green-600 hover:text-green-900 mr-3">
@@ -1011,10 +1424,15 @@ function displayAllTeachers(teachers) {
                     <button onclick="showRejectionModal(${teacher.id})" class="text-red-600 hover:text-red-900">
                         <i class="fas fa-times"></i> Reject
                     </button>
+                    <button type="button" onclick="archiveTeacherAccount(${teacher.id})" class="text-red-600 hover:text-red-900 ml-3">
+                        <i class="fas fa-trash"></i> Remove
+                    </button>
                 ` : ''}
             </td>
         </tr>
     `).join('');
+
+    if (!opts.skipPagination) renderTeacherDirectoryPagination(teachers.length);
 }
 
 function getStatusBadgeClass(status) {
@@ -1102,43 +1520,52 @@ function displayClassManagement(teacher, classes, students) {
     const potentialStudents = students.filter(s => !s.enrollment_date);
     
     content.innerHTML = `
-        <div class="mb-6">
-            <h4 class="text-lg font-semibold text-gray-900 mb-2">${teacher.first_name} ${teacher.last_name}</h4>
-            <p class="text-gray-600">${teacher.department} - ${teacher.subject}</p>
+        <div class="flex items-start justify-between gap-4 mb-6">
+            <div class="min-w-0">
+                <h4 class="text-lg font-semibold text-slate-900 truncate">${escapeHtml(teacher.first_name)} ${escapeHtml(teacher.last_name)}</h4>
+                <p class="text-sm text-slate-600 mt-1 truncate">${escapeHtml(teacher.department || '—')} • ${escapeHtml(teacher.subject || '—')}</p>
+            </div>
+            <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-50 text-slate-700 border border-slate-200">
+                <i class="fas fa-chalkboard-teacher mr-2 text-slate-500"></i>
+                ${classes.length} class${classes.length === 1 ? '' : 'es'}
+            </span>
         </div>
         
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Classes Section -->
             <div>
-                <h5 class="text-md font-semibold text-gray-900 mb-4">Classes Created</h5>
+                <div class="flex items-center gap-2 mb-4">
+                    <i class="fas fa-chalkboard text-indigo-600"></i>
+                    <h5 class="text-sm font-semibold text-slate-900">Classes</h5>
+                </div>
                 <div class="space-y-3">
                     ${classes.length > 0 ? classes.map(cls => `
-                        <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="border border-slate-200 rounded-xl p-4 bg-white">
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <h6 class="font-medium text-gray-900">${cls.class_name || 'Unnamed Class'}</h6>
-                                    <p class="text-sm text-gray-600">Class ID: ${cls.id}</p>
-                                    ${cls.grade_level ? `<p class="text-sm text-gray-500">Grade: ${cls.grade_level}</p>` : ''}
-                                    ${cls.strand ? `<p class="text-sm text-gray-500">Strand: ${cls.strand}</p>` : ''}
+                                    <h6 class="font-semibold text-slate-900">${escapeHtml(cls.class_name || 'Unnamed Class')}</h6>
+                                    <p class="text-xs text-slate-500 mt-1">Class ID: ${escapeHtml(String(cls.id))}</p>
+                                    <div class="mt-2 flex flex-wrap gap-2">
+                                        ${cls.grade_level ? `<span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-slate-50 text-slate-700 border border-slate-200"><i class="fas fa-layer-group mr-1 text-slate-500"></i> Grade ${escapeHtml(String(cls.grade_level))}</span>` : ''}
+                                        ${cls.strand ? `<span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-slate-50 text-slate-700 border border-slate-200"><i class="fas fa-stream mr-1 text-slate-500"></i> ${escapeHtml(String(cls.strand))}</span>` : ''}
+                                    </div>
                                 </div>
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                    ${enrolledStudents.filter(s => s.class_id == cls.id).length} Enrolled
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100">
+                                    <i class="fas fa-user-check mr-1"></i>
+                                    ${enrolledStudents.filter(s => s.class_id == cls.id).length} enrolled
                                 </span>
                             </div>
-                            <div class="mt-3">
-                                <button onclick="viewClassStudents(${cls.id})" class="text-blue-600 hover:text-blue-800 text-sm mr-3">
-                                    <i class="fas fa-users mr-1"></i>View Enrolled Students
-                                </button>
-                                <button onclick="manageClassEnrollment(${cls.id})" class="text-green-600 hover:text-green-800 text-sm">
-                                    <i class="fas fa-user-plus mr-1"></i>Manage Enrollment
+                            <div class="mt-3 flex items-center justify-between gap-3">
+                                <button type="button" onclick="viewClassStudents(${cls.id})" class="inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-indigo-700 bg-indigo-50 border border-indigo-100 rounded-lg hover:bg-indigo-100/70">
+                                    <i class="fas fa-users mr-2"></i>View students
                                 </button>
                             </div>
                         </div>
                     `).join('') : `
-                        <div class="text-center py-8 text-gray-500">
-                            <i class="fas fa-chalkboard-teacher text-4xl mb-4"></i>
-                            <p class="text-lg">No classes created yet</p>
-                            <p class="text-sm">This teacher hasn't created any classes</p>
+                        <div class="text-center py-10 text-slate-500 border border-dashed border-slate-200 rounded-xl bg-slate-50">
+                            <i class="fas fa-chalkboard-teacher text-3xl mb-3 text-slate-400"></i>
+                            <p class="font-semibold text-slate-700">No classes yet</p>
+                            <p class="text-sm mt-1">This teacher hasn’t created any classes.</p>
                         </div>
                     `}
                 </div>
@@ -1146,67 +1573,35 @@ function displayClassManagement(teacher, classes, students) {
             
             <!-- Students Section -->
             <div>
-                <h5 class="text-md font-semibold text-gray-900 mb-4">Students</h5>
-                
-                <!-- Enrolled Students -->
-                ${enrolledStudents.length > 0 ? `
-                    <div class="mb-4">
-                        <h6 class="text-sm font-medium text-green-700 mb-2">Enrolled Students (${enrolledStudents.length})</h6>
-                        <div class="space-y-2">
-                            ${enrolledStudents.slice(0, 3).map(student => `
-                                <div class="flex items-center justify-between p-2 bg-green-50 rounded-lg">
-                                    <div class="flex items-center">
-                                        <div class="h-6 w-6 bg-green-500 rounded-full flex items-center justify-center">
-                                            <span class="text-white text-xs font-medium">${student.first_name.charAt(0)}${student.last_name.charAt(0)}</span>
-                                        </div>
-                                        <div class="ml-2">
-                                            <p class="text-sm font-medium text-gray-900">${student.first_name} ${student.last_name}</p>
-                                            <p class="text-xs text-gray-500">${student.student_id || student.email}</p>
-                                        </div>
-                                    </div>
-                                    <span class="text-xs text-green-600">Enrolled</span>
-                                </div>
-                            `).join('')}
+                <div class="flex items-center gap-2 mb-4">
+                    <i class="fas fa-graduation-cap text-indigo-600"></i>
+                    <h5 class="text-sm font-semibold text-slate-900">Students</h5>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                    <div class="border border-slate-200 rounded-xl bg-white p-4">
+                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Total enrolled</p>
+                        <p class="text-2xl font-bold text-slate-900 mt-1">${enrolledStudents.length}</p>
+                        <p class="text-xs text-slate-500 mt-1">Across all classes</p>
+                    </div>
+                    <div class="border border-slate-200 rounded-xl bg-white p-4">
+                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Available list</p>
+                        <p class="text-2xl font-bold text-slate-900 mt-1">${potentialStudents.length}</p>
+                        <p class="text-xs text-slate-500 mt-1">Not enrolled (if provided)</p>
+                    </div>
+                </div>
+
+                <div class="border border-slate-200 rounded-xl bg-slate-50 p-4">
+                    <div class="flex items-start gap-3">
+                        <div class="h-10 w-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-700 flex-shrink-0">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-sm font-semibold text-slate-900">View enrolled students per class</p>
+                            <p class="text-sm text-slate-600 mt-1">Click <span class="font-semibold">View students</span> on a class card to open the full enrolled list with pagination.</p>
                         </div>
                     </div>
-                ` : ''}
-                
-                <!-- Potential Students -->
-                ${potentialStudents.length > 0 ? `
-                    <div>
-                        <h6 class="text-sm font-medium text-gray-700 mb-2">Available Students (${potentialStudents.length})</h6>
-                        <div class="space-y-2">
-                            ${potentialStudents.slice(0, 3).map(student => `
-                                <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-                                    <div class="flex items-center">
-                                        <div class="h-6 w-6 bg-gray-400 rounded-full flex items-center justify-center">
-                                            <span class="text-white text-xs font-medium">${student.first_name.charAt(0)}${student.last_name.charAt(0)}</span>
-                                        </div>
-                                        <div class="ml-2">
-                                            <p class="text-sm font-medium text-gray-900">${student.first_name} ${student.last_name}</p>
-                                            <p class="text-xs text-gray-500">${student.student_id || student.email}</p>
-                                        </div>
-                                    </div>
-                                    <span class="text-xs text-gray-500">Not Enrolled</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                ` : `
-                    <div class="text-center py-8 text-gray-500">
-                        <i class="fas fa-graduation-cap text-4xl mb-4"></i>
-                        <p class="text-lg">No students found</p>
-                        <p class="text-sm">No students are available for enrollment</p>
-                    </div>
-                `}
-                
-                ${students.length > 6 ? `
-                    <div class="text-center mt-4">
-                        <button onclick="viewAllStudents(${teacher.id})" class="text-blue-600 hover:text-blue-800 text-sm">
-                            View all ${students.length} students
-                        </button>
-                    </div>
-                ` : ''}
+                </div>
             </div>
         </div>
     `;
@@ -1239,105 +1634,111 @@ async function viewStudentProgress(teacherId) {
 function displayStudentProgress(teacher, students, analytics) {
     const content = document.getElementById('student-progress-content');
     content.innerHTML = `
-        <div class="mb-6">
-            <h4 class="text-lg font-semibold text-gray-900 mb-2">Student Progress & Analytics</h4>
-            <p class="text-gray-600">${teacher.first_name} ${teacher.last_name} - ${teacher.subject}</p>
+        <div class="flex items-start justify-between gap-4 mb-6">
+            <div class="min-w-0">
+                <h4 class="text-lg font-semibold text-slate-900 truncate">Progress & analytics</h4>
+                <p class="text-sm text-slate-600 mt-1 truncate">${escapeHtml(teacher.first_name)} ${escapeHtml(teacher.last_name)} • ${escapeHtml(teacher.subject || '—')}</p>
+            </div>
+            <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-50 text-slate-700 border border-slate-200">
+                <i class="fas fa-users mr-2 text-slate-500"></i>
+                ${students.length} student${students.length === 1 ? '' : 's'}
+            </span>
         </div>
         
         <!-- Analytics Overview -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <div class="bg-blue-50 p-4 rounded-lg">
+            <div class="border border-slate-200 bg-slate-50 p-4 rounded-xl">
                 <div class="flex items-center">
-                    <i class="fas fa-graduation-cap text-blue-600 text-2xl mr-3"></i>
+                    <i class="fas fa-graduation-cap text-indigo-600 text-2xl mr-3"></i>
                     <div>
-                        <p class="text-sm text-gray-600">Total Students</p>
-                        <p class="text-xl font-bold text-gray-900">${analytics.total_students || 0}</p>
+                        <p class="text-sm text-slate-600">Total students</p>
+                        <p class="text-xl font-bold text-slate-900">${analytics.total_students || 0}</p>
                     </div>
                 </div>
             </div>
-            <div class="bg-green-50 p-4 rounded-lg">
+            <div class="border border-slate-200 bg-slate-50 p-4 rounded-xl">
                 <div class="flex items-center">
-                    <i class="fas fa-chart-line text-green-600 text-2xl mr-3"></i>
+                    <i class="fas fa-chart-line text-emerald-600 text-2xl mr-3"></i>
                     <div>
-                        <p class="text-sm text-gray-600">Avg Progress</p>
-                        <p class="text-xl font-bold text-gray-900">${analytics.avg_progress || 0}%</p>
+                        <p class="text-sm text-slate-600">Avg progress</p>
+                        <p class="text-xl font-bold text-slate-900">${analytics.avg_progress || 0}%</p>
                     </div>
                 </div>
             </div>
-            <div class="bg-purple-50 p-4 rounded-lg">
+            <div class="border border-slate-200 bg-slate-50 p-4 rounded-xl">
                 <div class="flex items-center">
-                    <i class="fas fa-trophy text-purple-600 text-2xl mr-3"></i>
+                    <i class="fas fa-trophy text-violet-600 text-2xl mr-3"></i>
                     <div>
-                        <p class="text-sm text-gray-600">Achievements</p>
-                        <p class="text-xl font-bold text-gray-900">${analytics.total_achievements || 0}</p>
+                        <p class="text-sm text-slate-600">Achievements</p>
+                        <p class="text-xl font-bold text-slate-900">${analytics.total_achievements || 0}</p>
                     </div>
                 </div>
             </div>
-            <div class="bg-yellow-50 p-4 rounded-lg">
+            <div class="border border-slate-200 bg-slate-50 p-4 rounded-xl">
                 <div class="flex items-center">
-                    <i class="fas fa-star text-yellow-600 text-2xl mr-3"></i>
+                    <i class="fas fa-star text-amber-600 text-2xl mr-3"></i>
                     <div>
-                        <p class="text-sm text-gray-600">Avg Quiz Score</p>
-                        <p class="text-xl font-bold text-gray-900">${analytics.avg_quiz_score || 0}%</p>
+                        <p class="text-sm text-slate-600">Avg quiz score</p>
+                        <p class="text-xl font-bold text-slate-900">${analytics.avg_quiz_score || 0}%</p>
                     </div>
                 </div>
             </div>
         </div>
         
         <!-- Students Table -->
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+        <div class="overflow-x-auto border border-slate-200 rounded-xl">
+            <table class="min-w-full divide-y divide-slate-200">
+                <thead class="bg-slate-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progress</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quiz Scores</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Achievements</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ranking</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Student</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Progress</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Quiz score</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Achievements</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Ranking</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody class="bg-white divide-y divide-slate-100">
                     ${students.map(student => `
-                        <tr class="hover:bg-gray-50">
+                        <tr class="hover:bg-slate-50">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
-                                    <div class="h-8 w-8 bg-purple-500 rounded-full flex items-center justify-center">
+                                    <div class="h-9 w-9 bg-slate-900 rounded-full flex items-center justify-center">
                                         <span class="text-white text-xs font-medium">${student.first_name.charAt(0)}${student.last_name.charAt(0)}</span>
                                     </div>
                                     <div class="ml-3">
-                                        <div class="text-sm font-medium text-gray-900">${student.first_name} ${student.last_name}</div>
-                                        <div class="text-sm text-gray-500">${student.student_id}</div>
+                                        <div class="text-sm font-semibold text-slate-900">${escapeHtml(student.first_name)} ${escapeHtml(student.last_name)}</div>
+                                        <div class="text-xs text-slate-500">${escapeHtml(student.student_id || '—')}</div>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
-                                    <div class="flex-shrink-0 w-16 bg-gray-200 rounded-full h-2">
-                                        <div class="bg-green-600 h-2 rounded-full" style="width: ${student.progress_percentage || 0}%"></div>
+                                    <div class="flex-shrink-0 w-24 bg-slate-200 rounded-full h-2">
+                                        <div class="bg-emerald-600 h-2 rounded-full" style="width: ${student.progress_percentage || 0}%"></div>
                                     </div>
-                                    <span class="ml-2 text-sm text-gray-600">${student.progress_percentage || 0}%</span>
+                                    <span class="ml-2 text-sm text-slate-600">${student.progress_percentage || 0}%</span>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getScoreBadgeClass(student.avg_quiz_score)}">
                                     ${student.avg_quiz_score || 0}%
                                 </span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-900 border border-amber-200">
                                     <i class="fas fa-trophy mr-1"></i>
                                     ${student.achievements_count || 0}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRankingBadgeClass(student.ranking)}">
                                     #${student.ranking || 'N/A'}
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <button onclick="viewStudentDetails(${student.id})" class="text-indigo-600 hover:text-indigo-900">
-                                    <i class="fas fa-eye"></i> Details
+                                <button type="button" onclick="viewStudentDetails(${student.id})" class="inline-flex items-center text-indigo-700 hover:text-indigo-900 hover:bg-indigo-50 px-2 py-1 rounded-lg">
+                                    <i class="fas fa-eye mr-2"></i> Details
                                 </button>
                             </td>
                         </tr>
@@ -1373,11 +1774,6 @@ function closeStudentProgressModal() {
     currentTeacherId = null;
 }
 
-function viewClassStudents(classId) {
-    // Implementation for viewing students in a specific class
-    console.log('Viewing students for class:', classId);
-}
-
 function viewAllStudents(teacherId) {
     // Implementation for viewing all students
     console.log('Viewing all students for teacher:', teacherId);
@@ -1397,6 +1793,135 @@ function manageClassEnrollment(classId) {
         icon: 'info',
         confirmButtonText: 'OK'
     });
+}
+
+// Enrolled students modal (admin class management)
+let enrolledStudentsModalState = {
+    open: false,
+    teacher: null,
+    classId: null,
+    className: '',
+    students: [],
+    page: 1,
+    pageSize: 10
+};
+
+function closeEnrolledStudentsModal() {
+    const modal = document.getElementById('enrolled-students-modal');
+    if (modal) modal.classList.add('hidden');
+    enrolledStudentsModalState.open = false;
+}
+
+window.closeEnrolledStudentsModal = closeEnrolledStudentsModal;
+
+function setEnrolledStudentsPage(page) {
+    enrolledStudentsModalState.page = page;
+    renderEnrolledStudentsTable();
+}
+
+window.setEnrolledStudentsPage = setEnrolledStudentsPage;
+
+function renderEnrolledStudentsPagination(total) {
+    const wrap = document.getElementById('enrolled-students-pagination');
+    if (!wrap) return;
+
+    if (total <= enrolledStudentsModalState.pageSize) {
+        wrap.innerHTML = '';
+        return;
+    }
+
+    const totalPages = Math.max(1, Math.ceil(total / enrolledStudentsModalState.pageSize));
+    const page = Math.max(1, Math.min(totalPages, enrolledStudentsModalState.page));
+    enrolledStudentsModalState.page = page;
+
+    const startIdx = (page - 1) * enrolledStudentsModalState.pageSize;
+    const endIdx = Math.min(total, startIdx + enrolledStudentsModalState.pageSize);
+
+    const makeBtn = (label, targetPage, disabled, extraClass = '') => `
+        <button type="button"
+            class="px-3 py-2 text-sm font-medium rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed ${extraClass}"
+            ${disabled ? 'disabled' : ''}
+            onclick="setEnrolledStudentsPage(${targetPage})">
+            ${label}
+        </button>
+    `;
+
+    const prevBtn = makeBtn('Prev', page - 1, page <= 1);
+    const nextBtn = makeBtn('Next', page + 1, page >= totalPages);
+
+    const pages = [];
+    const windowSize = 2;
+    const addPage = (p) => pages.push(makeBtn(String(p), p, false, p === page ? 'bg-slate-800 text-white border-slate-800 hover:bg-slate-900' : ''));
+    const addEllipsis = () => pages.push(`<span class="px-2 text-slate-400 select-none">…</span>`);
+
+    if (totalPages <= 7) {
+        for (let p = 1; p <= totalPages; p++) addPage(p);
+    } else {
+        addPage(1);
+        if (page > 1 + windowSize + 1) addEllipsis();
+        for (let p = Math.max(2, page - windowSize); p <= Math.min(totalPages - 1, page + windowSize); p++) addPage(p);
+        if (page < totalPages - windowSize - 1) addEllipsis();
+        addPage(totalPages);
+    }
+
+    wrap.innerHTML = `
+        <div class="text-sm text-slate-600">
+            Showing <span class="font-semibold text-slate-800">${startIdx + 1}</span>–<span class="font-semibold text-slate-800">${endIdx}</span>
+            of <span class="font-semibold text-slate-800">${total}</span>
+        </div>
+        <div class="flex items-center gap-2 flex-wrap justify-start sm:justify-end">
+            ${prevBtn}
+            <div class="flex items-center gap-1">
+                ${pages.join('')}
+            </div>
+            ${nextBtn}
+        </div>
+    `;
+}
+
+function renderEnrolledStudentsTable() {
+    const tbody = document.getElementById('enrolled-students-table');
+    const empty = document.getElementById('enrolled-students-empty');
+    if (!tbody || !empty) return;
+
+    const list = Array.isArray(enrolledStudentsModalState.students) ? enrolledStudentsModalState.students : [];
+    const total = list.length;
+
+    if (total === 0) {
+        tbody.innerHTML = '';
+        empty.classList.remove('hidden');
+        renderEnrolledStudentsPagination(0);
+        return;
+    }
+
+    empty.classList.add('hidden');
+
+    const totalPages = Math.max(1, Math.ceil(total / enrolledStudentsModalState.pageSize));
+    const page = Math.max(1, Math.min(totalPages, enrolledStudentsModalState.page));
+    enrolledStudentsModalState.page = page;
+
+    const startIdx = (page - 1) * enrolledStudentsModalState.pageSize;
+    const endIdx = Math.min(total, startIdx + enrolledStudentsModalState.pageSize);
+    const pageItems = list.slice(startIdx, endIdx);
+
+    tbody.innerHTML = pageItems.map(s => `
+        <tr class="hover:bg-slate-50">
+            <td class="px-4 py-3 text-sm text-slate-900">
+                <div class="flex items-center gap-3">
+                    <div class="h-9 w-9 rounded-full bg-slate-900 flex items-center justify-center flex-shrink-0">
+                        <span class="text-white text-xs font-semibold">${escapeHtml(String(s.first_name || '').charAt(0))}${escapeHtml(String(s.last_name || '').charAt(0))}</span>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="font-semibold truncate">${escapeHtml(s.first_name || '')} ${escapeHtml(s.last_name || '')}</div>
+                    </div>
+                </div>
+            </td>
+            <td class="px-4 py-3 text-sm text-slate-700 break-all">${escapeHtml(s.email || '—')}</td>
+            <td class="px-4 py-3 text-sm text-slate-600">${escapeHtml(formatDate(s.enrollment_date || s.enrolled_at || s.created_at || ''))}</td>
+        </tr>
+    `).join('');
+
+    renderEnrolledStudentsPagination(total);
 }
 
 function viewClassStudents(classId) {
@@ -1427,59 +1952,38 @@ function viewClassStudents(classId) {
         });
         
         if (data.success) {
+            const classes = Array.isArray(data.classes) ? data.classes : [];
+            const cls = classes.find(c => String(c.id) === String(classId));
+
             // Filter students for the specific class (handle both string and number)
-            const classStudents = data.students.filter(student => {
-                const matches = student.class_id == classId || 
-                               student.class_id === classId || 
-                               parseInt(student.class_id) === parseInt(classId);
-                console.log(`Student ${student.first_name} ${student.last_name}: class_id=${student.class_id}, classId=${classId}, matches=${matches}`);
-                return matches;
+            const classStudents = (data.students || []).filter(student => {
+                return student.class_id == classId ||
+                    student.class_id === classId ||
+                    parseInt(student.class_id) === parseInt(classId);
             });
-            console.log('ViewClassStudents - Students for class', classId, ':', classStudents);
-            
-            const enrolledStudents = classStudents.filter(student => student.enrollment_date);
-            console.log('ViewClassStudents - Enrolled students:', enrolledStudents);
-            
-            if (enrolledStudents.length > 0) {
-                let studentList = `Enrolled Students in Class ${classId}:\n\n`;
-                enrolledStudents.forEach(student => {
-                    studentList += `• ${student.first_name} ${student.last_name}\n`;
-                    studentList += `  Email: ${student.email}\n`;
-                    studentList += `  Student ID: ${student.student_id || 'N/A'}\n`;
-                    studentList += `  Enrolled: ${student.enrollment_date || 'Unknown'}\n\n`;
-                });
-                
-                Swal.fire({
-                    title: 'Enrolled Students',
-                    text: studentList,
-                    html: `<pre style="text-align: left; font-size: 12px;">${studentList}</pre>`,
-                    width: '60%'
-                });
-            } else {
-                // Fallback: Show all enrolled students for this teacher
-                const allEnrolledStudents = data.students.filter(student => student.enrollment_date);
-                console.log('ViewClassStudents - Fallback: All enrolled students:', allEnrolledStudents);
-                
-                if (allEnrolledStudents.length > 0) {
-                    let studentList = `All Enrolled Students for Teacher:\n\n`;
-                    allEnrolledStudents.forEach(student => {
-                        studentList += `• ${student.first_name} ${student.last_name}\n`;
-                        studentList += `  Email: ${student.email}\n`;
-                        studentList += `  Student ID: ${student.student_id || 'N/A'}\n`;
-                        studentList += `  Class ID: ${student.class_id || 'N/A'}\n`;
-                        studentList += `  Enrolled: ${student.enrollment_date || 'Unknown'}\n\n`;
-                    });
-                    
-                    Swal.fire({
-                        title: 'All Enrolled Students',
-                        text: studentList,
-                        html: `<pre style="text-align: left; font-size: 12px;">${studentList}</pre>`,
-                        width: '60%'
-                    });
-                } else {
-                    Swal.fire('Info', 'No students enrolled in this class', 'info');
-                }
+
+            const enrolled = classStudents.filter(student => student.enrollment_date);
+
+            // Update modal header text
+            const titleEl = document.getElementById('enrolled-students-title');
+            const subEl = document.getElementById('enrolled-students-subtitle');
+            if (titleEl) titleEl.textContent = 'Enrolled students';
+            if (subEl) {
+                const className = cls && cls.class_name ? String(cls.class_name) : `Class ${classId}`;
+                subEl.textContent = `${className} • ${enrolled.length} enrolled`;
             }
+
+            // Store state + render
+            enrolledStudentsModalState.teacher = data.teacher || null;
+            enrolledStudentsModalState.classId = classId;
+            enrolledStudentsModalState.className = cls && cls.class_name ? String(cls.class_name) : '';
+            enrolledStudentsModalState.students = enrolled;
+            enrolledStudentsModalState.page = 1;
+
+            const modal = document.getElementById('enrolled-students-modal');
+            if (modal) modal.classList.remove('hidden');
+            enrolledStudentsModalState.open = true;
+            renderEnrolledStudentsTable();
         } else {
             Swal.fire('Error', 'Failed to load class data', 'error');
         }
@@ -1497,3 +2001,184 @@ window.viewClassStudents = viewClassStudents;
 window.viewAllStudents = viewAllStudents;
 window.viewStudentDetails = viewStudentDetails;
 window.manageClassEnrollment = manageClassEnrollment;
+
+async function loadMaintenancePanel() {
+    try {
+        const res = await fetch('php/admin-maintenance.php', { credentials: 'same-origin', cache: 'no-store' });
+        const data = await res.json();
+        if (data.success && data.data) {
+            applyMaintenanceForm(data.data);
+        }
+    } catch (e) {
+        console.error('loadMaintenancePanel', e);
+    }
+}
+
+function applyMaintenanceForm(d) {
+    const titleEl = document.getElementById('maintenance-title');
+    const msgEl = document.getElementById('maintenance-message');
+    const etaEl = document.getElementById('maintenance-eta');
+    const label = document.getElementById('maintenance-status-label');
+    const dot = document.getElementById('maintenance-status-dot');
+    const badge = document.getElementById('maintenance-status-badge');
+    if (titleEl) titleEl.value = d.title || '';
+    if (msgEl) msgEl.value = d.public_message || '';
+    if (etaEl) {
+        etaEl.value = d.estimated_end_at ? isoToDatetimeLocal(d.estimated_end_at) : '';
+    }
+    if (label && dot && badge) {
+        if (d.is_active) {
+            label.textContent = 'Maintenance ON — students/teachers cannot log in';
+            dot.className = 'w-2 h-2 rounded-full bg-amber-500 mr-2 animate-pulse';
+            badge.className = 'mb-6 inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-amber-50 text-amber-900 border border-amber-200';
+        } else {
+            label.textContent = 'Normal — logins allowed';
+            dot.className = 'w-2 h-2 rounded-full bg-emerald-500 mr-2';
+            badge.className = 'mb-6 inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200';
+        }
+    }
+}
+
+function isoToDatetimeLocal(s) {
+    if (!s) return '';
+    const normalized = String(s).replace(' ', 'T');
+    const d = new Date(normalized);
+    if (isNaN(d.getTime())) return '';
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function showEmailResult(email) {
+    const el = document.getElementById('maintenance-email-result');
+    if (!el) return;
+    if (!email || (email.sent == null && email.failed == null)) {
+        el.textContent = '';
+        return;
+    }
+    const total = Number(email.total_recipients || (Number(email.sent || 0) + Number(email.failed || 0)));
+    const durationMs = Number(email.duration_ms || 0);
+    const durationText = durationMs > 0 ? ` in ${(durationMs / 1000).toFixed(1)}s` : '';
+    el.textContent = `Last email run: sent ${email.sent}, failed ${email.failed}, total ${total}${durationText}`;
+}
+
+function setMaintenanceActionBusy(isBusy, message) {
+    const startBtn = document.getElementById('maintenance-start-btn');
+    const saveBtn = document.getElementById('maintenance-save-btn');
+    const endBtn = document.getElementById('maintenance-end-btn');
+    const resultEl = document.getElementById('maintenance-email-result');
+    [startBtn, saveBtn, endBtn].forEach((btn) => {
+        if (!btn) return;
+        btn.disabled = !!isBusy;
+    });
+    if (resultEl && message) {
+        resultEl.textContent = message;
+    }
+}
+
+async function startSystemMaintenance() {
+    const title = document.getElementById('maintenance-title')?.value?.trim() || '';
+    const public_message = document.getElementById('maintenance-message')?.value?.trim() || '';
+    const estimated_end_at = document.getElementById('maintenance-eta')?.value || '';
+    const send_email = document.getElementById('maintenance-email-start')?.checked;
+    const confirm = await Swal.fire({
+        title: 'Start maintenance?',
+        text: 'Students and teachers will not be able to log in until you end maintenance.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, start',
+        confirmButtonColor: '#d97706'
+    });
+    if (!confirm.isConfirmed) return;
+    try {
+        setMaintenanceActionBusy(true, send_email
+            ? 'Sending maintenance email announcements... please wait.'
+            : 'Starting maintenance...');
+        const res = await fetch('php/admin-maintenance.php', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'start', title, public_message, estimated_end_at, send_email })
+        });
+        const data = await res.json();
+        if (data.success) {
+            Swal.fire({ icon: 'success', title: 'Maintenance started', text: data.message || '' });
+            applyMaintenanceForm(data.data);
+            showEmailResult(data.email);
+        } else {
+            Swal.fire('Error', data.message || 'Failed', 'error');
+        }
+    } catch (e) {
+        Swal.fire('Error', String(e.message || e), 'error');
+    } finally {
+        setMaintenanceActionBusy(false);
+    }
+}
+
+async function saveMaintenanceDraft() {
+    const title = document.getElementById('maintenance-title')?.value?.trim() || '';
+    const public_message = document.getElementById('maintenance-message')?.value?.trim() || '';
+    const estimated_end_at = document.getElementById('maintenance-eta')?.value || '';
+    try {
+        setMaintenanceActionBusy(true, 'Saving maintenance details...');
+        const res = await fetch('php/admin-maintenance.php', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'update', title, public_message, estimated_end_at })
+        });
+        const data = await res.json();
+        if (data.success) {
+            Swal.fire({ icon: 'success', title: 'Saved', text: data.message || 'Details updated.' });
+            applyMaintenanceForm(data.data);
+        } else {
+            Swal.fire('Error', data.message || 'Failed (is maintenance active?)', 'error');
+        }
+    } catch (e) {
+        Swal.fire('Error', String(e.message || e), 'error');
+    } finally {
+        setMaintenanceActionBusy(false);
+    }
+}
+
+async function endSystemMaintenance() {
+    const send_email = document.getElementById('maintenance-email-end')?.checked;
+    const title = document.getElementById('maintenance-title')?.value?.trim() || '';
+    const public_message = document.getElementById('maintenance-message')?.value?.trim() || '';
+    const estimated_end_at = document.getElementById('maintenance-eta')?.value || '';
+    const confirm = await Swal.fire({
+        title: 'End maintenance?',
+        text: 'Students and teachers will be able to log in again.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, complete',
+        confirmButtonColor: '#059669'
+    });
+    if (!confirm.isConfirmed) return;
+    try {
+        setMaintenanceActionBusy(true, send_email
+            ? 'Ending maintenance and sending completion emails... please wait.'
+            : 'Ending maintenance...');
+        const res = await fetch('php/admin-maintenance.php', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'end', send_email, title, public_message, estimated_end_at })
+        });
+        const data = await res.json();
+        if (data.success) {
+            Swal.fire({ icon: 'success', title: 'Maintenance ended', text: data.message || '' });
+            applyMaintenanceForm(data.data);
+            showEmailResult(data.email);
+        } else {
+            Swal.fire('Error', data.message || 'Failed', 'error');
+        }
+    } catch (e) {
+        Swal.fire('Error', String(e.message || e), 'error');
+    } finally {
+        setMaintenanceActionBusy(false);
+    }
+}
+
+window.startSystemMaintenance = startSystemMaintenance;
+window.saveMaintenanceDraft = saveMaintenanceDraft;
+window.endSystemMaintenance = endSystemMaintenance;

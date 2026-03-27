@@ -27,6 +27,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode($response);
             exit;
         }
+
+        require_once __DIR__ . '/maintenance-helper.php';
+        if (isMaintenanceMode($pdo)) {
+            $p = getMaintenancePayload($pdo);
+            $msg = trim((string) ($p['message'] ?? '')) !== ''
+                ? $p['message']
+                : 'MathEase is temporarily unavailable while we apply updates. Please try again later.';
+            header('Content-Type: application/json');
+            http_response_code(503);
+            echo json_encode([
+                'success' => false,
+                'message' => $msg,
+                'error_type' => 'maintenance',
+                'field' => 'email',
+            ]);
+            exit;
+        }
         
         // Check if user exists and get verification status
         $stmt = $pdo->prepare("

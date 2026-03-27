@@ -969,7 +969,7 @@
                 <div class="flex items-center w-full sm:w-auto justify-between sm:justify-start">
                     <div class="flex items-center">
                         <span class="text-xs sm:text-sm text-gray-600 mr-2 font-medium">Question</span>
-                        <span class="text-xl sm:text-2xl font-bold text-gray-800" id="progressText">0/11</span>
+                        <span class="text-xl sm:text-2xl font-bold text-gray-800" id="progressText">0/15</span>
                     </div>
                     
                     <!-- Mobile: Show timer inline on small screens -->
@@ -1035,7 +1035,7 @@
                         </li>
                         <li class="flex items-start">
                             <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
-                            <span>Don't rush through the problem solving section</span>
+                            <span>Don't rush through every multiple choice question</span>
                         </li>
                         <li class="flex items-start">
                             <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
@@ -1091,7 +1091,7 @@
                     <ul class="space-y-2 text-gray-700">
                         <li class="flex items-start">
                             <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
-                            <span>Quiz has 11 total questions (10 multiple choice + 1 problem solving)</span>
+                            <span>Quiz has 15 total questions (all multiple choice)</span>
                         </li>
                         <li class="flex items-start">
                             <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
@@ -1478,129 +1478,63 @@
                 </div>
             </div>
 
-            <!-- Problem Solving Question -->
-            <div class="question-card bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 rounded-3xl shadow-2xl p-8 sm:p-10 mb-8 border-4 border-purple-400" data-question="11">
-                <!-- Header Section -->
-                <div class="flex flex-col sm:flex-row items-center justify-between mb-8 pb-6 border-b-2 border-purple-200">
-                    <div class="flex items-center space-x-4 mb-4 sm:mb-0">
-                        <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-full text-lg font-bold shadow-lg">
-                            <i class="fas fa-calculator mr-2"></i>Problem Solving
-                        </div>
-                        <span class="bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-800 px-5 py-2 rounded-full text-base font-bold shadow-md">
-                            <i class="fas fa-star mr-1"></i>1 point
-                        </span>
+            <!-- Question 11 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="11">
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">What value makes (x + 3)/(x - 2) undefined?</p>
+                    <div class="space-y-3">
+                        <label class="quiz-option"><input type="radio" name="q11" value="a" class="hidden"><div class="option-label">a</div><span class="flex-1">-3</span></label>
+                        <label class="quiz-option"><input type="radio" name="q11" value="b" class="hidden"><div class="option-label">b</div><span class="flex-1">2</span></label>
+                        <label class="quiz-option"><input type="radio" name="q11" value="c" class="hidden"><div class="option-label">c</div><span class="flex-1">0</span></label>
+                        <label class="quiz-option"><input type="radio" name="q11" value="d" class="hidden"><div class="option-label">d</div><span class="flex-1">3</span></label>
                     </div>
                 </div>
-                
-                <!-- Question Information Section -->
-                <div class="mb-8">
-                    <div class="bg-gradient-to-r from-blue-50 to-cyan-50 border-l-4 border-blue-500 p-6 mb-6 rounded-r-xl shadow-md">
-                        <div class="flex items-start">
-                            <div class="bg-blue-500 rounded-full p-3 mr-4">
-                                <i class="fas fa-thermometer-half text-white text-xl"></i>
-                            </div>
-                            <div class="flex-1">
-                                <h4 class="font-bold text-blue-800 mb-3 text-xl flex items-center">
-                                    <i class="fas fa-lightbulb mr-2"></i>Given Function
-                                </h4>
-                                <div class="bg-white rounded-lg p-4 mb-3">
-                                    <p class="math-expression text-center text-xl font-semibold text-gray-800">F = (9/5)C + 32</p>
-                                    <p class="text-center text-sm text-gray-600 mt-2">where C is Celsius and F is Fahrenheit</p>
-                                </div>
-                            </div>
-                        </div>
+            </div>
+            <!-- Question 12 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="12">
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">Solve: 1/(x + 1) = 1/4</p>
+                    <div class="space-y-3">
+                        <label class="quiz-option"><input type="radio" name="q12" value="a" class="hidden"><div class="option-label">a</div><span class="flex-1">x = 2</span></label>
+                        <label class="quiz-option"><input type="radio" name="q12" value="b" class="hidden"><div class="option-label">b</div><span class="flex-1">x = 3</span></label>
+                        <label class="quiz-option"><input type="radio" name="q12" value="c" class="hidden"><div class="option-label">c</div><span class="flex-1">x = 4</span></label>
+                        <label class="quiz-option"><input type="radio" name="q12" value="d" class="hidden"><div class="option-label">d</div><span class="flex-1">x = 5</span></label>
                     </div>
-                    
-                    <!-- Question Section -->
-                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 p-6 mb-6 rounded-r-xl shadow-md">
-                        <div class="flex items-start">
-                            <div class="bg-green-500 rounded-full p-3 mr-4">
-                                <i class="fas fa-question-circle text-white text-xl"></i>
-                            </div>
-                            <div class="flex-1">
-                                <h4 class="font-bold text-green-800 mb-3 text-xl flex items-center">
-                                    <i class="fas fa-bullseye mr-2"></i>What We Need to Find
-                                </h4>
-                                <p class="text-green-700 text-lg font-semibold mb-3">
-                                    Find the inverse function that converts Fahrenheit to Celsius. Express your answer as <strong class="text-green-800 text-xl">C = (your answer)</strong>
-                                </p>
-                                <div class="bg-white rounded-lg p-3 border border-green-200">
-                                    <p class="text-green-600 text-base flex items-center">
-                                        <i class="fas fa-lightbulb mr-2 text-yellow-500"></i>
-                                        <strong>Hint:</strong> To find the inverse, solve for C in terms of F. Start by subtracting 32, then multiply by 5/9! 🌡️
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                </div>
+            </div>
+            <!-- Question 13 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="13">
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">For inequality (x - 1)/(x + 2) > 0, which interval is included?</p>
+                    <div class="space-y-3">
+                        <label class="quiz-option"><input type="radio" name="q13" value="a" class="hidden"><div class="option-label">a</div><span class="flex-1">(-2, 1)</span></label>
+                        <label class="quiz-option"><input type="radio" name="q13" value="b" class="hidden"><div class="option-label">b</div><span class="flex-1">(-inf, -2)</span></label>
+                        <label class="quiz-option"><input type="radio" name="q13" value="c" class="hidden"><div class="option-label">c</div><span class="flex-1">{1}</span></label>
+                        <label class="quiz-option"><input type="radio" name="q13" value="d" class="hidden"><div class="option-label">d</div><span class="flex-1">[-2, 1]</span></label>
                     </div>
-                    
-                    <!-- Step-by-step guide -->
-                    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 mb-6 border-l-4 border-indigo-500 shadow-md">
-                        <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                            <i class="fas fa-list-ol text-indigo-500 mr-3"></i>Step-by-Step Guide
-                        </h4>
-                        <div class="space-y-3">
-                            <div class="flex items-start bg-white rounded-lg p-3">
-                                <span class="bg-indigo-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3 mt-1 flex-shrink-0">1</span>
-                                <div>
-                                    <p class="font-medium text-gray-800">Start with the given function:</p>
-                                    <p class="text-sm text-gray-600">F = (9/5)C + 32</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start bg-white rounded-lg p-3">
-                                <span class="bg-indigo-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3 mt-1 flex-shrink-0">2</span>
-                                <div>
-                                    <p class="font-medium text-gray-800">Subtract 32 from both sides:</p>
-                                    <p class="text-sm text-gray-600">F - 32 = (9/5)C</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start bg-white rounded-lg p-3">
-                                <span class="bg-indigo-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3 mt-1 flex-shrink-0">3</span>
-                                <div>
-                                    <p class="font-medium text-gray-800">Multiply both sides by 5/9:</p>
-                                    <p class="text-sm text-gray-600">(5/9)(F - 32) = C</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start bg-white rounded-lg p-3">
-                                <span class="bg-indigo-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3 mt-1 flex-shrink-0">4</span>
-                                <div>
-                                    <p class="font-medium text-gray-800">Write the inverse function:</p>
-                                    <p class="text-sm text-gray-600">C = (5/9)(F - 32)</p>
-                                </div>
-                            </div>
-                        </div>
+                </div>
+            </div>
+            <!-- Question 14 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="14">
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">What must be done after solving a rational equation?</p>
+                    <div class="space-y-3">
+                        <label class="quiz-option"><input type="radio" name="q14" value="a" class="hidden"><div class="option-label">a</div><span class="flex-1">Round to nearest integer</span></label>
+                        <label class="quiz-option"><input type="radio" name="q14" value="b" class="hidden"><div class="option-label">b</div><span class="flex-1">Check for extraneous values</span></label>
+                        <label class="quiz-option"><input type="radio" name="q14" value="c" class="hidden"><div class="option-label">c</div><span class="flex-1">Multiply by zero</span></label>
+                        <label class="quiz-option"><input type="radio" name="q14" value="d" class="hidden"><div class="option-label">d</div><span class="flex-1">Always include denominator roots</span></label>
                     </div>
-                    
-                    <!-- Answer Input Section -->
-                    <div class="bg-gradient-to-br from-white to-purple-50 rounded-2xl p-6 sm:p-8 mb-6 border-4 border-purple-300 shadow-2xl">
-                        <div class="text-center mb-6">
-                            <h4 class="font-bold text-gray-800 mb-2 text-2xl sm:text-3xl flex items-center justify-center">
-                                <i class="fas fa-pencil-alt mr-3 text-purple-600"></i>Your Answer
-                            </h4>
-                            <p class="text-lg text-gray-600">Enter the inverse function in the format: C = (your answer)</p>
-                        </div>
-                        <div class="mb-4">
-                            <label for="ps-answer" class="block text-sm font-medium text-gray-700 mb-2">Your Answer:</label>
-                            <input 
-                                type="text" 
-                                id="ps-answer" 
-                                name="ps-answer" 
-                                class="w-full px-4 py-3 border-4 border-purple-400 rounded-xl focus:border-purple-600 focus:ring-4 focus:ring-purple-200 transition-all text-lg"
-                                placeholder="e.g., (5/9)(F - 32)"
-                            >
-                        </div>
-                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                            <div class="flex">
-                                <div class="flex-shrink-0">
-                                    <i class="fas fa-exclamation-triangle text-yellow-400"></i>
-                                </div>
-                                <div class="ml-3">
-                                    <p class="text-sm text-yellow-700">
-                                        <strong>Note:</strong> Make sure your answer is in the correct format. The answer should be C = (5/9)(F - 32) or an equivalent form.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                </div>
+            </div>
+            <!-- Question 15 -->
+            <div class="question-card bg-white rounded-2xl shadow-lg p-8 mb-6" data-question="15">
+                <div class="mb-6">
+                    <p class="text-lg text-gray-700 mb-4">If (x^2 - 9)/(x - 3) = k for x != 3, what is k?</p>
+                    <div class="space-y-3">
+                        <label class="quiz-option"><input type="radio" name="q15" value="a" class="hidden"><div class="option-label">a</div><span class="flex-1">x - 3</span></label>
+                        <label class="quiz-option"><input type="radio" name="q15" value="b" class="hidden"><div class="option-label">b</div><span class="flex-1">x + 3</span></label>
+                        <label class="quiz-option"><input type="radio" name="q15" value="c" class="hidden"><div class="option-label">c</div><span class="flex-1">x^2 + 3</span></label>
+                        <label class="quiz-option"><input type="radio" name="q15" value="d" class="hidden"><div class="option-label">d</div><span class="flex-1">9</span></label>
                     </div>
                 </div>
             </div>
@@ -1632,7 +1566,7 @@
                 <!-- Score Summary -->
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
                     <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 text-center">
-                        <div class="text-3xl font-bold text-blue-600 mb-2" id="totalScore">0/11</div>
+                        <div class="text-3xl font-bold text-blue-600 mb-2" id="totalScore">0/15</div>
                         <div class="text-sm text-gray-600">Total Score</div>
                     </div>
                     <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 text-center">
@@ -1677,7 +1611,7 @@
                             </div>
                         </div>
                         <div class="bg-white rounded-lg p-4">
-                            <h4 class="font-semibold text-gray-800 mb-3">Problem Solving</h4>
+                            <h4 class="font-semibold text-gray-800 mb-3">All Questions</h4>
                             <div class="space-y-2">
                                 <div class="flex justify-between">
                                     <span class="text-gray-600">Questions:</span>
@@ -1983,6 +1917,7 @@
         let itemsPerPage = 10;
 
         // Quiz data with correct answers
+        const TOTAL_MCQ = 15;
         const quizData = {
             answers: {
                 q1: 'a', // A function where each element in the range corresponds to exactly one element in the domain
@@ -1995,11 +1930,15 @@
                 q8: 'a', // Domain and range swap
                 q9: 'a', // They ensure unique encryption and decryption
                 q10: 'a', // f⁻¹(x) = ∛x
-                'ps-answer': '(5/9)(F - 32)' // Temperature conversion inverse function
+                q11: 'b', // undefined at x = 2
+                q12: 'b', // x = 3
+                q13: 'b', // (-inf, -2)
+                q14: 'b', // check extraneous values
+                q15: 'b' // x + 3
             },
             points: {
                 q1: 1, q2: 1, q3: 1, q4: 1, q5: 1, q6: 1, q7: 1, q8: 1, q9: 1, q10: 1,
-                'ps-answer': 1
+                q11: 1, q12: 1, q13: 1, q14: 1, q15: 1
             },
             questionOrder: [] // Will store shuffled question order
         };
@@ -2032,15 +1971,6 @@
                 });
             });
             
-            // Also listen for problem solving input
-            const psInput = document.getElementById('ps-answer');
-            if (psInput) {
-                psInput.addEventListener('input', function() {
-                    if (!isReviewMode) {
-                        updateProgress();
-                    }
-                });
-            }
         }
 
         // Update option styles when selected
@@ -2058,20 +1988,14 @@
         
         // Update progress with animations
         function updateProgress() {
-            const totalQuestions = 11; // 10 multiple choice + 1 problem solving question
+            const totalQuestions = TOTAL_MCQ;
             let answered = 0;
             
             // Count answered multiple choice questions
-            for (let i = 1; i <= 10; i++) {
+            for (let i = 1; i <= TOTAL_MCQ; i++) {
                 if (document.querySelector(`input[name="q${i}"]:checked`)) {
                     answered++;
                 }
-            }
-            
-            // Count answered problem solving question
-            const psAnswerElement = document.getElementById('ps-answer');
-            if (psAnswerElement && psAnswerElement.value.trim() !== '') {
-                answered++;
             }
             
             const progress = (answered / totalQuestions) * 100;
@@ -2274,14 +2198,10 @@
             const answers = {};
             
             // Multiple choice questions
-            for (let i = 1; i <= 10; i++) {
+            for (let i = 1; i <= TOTAL_MCQ; i++) {
                 const selected = document.querySelector(`input[name="q${i}"]:checked`);
                 answers[`q${i}`] = selected ? selected.value : null;
             }
-            
-            // Problem solving question
-            const psAnswerElement = document.getElementById('ps-answer');
-            answers['ps-answer'] = psAnswerElement ? psAnswerElement.value.trim() : '';
             
             return answers;
         }
@@ -2292,7 +2212,7 @@
             let totalPoints = 0;
             
             // Check multiple choice questions
-            for (let i = 1; i <= 10; i++) {
+            for (let i = 1; i <= TOTAL_MCQ; i++) {
                 const questionKey = `q${i}`;
                 const studentAnswer = answers[questionKey];
                 const correctAnswer = quizData.answers[questionKey];
@@ -2302,16 +2222,6 @@
                 if (studentAnswer && studentAnswer.toString().toLowerCase() === correctAnswer.toString().toLowerCase()) {
                     score += points;
                 }
-            }
-            
-            // Check problem solving question
-            const psAnswer = answers['ps-answer'];
-            const psCorrect = quizData.answers['ps-answer'];
-            const psPoints = quizData.points['ps-answer'] || 1;
-            totalPoints += psPoints;
-            
-            if (psAnswer && psAnswer.toString().trim().toLowerCase() === psCorrect.toString().trim().toLowerCase()) {
-                score += psPoints;
             }
             
             return { score, totalPoints };
@@ -2335,23 +2245,12 @@
                 
                 // Add answers to form data
                 for (const [key, value] of Object.entries(answers)) {
-                    // Ensure ps-answer is included even if empty
                     const answerValue = value !== null && value !== undefined ? value : '';
                     formData.append(`answers[${key}]`, answerValue);
-                    if (key === 'ps-answer') {
-                        console.log(`✅ Added ${key} to form data:`, answerValue || '(empty)');
-                    }
-                }
-                
-                // Double-check ps-answer is included
-                if (!answers.hasOwnProperty('ps-answer')) {
-                    console.warn('⚠️ ps-answer missing from answers object, adding empty value');
-                    formData.append('answers[ps-answer]', '');
                 }
                 
                 console.log('Sending request to quiz-management.php...');
                 console.log('All answer keys being sent:', Object.keys(answers));
-                console.log('ps-answer value being sent:', answers['ps-answer'] || '(empty)');
                 
                 // Create abort controller for timeout
                 const controller = new AbortController();
@@ -2440,8 +2339,8 @@
                 if (quizContainer) quizContainer.classList.add('hidden');
                 if (resultsContainer) resultsContainer.classList.remove('hidden');
                 
-                const totalQuestions = result.total_questions || 11; // Number of questions (11)
-                const totalPoints = result.total_points || 11; // Total points (10 MC * 1 + 1 PS * 1 = 11)
+                const totalQuestions = result.total_questions || TOTAL_MCQ;
+                const totalPoints = result.total_points || TOTAL_MCQ;
                 const percentage = Math.round((result.score / totalPoints) * 100);
                 
                 // Update score displays
@@ -2484,13 +2383,16 @@
                 // Store quiz results for AI analysis
                 quizResultsForAI = {
                     score: result.score,
-                    total_points: totalPoints,
+                    totalQuestions: totalQuestions,
+                    totalPoints: totalPoints,
                     percentage: percentage,
-                    correct_answers: result.correct_answers,
-                    incorrect_answers: result.incorrect_answers,
-                    time_taken: quizDuration,
-                    answers: userAnswers,
-                    quiz_type: 'one-to-one-functions'
+                    correct: result.correct_answers,
+                    incorrect: result.incorrect_answers,
+                    timeTaken: getFormattedTime(),
+                    mcCorrect: result.correct_answers,
+                    mcIncorrect: result.incorrect_answers,
+                    studentAnswers: userAnswers,
+                    quizType: 'one-to-one-functions'
                 };
                 
                 // Display quiz review
@@ -2557,9 +2459,12 @@
             const quizContainer = document.getElementById('quizContainer');
             if (!quizContainer) return;
             
-            // Get all question cards (1-10, exclude problem solving 11)
+            // Get all question cards
             const questions = Array.from(quizContainer.querySelectorAll('[data-question]'))
-                .filter(q => q.getAttribute('data-question') !== '11');
+                .filter(q => {
+                    const n = parseInt(q.getAttribute('data-question'), 10);
+                    return n >= 1 && n <= TOTAL_MCQ;
+                });
             
             // Shuffle using Fisher-Yates algorithm
             for (let i = questions.length - 1; i > 0; i--) {
@@ -2571,23 +2476,16 @@
             quizData.questionOrder = questions.map(q => parseInt(q.getAttribute('data-question')));
             console.log('✅ Question order:', quizData.questionOrder);
             
-            // Reorder questions in DOM (but keep problem solving at the end)
-            const problemSolving = quizContainer.querySelector('[data-question="11"]');
+            // Reorder questions in DOM
             const submitButton = document.getElementById('submitButtonContainer');
             
             // Remove all questions from container
             questions.forEach(q => q.remove());
-            if (problemSolving) problemSolving.remove();
             
             // Add shuffled questions back
             const fragment = document.createDocumentFragment();
             questions.forEach(q => fragment.appendChild(q));
             quizContainer.insertBefore(fragment, submitButton);
-            
-            // Add problem solving question back at the end
-            if (problemSolving) {
-                quizContainer.insertBefore(problemSolving, submitButton);
-            }
             
             console.log('✅ Questions shuffled successfully');
         }
@@ -2655,7 +2553,7 @@
             reviewContainer.innerHTML = '';
             
             // Review each question
-            for (let i = 1; i <= 10; i++) {
+            for (let i = 1; i <= TOTAL_MCQ; i++) {
                 const questionKey = `q${i}`;
                 const studentAnswer = studentAnswers[questionKey];
                 const correctAnswer = quizData.answers[questionKey];
@@ -2676,24 +2574,6 @@
                 reviewContainer.appendChild(questionDiv);
             }
             
-            // Review problem solving question
-            const psAnswer = studentAnswers['ps-answer'];
-            const psCorrect = quizData.answers['ps-answer'];
-            const isPSCorrect = psAnswer && psAnswer.trim().toLowerCase() === psCorrect.trim().toLowerCase();
-            
-            const psDiv = document.createElement('div');
-            psDiv.className = `p-4 mb-4 rounded-lg ${isPSCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`;
-            psDiv.innerHTML = `
-                <div class="flex items-start justify-between mb-2">
-                    <h3 class="font-semibold text-gray-800">Problem Solving Question</h3>
-                    ${isPSCorrect ? '<span class="text-green-600 font-bold">✓ Correct</span>' : '<span class="text-red-600 font-bold">✗ Incorrect</span>'}
-                </div>
-                <div class="text-sm text-gray-600">
-                    <p><strong>Your answer:</strong> ${psAnswer || 'Not answered'}</p>
-                    <p><strong>Correct answer:</strong> ${psCorrect}</p>
-                </div>
-            `;
-            reviewContainer.appendChild(psDiv);
         }
         
         // Check and award badges
@@ -2975,7 +2855,7 @@
             document.getElementById('aiContent').classList.add('hidden');
             
             try {
-                const response = await fetch('../php/ai-analysis.php', {
+                const response = await fetch('../php/quiz-ai-assistant.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(quizResultsForAI),
@@ -3023,12 +2903,13 @@
         function displayAIMetrics(results) {
             const metricsContainer = document.getElementById('aiMetrics');
             if (!metricsContainer) return;
+            const totalPoints = results.totalPoints || results.total_points || TOTAL_MCQ;
             
             metricsContainer.innerHTML = `
                 <div class="grid grid-cols-2 gap-4 mb-6">
                     <div class="bg-blue-50 p-4 rounded-lg">
                         <div class="text-sm text-blue-600 font-semibold">Score</div>
-                        <div class="text-2xl font-bold text-blue-900">${results.score}/${results.total_points}</div>
+                        <div class="text-2xl font-bold text-blue-900">${results.score}/${totalPoints}</div>
                     </div>
                     <div class="bg-green-50 p-4 rounded-lg">
                         <div class="text-sm text-green-600 font-semibold">Percentage</div>

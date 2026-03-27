@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'config.php';
+require_once 'student-notification-helper.php';
 
 header('Content-Type: application/json');
 
@@ -44,6 +45,40 @@ class ClassManagement {
             
             if ($stmt->execute([$teacherId, $className, $classCode, $description, $subject, $gradeLevel, $strand, $maxStudents])) {
                 $classId = $this->pdo->lastInsertId();
+
+                // Log teacher activity (class created)
+                try {
+                    $this->pdo->exec("
+                        CREATE TABLE IF NOT EXISTS teacher_activity_log (
+                            id INT AUTO_INCREMENT PRIMARY KEY,
+                            teacher_id INT NOT NULL,
+                            action VARCHAR(100) NOT NULL,
+                            details TEXT,
+                            ip_address VARCHAR(45),
+                            user_agent TEXT,
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                            INDEX idx_teacher (teacher_id),
+                            INDEX idx_action (action),
+                            INDEX idx_created (created_at)
+                        )
+                    ");
+
+                    $details = "Created class '{$className}' (Code: {$classCode})";
+                    if (!empty($gradeLevel)) $details .= ", Grade {$gradeLevel}";
+                    if (!empty($strand)) $details .= ", Strand {$strand}";
+
+                    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+                    $ua = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
+
+                    $logStmt = $this->pdo->prepare("
+                        INSERT INTO teacher_activity_log (teacher_id, action, details, ip_address, user_agent)
+                        VALUES (?, 'class_created', ?, ?, ?)
+                    ");
+                    $logStmt->execute([$teacherId, $details, $ip, $ua]);
+                } catch (Exception $e) {
+                    error_log('Failed to log teacher class creation activity: ' . $e->getMessage());
+                }
+
                 return [
                     'success' => true,
                     'class_id' => $classId,
@@ -280,6 +315,16 @@ class ClassManagement {
                     'message' => 'Enrollment not found or you do not have permission'
                 ];
             }
+
+            // Idempotency: avoid duplicate notifications when status is unchanged.
+            $currentStatus = strtolower((string)($enrollment['enrollment_status'] ?? ''));
+            if ($currentStatus === strtolower($status)) {
+                return [
+                    'success' => true,
+                    'message' => 'Enrollment status already set. No new notification sent.',
+                    'student_name' => $enrollment['first_name'] . ' ' . $enrollment['last_name']
+                ];
+            }
             
             // Start transaction
             $this->pdo->beginTransaction();
@@ -297,11 +342,6 @@ class ClassManagement {
                 }
                 
                 // Create notification for the student
-                $notificationStmt = $this->pdo->prepare("
-                    INSERT INTO notifications (user_id, type, title, message, is_read, created_at) 
-                    VALUES (?, ?, ?, ?, 0, UTC_TIMESTAMP())
-                ");
-                
                 if ($status === 'approved') {
                     $notificationType = 'enrollment_approved';
                     $notificationTitle = "Enrollment Approved: " . $enrollment['class_name'];
@@ -315,12 +355,49 @@ class ClassManagement {
                     }
                 }
                 
-                $notificationStmt->execute([
-                    $enrollment['student_id'],
+                createStudentNotification(
+                    $this->pdo,
+                    (int)$enrollment['student_id'],
                     $notificationType,
                     $notificationTitle,
                     $notificationMessage
-                ]);
+                );
+
+                // Log teacher activity for enrollment decision
+                try {
+                    $this->pdo->exec("
+                        CREATE TABLE IF NOT EXISTS teacher_activity_log (
+                            id INT AUTO_INCREMENT PRIMARY KEY,
+                            teacher_id INT NOT NULL,
+                            action VARCHAR(100) NOT NULL,
+                            details TEXT,
+                            ip_address VARCHAR(45),
+                            user_agent TEXT,
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                            INDEX idx_teacher (teacher_id),
+                            INDEX idx_action (action),
+                            INDEX idx_created (created_at)
+                        )
+                    ");
+
+                    $action = $status === 'approved' ? 'student_enrollment_approved' : 'student_enrollment_rejected';
+                    $detail = ($status === 'approved' ? 'Approved' : 'Rejected') .
+                        " enrollment for {$enrollment['first_name']} {$enrollment['last_name']} in class '{$enrollment['class_name']}'.";
+                    if ($status !== 'approved' && !empty($notes)) {
+                        $detail .= " Notes: " . $notes;
+                    }
+
+                    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+                    $ua = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
+
+                    $logStmt = $this->pdo->prepare("
+                        INSERT INTO teacher_activity_log (teacher_id, action, details, ip_address, user_agent)
+                        VALUES (?, ?, ?, ?, ?)
+                    ");
+                    $logStmt->execute([$teacherId, $action, $detail, $ip, $ua]);
+                } catch (Exception $e) {
+                    error_log('Failed to log teacher enrollment activity: ' . $e->getMessage());
+                }
                 
                 // Commit transaction
                 $this->pdo->commit();

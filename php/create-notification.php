@@ -5,13 +5,24 @@
  */
 
 function createTeacherNotification($teacher_id, $type, $title, $message, $class_id = null) {
-    $host = 'localhost';
-    $dbname = 'mathease';
-    $username = 'root';
-    $password = '';
-    
+    putenv('DB_NAME=mathease_database3');
+    $_ENV['DB_NAME'] = 'mathease_database3';
+    $_SERVER['DB_NAME'] = 'mathease_database3';
+
+    if (file_exists(__DIR__ . '/config.php')) {
+        require_once __DIR__ . '/config.php';
+        $host = defined('DB_HOST') ? DB_HOST : 'localhost';
+        $username = defined('DB_USER') ? DB_USER : 'root';
+        $password = defined('DB_PASS') ? DB_PASS : '';
+    } else {
+        $host = 'localhost';
+        $username = 'root';
+        $password = '';
+    }
+    $dbname = 'mathease_database3';
+
     try {
-        $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+        $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         
         $stmt = $pdo->prepare("
@@ -109,13 +120,24 @@ function notifySystem($teacher_id, $title, $message) {
  * Batch create notifications for all teachers in a class
  */
 function notifyClassTeachers($class_id, $type, $title, $message) {
-    $host = 'localhost';
-    $dbname = 'mathease';
-    $username = 'root';
-    $password = '';
-    
+    putenv('DB_NAME=mathease_database3');
+    $_ENV['DB_NAME'] = 'mathease_database3';
+    $_SERVER['DB_NAME'] = 'mathease_database3';
+
+    if (file_exists(__DIR__ . '/config.php')) {
+        require_once __DIR__ . '/config.php';
+        $host = defined('DB_HOST') ? DB_HOST : 'localhost';
+        $username = defined('DB_USER') ? DB_USER : 'root';
+        $password = defined('DB_PASS') ? DB_PASS : '';
+    } else {
+        $host = 'localhost';
+        $username = 'root';
+        $password = '';
+    }
+    $dbname = 'mathease_database3';
+
     try {
-        $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+        $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         
         // Get teacher_id from class

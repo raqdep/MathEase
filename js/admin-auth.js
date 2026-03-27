@@ -121,22 +121,44 @@ async function checkAdminAuth() {
             sessionStorage.setItem('admin_email', data.admin_email);
             return true;
         } else {
-            // Not logged in, redirect to login
-            window.location.href = 'teacher-login.html';
+            window.location.href = 'teacher-login.html?from=admin';
             return false;
         }
     } catch (error) {
         console.error('Error checking admin session:', error);
-        // On error, redirect to login
-        window.location.href = 'teacher-login.html';
+        window.location.href = 'teacher-login.html?from=admin';
         return false;
     }
 }
 
-// Admin logout
+// Admin logout — use unified portal (same page as teachers; admins redirect after login)
 function adminLogout() {
-    sessionStorage.removeItem('admin_id');
-    sessionStorage.removeItem('admin_name');
-    sessionStorage.removeItem('admin_role');
-    window.location.href = 'admin-login.html';
+    const doLogout = () => {
+        sessionStorage.removeItem('admin_id');
+        sessionStorage.removeItem('admin_name');
+        sessionStorage.removeItem('admin_role');
+        sessionStorage.removeItem('admin_email');
+        window.location.href = 'php/admin-logout.php';
+    };
+
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Sign out?',
+            text: 'You will be logged out of the admin dashboard.',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, sign out',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#dc2626'
+        }).then((result) => {
+            if (result.isConfirmed) doLogout();
+        });
+        return;
+    }
+
+    if (window.confirm('Sign out of the admin dashboard?')) {
+        doLogout();
+    }
 }
+
+window.adminLogout = adminLogout;

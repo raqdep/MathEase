@@ -31,9 +31,42 @@ if (!$isTeacher) {
 }
 
 // Get teacher info before clearing session data
+$teacherId = $_SESSION['teacher_id'] ?? null;
 $teacherEmail = $_SESSION['teacher_email'] ?? null;
 
 error_log("Teacher logout - Teacher Email: " . $teacherEmail);
+
+// Log teacher activity (logout)
+if ($teacherId) {
+    try {
+        $pdo->exec("
+            CREATE TABLE IF NOT EXISTS teacher_activity_log (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                teacher_id INT NOT NULL,
+                action VARCHAR(100) NOT NULL,
+                details TEXT,
+                ip_address VARCHAR(45),
+                user_agent TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                INDEX idx_teacher (teacher_id),
+                INDEX idx_action (action),
+                INDEX idx_created (created_at)
+            )
+        ");
+
+        $stmt = $pdo->prepare("
+            INSERT INTO teacher_activity_log (teacher_id, action, details, ip_address, user_agent)
+            VALUES (?, 'logout', 'Teacher logged out', ?, ?)
+        ");
+        $stmt->execute([
+            $teacherId,
+            $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+            $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
+        ]);
+    } catch (Exception $e) {
+        error_log('Failed to log teacher logout activity: ' . $e->getMessage());
+    }
+}
 
 // Clear teacher remember me token if exists
 if (isset($_COOKIE['teacher_remember_token'])) {

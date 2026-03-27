@@ -10,6 +10,31 @@ if (!isset($_SESSION['admin_id'])) {
 }
 
 try {
+    // Ensure archive columns exist (older DBs won't have these yet)
+    $cols = [
+        'is_archived' => "ALTER TABLE teachers ADD COLUMN is_archived TINYINT(1) NOT NULL DEFAULT 0",
+        'archived_at' => "ALTER TABLE teachers ADD COLUMN archived_at DATETIME NULL",
+        'archived_by_admin_id' => "ALTER TABLE teachers ADD COLUMN archived_by_admin_id INT NULL",
+        'archive_reason' => "ALTER TABLE teachers ADD COLUMN archive_reason TEXT NULL",
+    ];
+    foreach ($cols as $col => $ddl) {
+        $check = $pdo->prepare("
+            SELECT COUNT(*) AS c
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME = 'teachers'
+              AND COLUMN_NAME = ?
+        ");
+        $check->execute([$col]);
+        $exists = (int) ($check->fetchColumn() ?: 0) > 0;
+        if (!$exists) {
+            $pdo->exec($ddl);
+        }
+    }
+
+    $archivedParam = $_GET['archived'] ?? null;
+    $wantArchived = (string) $archivedParam === '1' || (string) $archivedParam === 'true';
+
     // First, let's check what columns actually exist in the teachers table
     $stmt = $pdo->prepare("SHOW COLUMNS FROM teachers");
     $stmt->execute();
@@ -52,6 +77,10 @@ try {
     $selectQuery = implode(', ', $selectFields);
     
     // Get teachers with actual class and student counts
+    $whereArchived = $wantArchived
+        ? "COALESCE(t.is_archived, 0) = 1"
+        : "COALESCE(t.is_archived, 0) = 0";
+
     $stmt = $pdo->prepare("
         SELECT 
             t.id,
@@ -63,6 +92,10 @@ try {
             t.subject,
             {$statusColumn} as status,
             t.created_at,
+            COALESCE(t.is_archived, 0) as is_archived,
+            t.archived_at,
+            t.archived_by_admin_id,
+            t.archive_reason,
             COALESCE(class_stats.classes_count, 0) as classes_count,
             COALESCE(student_stats.students_count, 0) as students_count,
             COALESCE(student_stats.students_count, 0) * 10 as performance_score
@@ -83,6 +116,7 @@ try {
             LEFT JOIN class_enrollments ce ON c.id = ce.class_id
             GROUP BY c.teacher_id
         ) student_stats ON t.id = student_stats.teacher_id
+        WHERE {$whereArchived}
         ORDER BY t.created_at DESC
     ");
     

@@ -2249,7 +2249,7 @@
                 <div class="flex items-center w-full sm:w-auto justify-between sm:justify-start">
                     <div class="flex items-center">
                         <span class="text-xs sm:text-sm text-gray-600 mr-2 font-medium">Question</span>
-                        <span class="text-xl sm:text-2xl font-bold text-gray-800" id="progressText">0/11</span>
+                        <span class="text-xl sm:text-2xl font-bold text-gray-800" id="progressText">0/15</span>
                     </div>
                     
                     <!-- Mobile: Show timer inline on small screens -->
@@ -2315,7 +2315,7 @@
                         </li>
                         <li class="flex items-start">
                             <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
-                            <span>Don't rush through the problem solving section</span>
+                            <span>Don't rush through every multiple choice question</span>
                         </li>
                         <li class="flex items-start">
                             <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
@@ -2371,7 +2371,7 @@
                     <ul class="space-y-2 text-gray-700">
                         <li class="flex items-start">
                             <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
-                            <span>Quiz has 11 total questions (10 multiple choice + 1 problem solving)</span>
+                            <span>Quiz has 15 total questions (all multiple choice)</span>
                         </li>
                         <li class="flex items-start">
                             <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
@@ -2855,22 +2855,83 @@
                 </div>
             </div>
 
-            <!-- Problem Solving Question -->
+            <!-- Question 11 -->
             <div class="question-card p-6 sm:p-8 mb-6" data-question="11">
-                <!-- Question Text in Light Purple Card -->
                 <div class="relative z-10 p-6 sm:p-8 mb-6">
                     <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
-                        A company's average cost per unit is given by the rational function AC(x) = (1000 + 5x)/x, where x is the number of units produced. What is the average cost when 50 units are produced? (Express your answer as a decimal)
+                        What value makes (x + 3)/(x - 2) undefined?
                         <span class="text-pink-500 ml-2">?</span>
                     </h2>
                 </div>
-                
-                <!-- Answer Input -->
-                <div class="relative z-10">
-                    <div class="bg-white rounded-lg p-6 shadow-sm border-2 border-gray-200">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Enter your answer (in dollars):</label>
-                        <input type="number" id="ps-answer" step="0.01" class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-primary focus:outline-none" placeholder="Enter cost in dollars">
-                    </div>
+                <div class="relative z-10 space-y-3">
+                    <label class="quiz-option"><input type="radio" name="q11" value="a" class="hidden"><div class="option-label">a</div><span class="flex-1">-3</span></label>
+                    <label class="quiz-option"><input type="radio" name="q11" value="b" class="hidden"><div class="option-label">b</div><span class="flex-1">2</span></label>
+                    <label class="quiz-option"><input type="radio" name="q11" value="c" class="hidden"><div class="option-label">c</div><span class="flex-1">0</span></label>
+                    <label class="quiz-option"><input type="radio" name="q11" value="d" class="hidden"><div class="option-label">d</div><span class="flex-1">3</span></label>
+                </div>
+            </div>
+
+            <!-- Question 12 -->
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="12">
+                <div class="relative z-10 p-6 sm:p-8 mb-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
+                        Solve: 1/(x + 1) = 1/4
+                        <span class="text-pink-500 ml-2">?</span>
+                    </h2>
+                </div>
+                <div class="relative z-10 space-y-3">
+                    <label class="quiz-option"><input type="radio" name="q12" value="a" class="hidden"><div class="option-label">a</div><span class="flex-1">x = 2</span></label>
+                    <label class="quiz-option"><input type="radio" name="q12" value="b" class="hidden"><div class="option-label">b</div><span class="flex-1">x = 3</span></label>
+                    <label class="quiz-option"><input type="radio" name="q12" value="c" class="hidden"><div class="option-label">c</div><span class="flex-1">x = 4</span></label>
+                    <label class="quiz-option"><input type="radio" name="q12" value="d" class="hidden"><div class="option-label">d</div><span class="flex-1">x = 5</span></label>
+                </div>
+            </div>
+
+            <!-- Question 13 -->
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="13">
+                <div class="relative z-10 p-6 sm:p-8 mb-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
+                        For inequality (x - 1)/(x + 2) > 0, which interval is included?
+                        <span class="text-pink-500 ml-2">?</span>
+                    </h2>
+                </div>
+                <div class="relative z-10 space-y-3">
+                    <label class="quiz-option"><input type="radio" name="q13" value="a" class="hidden"><div class="option-label">a</div><span class="flex-1">(-2, 1)</span></label>
+                    <label class="quiz-option"><input type="radio" name="q13" value="b" class="hidden"><div class="option-label">b</div><span class="flex-1">(-inf, -2)</span></label>
+                    <label class="quiz-option"><input type="radio" name="q13" value="c" class="hidden"><div class="option-label">c</div><span class="flex-1">{1}</span></label>
+                    <label class="quiz-option"><input type="radio" name="q13" value="d" class="hidden"><div class="option-label">d</div><span class="flex-1">[-2, 1]</span></label>
+                </div>
+            </div>
+
+            <!-- Question 14 -->
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="14">
+                <div class="relative z-10 p-6 sm:p-8 mb-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
+                        What must be done after solving a rational equation?
+                        <span class="text-pink-500 ml-2">?</span>
+                    </h2>
+                </div>
+                <div class="relative z-10 space-y-3">
+                    <label class="quiz-option"><input type="radio" name="q14" value="a" class="hidden"><div class="option-label">a</div><span class="flex-1">Round to nearest integer</span></label>
+                    <label class="quiz-option"><input type="radio" name="q14" value="b" class="hidden"><div class="option-label">b</div><span class="flex-1">Check for extraneous values</span></label>
+                    <label class="quiz-option"><input type="radio" name="q14" value="c" class="hidden"><div class="option-label">c</div><span class="flex-1">Multiply by zero</span></label>
+                    <label class="quiz-option"><input type="radio" name="q14" value="d" class="hidden"><div class="option-label">d</div><span class="flex-1">Always include denominator roots</span></label>
+                </div>
+            </div>
+
+            <!-- Question 15 -->
+            <div class="question-card p-6 sm:p-8 mb-6" data-question="15">
+                <div class="relative z-10 p-6 sm:p-8 mb-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
+                        If (x^2 - 9)/(x - 3) = k for x != 3, what is k?
+                        <span class="text-pink-500 ml-2">?</span>
+                    </h2>
+                </div>
+                <div class="relative z-10 space-y-3">
+                    <label class="quiz-option"><input type="radio" name="q15" value="a" class="hidden"><div class="option-label">a</div><span class="flex-1">x - 3</span></label>
+                    <label class="quiz-option"><input type="radio" name="q15" value="b" class="hidden"><div class="option-label">b</div><span class="flex-1">x + 3</span></label>
+                    <label class="quiz-option"><input type="radio" name="q15" value="c" class="hidden"><div class="option-label">c</div><span class="flex-1">x^2 + 3</span></label>
+                    <label class="quiz-option"><input type="radio" name="q15" value="d" class="hidden"><div class="option-label">d</div><span class="flex-1">9</span></label>
                 </div>
             </div>
 
@@ -2910,7 +2971,7 @@
                 <!-- Score Summary -->
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
                     <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 text-center">
-                        <div class="text-3xl font-bold text-blue-600 mb-2" id="totalScore">0/11</div>
+                        <div class="text-3xl font-bold text-blue-600 mb-2" id="totalScore">0/15</div>
                         <div class="text-sm text-gray-600">Total Score</div>
                     </div>
                     <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 text-center">
@@ -3243,6 +3304,7 @@
         let hasLoggedOut = false;
 
         // Quiz data with correct answers
+        const TOTAL_MCQ = 15;
         const quizData = {
             answers: {
                 q1: 'a', // A function that can be expressed as the ratio of two polynomial functions
@@ -3254,10 +3316,12 @@
                 q7: 'd', // All of the above
                 q8: 'a', // x = 2
                 q9: 'a', // y = -4
-                q10: 'a' // Electrical resistance in parallel circuits
-            },
-            problemSolving: {
-                answer: 25.00 // AC(50) = (1000 + 5(50))/50 = 1250/50 = 25.00
+                q10: 'a', // Electrical resistance in parallel circuits
+                q11: 'b', // x = 2
+                q12: 'b', // x = 3
+                q13: 'b', // (-inf, -2)
+                q14: 'b', // check extraneous values
+                q15: 'b' // x + 3
             },
             questionOrder: [] // Will store shuffled question order
         };
@@ -3377,23 +3441,12 @@
                 
                 // Add answers to form data
                 for (const [key, value] of Object.entries(answers)) {
-                    // Ensure ps-answer is included even if empty
                     const answerValue = value !== null && value !== undefined ? value : '';
                     formData.append(`answers[${key}]`, answerValue);
-                    if (key === 'ps-answer') {
-                        console.log(`✅ Added ${key} to form data:`, answerValue || '(empty)');
-                    }
-                }
-                
-                // Double-check ps-answer is included
-                if (!answers.hasOwnProperty('ps-answer')) {
-                    console.warn('⚠️ ps-answer missing from answers object, adding empty value');
-                    formData.append('answers[ps-answer]', '');
                 }
                 
                 console.log('Sending request to quiz-management.php...');
                 console.log('All answer keys being sent:', Object.keys(answers));
-                console.log('ps-answer value being sent:', answers['ps-answer'] || '(empty)');
                 
                 // Create abort controller for timeout
                 const controller = new AbortController();
@@ -3601,17 +3654,14 @@
             }
             
             // Check if all questions are answered
-            const totalQuestions = 11; // 10 multiple choice + 1 problem solving question
+            const totalQuestions = TOTAL_MCQ;
             let answered = 0;
             
-            for (let i = 1; i <= 10; i++) {
+            for (let i = 1; i <= TOTAL_MCQ; i++) {
                 if (document.querySelector(`input[name="q${i}"]:checked`)) {
                     answered++;
                 }
             }
-            
-            const psAnswer = document.getElementById('ps-answer').value.trim();
-            if (psAnswer) answered++;
             
             // Show confirmation dialog
             const result = await Swal.fire({
@@ -3671,22 +3721,9 @@
             
             // Collect all answers
             const answers = {};
-            for (let i = 1; i <= 10; i++) {
+            for (let i = 1; i <= TOTAL_MCQ; i++) {
                 const selected = document.querySelector(`input[name="q${i}"]:checked`);
                 answers[`q${i}`] = selected ? selected.value : '';
-            }
-            
-            // Collect problem solving answer
-            const psInput = document.getElementById('ps-answer');
-            if (psInput) {
-                const rawValue = psInput.value;
-                if (rawValue !== null && rawValue !== undefined && rawValue !== '') {
-                    answers['ps-answer'] = String(rawValue).trim();
-                } else {
-                    answers['ps-answer'] = '';
-                }
-            } else {
-                answers['ps-answer'] = '';
             }
             
             // Submit to database
@@ -3721,23 +3758,9 @@
             const answers = {};
             
             // Multiple choice questions
-            for (let i = 1; i <= 10; i++) {
+            for (let i = 1; i <= TOTAL_MCQ; i++) {
                 const selected = document.querySelector(`input[name="q${i}"]:checked`);
                 answers[`q${i}`] = selected ? selected.value : '';
-            }
-            
-            // Problem solving question
-            const psInput = document.getElementById('ps-answer');
-            if (psInput) {
-                const rawValue = psInput.value;
-                if (rawValue !== null && rawValue !== undefined && rawValue !== '') {
-                    const psValue = String(rawValue).trim();
-                    answers['ps-answer'] = psValue;
-                } else {
-                    answers['ps-answer'] = '';
-                }
-            } else {
-                answers['ps-answer'] = '';
             }
             
             return answers;
@@ -3748,7 +3771,7 @@
             let score = 0;
             
             // Check multiple choice questions
-            for (let i = 1; i <= 10; i++) {
+            for (let i = 1; i <= TOTAL_MCQ; i++) {
                 const questionKey = `q${i}`;
                 const studentAnswer = answers[questionKey];
                 const correctAnswer = quizData.answers[questionKey];
@@ -3757,15 +3780,6 @@
                     score++;
                 }
             }
-            
-            // Check problem solving question
-            const psAnswer = answers['ps-answer'];
-            const psCorrect = quizData.problemSolving.answer;
-            
-            if (psAnswer && parseFloat(psAnswer) === psCorrect) {
-                score++;
-            }
-            
             return score;
         }
 
@@ -3782,7 +3796,7 @@
                         quiz_type: 'representations-of-rational-functions',
                         answers: answers,
                         score: score,
-                        total_questions: 11,
+                        total_questions: TOTAL_MCQ,
                         percentage: percentage,
                         time_taken: quizDuration
                     }),
@@ -3837,8 +3851,8 @@
                 if (quizContainer) quizContainer.classList.add('hidden');
                 if (resultsContainer) resultsContainer.classList.remove('hidden');
                 
-                const totalQuestions = result.total_questions || 11; // Number of questions (11)
-                const totalPoints = result.total_points || 11; // Total points (10 MC * 1 + 1 PS * 1 = 11)
+                const totalQuestions = result.total_questions || TOTAL_MCQ;
+                const totalPoints = result.total_points || TOTAL_MCQ;
                 const percentage = Math.round((result.score / totalPoints) * 100);
                 
                 // Update score displays
@@ -3878,30 +3892,16 @@
 
                 // Collect student answers from the quiz form
                 const studentAnswers = {};
-                for (let i = 1; i <= 10; i++) {
+                for (let i = 1; i <= TOTAL_MCQ; i++) {
                     const selected = document.querySelector(`input[name="q${i}"]:checked`);
                     studentAnswers[`q${i}`] = selected ? selected.value : '';
-                }
-                const psInput = document.getElementById('ps-answer');
-                if (psInput && psInput.value !== null && psInput.value !== undefined) {
-                    const psValue = psInput.value.trim();
-                    studentAnswers['ps-answer'] = psValue;
-                } else {
-                    studentAnswers['ps-answer'] = '';
                 }
 
                 // Show quiz review with correct/incorrect answers and explanations
                 displayQuizReview(studentAnswers);
                 
-                // Calculate problem solving correct/incorrect for AI analysis
-                const psAnswerString = studentAnswers['ps-answer'] || '';
-                const isPsCorrect = psAnswerString && parseFloat(psAnswerString) === quizData.problemSolving.answer;
-                const psCorrect = isPsCorrect ? 1 : 0;
-                const psIncorrect = isPsCorrect ? 0 : 1;
-                
-                // Calculate MC correct/incorrect
-                const mcCorrect = result.correct_answers - psCorrect;
-                const mcIncorrect = result.incorrect_answers - psIncorrect;
+                const mcCorrect = result.correct_answers;
+                const mcIncorrect = result.incorrect_answers;
                 
                 // Analyze which specific questions were answered correctly/incorrectly
                 const questionAnalysis = [];
@@ -3915,10 +3915,15 @@
                     7: { title: 'Representations of functions', concept: 'Understanding different ways to represent functions' },
                     8: { title: 'Vertical asymptote identification', concept: 'Finding vertical asymptotes from function form' },
                     9: { title: 'Y-intercepts', concept: 'Finding y-intercepts by evaluating f(0)' },
-                    10: { title: 'Real-world applications', concept: 'Understanding practical uses of rational functions' }
+                    10: { title: 'Real-world applications', concept: 'Understanding practical uses of rational functions' },
+                    11: { title: 'Undefined values', concept: 'Identifying denominator restrictions in rational expressions' },
+                    12: { title: 'Equation solving', concept: 'Solving one-step rational equations accurately' },
+                    13: { title: 'Interval testing', concept: 'Choosing valid sign intervals for rational inequalities' },
+                    14: { title: 'Solution validation', concept: 'Checking and removing extraneous solutions' },
+                    15: { title: 'Expression simplification', concept: 'Simplifying rational expressions with factoring' }
                 };
                 
-                for (let i = 1; i <= 10; i++) {
+                for (let i = 1; i <= TOTAL_MCQ; i++) {
                     const studentAnswer = studentAnswers[`q${i}`] || '';
                     const correctAnswer = quizData.answers[`q${i}`];
                     const isCorrect = studentAnswer === correctAnswer;
@@ -3943,12 +3948,9 @@
                     timeTaken: getFormattedTime(),
                     mcCorrect: mcCorrect,
                     mcIncorrect: mcIncorrect,
-                    psCorrect: psCorrect,
-                    psIncorrect: psIncorrect,
+                    quizType: 'representations-of-rational-functions',
                     studentAnswers: studentAnswers,
-                    questionAnalysis: questionAnalysis,
-                    problemSolvingAnswer: studentAnswers['ps-answer'] || '',
-                    problemSolvingCorrect: psCorrect > 0
+                    questionAnalysis: questionAnalysis
                 };
 
                 // Check and award badges for any completed quiz (backend decides which badges apply)
@@ -4095,10 +4097,8 @@
             if (!metricsDiv || !metrics) return;
             
             const percentage = metrics.percentage || 0;
-            const mcPercentage = metrics.mcPercentage || 0;
-            const psPercentage = metrics.psPercentage || 0;
+            const mcPercentage = metrics.mcPercentage || percentage;
             const mcCorrect = metrics.mcCorrect || 0;
-            const psCorrect = metrics.psCorrect || 0;
             
             let overallColorClass, overallIcon, overallLevel, overallStatus;
             if (percentage >= 90) {
@@ -4140,18 +4140,6 @@
                 mcStatus = 'Needs improvement in Multiple Choice';
             }
             
-            let psColorClass, psStatus;
-            if (psPercentage >= 80) {
-                psColorClass = 'from-purple-500 to-pink-600';
-                psStatus = 'Strong in Problem Solving';
-            } else if (psPercentage >= 50) {
-                psColorClass = 'from-yellow-500 to-orange-500';
-                psStatus = 'Moderate performance in Problem Solving';
-            } else {
-                psColorClass = 'from-red-500 to-pink-500';
-                psStatus = 'Needs improvement in Problem Solving';
-            }
-            
             metricsDiv.innerHTML = `
                 <div class="bg-gradient-to-br ${overallColorClass} rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-transform">
                     <div class="flex items-center justify-between mb-3">
@@ -4175,21 +4163,18 @@
                     <div class="w-full bg-white/20 rounded-full h-3 mb-2">
                         <div class="bg-white rounded-full h-3 transition-all duration-1000 shadow-lg" style="width: ${mcPercentage}%"></div>
                     </div>
-                    <div class="text-sm font-semibold mb-1">${mcCorrect}/10 Questions</div>
+                    <div class="text-sm font-semibold mb-1">${mcCorrect}/${TOTAL_MCQ} Questions</div>
                     <div class="text-xs opacity-90 italic">${mcStatus}</div>
                 </div>
                 
-                <div class="bg-gradient-to-br ${psColorClass} rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-transform">
+                <div class="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-transform">
                     <div class="flex items-center justify-between mb-3">
-                        <span class="text-sm font-semibold uppercase tracking-wide">Problem Solving</span>
-                        <i class="fas fa-calculator text-2xl"></i>
+                        <span class="text-sm font-semibold uppercase tracking-wide">Total Questions</span>
+                        <i class="fas fa-layer-group text-2xl"></i>
                     </div>
-                    <div class="text-4xl font-bold mb-2">${psPercentage}%</div>
-                    <div class="w-full bg-white/20 rounded-full h-3 mb-2">
-                        <div class="bg-white rounded-full h-3 transition-all duration-1000 shadow-lg" style="width: ${psPercentage}%"></div>
-                    </div>
-                    <div class="text-sm font-semibold mb-1">${psCorrect > 0 ? 'Correct' : 'Incorrect'}</div>
-                    <div class="text-xs opacity-90 italic">${psStatus}</div>
+                    <div class="text-4xl font-bold mb-2">${TOTAL_MCQ}</div>
+                    <div class="text-sm font-semibold mb-1">All Multiple Choice</div>
+                    <div class="text-xs opacity-90 italic">Pure MC format</div>
                 </div>
             `;
         }
@@ -4806,88 +4791,6 @@
                 reviewContainer.appendChild(reviewCard);
             });
 
-            // Display problem solving question (11)
-            const psCard = document.querySelector('[data-question="11"]');
-            if (psCard) {
-                const reviewPsCard = psCard.cloneNode(true);
-                const psAnswer = studentAnswers['ps-answer'] || '';
-                const correctPsAnswer = quizData.problemSolving.answer;
-                const psInput = reviewPsCard.querySelector('#ps-answer');
-                
-                // Add border based on correctness
-                if (psAnswer) {
-                    const studentAnswerTrimmed = parseFloat(psAnswer);
-                    const correctAnswerTrimmed = parseFloat(correctPsAnswer);
-                    const isPsCorrect = !isNaN(studentAnswerTrimmed) && !isNaN(correctAnswerTrimmed) && 
-                                       Math.abs(studentAnswerTrimmed - correctAnswerTrimmed) < 0.01;
-                    
-                    if (isPsCorrect) {
-                        reviewPsCard.classList.add('border-4', 'border-green-500');
-                    } else {
-                        reviewPsCard.classList.add('border-4', 'border-red-500');
-                    }
-                } else {
-                    reviewPsCard.classList.add('border-4', 'border-yellow-500');
-                }
-                
-                if (psInput) {
-                    psInput.disabled = true;
-                    psInput.style.pointerEvents = 'none';
-                    
-                    if (psAnswer) {
-                        const studentAnswerTrimmed = parseFloat(psAnswer);
-                        const correctAnswerTrimmed = parseFloat(correctPsAnswer);
-                        const isPsCorrect = !isNaN(studentAnswerTrimmed) && !isNaN(correctAnswerTrimmed) && 
-                                           Math.abs(studentAnswerTrimmed - correctAnswerTrimmed) < 0.01;
-                        
-                        // Create a better display for the answer
-                        const answerContainer = psInput.parentElement;
-                        if (answerContainer) {
-                            // Add status indicator
-                            const statusDiv = document.createElement('div');
-                            statusDiv.className = `mt-4 p-4 rounded-xl ${isPsCorrect ? 'bg-green-100 border-2 border-green-400' : 'bg-red-100 border-2 border-red-400'}`;
-                            statusDiv.innerHTML = `
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center">
-                                        <i class="fas ${isPsCorrect ? 'fa-check-circle text-green-600' : 'fa-times-circle text-red-600'} text-2xl mr-3"></i>
-                                        <div>
-                                            <p class="font-semibold ${isPsCorrect ? 'text-green-800' : 'text-red-800'}">
-                                                ${isPsCorrect ? 'Correct!' : 'Incorrect'}
-                                            </p>
-                                            <p class="text-sm ${isPsCorrect ? 'text-green-700' : 'text-red-700'}">
-                                                Your answer: <strong>${psAnswer}</strong>
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="text-right">
-                                        <p class="text-sm ${isPsCorrect ? 'text-green-700' : 'text-red-700'}">Correct answer:</p>
-                                        <p class="font-bold text-lg ${isPsCorrect ? 'text-green-800' : 'text-red-800'}">${correctPsAnswer}</p>
-                                    </div>
-                                </div>
-                            `;
-                            answerContainer.appendChild(statusDiv);
-                        }
-                        
-                        psInput.value = psAnswer;
-                    } else {
-                        psInput.value = '';
-                        const unansweredNotice = document.createElement('div');
-                        unansweredNotice.className = 'mt-4 p-4 bg-yellow-100 border-2 border-yellow-400 rounded-xl shadow-md';
-                        unansweredNotice.innerHTML = `
-                            <div class="flex items-center text-yellow-800">
-                                <i class="fas fa-exclamation-triangle mr-3 text-2xl"></i>
-                                <div>
-                                    <span class="text-base font-semibold">You did not answer this question</span>
-                                    <p class="text-sm text-yellow-700 mt-1">Correct answer: ${correctPsAnswer}</p>
-                                </div>
-                            </div>
-                        `;
-                        psInput.parentElement.appendChild(unansweredNotice);
-                    }
-                }
-                
-                reviewContainer.appendChild(reviewPsCard);
-            }
         }
 
         // Update results character based on score
@@ -5119,9 +5022,12 @@
             const quizContainer = document.getElementById('quizContainer');
             if (!quizContainer) return;
             
-            // Get all question cards (1-10, exclude problem solving 11)
+            // Get all question cards
             const questions = Array.from(quizContainer.querySelectorAll('[data-question]'))
-                .filter(q => q.getAttribute('data-question') !== '11');
+                .filter(q => {
+                    const n = parseInt(q.getAttribute('data-question'), 10);
+                    return n >= 1 && n <= TOTAL_MCQ;
+                });
             
             // Shuffle using Fisher-Yates algorithm
             for (let i = questions.length - 1; i > 0; i--) {
@@ -5133,13 +5039,11 @@
             quizData.questionOrder = questions.map(q => parseInt(q.getAttribute('data-question')));
             console.log('✅ Question order:', quizData.questionOrder);
             
-            // Reorder questions in DOM (but keep problem solving at the end)
-            const problemSolving = quizContainer.querySelector('[data-question="11"]');
+            // Reorder questions in DOM
             const submitButton = document.getElementById('submitQuizBtn');
             
             // Remove all questions from container
             questions.forEach(q => q.remove());
-            if (problemSolving) problemSolving.remove();
             
             // Add shuffled questions back
             const fragment = document.createDocumentFragment();
@@ -5150,15 +5054,6 @@
                 quizContainer.insertBefore(fragment, submitButton);
             } else {
                 quizContainer.appendChild(fragment);
-            }
-            
-            // Add problem solving question back at the end
-            if (problemSolving) {
-                if (submitButton && quizContainer.contains(submitButton)) {
-                    quizContainer.insertBefore(problemSolving, submitButton);
-                } else {
-                    quizContainer.appendChild(problemSolving);
-                }
             }
             
             console.log('✅ Questions shuffled successfully');

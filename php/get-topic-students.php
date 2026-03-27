@@ -2,6 +2,31 @@
 session_start();
 require_once 'config.php';
 
+function normalizeStudentProfilePicture(?string $rawPath): ?string {
+    $path = trim((string)($rawPath ?? ''));
+    if ($path === '') {
+        return null;
+    }
+
+    if (strpos($path, '../') === 0) {
+        $path = substr($path, 3);
+    }
+
+    if (preg_match('#^https?://#i', $path)) {
+        return $path;
+    }
+
+    if (strpos($path, 'uploads/profiles/') === 0) {
+        return $path;
+    }
+
+    if (strpos($path, 'profiles/') === 0) {
+        return 'uploads/' . $path;
+    }
+
+    return 'uploads/profiles/' . ltrim(basename($path), '/\\');
+}
+
 header('Content-Type: application/json');
 
 // Check if user is logged in
@@ -117,6 +142,13 @@ try {
     
     $stmt->execute([$topic, $properTopicName, $topic_id, $class_id, $user_id, $class_id]);
     $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($students as &$student) {
+        $normalizedProfilePicture = normalizeStudentProfilePicture($student['profile_picture'] ?? null);
+        $student['profile_picture'] = $normalizedProfilePicture;
+        $student['profile_picture_url'] = $normalizedProfilePicture;
+    }
+    unset($student);
     
     // Get total count of students from SAME CLASS who accessed this topic
     $countStmt = $pdo->prepare("

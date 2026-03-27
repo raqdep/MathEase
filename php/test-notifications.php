@@ -17,7 +17,7 @@ require_once 'create-notification.php';
 
 // Database connection
 $host = 'localhost';
-$dbname = 'mathease';
+$dbname = 'mathease_database3';
 $username = 'root';
 $password = '';
 

@@ -10,7 +10,8 @@ class DashboardManager {
 
     async init() {
         if (window.MathEase && window.MathEase.showLoading) window.MathEase.showLoading();
-        await this.loadUserData();
+        const userOk = await this.loadUserData();
+        if (!userOk) return;
         await this.loadProgressData();
         this.updateDashboard();
         this.setupEventListeners();
@@ -29,7 +30,7 @@ class DashboardManager {
             const res = await fetch('php/user.php', { credentials: 'include', cache: 'no-store' });
             if (res.status === 401) {
                 window.location.href = 'login.html';
-                return;
+                return false;
             }
             const data = await res.json();
             if (!data.success) {
@@ -46,9 +47,11 @@ class DashboardManager {
                 strand: u.strand,
                 lastLogin: u.last_login
             };
+            return true;
         } catch (error) {
             console.error('Error loading user data:', error);
             this.showNotification('Error loading user data', 'error');
+            return false;
         }
     }
 

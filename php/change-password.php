@@ -38,8 +38,20 @@ try {
         throw new Exception('Current password and new password are required');
     }
     
-    if (strlen($new_password) < 6) {
-        throw new Exception('New password must be at least 6 characters long');
+    if (strlen($new_password) < 8 || strlen($new_password) > 30) {
+        throw new Exception('New password must be 8-30 characters long');
+    }
+
+    $hasLower = preg_match('/[a-z]/', $new_password);
+    $hasUpper = preg_match('/[A-Z]/', $new_password);
+    $hasNumber = preg_match('/[0-9]/', $new_password);
+    $hasSpecial = preg_match('/[^a-zA-Z0-9]/', $new_password);
+    if (!$hasLower || !$hasUpper || !$hasNumber || !$hasSpecial) {
+        throw new Exception('Password must include uppercase, lowercase, number, and special character');
+    }
+
+    if ($current_password === $new_password) {
+        throw new Exception('New password must be different from current password');
     }
     
     // Get current user password

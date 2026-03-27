@@ -24,12 +24,43 @@
 
 session_start();
 require_once 'config.php';
+require_once __DIR__ . '/student-notification-helper.php';
 
 // Prevent caching - always get fresh data from database
 header('Content-Type: application/json');
 header('Cache-Control: no-cache, no-store, must-revalidate');
 header('Pragma: no-cache');
 header('Expires: 0');
+
+// Ensure we always return JSON even on fatal errors.
+// Some PHP fatals/parse errors can otherwise result in an empty/HTML response,
+// which breaks frontend `response.json()` with "Unexpected end of JSON input".
+ob_start();
+set_exception_handler(function (Throwable $e) {
+    error_log("quiz-management.php uncaught exception: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
+    if (ob_get_length() !== false) {
+        @ob_clean();
+    }
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Server error. Please try again.']);
+    exit;
+});
+register_shutdown_function(function () {
+    $err = error_get_last();
+    if (!$err) return;
+
+    $fatalTypes = [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR];
+    if (!in_array($err['type'] ?? 0, $fatalTypes, true)) {
+        return;
+    }
+
+    error_log("quiz-management.php fatal error: " . ($err['message'] ?? 'unknown') . " in " . ($err['file'] ?? 'unknown') . ":" . ($err['line'] ?? 0));
+    if (ob_get_length() !== false) {
+        @ob_clean();
+    }
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Server error. Please try again.']);
+});
 
 class QuizManager {
     private $pdo;
@@ -170,12 +201,9 @@ class QuizManager {
                 $studentAnswer = $answer['student_answer'];
                 
                 // Convert question number to frontend format
-                if ($questionNumber >= 1 && $questionNumber <= 10) {
+                if ($questionNumber >= 1 && $questionNumber <= 15) {
                     // Multiple choice questions: q1, q2, q3, etc.
                     $answerMap["q{$questionNumber}"] = $studentAnswer;
-                } elseif ($questionNumber == 11) {
-                    // Problem solving question: ps-answer
-                    $answerMap['ps-answer'] = $studentAnswer;
                 } else {
                     // Skip invalid question numbers (like 0)
                     error_log("Skipping invalid question number: $questionNumber");
@@ -401,11 +429,11 @@ class QuizManager {
             
             // Handle different quiz types
             if ($quizType === 'evaluating-functions') {
-                // Evaluating Functions Quiz: 10 questions (8 multiple choice + 2 problem solving)
-                $totalQuestions = 10;
+                // Evaluating Functions Quiz: 15 multiple choice questions
+                $totalQuestions = 15;
                 
-                // Process multiple choice answers (questions 1-8)
-                for ($i = 1; $i <= 8; $i++) {
+                // Process multiple choice answers (questions 1-15)
+                for ($i = 1; $i <= 15; $i++) {
                     if (isset($answers["q$i"])) {
                         $studentAnswer = $answers["q$i"];
                         $correctAnswer = $this->getEvaluatingFunctionsCorrectAnswer($i);
@@ -423,19 +451,12 @@ class QuizManager {
                     }
                 }
                 
-                // Process problem solving answers (questions 9-10)
-                $psScore = $this->calculateEvaluatingFunctionsProblemSolvingScore($answers);
-                $score += $psScore;
-                
-                // Store problem solving answers
-                $this->storeEvaluatingFunctionsProblemSolvingAnswers($attemptId, $answers, $psScore);
-                
             } else if ($quizType === 'operations-on-functions') {
-                // Operations on Functions Quiz: 15 points (10 multiple choice + 1 problem solving worth 5 points)
+                // Operations on Functions Quiz: 15 multiple choice questions
                 $totalQuestions = 15;
                 
-                // Process multiple choice answers (questions 1-10)
-                for ($i = 1; $i <= 10; $i++) {
+                // Process multiple choice answers (questions 1-15)
+                for ($i = 1; $i <= 15; $i++) {
                     if (isset($answers["q$i"])) {
                         $studentAnswer = $answers["q$i"];
                         $correctAnswer = $this->getOperationsOnFunctionsCorrectAnswer($i);
@@ -453,27 +474,79 @@ class QuizManager {
                     }
                 }
                 
-                // Process problem solving answers (question 11)
-                $psScore = $this->calculateOperationsOnFunctionsProblemSolvingScore($answers);
-                $score += $psScore;
+            } else if ($quizType === 'domain-range-rational-functions') {
+                // Domain & Range of Rational Functions Quiz: 15 multiple choice questions
+                $totalQuestions = 15;
                 
-                // Count problem solving as correct/incorrect
-                if ($psScore >= 5) {
-                    $correctAnswers++;
-                } else {
-                    $incorrectAnswers++;
+                for ($i = 1; $i <= 15; $i++) {
+                    if (isset($answers["q$i"])) {
+                        $studentAnswer = $answers["q$i"];
+                        $correctAnswer = $this->getDomainRangeRationalFunctionsCorrectAnswer($i);
+                        $isCorrect = ($studentAnswer === $correctAnswer);
+                        
+                        if ($isCorrect) {
+                            $score += 1;
+                            $correctAnswers++;
+                        } else {
+                            $incorrectAnswers++;
+                        }
+                        
+                        $this->storeAnswer($attemptId, $i, 'multiple_choice', $studentAnswer, $correctAnswer, $isCorrect, $isCorrect ? 1 : 0);
+                    }
                 }
                 
-                // Store problem solving answers
-                $this->storeOperationsOnFunctionsProblemSolvingAnswers($attemptId, $answers, $psScore);
+            } else if ($quizType === 'domain-range-inverse-functions') {
+                // Domain & Range of Inverse Functions Quiz: 15 multiple choice questions
+                $totalQuestions = 15;
                 
-            } else if ($quizType === 'rational-functions') {
-                // Rational Functions Quiz: 11 questions (10 multiple choice + 1 problem solving)
-                $totalQuestions = 11;
+                for ($i = 1; $i <= 15; $i++) {
+                    if (isset($answers["q$i"])) {
+                        $studentAnswer = $answers["q$i"];
+                        $correctAnswer = $this->getDomainRangeInverseFunctionsCorrectAnswer($i);
+                        $isCorrect = ($studentAnswer === $correctAnswer);
+                        
+                        if ($isCorrect) {
+                            $score += 1;
+                            $correctAnswers++;
+                        } else {
+                            $incorrectAnswers++;
+                        }
+                        
+                        $this->storeAnswer($attemptId, $i, 'multiple_choice', $studentAnswer, $correctAnswer, $isCorrect, $isCorrect ? 1 : 0);
+                    }
+                }
+                
+            } else if ($quizType === 'representations-of-rational-functions') {
+                // Representations of Rational Functions Quiz: 15 multiple choice questions
+                $totalQuestions = 15;
+                error_log("Processing representations-of-rational-functions quiz - Attempt ID: $attemptId, Answers: " . json_encode($answers));
+                
+                for ($i = 1; $i <= 15; $i++) {
+                    if (isset($answers["q$i"])) {
+                        $studentAnswer = $answers["q$i"];
+                        $correctAnswer = $this->getRepresentationsOfRationalFunctionsCorrectAnswer($i);
+                        $isCorrect = ($studentAnswer === $correctAnswer);
+                        
+                        if ($isCorrect) {
+                            $score += 1;
+                            $correctAnswers++;
+                        } else {
+                            $incorrectAnswers++;
+                        }
+                        
+                        $this->storeAnswer($attemptId, $i, 'multiple_choice', $studentAnswer, $correctAnswer, $isCorrect, $isCorrect ? 1 : 0);
+                    }
+                }
+                
+                error_log("Final representations-of-rational-functions score: $score, Correct: $correctAnswers, Incorrect: $incorrectAnswers, Total: $totalQuestions");
+                
+            } else if ($quizType === 'rational-functions' || $quizType === 'solving-rational-equations-inequalities') {
+                // Rational Functions Quiz: 15 multiple choice questions
+                $totalQuestions = 15;
                 error_log("Processing rational-functions quiz - Attempt ID: $attemptId, Answers: " . json_encode($answers));
                 
-                // Process multiple choice answers (questions 1-10)
-                for ($i = 1; $i <= 10; $i++) {
+                // Process multiple choice answers (questions 1-15)
+                for ($i = 1; $i <= 15; $i++) {
                     if (isset($answers["q$i"])) {
                         $studentAnswer = $answers["q$i"];
                         $correctAnswer = $this->getRationalFunctionsCorrectAnswer($i);
@@ -493,31 +566,35 @@ class QuizManager {
                     }
                 }
                 
-                // Process problem solving answer (question 11)
-                $psScore = $this->calculateRationalFunctionsProblemSolvingScore($answers);
-                $score += $psScore;
-                
-                error_log("Problem solving score: $psScore, Total score so far: $score");
-                
-                // Count problem solving as correct/incorrect
-                if ($psScore >= 1) {
-                    $correctAnswers++;
-                } else {
-                    $incorrectAnswers++;
-                }
-                
-                // Store problem solving answer
-                $this->storeRationalFunctionsProblemSolvingAnswer($attemptId, $answers, $psScore);
-                
                 error_log("Final rational-functions score: $score, Correct: $correctAnswers, Incorrect: $incorrectAnswers, Total: $totalQuestions");
                 
-            } else if ($quizType === 'functions') {
-                // Functions Quiz: 11 questions (10 multiple choice + 1 problem solving)
-                // Total points: 15 (10 MC * 1 point + 1 PS * 5 points)
-                $totalQuestions = 11; // Number of questions
+            } else if ($quizType === 'one-to-one-functions') {
+                // One-to-One Functions Quiz: 15 multiple choice questions
+                $totalQuestions = 15;
                 
-                // Process multiple choice answers (questions 1-10)
-                for ($i = 1; $i <= 10; $i++) {
+                for ($i = 1; $i <= 15; $i++) {
+                    if (isset($answers["q$i"])) {
+                        $studentAnswer = $answers["q$i"];
+                        $correctAnswer = $this->getOneToOneFunctionsCorrectAnswer($i);
+                        $isCorrect = ($studentAnswer === $correctAnswer);
+                        
+                        if ($isCorrect) {
+                            $score += 1;
+                            $correctAnswers++;
+                        } else {
+                            $incorrectAnswers++;
+                        }
+                        
+                        $this->storeAnswer($attemptId, $i, 'multiple_choice', $studentAnswer, $correctAnswer, $isCorrect, $isCorrect ? 1 : 0);
+                    }
+                }
+                
+            } else if ($quizType === 'functions') {
+                // Functions Quiz: 15 multiple choice questions
+                $totalQuestions = 15;
+                
+                // Process multiple choice answers (questions 1-15)
+                for ($i = 1; $i <= 15; $i++) {
                     if (isset($answers["q$i"])) {
                         $studentAnswer = $answers["q$i"];
                         $correctAnswer = $this->getCorrectAnswer($i);
@@ -535,26 +612,12 @@ class QuizManager {
                     }
                 }
                 
-                // Process problem solving answers (question 11)
-                $psScore = $this->calculateProblemSolvingScore($answers);
-                $score += $psScore;
-                
-                // Count problem solving as correct/incorrect
-                if ($psScore >= 5) {
-                    $correctAnswers++;
-                } else {
-                    $incorrectAnswers++;
-                }
-                
-                // Store problem solving answers
-                $this->storeProblemSolvingAnswers($attemptId, $answers, $psScore);
-                
             } else if ($quizType === 'real-life-problems') {
-                // Real-Life Problems Quiz: 15 points (10 multiple choice + 1 problem solving worth 5 points)
+                // Real-Life Problems Quiz: 15 multiple choice questions
                 $totalQuestions = 15;
                 
-                // Process multiple choice answers (questions 1-10)
-                for ($i = 1; $i <= 10; $i++) {
+                // Process multiple choice answers (questions 1-15)
+                for ($i = 1; $i <= 15; $i++) {
                     if (isset($answers["q$i"])) {
                         $studentAnswer = $answers["q$i"];
                         $correctAnswer = $this->getRealLifeProblemsCorrectAnswer($i);
@@ -571,20 +634,6 @@ class QuizManager {
                         $this->storeAnswer($attemptId, $i, 'multiple_choice', $studentAnswer, $correctAnswer, $isCorrect, $isCorrect ? 1 : 0);
                     }
                 }
-                
-                // Process problem solving answers (question 11)
-                $psScore = $this->calculateRealLifeProblemsProblemSolvingScore($answers);
-                $score += $psScore;
-                
-                // Count problem solving as correct/incorrect
-                if ($psScore >= 5) {
-                    $correctAnswers++;
-                } else {
-                    $incorrectAnswers++;
-                }
-                
-                // Store problem solving answers
-                $this->storeRealLifeProblemsProblemSolvingAnswers($attemptId, $answers, $psScore);
                 
             } else {
                 // Unknown quiz type - log error and use default functions quiz logic
@@ -625,8 +674,8 @@ class QuizManager {
                 $this->storeProblemSolvingAnswers($attemptId, $answers, $psScore);
             }
             
-            // For functions quiz, store number of questions (11) in total_questions field
-            $questionsToStore = ($quizType === 'functions') ? 11 : $totalQuestions;
+            // Store total_questions for this quiz
+            $questionsToStore = $totalQuestions;
             
             // Update quiz attempt with explicit status
             $stmt = $this->pdo->prepare("
@@ -655,18 +704,19 @@ class QuizManager {
         // Badge awarding is now handled by the frontend through badge-management.php
             
             $this->pdo->commit();
-            
+
+            $this->notifyTeachersQuizSubmitted((int) $attempt['student_id'], (string) $quizType);
+
             // Generate detailed results
             $detailedResults = $this->generateDetailedResults($answers, $score, $correctAnswers, $incorrectAnswers, $quizType);
             
-            // For functions quiz, total_questions is number of questions (11), total_points is total points (15)
-            $totalPoints = ($quizType === 'functions') ? 15 : $totalQuestions;
+            $totalPoints = $totalQuestions;
             
             return [
                 'success' => true,
                 'score' => $score,
-                'total_questions' => ($quizType === 'functions') ? 11 : $totalQuestions, // Number of questions
-                'total_points' => $totalPoints, // Total points for percentage calculation
+                'total_questions' => $totalQuestions,
+                'total_points' => $totalPoints,
                 'correct_answers' => $correctAnswers,
                 'incorrect_answers' => $incorrectAnswers,
                 'completion_time' => $completionTime,
@@ -698,7 +748,83 @@ class QuizManager {
             ];
         }
     }
-    
+
+    /**
+     * Notify each distinct teacher (via approved enrollment) once per quiz submission.
+     * Skips topic/lesson quiz types handled by store-quiz-data.php.
+     */
+    private function notifyTeachersQuizSubmitted($studentId, $quizType) {
+        if ($studentId <= 0 || $quizType === '') {
+            return;
+        }
+        if (strpos($quizType, '_topic_') !== false || strpos($quizType, '_lesson_') !== false) {
+            return;
+        }
+        if (stripos($quizType, 'topic') !== false || stripos($quizType, 'lesson') !== false) {
+            return;
+        }
+
+        try {
+            require_once __DIR__ . '/create-notification.php';
+
+            $stmt = $this->pdo->prepare('SELECT CONCAT(first_name, " ", last_name) AS full_name FROM users WHERE id = ?');
+            $stmt->execute([$studentId]);
+            $u = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$u || trim((string) ($u['full_name'] ?? '')) === '') {
+                return;
+            }
+            $studentName = trim($u['full_name']);
+            $quizLabel = $this->quizTypeToDisplayName($quizType);
+
+            $sql = '
+                SELECT c.teacher_id, c.id AS class_id, c.class_name
+                FROM classes c
+                INNER JOIN (
+                    SELECT c2.teacher_id, MIN(c2.id) AS min_class_id
+                    FROM class_enrollments ce
+                    INNER JOIN classes c2 ON ce.class_id = c2.id AND c2.is_active = TRUE
+                    WHERE ce.student_id = ? AND ce.enrollment_status = \'approved\'
+                    GROUP BY c2.teacher_id
+                ) mc ON c.id = mc.min_class_id AND c.teacher_id = mc.teacher_id
+            ';
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$studentId]);
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($rows as $row) {
+                notifyQuizSubmission(
+                    (int) $row['teacher_id'],
+                    (int) $row['class_id'],
+                    $studentName,
+                    $quizLabel,
+                    (string) $row['class_name']
+                );
+            }
+        } catch (Throwable $e) {
+            error_log('notifyTeachersQuizSubmitted: ' . $e->getMessage());
+        }
+    }
+
+    private function quizTypeToDisplayName($quizType) {
+        $map = [
+            'functions' => 'Functions Quiz',
+            'evaluating-functions' => 'Evaluating Functions Quiz',
+            'operations-on-functions' => 'Operations on Functions Quiz',
+            'real-life-problems' => 'Real-Life Problems Quiz',
+            'rational-functions' => 'Rational Functions Quiz',
+            'solving-rational-equations-inequalities' => 'Solving Rational Equations & Inequalities Quiz',
+            'representations-of-rational-functions' => 'Representations of Rational Functions Quiz',
+            'domain-range-rational-functions' => 'Domain & Range (Rational Functions) Quiz',
+            'domain-range-inverse-functions' => 'Domain & Range (Inverse Functions) Quiz',
+            'one-to-one-functions' => 'One-to-One Functions Quiz',
+        ];
+        if (isset($map[$quizType])) {
+            return $map[$quizType];
+        }
+
+        return ucwords(str_replace(['-', '_'], ' ', $quizType)) . ' Quiz';
+    }
+
     // Generate detailed results for quiz submission
     private function generateDetailedResults($answers, $score, $correctAnswers, $incorrectAnswers, $quizType = 'functions') {
         $detailedResults = '';
@@ -706,12 +832,13 @@ class QuizManager {
         if ($quizType === 'evaluating-functions') {
             // Evaluating Functions Quiz results
             $correctAnswersData = [
-                'q1' => 'a', 'q2' => 'b', 'q3' => 'c', 'q4' => 'a', 'q5' => 'b',
-                'q6' => 'c', 'q7' => 'a', 'q8' => 'b'
+                'q1' => 'b', 'q2' => 'b', 'q3' => 'a', 'q4' => 'b', 'q5' => 'b',
+                'q6' => 'a', 'q7' => 'c', 'q8' => 'a', 'q9' => 'a', 'q10' => 'b',
+                'q11' => 'c', 'q12' => 'a', 'q13' => 'b', 'q14' => 'a', 'q15' => 'c'
             ];
             
-            // Generate detailed results for multiple choice questions (1-8)
-            for ($i = 1; $i <= 8; $i++) {
+            // Generate detailed results for multiple choice questions (1-15)
+            for ($i = 1; $i <= 15; $i++) {
                 $questionKey = "q{$i}";
                 $selected = $answers[$questionKey] ?? '';
                 $correct = $correctAnswersData[$questionKey];
@@ -758,54 +885,54 @@ class QuizManager {
                     ";
                 }
             }
-            
-            // Generate detailed results for problem solving (questions 9-10)
-            $psScore = 0;
-            $psDetails = '';
-            
-            // Question 9
-            $ps9 = intval($answers['ps-9'] ?? 0);
-            if (abs($ps9 - 25) <= 5) {
-                $psScore += 1;
-                $psDetails .= '<p class="text-sm text-green-700">Question 9: Correct! (+1 point)</p>';
-            } else {
-                $psDetails .= "<p class=\"text-sm text-red-700\">Question 9: Incorrect. Your answer: {$ps9}, Correct: 25</p>";
-            }
-            
-            // Question 10
-            $ps10 = intval($answers['ps-10'] ?? 0);
-            if (abs($ps10 - 15) <= 3) {
-                $psScore += 1;
-                $psDetails .= '<p class="text-sm text-green-700">Question 10: Correct! (+1 point)</p>';
-            } else {
-                $psDetails .= "<p class=\"text-sm text-red-700\">Question 10: Incorrect. Your answer: {$ps10}, Correct: 15</p>";
-            }
-            
-            $detailedResults .= "
-                <div class=\"bg-orange-50 border-l-4 border-orange-500 p-4 rounded-lg\">
-                    <div class=\"flex items-center justify-between\">
-                        <div>
-                            <h4 class=\"font-semibold text-orange-800\">Problem Solving</h4>
-                            <p class=\"text-sm text-orange-700\">Score: {$psScore}/2 points</p>
-                            {$psDetails}
-                        </div>
-                        <i class=\"fas fa-calculator text-orange-500 text-xl\"></i>
-                    </div>
-                </div>
-            ";
             
         } else {
-            // Default Functions Quiz results
+            // Default 15-item quiz results
             $correctAnswersData = [
                 'q1' => 'a', 'q2' => 'b', 'q3' => 'a', 'q4' => 'b', 'q5' => 'b',
-                'q6' => 'a', 'q7' => 'b', 'q8' => 'b', 'q9' => 'a', 'q10' => 'a'
+                'q6' => 'a', 'q7' => 'b', 'q8' => 'b', 'q9' => 'a', 'q10' => 'a',
+                'q11' => 'b', 'q12' => 'b', 'q13' => 'a', 'q14' => 'b', 'q15' => 'c'
             ];
-            
-            // Problem solving correct answers
-            $problemSolvingAnswers = ['ps-a' => 450, 'ps-b' => 10, 'ps-c' => 100];
-            
+            if ($quizType === 'operations-on-functions') {
+                $correctAnswersData = [
+                    'q1' => 'c', 'q2' => 'B', 'q3' => 'C', 'q4' => 'D', 'q5' => 'B',
+                    'q6' => 'C', 'q7' => 'B', 'q8' => 'C', 'q9' => 'D', 'q10' => 'A',
+                    'q11' => 'C', 'q12' => 'B', 'q13' => 'A', 'q14' => 'A', 'q15' => 'B'
+                ];
+            } else if ($quizType === 'real-life-problems') {
+                $correctAnswersData = [
+                    'q1' => 'b', 'q2' => 'b', 'q3' => 'c', 'q4' => 'b', 'q5' => 'a',
+                    'q6' => 'b', 'q7' => 'b', 'q8' => 'c', 'q9' => 'a', 'q10' => 'c',
+                    'q11' => 'b', 'q12' => 'c', 'q13' => 'b', 'q14' => 'b', 'q15' => 'c'
+                ];
+            } else if ($quizType === 'one-to-one-functions') {
+                $correctAnswersData = [
+                    'q1' => 'a', 'q2' => 'a', 'q3' => 'a', 'q4' => 'c', 'q5' => 'a',
+                    'q6' => 'a', 'q7' => 'a', 'q8' => 'a', 'q9' => 'a', 'q10' => 'a',
+                    'q11' => 'b', 'q12' => 'b', 'q13' => 'b', 'q14' => 'b', 'q15' => 'b'
+                ];
+            } else if ($quizType === 'domain-range-rational-functions') {
+                $correctAnswersData = [
+                    'q1' => 'a', 'q2' => 'a', 'q3' => 'a', 'q4' => 'a', 'q5' => 'a',
+                    'q6' => 'a', 'q7' => 'a', 'q8' => 'a', 'q9' => 'a', 'q10' => 'a',
+                    'q11' => 'b', 'q12' => 'b', 'q13' => 'b', 'q14' => 'b', 'q15' => 'b'
+                ];
+            } else if ($quizType === 'domain-range-inverse-functions') {
+                $correctAnswersData = [
+                    'q1' => 'a', 'q2' => 'a', 'q3' => 'a', 'q4' => 'a', 'q5' => 'a',
+                    'q6' => 'a', 'q7' => 'a', 'q8' => 'a', 'q9' => 'a', 'q10' => 'a',
+                    'q11' => 'b', 'q12' => 'b', 'q13' => 'b', 'q14' => 'b', 'q15' => 'b'
+                ];
+            } else if ($quizType === 'representations-of-rational-functions') {
+                $correctAnswersData = [
+                    'q1' => 'a', 'q2' => 'b', 'q3' => 'a', 'q4' => 'a', 'q5' => 'a',
+                    'q6' => 'a', 'q7' => 'd', 'q8' => 'a', 'q9' => 'a', 'q10' => 'a',
+                    'q11' => 'b', 'q12' => 'b', 'q13' => 'b', 'q14' => 'b', 'q15' => 'b'
+                ];
+            }
+
             // Generate detailed results for multiple choice questions
-            for ($i = 1; $i <= 10; $i++) {
+            for ($i = 1; $i <= 15; $i++) {
                 $questionKey = "q{$i}";
                 $selected = $answers[$questionKey] ?? '';
                 $correct = $correctAnswersData[$questionKey];
@@ -852,50 +979,6 @@ class QuizManager {
                     ";
                 }
             }
-            
-            // Generate detailed results for problem solving
-            $psScore = 0;
-            $psDetails = '';
-            
-            // Part A
-            $psA = intval($answers['ps-a'] ?? 0);
-            if (abs($psA - $problemSolvingAnswers['ps-a']) <= 50) {
-                $psScore += 1;
-                $psDetails .= '<p class="text-sm text-green-700">Part A: Correct! (+1 point)</p>';
-            } else {
-                $psDetails .= "<p class=\"text-sm text-red-700\">Part A: Incorrect. Your answer: {$psA}, Correct: {$problemSolvingAnswers['ps-a']}</p>";
-            }
-            
-            // Part B
-            $psB = intval($answers['ps-b'] ?? 0);
-            if (abs($psB - $problemSolvingAnswers['ps-b']) <= 5) {
-                $psScore += 2;
-                $psDetails .= '<p class="text-sm text-green-700">Part B: Correct! (+2 points)</p>';
-            } else {
-                $psDetails .= "<p class=\"text-sm text-red-700\">Part B: Incorrect. Your answer: {$psB}, Correct: {$problemSolvingAnswers['ps-b']}</p>";
-            }
-            
-            // Part C
-            $psC = intval($answers['ps-c'] ?? 0);
-            if (abs($psC - $problemSolvingAnswers['ps-c']) <= 50) {
-                $psScore += 2;
-                $psDetails .= '<p class="text-sm text-green-700">Part C: Correct! (+2 points)</p>';
-            } else {
-                $psDetails .= "<p class=\"text-sm text-red-700\">Part C: Incorrect. Your answer: {$psC}, Correct: {$problemSolvingAnswers['ps-c']}</p>";
-            }
-            
-            $detailedResults .= "
-                <div class=\"bg-purple-50 border-l-4 border-purple-500 p-4 rounded-lg\">
-                    <div class=\"flex items-center justify-between\">
-                        <div>
-                            <h4 class=\"font-semibold text-purple-800\">Problem Solving</h4>
-                            <p class=\"text-sm text-purple-700\">Score: {$psScore}/5 points</p>
-                            {$psDetails}
-                        </div>
-                        <i class=\"fas fa-calculator text-purple-500 text-xl\"></i>
-                    </div>
-                </div>
-            ";
         }
         
         return $detailedResults;
@@ -1152,6 +1235,19 @@ class QuizManager {
             
             $scopeText = $classId == 0 ? 'all classes' : "class ID $classId";
             error_log("Quiz settings saved successfully for quiz_type: $quizType, deadline local: $deadlineLocal, time_limit: $timeLimit, scope: $scopeText");
+
+            // Notify students about deadline/time limit update
+            try {
+                $teacherId = (int)($_SESSION['teacher_id'] ?? 0);
+                if ($teacherId > 0) {
+                    $quizLabel = ucwords(str_replace(['-', '_'], ' ', (string)$quizType));
+                    $title = 'Quiz deadline updated';
+                    $msg = "$quizLabel deadline was set/updated to $deadlineLocal (Time limit: {$timeLimit} min).";
+                    notifyApprovedStudentsForTeacherScope($this->pdo, $teacherId, (int)$classId, 'quiz_deadline_updated', $title, $msg);
+                }
+            } catch (Throwable $e) {
+                error_log('saveQuizSettings notify students failed: ' . $e->getMessage());
+            }
             
             return [
                 'success' => true,
@@ -1232,6 +1328,19 @@ class QuizManager {
         }
         
         // Build the main query with proper class filtering
+        $attemptColsStmt = $this->pdo->query("SHOW COLUMNS FROM quiz_attempts");
+        $attemptCols = $attemptColsStmt ? $attemptColsStmt->fetchAll(PDO::FETCH_COLUMN, 0) : [];
+        $hasStatusCol = in_array('status', $attemptCols, true);
+        $hasCheatingReasonCol = in_array('cheating_reason', $attemptCols, true);
+        $hasTabSwitchCountCol = in_array('tab_switch_count', $attemptCols, true);
+        $hasTimedOutCol = in_array('timed_out', $attemptCols, true);
+
+        $statusSelect = $hasStatusCol ? "qa.status AS attempt_status" : "'completed' AS attempt_status";
+        $cheatingSelect = $hasCheatingReasonCol ? "qa.cheating_reason" : "NULL AS cheating_reason";
+        $tabSwitchSelect = $hasTabSwitchCountCol ? "COALESCE(qa.tab_switch_count, 0) AS tab_switch_count" : "NULL AS tab_switch_count";
+        $timedOutSelect = $hasTimedOutCol ? "COALESCE(qa.timed_out, 0) AS timed_out" : "NULL AS timed_out";
+        $statusFilter = $hasStatusCol ? "qa.status IN ('completed', 'cheating')" : "qa.completed_at IS NOT NULL";
+
         $sql = "
             SELECT 
                 qa.id,
@@ -1248,12 +1357,26 @@ class QuizManager {
                 ROUND((qa.score / qa.total_questions) * 100, 1) as percentage,
                 c.class_name,
                 c.id as class_id,
-                u.email as student_email
+                u.email as student_email,
+                {$statusSelect},
+                {$cheatingSelect},
+                {$tabSwitchSelect},
+                {$timedOutSelect},
+                COALESCE(qs_class.time_limit, qs_global.time_limit, 0) as configured_time_limit,
+                CASE
+                    WHEN " . ($hasTimedOutCol ? "COALESCE(qa.timed_out, 0) = 1" : "0=1") . " THEN 1
+                    WHEN COALESCE(qs_class.time_limit, qs_global.time_limit, 0) > 0
+                         AND qa.completion_time >= (COALESCE(qs_class.time_limit, qs_global.time_limit, 0) * 60)
+                    THEN 1
+                    ELSE 0
+                END AS timer_expired
             FROM quiz_attempts qa
             JOIN users u ON qa.student_id = u.id
             JOIN class_enrollments ce ON u.id = ce.student_id AND ce.enrollment_status = 'approved'
             JOIN classes c ON ce.class_id = c.id AND c.is_active = TRUE AND c.teacher_id = ?
-            WHERE qa.quiz_type = ? AND qa.status = 'completed'";
+            LEFT JOIN quiz_settings qs_class ON qs_class.quiz_type = qa.quiz_type AND qs_class.class_id = c.id
+            LEFT JOIN quiz_settings qs_global ON qs_global.quiz_type = qa.quiz_type AND (qs_global.class_id = 0 OR qs_global.class_id IS NULL)
+            WHERE qa.quiz_type = ? AND {$statusFilter}";
         
         $params = [$teacherId, $quizType];
         
@@ -1308,6 +1431,273 @@ class QuizManager {
             'message' => 'Failed to get quiz results'
         ];
     }
+    }
+
+    // Get per-question answer details for a specific quiz attempt (teacher view)
+    public function getAttemptAnswerDetails($attemptId, $teacherId) {
+        try {
+            $attemptId = (int)$attemptId;
+            $teacherId = (int)$teacherId;
+            if ($attemptId <= 0 || $teacherId <= 0) {
+                return ['success' => false, 'message' => 'Invalid parameters'];
+            }
+
+            // Verify attempt belongs to a student enrolled to this teacher (active class)
+            $verify = $this->pdo->prepare("
+                SELECT 
+                    qa.id as attempt_id,
+                    qa.quiz_type,
+                    qa.total_questions,
+                    qa.completed_at,
+                    u.id as student_id,
+                    CONCAT(u.first_name, ' ', u.last_name) as student_name,
+                    u.email as student_email,
+                    c.id as class_id,
+                    c.class_name
+                FROM quiz_attempts qa
+                JOIN users u ON qa.student_id = u.id
+                JOIN class_enrollments ce ON u.id = ce.student_id AND ce.enrollment_status = 'approved'
+                JOIN classes c ON ce.class_id = c.id
+                WHERE qa.id = ?
+                  AND qa.status = 'completed'
+                  AND c.teacher_id = ?
+                  AND c.is_active = TRUE
+                LIMIT 1
+            ");
+            $verify->execute([$attemptId, $teacherId]);
+            $meta = $verify->fetch(PDO::FETCH_ASSOC);
+            if (!$meta) {
+                return ['success' => false, 'message' => 'Attempt not found or not authorized'];
+            }
+
+            // Determine available columns for robustness
+            $colStmt = $this->pdo->query("SHOW COLUMNS FROM quiz_answers");
+            $columns = $colStmt ? $colStmt->fetchAll(PDO::FETCH_COLUMN, 0) : [];
+            $hasCorrectAnswer = in_array('correct_answer', $columns, true);
+            $hasIsCorrect = in_array('is_correct', $columns, true);
+            $hasPoints = in_array('points_earned', $columns, true);
+            $hasType = in_array('question_type', $columns, true);
+
+            $select = [
+                "question_number",
+                "student_answer",
+                ($hasCorrectAnswer ? "correct_answer" : "NULL as correct_answer"),
+                ($hasIsCorrect ? "is_correct" : "NULL as is_correct"),
+                ($hasPoints ? "points_earned" : "NULL as points_earned"),
+                ($hasType ? "question_type" : "NULL as question_type")
+            ];
+
+            $stmt = $this->pdo->prepare("
+                SELECT " . implode(", ", $select) . "
+                FROM quiz_answers
+                WHERE attempt_id = ?
+                ORDER BY question_number ASC
+            ");
+            $stmt->execute([$attemptId]);
+            $answers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $quizTypeForBank = (string)($meta['quiz_type'] ?? 'functions');
+            $questionBank = $this->getQuizQuestionBank($quizTypeForBank);
+
+            // Ensure correct_answer / is_correct are always present.
+            // Some databases have the columns but older rows may have NULL values.
+            $correctMap = $this->getCorrectAnswersMapForQuizType($quizTypeForBank);
+            foreach ($answers as &$a) {
+                $qn = (int)($a['question_number'] ?? 0);
+                $key = "q{$qn}";
+                $mappedCorrect = $correctMap[$key] ?? null;
+
+                $existingCorrect = $a['correct_answer'] ?? null;
+                $existingIsCorrect = $a['is_correct'] ?? null;
+
+                // Fill missing correct_answer when NULL/empty
+                if (!$hasCorrectAnswer || $existingCorrect === null || $existingCorrect === '') {
+                    $a['correct_answer'] = $mappedCorrect;
+                }
+
+                // Fill missing is_correct when NULL/empty
+                if (!$hasIsCorrect || $existingIsCorrect === null || $existingIsCorrect === '') {
+                    $student = $a['student_answer'] ?? null;
+                    $correct = $a['correct_answer'] ?? $mappedCorrect;
+                    $a['is_correct'] = ($correct !== null && $student !== null && (string)$student === (string)$correct) ? 1 : 0;
+                }
+            }
+            unset($a);
+
+            // Attach question text + option texts (from quiz HTML files)
+            if (!empty($questionBank)) {
+                foreach ($answers as &$a) {
+                    $qn = (int)($a['question_number'] ?? 0);
+                    $q = $questionBank[$qn] ?? null;
+                    if ($q) {
+                        $a['question_text'] = $q['question_text'] ?? null;
+                        $a['options'] = $q['options'] ?? null; // {a: "...", b: "...", c: "...", d: "..."}
+
+                        $studentKey = isset($a['student_answer']) ? strtolower((string)$a['student_answer']) : '';
+                        $correctKey = isset($a['correct_answer']) ? strtolower((string)$a['correct_answer']) : '';
+
+                        $opts = is_array($a['options'] ?? null) ? $a['options'] : [];
+                        $a['student_answer_text'] = ($studentKey !== '' && isset($opts[$studentKey])) ? $opts[$studentKey] : null;
+                        $a['correct_answer_text'] = ($correctKey !== '' && isset($opts[$correctKey])) ? $opts[$correctKey] : null;
+                    }
+                }
+                unset($a);
+            }
+
+            return [
+                'success' => true,
+                'attempt' => $meta,
+                'answers' => $answers
+            ];
+        } catch (Exception $e) {
+            error_log("Error getAttemptAnswerDetails: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Failed to load attempt answers'];
+        }
+    }
+
+    private function getCorrectAnswersMapForQuizType($quizType) {
+        // Mirrors mappings used in generateDetailedResults()
+        $quizType = (string)$quizType;
+
+        if ($quizType === 'evaluating-functions') {
+            return [
+                'q1' => 'b', 'q2' => 'b', 'q3' => 'a', 'q4' => 'b', 'q5' => 'b',
+                'q6' => 'a', 'q7' => 'c', 'q8' => 'a', 'q9' => 'a', 'q10' => 'b',
+                'q11' => 'c', 'q12' => 'a', 'q13' => 'b', 'q14' => 'a', 'q15' => 'c'
+            ];
+        }
+
+        if ($quizType === 'operations-on-functions') {
+            return [
+                'q1' => 'c', 'q2' => 'B', 'q3' => 'C', 'q4' => 'D', 'q5' => 'B',
+                'q6' => 'C', 'q7' => 'B', 'q8' => 'C', 'q9' => 'D', 'q10' => 'A',
+                'q11' => 'C', 'q12' => 'B', 'q13' => 'A', 'q14' => 'A', 'q15' => 'B'
+            ];
+        }
+
+        if ($quizType === 'real-life-problems') {
+            return [
+                'q1' => 'b', 'q2' => 'b', 'q3' => 'c', 'q4' => 'b', 'q5' => 'a',
+                'q6' => 'b', 'q7' => 'b', 'q8' => 'c', 'q9' => 'a', 'q10' => 'c',
+                'q11' => 'b', 'q12' => 'c', 'q13' => 'b', 'q14' => 'b', 'q15' => 'c'
+            ];
+        }
+
+        if ($quizType === 'one-to-one-functions') {
+            return [
+                'q1' => 'a', 'q2' => 'a', 'q3' => 'a', 'q4' => 'c', 'q5' => 'a',
+                'q6' => 'a', 'q7' => 'a', 'q8' => 'a', 'q9' => 'a', 'q10' => 'a',
+                'q11' => 'b', 'q12' => 'b', 'q13' => 'b', 'q14' => 'b', 'q15' => 'b'
+            ];
+        }
+
+        if ($quizType === 'domain-range-rational-functions') {
+            return [
+                'q1' => 'a', 'q2' => 'a', 'q3' => 'a', 'q4' => 'a', 'q5' => 'a',
+                'q6' => 'a', 'q7' => 'a', 'q8' => 'a', 'q9' => 'a', 'q10' => 'a',
+                'q11' => 'b', 'q12' => 'b', 'q13' => 'b', 'q14' => 'b', 'q15' => 'b'
+            ];
+        }
+
+        if ($quizType === 'domain-range-inverse-functions') {
+            return [
+                'q1' => 'a', 'q2' => 'a', 'q3' => 'a', 'q4' => 'a', 'q5' => 'a',
+                'q6' => 'a', 'q7' => 'a', 'q8' => 'a', 'q9' => 'a', 'q10' => 'a',
+                'q11' => 'b', 'q12' => 'b', 'q13' => 'b', 'q14' => 'b', 'q15' => 'b'
+            ];
+        }
+
+        if ($quizType === 'representations-of-rational-functions') {
+            return [
+                'q1' => 'a', 'q2' => 'b', 'q3' => 'a', 'q4' => 'a', 'q5' => 'a',
+                'q6' => 'a', 'q7' => 'd', 'q8' => 'a', 'q9' => 'a', 'q10' => 'a',
+                'q11' => 'b', 'q12' => 'b', 'q13' => 'b', 'q14' => 'b', 'q15' => 'b'
+            ];
+        }
+
+        // Default mapping used by the basic quiz types (includes rational-functions too)
+        return [
+            'q1' => 'a', 'q2' => 'b', 'q3' => 'a', 'q4' => 'b', 'q5' => 'b',
+            'q6' => 'a', 'q7' => 'b', 'q8' => 'b', 'q9' => 'a', 'q10' => 'a',
+            'q11' => 'b', 'q12' => 'b', 'q13' => 'a', 'q14' => 'b', 'q15' => 'c'
+        ];
+    }
+
+    private function getQuizQuestionBank($quizType) {
+        $file = $this->quizTypeToHtmlFile($quizType);
+        if (!$file) return [];
+
+        $path = realpath(__DIR__ . '/../quiz/' . $file);
+        if (!$path || !is_file($path)) return [];
+
+        $html = @file_get_contents($path);
+        if ($html === false || trim($html) === '') return [];
+
+        libxml_use_internal_errors(true);
+        $doc = new DOMDocument();
+        // Prevent DOMDocument from adding extra html/body wrappers issues
+        $loaded = @$doc->loadHTML($html, LIBXML_NOWARNING | LIBXML_NOERROR);
+        libxml_clear_errors();
+        if (!$loaded) return [];
+
+        $xpath = new DOMXPath($doc);
+        $nodes = $xpath->query("//*[@data-question]");
+        if (!$nodes) return [];
+
+        $bank = [];
+        foreach ($nodes as $card) {
+            /** @var DOMElement $card */
+            $qnAttr = $card->getAttribute('data-question');
+            $qn = (int)$qnAttr;
+            if ($qn <= 0) continue;
+
+            // Question text: first h2/h3 inside card
+            $qTextNode = $xpath->query(".//h2|.//h3", $card);
+            $qText = null;
+            if ($qTextNode && $qTextNode->length > 0) {
+                $qText = trim(preg_replace('/\s+/', ' ', $qTextNode->item(0)->textContent ?? ''));
+            }
+
+            // Options: each label.quiz-option contains .option-label and a span.flex-1
+            $optNodes = $xpath->query(".//*[contains(concat(' ', normalize-space(@class), ' '), ' quiz-option ')]", $card);
+            $options = [];
+            if ($optNodes) {
+                foreach ($optNodes as $opt) {
+                    $labelNode = $xpath->query(".//*[contains(concat(' ', normalize-space(@class), ' '), ' option-label ')]", $opt);
+                    $key = $labelNode && $labelNode->length ? strtolower(trim($labelNode->item(0)->textContent ?? '')) : '';
+                    if ($key === '') continue;
+
+                    $textNode = $xpath->query(".//span[contains(concat(' ', normalize-space(@class), ' '), ' flex-1 ')][1]", $opt);
+                    $val = $textNode && $textNode->length ? trim(preg_replace('/\s+/', ' ', $textNode->item(0)->textContent ?? '')) : '';
+                    $options[$key] = $val;
+                }
+            }
+
+            if ($qText || !empty($options)) {
+                $bank[$qn] = [
+                    'question_text' => $qText,
+                    'options' => $options
+                ];
+            }
+        }
+
+        return $bank;
+    }
+
+    private function quizTypeToHtmlFile($quizType) {
+        $map = [
+            'functions' => 'functions-quiz.html',
+            'evaluating-functions' => 'evaluating-functions-quiz.html',
+            'operations-on-functions' => 'operations-on-functions-quiz.html',
+            'real-life-problems' => 'solving-real-life-problems-quiz.html',
+            'rational-functions' => 'rational-functions-quiz.html',
+            'solving-rational-equations-inequalities' => 'solving-rational-equations-inequalities-quiz.html',
+            'representations-of-rational-functions' => 'representations-of-rational-functions-quiz.html',
+            'domain-range-rational-functions' => 'domain-range-rational-functions-quiz.html',
+            'domain-range-inverse-functions' => 'domain-range-inverse-functions-quiz.html',
+            'one-to-one-functions' => 'one-to-one-functions-quiz.html',
+        ];
+        return $map[$quizType] ?? null;
     }
     
     // Get quiz statistics for all quizzes
@@ -1596,6 +1986,23 @@ class QuizManager {
             
             $scopeText = $classId == 0 ? 'all classes' : "class ID $classId";
             error_log("Quiz status toggled for quiz_type: $quizType, is_open: $isOpen, scope: $scopeText");
+
+            // Notify students about quiz open/close
+            try {
+                $teacherId = (int)($_SESSION['teacher_id'] ?? 0);
+                if ($teacherId > 0) {
+                    $quizLabel = ucwords(str_replace(['-', '_'], ' ', (string)$quizType));
+                    $opened = ((string)$isOpen === '1' || $isOpen === 1 || $isOpen === true);
+                    $type = $opened ? 'quiz_opened' : 'quiz_closed';
+                    $title = $opened ? 'Quiz opened' : 'Quiz closed';
+                    $msg = $opened
+                        ? "$quizLabel is now open. You can take the quiz."
+                        : "$quizLabel is now closed. You can no longer take the quiz for now.";
+                    notifyApprovedStudentsForTeacherScope($this->pdo, $teacherId, (int)$classId, $type, $title, $msg);
+                }
+            } catch (Throwable $e) {
+                error_log('toggleQuizStatus notify students failed: ' . $e->getMessage());
+            }
             
             return [
                 'success' => true,
@@ -1915,12 +2322,15 @@ class QuizManager {
                 $quizBadgeMap = [
                     'functions' => ['Functions Master', 'Functions Expert', 'Functions Achiever'],
                     'functions_topic_1' => ['Functions Master', 'Functions Expert', 'Functions Achiever'],
+                    'one-to-one-functions' => ['Functions Master', 'Functions Expert', 'Functions Achiever'],
                     'evaluating-functions' => ['Evaluating Functions Champion', 'Evaluating Functions Expert'],
                     'operations-on-functions' => ['Operations on Functions Champion', 'Operations on Functions Master', 'Operations on Functions Expert'],
                     'real-life-problems' => ['Real-Life Problems Champion', 'Real-Life Problems Master', 'Real-Life Problems Solver'],
                     'domain-range-rational-functions' => ['Domain & Range Master'],
                     'domain-range-inverse-functions' => ['Domain & Range Master'],
-                    'rational-functions' => ['Rational Functions Expert']
+                    'rational-functions' => ['Rational Functions Expert'],
+                    'solving-rational-equations-inequalities' => ['Rational Functions Expert'],
+                    'representations-of-rational-functions' => ['Rational Functions Expert']
                 ];
                 
                 // Get badge names for this quiz type
@@ -1996,6 +2406,15 @@ class QuizManager {
                 if ($totalBadgesRemoved > 0) {
                     $message .= " Removed $totalBadgesRemoved badge(s) associated with this quiz.";
                 }
+
+                // Notify the student that their quiz was reset
+                try {
+                    $quizLabel = ucwords(str_replace(['-', '_'], ' ', (string)$quizType));
+                    createStudentNotification($this->pdo, (int)$studentId, 'quiz_reset', 'Quiz was reset', "Your $quizLabel attempt was reset by your teacher. You can retake it now.");
+                } catch (Throwable $e) {
+                    error_log('resetStudentQuizAttempt notify student failed: ' . $e->getMessage());
+                }
+
                 return [
                     'success' => true,
                     'message' => $message,
@@ -2017,12 +2436,109 @@ class QuizManager {
             ];
         }
     }
+
+    // Allow teacher to reset quiz attempts for all students in their class/scope
+    public function resetAllStudentQuizAttempts($quizType, $teacherId, $classId = null) {
+        try {
+            if (empty($quizType) || empty($teacherId)) {
+                return ['success' => false, 'message' => 'Missing required parameters'];
+            }
+
+            // If class is specified, verify ownership
+            if (!empty($classId)) {
+                $verifyClass = $this->pdo->prepare("
+                    SELECT id FROM classes
+                    WHERE id = ? AND teacher_id = ? AND is_active = TRUE
+                    LIMIT 1
+                ");
+                $verifyClass->execute([$classId, $teacherId]);
+                if (!$verifyClass->fetch()) {
+                    return ['success' => false, 'message' => 'Invalid class selection'];
+                }
+            }
+
+            $this->pdo->beginTransaction();
+
+            $sql = "
+                SELECT DISTINCT qa.id, qa.student_id
+                FROM quiz_attempts qa
+                JOIN class_enrollments ce ON qa.student_id = ce.student_id AND ce.enrollment_status = 'approved'
+                JOIN classes c ON ce.class_id = c.id
+                WHERE c.teacher_id = ?
+                  AND c.is_active = TRUE
+                  AND qa.quiz_type = ?
+                  AND qa.status IN ('completed', 'in_progress')
+            ";
+            $params = [$teacherId, $quizType];
+            if (!empty($classId)) {
+                $sql .= " AND c.id = ?";
+                $params[] = $classId;
+            }
+
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $attemptIds = array_map('intval', array_column($rows, 'id'));
+            $studentIds = array_map('intval', array_unique(array_column($rows, 'student_id')));
+
+            if (empty($attemptIds)) {
+                $this->pdo->commit();
+                return [
+                    'success' => true,
+                    'message' => 'No quiz attempts to reset.',
+                    'reset_count' => 0
+                ];
+            }
+
+            $placeholders = implode(',', array_fill(0, count($attemptIds), '?'));
+
+            // Remove saved answers for these attempts
+            $delAnswers = $this->pdo->prepare("DELETE FROM quiz_answers WHERE attempt_id IN ($placeholders)");
+            $delAnswers->execute($attemptIds);
+
+            // Mark attempts as reset
+            $upd = $this->pdo->prepare("
+                UPDATE quiz_attempts
+                SET status = 'reset',
+                    completed_at = CURRENT_TIMESTAMP
+                WHERE id IN ($placeholders)
+            ");
+            $upd->execute($attemptIds);
+
+            $this->pdo->commit();
+
+            // Notify affected students
+            try {
+                if (!empty($studentIds)) {
+                    $quizLabel = ucwords(str_replace(['-', '_'], ' ', (string)$quizType));
+                    foreach ($studentIds as $sid) {
+                        createStudentNotification($this->pdo, (int)$sid, 'quiz_reset', 'Quiz was reset', "$quizLabel was reset by your teacher. You can retake it now.");
+                    }
+                }
+            } catch (Throwable $e) {
+                error_log('resetAllStudentQuizAttempts notify students failed: ' . $e->getMessage());
+            }
+
+            return [
+                'success' => true,
+                'message' => 'All student quiz attempts have been reset.',
+                'reset_count' => count($attemptIds)
+            ];
+        } catch (Exception $e) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            error_log("Error resetAllStudentQuizAttempts: " . $e->getMessage());
+            return ['success' => false, 'message' => 'Failed to reset all quiz attempts'];
+        }
+    }
     
     // Helper methods
     private function getCorrectAnswer($questionNumber) {
         $correctAnswers = [
             1 => 'a', 2 => 'b', 3 => 'a', 4 => 'b', 5 => 'b',
-            6 => 'a', 7 => 'b', 8 => 'b', 9 => 'a', 10 => 'a'
+            6 => 'a', 7 => 'b', 8 => 'b', 9 => 'a', 10 => 'a',
+            11 => 'b', 12 => 'b', 13 => 'a', 14 => 'b', 15 => 'c'
         ];
         return $correctAnswers[$questionNumber] ?? '';
     }
@@ -2031,7 +2547,8 @@ class QuizManager {
     private function getRealLifeProblemsCorrectAnswer($questionNumber) {
         $correctAnswers = [
             1 => 'b', 2 => 'b', 3 => 'c', 4 => 'b', 5 => 'a',
-            6 => 'b', 7 => 'b', 8 => 'c', 9 => 'a', 10 => 'c'
+            6 => 'b', 7 => 'b', 8 => 'c', 9 => 'a', 10 => 'c',
+            11 => 'b', 12 => 'c', 13 => 'b', 14 => 'b', 15 => 'c'
         ];
         return $correctAnswers[$questionNumber] ?? '';
     }
@@ -2039,8 +2556,9 @@ class QuizManager {
     // Evaluating Functions Quiz correct answers
     private function getEvaluatingFunctionsCorrectAnswer($questionNumber) {
         $correctAnswers = [
-            1 => 'a', 2 => 'b', 3 => 'c', 4 => 'a', 5 => 'b',
-            6 => 'c', 7 => 'a', 8 => 'b'
+            1 => 'b', 2 => 'b', 3 => 'a', 4 => 'b', 5 => 'b',
+            6 => 'a', 7 => 'c', 8 => 'a', 9 => 'a', 10 => 'b',
+            11 => 'c', 12 => 'a', 13 => 'b', 14 => 'a', 15 => 'c'
         ];
         return $correctAnswers[$questionNumber] ?? '';
     }
@@ -2048,8 +2566,9 @@ class QuizManager {
     // Operations on Functions Quiz correct answers
     private function getOperationsOnFunctionsCorrectAnswer($questionNumber) {
         $correctAnswers = [
-            1 => 'a', 2 => 'a', 3 => 'a', 4 => 'a', 5 => 'a', 
-            6 => 'a', 7 => 'a', 8 => 'a', 9 => 'a', 10 => 'b'
+            1 => 'c', 2 => 'B', 3 => 'C', 4 => 'D', 5 => 'B',
+            6 => 'C', 7 => 'B', 8 => 'C', 9 => 'D', 10 => 'A',
+            11 => 'C', 12 => 'B', 13 => 'A', 14 => 'A', 15 => 'B'
         ];
         return $correctAnswers[$questionNumber] ?? '';
     }
@@ -2203,42 +2722,103 @@ class QuizManager {
             7 => 'a', // Find the least common denominator (LCD)
             8 => 'a', // (-∞, -2) ∪ [1, ∞)
             9 => 'a', // Sign analysis and number line
-            10 => 'a' // x = -3
+            10 => 'a', // x = -3
+            11 => 'b', // undefined at x = 2
+            12 => 'b', // x = 3
+            13 => 'b', // (-inf, -2)
+            14 => 'b', // check extraneous values
+            15 => 'b' // x + 3
         ];
         
         return $correctAnswers[$questionNumber] ?? '';
     }
     
-    private function calculateRationalFunctionsProblemSolvingScore($answers) {
-        $score = 0;
+    private function getRepresentationsOfRationalFunctionsCorrectAnswer($questionNumber) {
+        $correctAnswers = [
+            1 => 'a', // Ratio of two polynomial functions
+            2 => 'b', // f(x) = sqrt(x) is not rational
+            3 => 'a', // Domain exclusions at denominator zeros
+            4 => 'a', // Vertical asymptote meaning
+            5 => 'a', // Horizontal asymptote by leading coefficients
+            6 => 'a', // X-intercepts from numerator
+            7 => 'd', // All of the above
+            8 => 'a', // Vertical asymptote x = 2
+            9 => 'a', // y-intercept y = -4
+            10 => 'a', // Real-world application
+            11 => 'b', // Undefined at x = 2
+            12 => 'b', // x = 3
+            13 => 'b', // (-inf, -2)
+            14 => 'b', // Check extraneous values
+            15 => 'b' // x + 3
+        ];
         
-        // Problem solving question (1 point) - domain of f(x) = (x² - 4)/(x - 2)
-        if (isset($answers['q11'])) {
-            $studentAnswer = strtolower(trim($answers['q11']));
-            $correctAnswer = '(-∞,2) ∪ (2,∞)';
-            
-            // Check for exact match or common variations
-            if ($studentAnswer === strtolower($correctAnswer) || 
-                $studentAnswer === '(-∞,2) u (2,∞)' ||
-                $studentAnswer === '(-∞,2) ∪ (2,∞)' ||
-                strpos($studentAnswer, '(-∞,2)') !== false && strpos($studentAnswer, '(2,∞)') !== false) {
-                $score = 1;
-            }
-        }
-        
-        return $score;
+        return $correctAnswers[$questionNumber] ?? '';
     }
     
-    private function storeRationalFunctionsProblemSolvingAnswer($attemptId, $answers, $score) {
-        try {
-            $psAnswer = $answers['q11'] ?? '';
-            $correctAnswer = '(-∞,2) ∪ (2,∞)';
-            $isCorrect = ($score >= 1);
-            
-            $this->storeAnswer($attemptId, 11, 'problem_solving', $psAnswer, $correctAnswer, $isCorrect, $score);
-        } catch (Exception $e) {
-            error_log("Error storing rational functions problem solving answer: " . $e->getMessage());
-        }
+    private function getOneToOneFunctionsCorrectAnswer($questionNumber) {
+        $correctAnswers = [
+            1 => 'a', // Definition of one-to-one function
+            2 => 'a', // f(x) = 2x + 3
+            3 => 'a', // Horizontal line test purpose
+            4 => 'c', // f(x) = x^2 is not one-to-one
+            5 => 'a', // Inverse of linear function
+            6 => 'a', // Composition identities
+            7 => 'a', // Algebraic proof method
+            8 => 'a', // Domain-range swap
+            9 => 'a', // Practical uniqueness mapping
+            10 => 'a', // Inverse of cubic root relation
+            11 => 'b', // Undefined at x = 2
+            12 => 'b', // x = 3
+            13 => 'b', // (-inf, -2)
+            14 => 'b', // Check extraneous values
+            15 => 'b' // x + 3
+        ];
+        
+        return $correctAnswers[$questionNumber] ?? '';
+    }
+    
+    private function getDomainRangeRationalFunctionsCorrectAnswer($questionNumber) {
+        $correctAnswers = [
+            1 => 'a',
+            2 => 'a',
+            3 => 'a',
+            4 => 'a',
+            5 => 'a',
+            6 => 'a',
+            7 => 'a',
+            8 => 'a',
+            9 => 'a',
+            10 => 'a',
+            11 => 'b',
+            12 => 'b',
+            13 => 'b',
+            14 => 'b',
+            15 => 'b'
+        ];
+        
+        return $correctAnswers[$questionNumber] ?? '';
+    }
+
+    private function getDomainRangeInverseFunctionsCorrectAnswer($questionNumber) {
+        $correctAnswers = [
+            1 => 'a',
+            2 => 'a',
+            3 => 'a',
+            4 => 'a',
+            5 => 'a',
+            6 => 'a',
+            7 => 'a',
+            8 => 'a',
+            9 => 'a',
+            10 => 'a',
+            11 => 'b',
+            12 => 'b',
+            13 => 'b',
+            14 => 'b',
+            15 => 'b'
+        ];
+        
+        return $correctAnswers[$questionNumber] ?? '';
     }
     
     // Update heartbeat for quiz attempt
@@ -2419,7 +2999,7 @@ $isTeacher = is_teacher_logged_in();
 
 // For certain actions, we need to handle authentication more gracefully
 $authRequiredActions = ['start_quiz', 'check_existing_attempt', 'get_student_history', 'submit_quiz', 'save_quiz_progress', 'get_quiz_answers'];
-$teacherOnlyActions = ['save_quiz_settings', 'get_quiz_results', 'get_quiz_statistics', 'toggle_quiz_status'];
+$teacherOnlyActions = ['save_quiz_settings', 'get_quiz_results', 'get_quiz_statistics', 'toggle_quiz_status', 'get_attempt_answer_details', 'reset_all_student_quiz'];
 $publicActions = ['get_quiz_settings', 'get_quiz_status']; // These can be accessed by both students and teachers
 
 // Check if action requires authentication
@@ -2677,6 +3257,21 @@ try {
             $result = $quizManager->getQuizResults($quizType, null, $classId);
             echo json_encode($result);
             break;
+
+        case 'get_attempt_answer_details':
+            if (!$isTeacher) {
+                echo json_encode(['success' => false, 'message' => 'Teacher authentication required']);
+                break;
+            }
+            $attemptId = $_GET['attempt_id'] ?? null;
+            $teacherId = $_SESSION['teacher_id'] ?? null;
+            if (!$attemptId || !$teacherId) {
+                echo json_encode(['success' => false, 'message' => 'Missing required parameters']);
+                break;
+            }
+            $result = $quizManager->getAttemptAnswerDetails($attemptId, $teacherId);
+            echo json_encode($result);
+            break;
             
         case 'get_quiz_statistics':
             if (!$isTeacher) {
@@ -2794,6 +3389,24 @@ try {
             }
             
             $result = $quizManager->resetStudentQuizAttempt($studentId, $quizType, $teacherId);
+            echo json_encode($result);
+            break;
+
+        case 'reset_all_student_quiz':
+            if (!$isTeacher) {
+                echo json_encode(['success' => false, 'message' => 'Teacher authentication required']);
+                break;
+            }
+            $quizType = $_POST['quiz_type'] ?? '';
+            $teacherId = $_SESSION['teacher_id'] ?? null;
+            $classId = $_POST['class_id'] ?? null;
+
+            if (!$quizType || !$teacherId) {
+                echo json_encode(['success' => false, 'message' => 'Missing required parameters']);
+                break;
+            }
+
+            $result = $quizManager->resetAllStudentQuizAttempts($quizType, $teacherId, $classId);
             echo json_encode($result);
             break;
             

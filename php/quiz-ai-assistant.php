@@ -47,16 +47,20 @@ if (!isset($_SESSION['user_id'])) {
 // Load environment variables (API key should be in .env file)
 require_once __DIR__ . '/load-env.php';
 
-$GROQ_API_KEY = getenv('GROQ_API_KEY');
+// Support multiple configured key names used across this project
+$GROQ_API_KEY = getenv('GROQ_API_KEY')
+    ?: getenv('GROQ_PERF_API_KEY')
+    ?: getenv('GROQ_LESSON_API_KEY');
 $GROQ_API_URL = getenv('GROQ_API_URL') ?: 'https://api.groq.com/openai/v1/chat/completions';
 $GROQ_MODEL = 'llama-3.1-8b-instant';
 
 if (empty($GROQ_API_KEY)) {
     ob_clean();
-    http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => 'GROQ_API_KEY is not configured'
+        'code' => 'AI_UNAVAILABLE',
+        'message' => 'AI analysis is temporarily unavailable. No Groq API key is configured (GROQ_API_KEY/GROQ_PERF_API_KEY/GROQ_LESSON_API_KEY).',
+        'metrics' => null
     ]);
     exit;
 }
@@ -70,15 +74,14 @@ try {
     }
     
     $score = isset($quizData['score']) ? (int)$quizData['score'] : 0;
-    $totalQuestions = isset($quizData['totalQuestions']) ? (int)$quizData['totalQuestions'] : 11;
+    $totalQuestions = isset($quizData['totalQuestions']) ? (int)$quizData['totalQuestions'] : 15;
     $correct = isset($quizData['correct']) ? (int)$quizData['correct'] : 0;
     $incorrect = isset($quizData['incorrect']) ? (int)$quizData['incorrect'] : 0;
     $percentage = isset($quizData['percentage']) ? (float)$quizData['percentage'] : 0;
     $timeTaken = isset($quizData['timeTaken']) ? $quizData['timeTaken'] : 'N/A';
     $mcCorrect = isset($quizData['mcCorrect']) ? (int)$quizData['mcCorrect'] : 0;
     $mcIncorrect = isset($quizData['mcIncorrect']) ? (int)$quizData['mcIncorrect'] : 0;
-    $psCorrect = isset($quizData['psCorrect']) ? (int)$quizData['psCorrect'] : 0;
-    $psIncorrect = isset($quizData['psIncorrect']) ? (int)$quizData['psIncorrect'] : 0;
+    $quizType = isset($quizData['quizType']) ? (string)$quizData['quizType'] : 'functions';
     
     // Get student info
     $user_id = $_SESSION['user_id'];
@@ -93,9 +96,8 @@ try {
     $studentName = $studentInfo['first_name'] . ' ' . $studentInfo['last_name'];
     
     // Calculate detailed metrics for better analysis
-    $mcPercentage = $mcCorrect > 0 ? round(($mcCorrect / 10) * 100, 1) : 0;
-    $psPercentage = $psCorrect > 0 ? 100 : 0;
-    $totalPoints = 15; // 10 MC (1pt each) + 1 PS (5pts)
+    $mcPercentage = $totalQuestions > 0 ? round(($mcCorrect / $totalQuestions) * 100, 1) : 0;
+    $totalPoints = $totalQuestions; // 15 MC (1 point each)
     
     // Determine performance level
     $performanceLevel = '';
@@ -116,14 +118,26 @@ try {
     $systemPrompt .= "You provide accurate, specific, and actionable feedback. Always be positive and supportive while being honest about areas for improvement. ";
     $systemPrompt .= "Use the student's name naturally throughout your response. Be conversational but educational.";
     
-    $userPrompt = "Analyze this student's Functions Quiz performance and provide detailed feedback:\n\n";
+    $quizTypeLabels = [
+        'functions' => 'Functions Quiz',
+        'one-to-one-functions' => 'One-to-One Functions Quiz',
+        'domain-range-rational-functions' => 'Domain and Range of Rational Functions Quiz',
+        'domain-range-inverse-functions' => 'Domain and Range of Inverse Functions Quiz',
+        'evaluating-functions' => 'Evaluating Functions Quiz',
+        'operations-on-functions' => 'Operations on Functions Quiz',
+        'real-life-problems' => 'Solving Real-Life Problems Quiz',
+        'rational-functions' => 'Rational Functions Quiz',
+        'solving-rational-equations-inequalities' => 'Solving Rational Equations and Inequalities Quiz',
+        'representations-of-rational-functions' => 'Representations of Rational Functions Quiz'
+    ];
+    $quizLabel = $quizTypeLabels[$quizType] ?? 'Functions Quiz';
+    $userPrompt = "Analyze this student's {$quizLabel} performance and provide detailed feedback:\n\n";
     $userPrompt .= "STUDENT: " . $studentName . "\n";
     $userPrompt .= "PERFORMANCE LEVEL: " . $performanceLevel . " (" . round($percentage, 1) . "%)\n\n";
     
     $userPrompt .= "DETAILED SCORES:\n";
     $userPrompt .= "- Total Score: " . $score . "/" . $totalPoints . " points (" . round($percentage, 1) . "%)\n";
-    $userPrompt .= "- Multiple Choice: " . $mcCorrect . "/10 correct (" . $mcPercentage . "%) - " . ($mcIncorrect > 0 ? $mcIncorrect . " incorrect" : "Perfect!") . "\n";
-    $userPrompt .= "- Problem Solving: " . ($psCorrect > 0 ? "Correct (5/5 points)" : "Incorrect (0/5 points)") . "\n";
+    $userPrompt .= "- Multiple Choice: " . $mcCorrect . "/" . $totalQuestions . " correct (" . $mcPercentage . "%) - " . ($mcIncorrect > 0 ? $mcIncorrect . " incorrect" : "Perfect!") . "\n";
     $userPrompt .= "- Time Taken: " . $timeTaken . "\n\n";
     
     $userPrompt .= "QUIZ TOPICS COVERED:\n";
@@ -132,7 +146,7 @@ try {
     $userPrompt .= "3. Function Operations (addition, subtraction, multiplication, division)\n";
     $userPrompt .= "4. Function Composition\n";
     $userPrompt .= "5. Inverse Functions\n";
-    $userPrompt .= "6. Real-world Application (quadratic functions, vertex formula, maximum/minimum)\n\n";
+    $userPrompt .= "6. Applied and mixed function questions\n\n";
     
     $userPrompt .= "ANALYSIS REQUIREMENTS:\n\n";
     
@@ -147,23 +161,16 @@ try {
     if ($mcPercentage >= 80) {
         $userPrompt .= "- Strong understanding of multiple choice concepts\n";
     }
-    if ($psCorrect > 0) {
-        $userPrompt .= "- Successfully applied problem-solving skills\n";
-    }
     if ($mcCorrect >= 7) {
         $userPrompt .= "- Good grasp of function fundamentals\n";
     }
     $userPrompt .= "- Be specific about which topics they mastered\n";
-    $userPrompt .= "- Mention their problem-solving approach if PS was correct\n";
     $userPrompt .= "- Format as bullet points with specific examples\n\n";
     
     $userPrompt .= "## AREAS FOR IMPROVEMENT (List 3-5 specific areas)\n";
     $userPrompt .= "Identify weaknesses based on:\n";
     if ($mcIncorrect > 0) {
         $userPrompt .= "- Multiple choice errors (" . $mcIncorrect . " questions)\n";
-    }
-    if ($psCorrect == 0) {
-        $userPrompt .= "- Problem-solving application needs work\n";
     }
     if ($mcPercentage < 70) {
         $userPrompt .= "- Core function concepts need reinforcement\n";
@@ -193,18 +200,15 @@ try {
     $userPrompt .= "- Provide mathematical accuracy in your analysis\n";
     $userPrompt .= "- Keep each section concise but informative\n";
     $userPrompt .= "- Use emojis sparingly (1-2 per section max)\n";
-    $userPrompt .= "- Make recommendations specific to Functions topic\n";
+    $userPrompt .= "- Make recommendations specific to the current quiz topic\n";
     
     // Return metrics for frontend visualization
     $metrics = [
         'percentage' => round($percentage, 1),
         'mcPercentage' => $mcPercentage,
-        'psPercentage' => $psPercentage,
         'performanceLevel' => $performanceLevel,
         'mcCorrect' => $mcCorrect,
-        'mcIncorrect' => $mcIncorrect,
-        'psCorrect' => $psCorrect,
-        'psIncorrect' => $psIncorrect
+        'mcIncorrect' => $mcIncorrect
     ];
     
     // Call Groq API

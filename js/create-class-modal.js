@@ -18,15 +18,15 @@ class CreateClassModal {
                 <div class="flex items-center justify-center min-h-screen p-4 overflow-y-auto">
                     <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full mx-4 my-8 max-h-[90vh] transform transition-all duration-300 scale-95 opacity-0 flex flex-col" id="createClassModalContent">
                         <!-- Modal Header -->
-                        <div class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-6 rounded-t-2xl text-white flex-shrink-0">
+                        <div class="bg-purple-600 p-6 rounded-t-2xl text-white flex-shrink-0">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
-                                    <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                                        <i class="fas fa-chalkboard text-2xl"></i>
+                                    <div class="w-12 h-12 bg-white/15 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                                        <i class="fas fa-chalkboard-teacher text-2xl"></i>
                                     </div>
                                     <div>
                                         <h3 class="text-xl font-bold">Create New Class</h3>
-                                        <p class="text-indigo-100 text-sm">Set up a new class for your students</p>
+                                        <p class="text-purple-100 text-sm">Set up a new class for your students</p>
                                     </div>
                                 </div>
                                 <button id="closeCreateClassModal" class="text-white/80 hover:text-white hover:bg-white/20 p-2 rounded-lg transition-all duration-200">
@@ -47,7 +47,7 @@ class CreateClassModal {
                                         type="text" 
                                         id="className" 
                                         name="class_name"
-                                        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200"
+                                        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200"
                                         placeholder="e.g., Grade 11 STEM - General Mathematics"
                                         required
                                     >
@@ -88,26 +88,6 @@ class CreateClassModal {
                                     </div>
                                 </div>
 
-                                <div class="grid grid-cols-2 gap-3">
-                                    <!-- Max Students -->
-                                    <div>
-                                        <label for="maxStudents" class="block text-xs font-semibold text-slate-700 mb-1">
-                                            Max Students
-                                        </label>
-                                        <input 
-                                            type="number" 
-                                            id="maxStudents" 
-                                            name="max_students"
-                                            class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200"
-                                            placeholder="50"
-                                            min="1"
-                                            max="100"
-                                            value="50"
-                                        >
-                                    </div>
-                                    <div></div>
-                                </div>
-
                                 <!-- Description -->
                                 <div>
                                     <label for="description" class="block text-sm font-semibold text-slate-700 mb-2">
@@ -117,15 +97,15 @@ class CreateClassModal {
                                         id="description" 
                                         name="description"
                                         rows="2"
-                                        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200"
+                                        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200"
                                         placeholder="Brief description of your class..."
                                     ></textarea>
                                 </div>
 
                                 <!-- Info Box -->
-                                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-3">
+                                <div class="bg-purple-50 border border-purple-200 rounded-lg p-3">
                                     <div class="flex items-start space-x-2">
-                                        <div class="w-6 h-6 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                                        <div class="w-6 h-6 bg-purple-600 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
                                             <i class="fas fa-info text-white text-xs"></i>
                                         </div>
                                         <div>
@@ -140,21 +120,21 @@ class CreateClassModal {
                                 <!-- Loading State -->
                                 <div id="createClassLoading" class="hidden">
                                     <div class="flex items-center justify-center space-x-3 py-4">
-                                        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-500"></div>
+                                        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
                                         <span class="text-slate-600 font-medium">Creating class...</span>
                                     </div>
                                 </div>
 
                                 <!-- Success State -->
                                 <div id="createClassSuccess" class="hidden">
-                                    <div class="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-lg p-3">
+                                <div class="bg-purple-50 border border-purple-200 rounded-lg p-3">
                                         <div class="flex items-center space-x-2">
-                                            <div class="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
+                                        <div class="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
                                                 <i class="fas fa-check text-white text-sm"></i>
                                             </div>
                                             <div>
-                                                <h4 class="font-semibold text-emerald-800 text-sm">Class Created Successfully!</h4>
-                                                <p class="text-xs text-emerald-700">Class code: <span id="generatedClassCode" class="font-mono font-bold"></span></p>
+                                            <h4 class="font-semibold text-purple-800 text-sm">Class Created Successfully!</h4>
+                                            <p class="text-xs text-purple-700">Class code: <span id="generatedClassCode" class="font-mono font-bold"></span></p>
                                             </div>
                                         </div>
                                     </div>
@@ -162,9 +142,9 @@ class CreateClassModal {
 
                                 <!-- Error State -->
                                 <div id="createClassError" class="hidden">
-                                    <div class="bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-lg p-3">
+                                    <div class="bg-red-50 border border-red-200 rounded-lg p-3">
                                         <div class="flex items-center space-x-2">
-                                            <div class="w-8 h-8 bg-gradient-to-br from-red-500 to-pink-600 rounded-lg flex items-center justify-center">
+                                            <div class="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
                                                 <i class="fas fa-exclamation-triangle text-white text-sm"></i>
                                             </div>
                                             <div>
@@ -184,14 +164,14 @@ class CreateClassModal {
                                 <button 
                                     type="button" 
                                     id="cancelCreateClass" 
-                                    class="flex-1 px-4 py-3 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl font-medium transition-all duration-200"
+                                    class="flex-1 px-4 py-3 bg-white border border-purple-200 text-purple-700 hover:bg-purple-50 hover:border-purple-300 rounded-xl font-medium transition-all duration-200"
                                 >
                                     Cancel
                                 </button>
                                 <button 
                                     type="submit" 
                                     id="submitCreateClass"
-                                    class="flex-1 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-4 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
+                                    class="flex-1 bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
                                 >
                                     <i class="fas fa-plus mr-2"></i>
                                     Create Class
@@ -248,7 +228,8 @@ class CreateClassModal {
             subject: formData.get('subject'),
             gradeLevel: formData.get('grade_level'),
             strand: formData.get('strand'),
-            maxStudents: parseInt(formData.get('max_students')) || 50
+            // Kept as a fixed default since the UI no longer asks max students.
+            maxStudents: 50
         };
 
         // Validate required fields
