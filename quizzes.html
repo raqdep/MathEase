@@ -488,14 +488,16 @@
     <!-- Quiz Leaderboard Modal -->
     <div id="quizLeaderboardModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col">
-            <!-- Modal Header -->
-            <div class="bg-white rounded-t-2xl p-8 flex-shrink-0 relative">
-                <div class="text-center mb-8">
-                    <div class="w-20 h-20 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-trophy text-3xl"></i>
+            <!-- Modal Header (compact: trophy left, title stack right — matches quiz results modal) -->
+            <div class="bg-white rounded-t-2xl p-5 sm:p-6 flex-shrink-0 relative">
+                <div class="flex items-center gap-4 pr-12">
+                    <div class="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-full flex items-center justify-center flex-shrink-0 shadow-md" aria-hidden="true">
+                        <i class="fas fa-trophy text-2xl sm:text-3xl"></i>
                     </div>
-                    <h2 class="text-3xl font-bold text-gray-800 mb-2" id="leaderboardModalTitle">Class Leaderboard</h2>
-                    <p class="text-lg text-gray-600" id="leaderboardModalSubtitle">All students from your class ranked by score and speed</p>
+                    <div class="min-w-0">
+                        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-1 leading-tight" id="leaderboardModalTitle">Class Leaderboard</h2>
+                        <p class="text-base sm:text-lg text-gray-600" id="leaderboardModalSubtitle">All students from your class ranked by score and speed</p>
+                    </div>
                 </div>
                 <button onclick="closeQuizLeaderboard()" class="absolute top-4 right-4 z-10 text-gray-500 hover:text-gray-700 transition-colors p-2 hover:bg-gray-100 rounded-full" aria-label="Close leaderboard">
                     <i class="fas fa-times text-2xl"></i>
