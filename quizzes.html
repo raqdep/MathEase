@@ -3254,6 +3254,72 @@
             document.getElementById('quizLeaderboardModal').classList.add('hidden');
         }
 
+        /** Match class-specific quiz settings (same precedence as updateQuizCardsWithDeadlines). */
+        function resolveClassSettingsForQuiz(settingsRoot, quizType, sid) {
+            if (!settingsRoot || !quizType || !settingsRoot[quizType]) return null;
+            const byType = settingsRoot[quizType];
+            if (sid !== null && sid !== undefined && sid !== '') {
+                if (byType[sid]) return byType[sid];
+                if (byType[String(sid)]) return byType[String(sid)];
+                if (byType[Number(sid)]) return byType[Number(sid)];
+            }
+            if (byType['0']) return byType['0'];
+            const vals = Object.values(byType);
+            return vals.length ? vals[0] : null;
+        }
+
+        /** Full itemized review only after deadline passed AND quiz closed by teacher. */
+        function isFullQuizReviewAllowed(classSettings) {
+            if (!classSettings || !classSettings.deadline) return false;
+            const deadline = new Date(classSettings.deadline);
+            if (Number.isNaN(deadline.getTime())) return false;
+            const deadlinePassed = Date.now() > deadline.getTime();
+            const isClosed = classSettings.is_open === false || classSettings.is_open === 0 || classSettings.is_open === '0';
+            return deadlinePassed && isClosed;
+        }
+
+        async function getStudentQuizReviewPolicy(quizType) {
+            try {
+                const cid = studentClassId || await getStudentClassId();
+                const url = cid
+                    ? `php/quiz-management.php?action=get_quiz_settings&class_id=${encodeURIComponent(cid)}&_t=${Date.now()}`
+                    : `php/quiz-management.php?action=get_quiz_settings&_t=${Date.now()}`;
+                const response = await fetch(url, {
+                    credentials: 'include',
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache'
+                    }
+                });
+                const result = await response.json();
+                if (!result.success || !result.settings) {
+                    return { allowFull: false, deadlinePassed: false, isClosed: false, hasSettings: false };
+                }
+                const classSettings = resolveClassSettingsForQuiz(result.settings, quizType, cid);
+                if (!classSettings) {
+                    return { allowFull: false, deadlinePassed: false, isClosed: false, hasSettings: false };
+                }
+                const deadline = classSettings.deadline ? new Date(classSettings.deadline) : null;
+                const deadlinePassed = deadline && !Number.isNaN(deadline.getTime())
+                    ? Date.now() > deadline.getTime()
+                    : false;
+                const isClosed = classSettings.is_open === false || classSettings.is_open === 0 || classSettings.is_open === '0';
+                const allowFull = isFullQuizReviewAllowed(classSettings);
+                return { allowFull, deadlinePassed, isClosed, hasSettings: true };
+            } catch (e) {
+                console.error('getStudentQuizReviewPolicy:', e);
+                return { allowFull: false, deadlinePassed: false, isClosed: false, hasSettings: false };
+            }
+        }
+
+        function escapeHtml(text) {
+            if (text === null || text === undefined) return '';
+            const div = document.createElement('div');
+            div.textContent = String(text);
+            return div.innerHTML;
+        }
+
         async function showQuizResults(quizType) {
             const modal = document.getElementById('quizResultsModal');
             const title = document.getElementById('resultsModalTitle');
@@ -3289,12 +3355,14 @@
             `;
             
             try {
-                // Get student's quiz attempt
-                const response = await fetch(`php/quiz-management.php?action=get_student_history&quiz_type=${encodeURIComponent(quizType)}`, {
-                    credentials: 'include'
-                });
-                
-                const result = await response.json();
+                const [reviewPolicy, historyResponse] = await Promise.all([
+                    getStudentQuizReviewPolicy(quizType),
+                    fetch(`php/quiz-management.php?action=get_student_history&quiz_type=${encodeURIComponent(quizType)}`, {
+                        credentials: 'include'
+                    })
+                ]);
+
+                const result = await historyResponse.json();
                 
                 if (result.success && result.attempts && result.attempts.length > 0) {
                     const attempts = result.attempts;
@@ -3333,8 +3401,8 @@
                         const answersResult = await answersResponse.json();
                         
                         if (answersResult.success && answersResult.answers) {
-                            // Load quiz data to get correct answers
-                            await loadQuizDataAndDisplayResults(quizType, answersResult.answers, candidateAttempt, content);
+                            // Load quiz data to get correct answers (full review only when deadline passed + quiz closed)
+                            await loadQuizDataAndDisplayResults(quizType, answersResult.answers, candidateAttempt, content, reviewPolicy);
                         } else {
                             content.innerHTML = `
                                 <div class="text-center py-16">
@@ -3425,8 +3493,14 @@
             return answers;
         }
 
-        async function loadQuizDataAndDisplayResults(quizType, studentAnswers, attempt, container) {
+        async function loadQuizDataAndDisplayResults(quizType, studentAnswers, attempt, container, reviewPolicy) {
             try {
+                const policy = reviewPolicy || { allowFull: false };
+                if (!policy.allowFull) {
+                    displayBasicResults(studentAnswers, attempt, container, { reason: 'policy', reviewPolicy: policy });
+                    return;
+                }
+
                 // Cache quizData to avoid expensive repeated fetch/HTML parsing on subsequent "Result" clicks.
                 window.__quizDataCache = window.__quizDataCache || {};
                 if (window.__quizDataCache[quizType]) {
@@ -3434,7 +3508,7 @@
                     if (cached && cached.answers) {
                         displayResultsInModal(cached, studentAnswers, attempt, container);
                     } else {
-                        displayBasicResults(studentAnswers, attempt, container);
+                        displayBasicResults(studentAnswers, attempt, container, { reason: 'load_error' });
                     }
                     return;
                 }
@@ -3452,8 +3526,9 @@
                     }
                 }
                 
-                // If API doesn't have quiz data, try to load from quiz file
-                if (!quizData) {
+                // If API doesn't provide usable answers, fallback to quiz HTML parsing.
+                const hasUsableAnswers = !!(quizData && quizData.answers && Object.keys(quizData.answers).length > 0);
+                if (!hasUsableAnswers) {
                     const quizUrls = {
                         'functions': 'quiz/functions-quiz.html',
                         'evaluating-functions': 'quiz/evaluating-functions-quiz.html',
@@ -3490,16 +3565,43 @@
                     displayResultsInModal(quizData, studentAnswers, attempt, container);
                 } else {
                     // Fallback: Show basic results without correct answers
-                    displayBasicResults(studentAnswers, attempt, container);
+                    displayBasicResults(studentAnswers, attempt, container, { reason: 'load_error' });
                 }
             } catch (error) {
                 console.error('Error loading quiz data:', error);
                 // Fallback: Show basic results
-                displayBasicResults(studentAnswers, attempt, container);
+                displayBasicResults(studentAnswers, attempt, container, { reason: 'load_error' });
             }
         }
 
-        function displayBasicResults(studentAnswers, attempt, container) {
+        function displayBasicResults(studentAnswers, attempt, container, options) {
+            const reason = options && options.reason;
+            const rp = options && options.reviewPolicy;
+            const policyLock = reason === 'policy' && rp;
+            let infoBody = '';
+            let boxClass = 'bg-blue-50 border border-blue-200 rounded-lg p-4';
+            let titleClass = 'text-blue-800 mb-2';
+            let titleText = 'Limited details';
+
+            if (policyLock) {
+                boxClass = 'bg-amber-50 border border-amber-200 rounded-lg p-4';
+                titleClass = 'text-amber-900 mb-2';
+                titleText = 'Review locked';
+                const parts = [];
+                if (!rp.deadlinePassed) parts.push('the quiz deadline has passed');
+                if (!rp.isClosed) parts.push('your teacher has closed the quiz');
+                const waitList = parts.length ? parts.join(' and ') : 'those conditions are met';
+                infoBody = `
+                    <p class="text-amber-900 mb-2 font-medium">Question-by-question review is not available yet.</p>
+                    <p class="text-amber-800 text-sm">You will see each question, your answers, and the correct answers once ${waitList}.</p>
+                `;
+            } else {
+                infoBody = `
+                    <p class="text-blue-800">
+                        For detailed question review, please visit the quiz page directly.
+                    </p>
+                `;
+            }
             container.innerHTML = `
                 <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
                     <div class="text-center mb-6">
@@ -3508,11 +3610,12 @@
                         <div class="text-2xl font-semibold text-gray-600">${attempt.percentage}%</div>
                     </div>
                 </div>
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <p class="text-blue-800">
+                <div class="${boxClass}">
+                    <p class="${titleClass}">
                         <i class="fas fa-info-circle mr-2"></i>
-                        For detailed question review, please visit the quiz page directly.
+                        ${titleText}
                     </p>
+                    ${infoBody}
                 </div>
             `;
         }
