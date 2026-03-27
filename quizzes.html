@@ -3371,6 +3371,39 @@
             }
         }
 
+        function extractQuestionBankFromHtml(html) {
+            try {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const cards = doc.querySelectorAll('[data-question]');
+                const bank = {};
+
+                cards.forEach((card) => {
+                    const qn = parseInt(card.getAttribute('data-question'), 10);
+                    if (!Number.isInteger(qn)) return;
+
+                    const heading = card.querySelector('h2, h3');
+                    const questionText = heading ? heading.textContent.trim().replace(/\s+/g, ' ') : `Question ${qn}`;
+
+                    const options = {};
+                    const labels = card.querySelectorAll('label.quiz-option');
+                    labels.forEach((label) => {
+                        const keyEl = label.querySelector('.option-label');
+                        const txtEl = label.querySelector('span.flex-1');
+                        const key = keyEl ? keyEl.textContent.trim().toUpperCase() : '';
+                        const val = txtEl ? txtEl.textContent.trim().replace(/\s+/g, ' ') : '';
+                        if (key && val) options[key] = val;
+                    });
+
+                    bank[qn] = { questionText, options };
+                });
+
+                return bank;
+            } catch (_e) {
+                return {};
+            }
+        }
+
         async function loadQuizDataAndDisplayResults(quizType, studentAnswers, attempt, container) {
             try {
                 // Cache quizData to avoid expensive repeated fetch/HTML parsing on subsequent "Result" clicks.
@@ -3417,6 +3450,7 @@
                     if (quizUrl) {
                         const htmlResponse = await fetch(quizUrl);
                         const html = await htmlResponse.text();
+                        const extractedBank = extractQuestionBankFromHtml(html);
                         
                         // Extract quiz data from script tag using a safer method
                         // Try to match the quizData object (may span multiple lines)
@@ -3426,6 +3460,7 @@
                             try {
                                 const func = new Function(scriptMatch[0] + ' return quizData;');
                                 quizData = func();
+                                quizData.questionBank = extractedBank;
                                 console.log('✅ Quiz data extracted successfully for', quizType);
                                 console.log('Quiz data structure:', {
                                     hasAnswers: !!quizData.answers
@@ -3439,7 +3474,8 @@
                                     
                                     if (answersMatch) {
                                         quizData = {
-                                            answers: {}
+                                            answers: {},
+                                            questionBank: extractedBank
                                         };
                                         
                                         if (answersMatch) {
@@ -3529,34 +3565,34 @@
             
             // Score Summary Section - Match exact design from quiz
             let resultsHTML = `
-                <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                <div class="bg-white rounded-2xl shadow-xl p-6 mb-6">
                     <!-- Score Summary -->
-                    <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
-                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 text-center">
-                            <div class="text-3xl font-bold text-blue-600 mb-2">${attempt.score}/${attempt.total_questions}</div>
-                            <div class="text-sm text-gray-600">Total Score</div>
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 text-center">
+                            <div class="text-2xl font-bold text-blue-600 mb-1">${attempt.score}/${attempt.total_questions}</div>
+                            <div class="text-xs text-gray-600">Score</div>
                         </div>
-                        <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 text-center">
-                            <div class="text-3xl font-bold text-green-600 mb-2">${correctCount}</div>
-                            <div class="text-sm text-gray-600">Correct Answers</div>
+                        <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 text-center">
+                            <div class="text-2xl font-bold text-green-600 mb-1">${correctCount}</div>
+                            <div class="text-xs text-gray-600">Correct</div>
                         </div>
-                        <div class="bg-gradient-to-r from-red-50 to-pink-50 rounded-xl p-6 text-center">
-                            <div class="text-3xl font-bold text-red-600 mb-2">${incorrectCount}</div>
-                            <div class="text-sm text-gray-600">Incorrect Answers</div>
+                        <div class="bg-gradient-to-r from-red-50 to-pink-50 rounded-xl p-4 text-center">
+                            <div class="text-2xl font-bold text-red-600 mb-1">${incorrectCount}</div>
+                            <div class="text-xs text-gray-600">Incorrect</div>
                         </div>
-                        <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 text-center">
-                            <div class="text-3xl font-bold text-purple-600 mb-2">${attempt.completion_time ? formatTime(attempt.completion_time) : '--'}</div>
-                            <div class="text-sm text-gray-600">Completion Time</div>
+                        <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 text-center">
+                            <div class="text-2xl font-bold text-purple-600 mb-1">${attempt.completion_time ? formatTime(attempt.completion_time) : '--'}</div>
+                            <div class="text-xs text-gray-600">Time</div>
                         </div>
-                        <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 text-center">
-                            <div class="text-3xl font-bold text-yellow-600 mb-2">${attempt.rank_position || '--'}</div>
-                            <div class="text-sm text-gray-600">Your Rank</div>
+                        <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-4 text-center">
+                            <div class="text-2xl font-bold text-yellow-600 mb-1">${attempt.rank_position || '--'}</div>
+                            <div class="text-xs text-gray-600">Rank</div>
                         </div>
                     </div>
 
                     <!-- Detailed Performance Analysis -->
-                    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 mb-8">
-                        <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">
+                    <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-4 mb-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-3 text-center">
                             <i class="fas fa-chart-line text-indigo-500 mr-2"></i>Performance Analysis
                         </h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -3592,22 +3628,21 @@
                     </div>
 
                     <!-- Review Your Answers Section -->
-                    <div id="reviewAnswersSection" class="mt-8 mb-8">
-                        <div class="bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 rounded-xl p-6 mb-6 shadow-lg border-2 border-blue-200">
+                    <div id="reviewAnswersSection" class="mt-6 mb-6">
+                        <div class="bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 rounded-xl p-4 mb-4 shadow border border-blue-200">
                             <div class="text-center">
-                                <div class="inline-flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full p-4 mb-4 shadow-lg">
-                                    <i class="fas fa-clipboard-check text-3xl"></i>
+                                <div class="inline-flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full p-3 mb-3 shadow">
+                                    <i class="fas fa-clipboard-check text-xl"></i>
                                 </div>
-                                <h3 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-3">
+                                <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
                                     Review Your Answers
                                 </h3>
-                                <p class="text-gray-600 mb-2 text-lg">See which answers you got correct and incorrect</p>
-                                <p class="text-gray-500 text-sm">Review each question with explanations</p>
+                                <p class="text-gray-600 text-sm">See your answer vs the correct answer.</p>
                             </div>
                         </div>
                         
                         <!-- Quiz questions with answers -->
-                        <div id="quizReviewContainer" class="space-y-6">
+                        <div id="quizReviewContainer" class="space-y-4">
             `;
             
             // Display multiple choice questions - Match exact quiz review design
@@ -3624,16 +3659,20 @@
                 const studentAnswerNorm = normalizeOption(studentAnswer);
                 const isCorrect = studentAnswerNorm === correctAnswerNorm;
                 
-                // Get question text from quiz (we'll need to fetch this or use a placeholder)
+                const questionMeta = (quizData.questionBank && quizData.questionBank[i]) ? quizData.questionBank[i] : null;
+                const questionText = questionMeta?.questionText || `Question ${i}`;
+                const optionMap = questionMeta?.options || {};
+
                 resultsHTML += `
-                    <div class="review-question-card p-6 sm:p-8 mb-6 border-4 ${isCorrect ? 'border-green-400' : 'border-red-400'}">
-                        <div class="relative z-10 p-6 sm:p-8 mb-6">
-                            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
-                                <span class="inline-flex items-center ml-3 px-3 py-1 rounded-full text-sm font-bold bg-purple-100 text-purple-700">Question ${i}</span>
+                    <div class="review-question-card p-4 sm:p-5 mb-4 border-2 ${isCorrect ? 'border-green-400' : 'border-red-400'}">
+                        <div class="relative z-10 mb-4">
+                            <h2 class="text-lg sm:text-xl font-bold text-gray-800 leading-snug">
+                                <span class="inline-flex items-center mr-2 px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-100 text-purple-700">Q${i}</span>
                                 <span class="inline-flex items-center ml-3 px-4 py-2 rounded-full text-sm font-bold shadow-md ${isCorrect ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}">
                                     ${isCorrect ? '<i class="fas fa-check-circle mr-2"></i>Correct' : '<i class="fas fa-times-circle mr-2"></i>Incorrect'}
                                 </span>
                             </h2>
+                            <p class="mt-2 text-gray-700 font-medium">${escapeHtml(questionText)}</p>
                         </div>
                         
                         <div class="relative z-10 space-y-3">
@@ -3663,7 +3702,7 @@
                         <label class="${optionClass}">
                             <input type="radio" name="q${i}" value="${opt}" ${isStudentAnswer || isCorrectOption ? 'checked' : ''} disabled class="hidden">
                             <div class="option-label">${opt.toUpperCase()}</div>
-                            <span class="flex-1">Option ${opt.toUpperCase()}</span>
+                            <span class="flex-1">${escapeHtml(optionMap[opt.toUpperCase()] || `Option ${opt.toUpperCase()}`)}</span>
                             ${indicatorHTML}
                         </label>
                     `;
