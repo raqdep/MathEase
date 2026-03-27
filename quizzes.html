@@ -3404,6 +3404,27 @@
             }
         }
 
+        function extractAnswersFromHtml(html) {
+            const answers = {};
+            try {
+                // Prefer scoped block between `answers: { ... }` and `questionOrder`
+                const blockMatch = html.match(/answers\s*:\s*\{([\s\S]*?)\}\s*,\s*questionOrder/i);
+                const source = blockMatch ? blockMatch[1] : html;
+                const re = /q(\d+)\s*:\s*['"]([^'"]+)['"]/gi;
+                let m;
+                while ((m = re.exec(source)) !== null) {
+                    const qNum = parseInt(m[1], 10);
+                    const val = String(m[2] || '').trim();
+                    if (Number.isInteger(qNum) && val) {
+                        answers[`q${qNum}`] = val;
+                    }
+                }
+            } catch (_e) {
+                // ignore
+            }
+            return answers;
+        }
+
         async function loadQuizDataAndDisplayResults(quizType, studentAnswers, attempt, container) {
             try {
                 // Cache quizData to avoid expensive repeated fetch/HTML parsing on subsequent "Result" clicks.
@@ -3452,43 +3473,14 @@
                         const html = await htmlResponse.text();
                         const extractedBank = extractQuestionBankFromHtml(html);
                         
-                        // Extract quiz data from script tag using a safer method
-                        // Try to match the quizData object (may span multiple lines)
-                        const scriptMatch = html.match(/const quizData\s*=\s*\{[\s\S]*?\n\s*\};/);
-                        if (scriptMatch) {
-                            // Use Function constructor for safer evaluation
-                            try {
-                                const func = new Function(scriptMatch[0] + ' return quizData;');
-                                quizData = func();
-                                quizData.questionBank = extractedBank;
-                                console.log('✅ Quiz data extracted successfully for', quizType);
-                                console.log('Quiz data structure:', {
-                                    hasAnswers: !!quizData.answers
-                                });
-                            } catch (e) {
-                                console.error('Error parsing quiz data:', e);
-                                // Try alternative extraction method
-                                try {
-                                    // Try to extract just the answers object
-                                    const answersMatch = html.match(/answers:\s*\{[\s\S]*?\n\s*\}/);
-                                    
-                                    if (answersMatch) {
-                                        quizData = {
-                                            answers: {},
-                                            questionBank: extractedBank
-                                        };
-                                        
-                                        if (answersMatch) {
-                                            const answersFunc = new Function('return ' + answersMatch[0]);
-                                            Object.assign(quizData.answers, answersFunc());
-                                        }
-                                        
-                                        console.log('✅ Quiz data extracted using alternative method');
-                                    }
-                                } catch (e2) {
-                                    console.error('Alternative extraction also failed:', e2);
-                                }
-                            }
+                        // Robust text parsing: no eval/function execution.
+                        const parsedAnswers = extractAnswersFromHtml(html);
+                        if (Object.keys(parsedAnswers).length > 0) {
+                            quizData = {
+                                answers: parsedAnswers,
+                                questionBank: extractedBank
+                            };
+                            console.log('✅ Quiz data extracted via regex parser for', quizType, Object.keys(parsedAnswers).length, 'answers');
                         }
                     }
                 }
