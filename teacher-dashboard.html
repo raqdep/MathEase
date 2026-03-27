@@ -6595,11 +6595,10 @@ let currentQuizResultsSearch = '';
                     </div>
                 `;
             } else {
-                // Deadline has passed - quiz is in review mode
                 statusElement.innerHTML = `
                     <div class="flex items-center text-orange-600">
-                        <i class="fas fa-eye mr-2"></i>
-                        <span class="font-medium">Review Mode Active</span>
+                        <i class="fas fa-hourglass-end mr-2"></i>
+                        <span class="font-medium">Deadline Passed</span>
                     </div>
                 `;
             }
