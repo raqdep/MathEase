@@ -1549,7 +1549,7 @@ class QuizManager {
                 'attempt' => $meta,
                 'answers' => $answers
             ];
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             error_log("Error getAttemptAnswerDetails: " . $e->getMessage());
             return ['success' => false, 'message' => 'Failed to load attempt answers'];
         }
@@ -1632,6 +1632,13 @@ class QuizManager {
 
         $html = @file_get_contents($path);
         if ($html === false || trim($html) === '') return [];
+
+        // Some production servers may not have the XML extension enabled.
+        // Fall back gracefully: return answers without parsed question text/options.
+        if (!class_exists('DOMDocument') || !class_exists('DOMXPath')) {
+            error_log('getQuizQuestionBank: DOM extension unavailable; returning empty question bank');
+            return [];
+        }
 
         libxml_use_internal_errors(true);
         $doc = new DOMDocument();
