@@ -519,16 +519,18 @@
     <div id="quizResultsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl max-h-[90vh] flex flex-col">
             <!-- Modal Header -->
-            <div class="bg-white rounded-t-2xl p-8 flex-shrink-0 relative">
-                <div class="text-center mb-8">
-                    <div id="resultsCharacter" class="w-24 h-24 mx-auto mb-4 flex items-center justify-center">
+            <div class="bg-white rounded-t-2xl p-5 sm:p-6 flex-shrink-0 relative">
+                <div class="flex items-center gap-4 pr-12">
+                    <div id="resultsCharacter" class="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center flex-shrink-0">
                         <img src="Img/Character/tips_approved-removebg-preview.png" 
                              alt="Results Character" 
                              class="w-full h-full object-contain results-character"
                              style="filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));">
                     </div>
-                    <h2 class="text-3xl font-bold text-gray-800 mb-2" id="resultsModalTitle">Quiz Complete!</h2>
-                    <p class="text-lg text-gray-600" id="resultsModalSubtitle">Here's how you performed</p>
+                    <div class="min-w-0">
+                        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-1 leading-tight" id="resultsModalTitle">Quiz Complete!</h2>
+                        <p class="text-base sm:text-lg text-gray-600" id="resultsModalSubtitle">Here's how you performed</p>
+                    </div>
                 </div>
                 <button onclick="closeQuizResults()" class="absolute top-4 right-4 z-10 text-gray-500 hover:text-gray-700 transition-colors p-2 hover:bg-gray-100 rounded-full" aria-label="Close quiz results">
                     <i class="fas fa-times text-2xl"></i>
