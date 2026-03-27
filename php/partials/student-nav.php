@@ -37,7 +37,6 @@ function navCls(string $key, string $activePage, string $base, string $active): 
                 <a href="flashcards.php" class="<?= htmlspecialchars(navCls('flashcards', $activePage, $linkBase, $linkActive)) ?>">Flashcards</a>
                 <a href="achievements.php" class="<?= htmlspecialchars(navCls('achievements', $activePage, $linkBase, $linkActive)) ?>">Achievements</a>
                 <a href="dashboard.php#progress" class="<?= htmlspecialchars($linkBase) ?>">Progress</a>
-                <a href="profile.php" class="<?= htmlspecialchars(navCls('profile', $activePage, $linkBase, $linkActive)) ?>">Profile</a>
             </div>
 
             <!-- Desktop user menu -->
@@ -100,7 +99,6 @@ function navCls(string $key, string $activePage, string $base, string $active): 
                     <option value="flashcards.php" <?= $activePage === 'flashcards' ? 'selected' : '' ?>>Flashcards</option>
                     <option value="achievements.php" <?= $activePage === 'achievements' ? 'selected' : '' ?>>Achievements</option>
                     <option value="dashboard.php#progress">Progress</option>
-                    <option value="profile.php" <?= $activePage === 'profile' ? 'selected' : '' ?>>Profile</option>
                 </select>
             </div>
         </div>
