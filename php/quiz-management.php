@@ -1424,8 +1424,8 @@ class QuizManager {
             'class_id' => $classId,
             'teacher_id' => $teacherId
         ];
-    } catch (Exception $e) {
-        error_log("Error getting quiz results: " . $e->getMessage());
+    } catch (Throwable $e) {
+        error_log("Error getting quiz results: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
         return [
             'success' => false,
             'message' => 'Failed to get quiz results'
@@ -1775,9 +1775,9 @@ class QuizManager {
                 $statistics[$row['quiz_type']] = [
                     'total_attempts' => (int)$row['total_attempts'],
                     'completed' => (int)$row['completed_attempts'],
-                    'average_percentage' => round($row['average_percentage'], 1),
-                    'fastest_time' => (int)$row['fastest_time'],
-                    'slowest_time' => (int)$row['slowest_time']
+                    'average_percentage' => round((float)($row['average_percentage'] ?? 0), 1),
+                    'fastest_time' => (int)($row['fastest_time'] ?? 0),
+                    'slowest_time' => (int)($row['slowest_time'] ?? 0)
                 ];
             }
             
@@ -1787,7 +1787,7 @@ class QuizManager {
                 'class_id' => $classId,
                 'teacher_id' => $teacherId
             ];
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             error_log("Error getting quiz statistics: " . $e->getMessage());
             return [
                 'success' => false,
@@ -1840,14 +1840,22 @@ class QuizManager {
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($params);
             $result = $stmt->fetch();
-            
+            if (!$result) {
+                return [
+                    'total_attempts' => 0,
+                    'average_percentage' => 0.0,
+                    'fastest_time' => 0,
+                    'slowest_time' => 0
+                ];
+            }
+
             return [
-                'total_attempts' => (int)$result['total_attempts'],
-                'average_percentage' => round($result['average_percentage'], 1),
-                'fastest_time' => (int)$result['fastest_time'],
-                'slowest_time' => (int)$result['slowest_time']
+                'total_attempts' => (int)($result['total_attempts'] ?? 0),
+                'average_percentage' => round((float)($result['average_percentage'] ?? 0), 1),
+                'fastest_time' => (int)($result['fastest_time'] ?? 0),
+                'slowest_time' => (int)($result['slowest_time'] ?? 0)
             ];
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             error_log("Error getting quiz statistics for type: " . $e->getMessage());
             return [
                 'total_attempts' => 0,
