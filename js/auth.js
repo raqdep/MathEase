@@ -425,7 +425,7 @@ async function handleLogin(e) {
         }
 
         if (data.success) {
-            const redirectUrl = data.redirect ? data.redirect.replace('..\\/', '').replace('../', '') : 'dashboard.html';
+            const redirectUrl = data.redirect ? data.redirect.replace('..\\/', '').replace('../', '') : 'dashboard.php';
             Swal.fire({ icon: 'success', title: 'Login successful', text: 'Redirecting to dashboard...', timer: 900, showConfirmButton: false });
             setTimeout(() => {
                 window.location.href = redirectUrl;
@@ -686,14 +686,14 @@ async function handleGoogleAuth() {
 
             const otpData = await otpResp.json();
             if (otpData.success) {
-                const redirectUrl = (otpData.redirect || 'dashboard.html').replace('..\/', '').replace('../', '');
+                const redirectUrl = (otpData.redirect || 'dashboard.php').replace('..\/', '').replace('../', '');
                 Swal.fire({ icon: 'success', title: 'Verified', text: 'Redirecting...', timer: 900, showConfirmButton: false });
                 setTimeout(() => { window.location.href = redirectUrl; }, 600);
             } else {
                 Swal.fire({ icon: 'error', title: 'Invalid code', text: otpData.message || 'Please try again.' });
             }
         } else {
-            const redirectUrl = (data.redirect || 'dashboard.html').replace('..\/', '').replace('../', '');
+            const redirectUrl = (data.redirect || 'dashboard.php').replace('..\/', '').replace('../', '');
             window.location.href = redirectUrl;
         }
     } catch (err) {

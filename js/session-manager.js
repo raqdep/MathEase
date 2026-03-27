@@ -21,9 +21,16 @@ class SessionManager {
         if (currentPath.includes('teacher-')) {
             this.currentUserType = 'teacher';
         } else if (currentPath.includes('dashboard.html') ||
+                   currentPath.includes('dashboard.php') ||
                    currentPath.includes('topics/') ||
                    currentPath.includes('quizzes.html') ||
+                   currentPath.includes('quizzes.php') ||
                    currentPath.includes('flashcards.html') ||
+                   currentPath.includes('flashcards.php') ||
+                   currentPath.includes('achievements.html') ||
+                   currentPath.includes('achievements.php') ||
+                   currentPath.includes('profile.html') ||
+                   currentPath.includes('profile.php') ||
                    currentPath.includes('flashcards/')) {
             this.currentUserType = 'student';
         }
@@ -453,11 +460,11 @@ class SessionManager {
                     confirmButtonText: 'Go to Student Portal',
                     confirmButtonColor: '#6366f1'
                 }).then(() => {
-                    window.location.href = 'dashboard.html';
+                    window.location.href = 'dashboard.php';
                 });
             } else {
                 alert('You are logged in as a student. Please use the student portal.');
-                window.location.href = 'dashboard.html';
+                window.location.href = 'dashboard.php';
             }
             return false;
         }

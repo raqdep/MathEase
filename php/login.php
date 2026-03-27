@@ -129,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $response = array(
             'success' => true,
             'message' => 'Login successful! Welcome back, ' . $user['first_name'] . '!',
-            'redirect' => '../dashboard.html'
+            'redirect' => '../dashboard.php'
         );
         
     } catch (Exception $e) {
