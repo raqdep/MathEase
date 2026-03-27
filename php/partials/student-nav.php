@@ -90,16 +90,11 @@ function navCls(string $key, string $activePage, string $base, string $active): 
                 </div>
             </div>
 
-            <!-- Mobile menu (simple select) -->
-            <div class="md:hidden">
-                <select id="mobileNavSelect" class="w-44 px-3 py-2 border border-slate-200 rounded-lg bg-white text-slate-700">
-                    <option value="dashboard.php" <?= $activePage === 'dashboard' ? 'selected' : '' ?>>Dashboard</option>
-                    <option value="dashboard.php#learning-path">Topics</option>
-                    <option value="quizzes.php" <?= $activePage === 'quizzes' ? 'selected' : '' ?>>Quizzes</option>
-                    <option value="flashcards.php" <?= $activePage === 'flashcards' ? 'selected' : '' ?>>Flashcards</option>
-                    <option value="achievements.php" <?= $activePage === 'achievements' ? 'selected' : '' ?>>Achievements</option>
-                    <option value="dashboard.php#progress">Progress</option>
-                </select>
+            <!-- Mobile hamburger -->
+            <div class="md:hidden flex-shrink-0">
+                <button type="button" id="mobileMenuButton" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 p-2 rounded-lg transition-all duration-200 min-h-[44px] min-w-[44px]">
+                    <i class="fas fa-bars text-lg"></i>
+                </button>
             </div>
         </div>
     </div>
@@ -107,14 +102,152 @@ function navCls(string $key, string $activePage, string $base, string $active): 
 
 <script>
     (function () {
-        const mobileNavSelect = document.getElementById('mobileNavSelect');
-        if (mobileNavSelect && !mobileNavSelect.dataset.bound) {
-            mobileNavSelect.dataset.bound = '1';
-            mobileNavSelect.addEventListener('change', (e) => {
-                const v = e.target.value;
-                if (v) window.location.href = v;
-            });
+        if (document.getElementById('sharedStudentMobileNavStyles')) return;
+
+        const styles = document.createElement('style');
+        styles.id = 'sharedStudentMobileNavStyles';
+        styles.textContent = `
+            .mobile-nav-backdrop {
+                position: fixed;
+                inset: 0;
+                background: rgba(15, 23, 42, 0.45);
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity .25s ease, visibility .25s ease;
+                z-index: 60;
+            }
+            .mobile-nav-backdrop.active { opacity: 1; visibility: visible; }
+            .mobile-nav-menu {
+                position: fixed;
+                top: 0;
+                right: 0;
+                width: min(320px, 82vw);
+                height: 100vh;
+                transform: translateX(100%);
+                transition: transform .28s ease;
+                z-index: 70;
+                background: linear-gradient(145deg, #6366f1, #7c3aed);
+                color: #fff;
+                box-shadow: -12px 0 28px rgba(0,0,0,.25);
+                overflow-y: auto;
+            }
+            .mobile-nav-menu.active { transform: translateX(0); }
+            .mobile-nav-header { padding: 1rem 1rem .75rem; border-bottom: 1px solid rgba(255,255,255,.2); }
+            .mobile-nav-brand { display: flex; align-items: center; gap: .75rem; font-weight: 700; }
+            .mobile-nav-profile { padding: .75rem 1rem; border-bottom: 1px solid rgba(255,255,255,.2); }
+            .mobile-nav-profile .name { font-weight: 600; line-height: 1.2; }
+            .mobile-nav-profile .email { font-size: .75rem; opacity: .85; max-width: 190px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+            .mobile-nav-content { padding: .75rem; }
+            .mobile-nav-item {
+                display: flex; align-items: center; gap: .75rem;
+                color: rgba(255,255,255,.95);
+                border-radius: .65rem;
+                padding: .75rem .8rem;
+                text-decoration: none;
+                font-size: .95rem;
+                margin-bottom: .15rem;
+            }
+            .mobile-nav-item:hover, .mobile-nav-item.active { background: rgba(255,255,255,.16); }
+            .mobile-nav-item-danger { color: #ffe5e5; }
+            .mobile-nav-divider { height: 1px; background: rgba(255,255,255,.2); margin: .5rem 0; }
+            .mobile-nav-badge {
+                margin-left: auto;
+                background: #ef4444; color: #fff; border-radius: 9999px;
+                min-width: 20px; height: 20px; padding: 0 6px; font-size: .72rem;
+                display: inline-flex; align-items: center; justify-content: center;
+            }
+            .mobile-nav-badge.hidden { display: none; }
+        `;
+        document.head.appendChild(styles);
+
+        const page = <?= json_encode($activePage) ?>;
+        const active = (k) => page === k ? 'active' : '';
+        const existingMenu = document.getElementById('mobileMenu');
+        const existingBackdrop = document.getElementById('mobileMenuBackdrop');
+
+        if (!existingMenu) {
+            const backdrop = document.createElement('div');
+            backdrop.id = 'mobileMenuBackdrop';
+            backdrop.className = 'mobile-nav-backdrop';
+
+            const menu = document.createElement('div');
+            menu.id = 'mobileMenu';
+            menu.className = 'mobile-nav-menu';
+            menu.innerHTML = `
+                <div class="mobile-nav-header">
+                    <div class="mobile-nav-brand">
+                        <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+                            <img src="css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-6 w-6 object-contain">
+                        </div>
+                        <span>MathEase</span>
+                    </div>
+                </div>
+                <div class="mobile-nav-profile">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center overflow-hidden" id="mobileProfileIconContainer">
+                            <img id="mobileProfileIconImage" src="" alt="Profile" class="w-full h-full object-cover hidden">
+                            <i class="fas fa-user text-white text-sm" id="mobileProfileIconPlaceholder"></i>
+                        </div>
+                        <div>
+                            <div class="name" id="mobileUserName">Student</div>
+                            <div class="email" id="mobileUserEmail">student@mathease.local</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mobile-nav-content">
+                    <a href="dashboard.php" class="mobile-nav-item ${active('dashboard')}"><i class="fas fa-home"></i><span>Dashboard</span></a>
+                    <a href="dashboard.php#learning-path" class="mobile-nav-item"><i class="fas fa-book"></i><span>Topics</span></a>
+                    <a href="quizzes.php" class="mobile-nav-item ${active('quizzes')}"><i class="fas fa-question-circle"></i><span>Quizzes</span></a>
+                    <a href="flashcards.php" class="mobile-nav-item ${active('flashcards')}"><i class="fas fa-book-open"></i><span>Flashcards</span></a>
+                    <a href="achievements.php" class="mobile-nav-item ${active('achievements')}"><i class="fas fa-medal"></i><span>Achievements</span></a>
+                    <a href="dashboard.php#progress" class="mobile-nav-item"><i class="fas fa-chart-line"></i><span>Progress</span></a>
+                    <div class="mobile-nav-divider"></div>
+                    <a href="#" class="mobile-nav-item" id="mobileNotificationLink"><i class="fas fa-bell"></i><span>Notifications</span><span id="mobileNotificationBadge" class="mobile-nav-badge hidden">0</span></a>
+                    <a href="profile.php" class="mobile-nav-item"><i class="fas fa-user-circle"></i><span>Profile</span></a>
+                    <a href="#" class="mobile-nav-item mobile-nav-item-danger" id="mobileLogoutLink"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+                </div>
+            `;
+
+            document.body.appendChild(backdrop);
+            document.body.appendChild(menu);
         }
+
+        const button = document.getElementById('mobileMenuButton');
+        const menu = document.getElementById('mobileMenu');
+        const backdrop = document.getElementById('mobileMenuBackdrop');
+        if (!button || !menu || !backdrop || button.dataset.bound === '1') return;
+
+        const openMenu = () => {
+            menu.classList.add('active');
+            backdrop.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+        const closeMenu = () => {
+            menu.classList.remove('active');
+            backdrop.classList.remove('active');
+            document.body.style.overflow = '';
+        };
+
+        button.dataset.bound = '1';
+        button.addEventListener('click', openMenu);
+        backdrop.addEventListener('click', closeMenu);
+        menu.addEventListener('click', (e) => {
+            const action = e.target.closest('a');
+            if (!action) return;
+            if (action.id === 'mobileNotificationLink') {
+                e.preventDefault();
+                if (typeof toggleNotifications === 'function') toggleNotifications();
+                closeMenu();
+                return;
+            }
+            if (action.id === 'mobileLogoutLink') {
+                e.preventDefault();
+                if (typeof confirmLogout === 'function') confirmLogout(e);
+                else window.location.href = 'php/smart-logout.php?type=student';
+                return;
+            }
+            closeMenu();
+        });
     })();
 </script>
 
