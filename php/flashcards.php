@@ -152,6 +152,13 @@ function extractLessonContextFromTopicHtml(string $topicFilePath, int $lessonNum
         return ['objective' => '', 'example' => '', 'reference' => '', 'error' => 'Failed to read topic file'];
     }
 
+    // Some servers may not have the PHP XML extension enabled.
+    // Fall back to empty extracted context instead of crashing.
+    if (!class_exists('DOMDocument') || !class_exists('DOMXPath')) {
+        error_log('flashcards.php: DOM extension unavailable; skipping lesson HTML parsing');
+        return ['objective' => '', 'example' => '', 'reference' => '', 'error' => 'DOM extension unavailable'];
+    }
+
     libxml_use_internal_errors(true);
     $dom = new DOMDocument();
     $loaded = $dom->loadHTML($html, LIBXML_NOERROR | LIBXML_NOWARNING);
