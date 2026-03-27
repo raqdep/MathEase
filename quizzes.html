@@ -3315,6 +3315,28 @@
             }
         }
 
+        async function getCurrentStudentRankForQuiz(quizType) {
+            try {
+                const cid = studentClassId || await getStudentClassId();
+                const classQuery = cid ? `&class_id=${encodeURIComponent(cid)}` : '';
+                const response = await fetch(`php/quiz-management.php?action=get_leaderboard&quiz_type=${encodeURIComponent(quizType)}&limit=1000&same_class_only=true${classQuery}`, {
+                    credentials: 'include',
+                    cache: 'no-store'
+                });
+                const result = await response.json();
+                if (!result.success || !Array.isArray(result.leaderboard)) return null;
+
+                // Backend tags the logged-in student row with is_current_user = 1.
+                const current = result.leaderboard.find((entry) => Number(entry?.is_current_user) === 1);
+                if (!current) return null;
+                const rank = parseInt(current.rank_position, 10);
+                return Number.isInteger(rank) ? rank : null;
+            } catch (e) {
+                console.error('getCurrentStudentRankForQuiz:', e);
+                return null;
+            }
+        }
+
         function escapeHtml(text) {
             if (text === null || text === undefined) return '';
             const div = document.createElement('div');
@@ -3357,11 +3379,12 @@
             `;
             
             try {
-                const [reviewPolicy, historyResponse] = await Promise.all([
+                const [reviewPolicy, historyResponse, fallbackRank] = await Promise.all([
                     getStudentQuizReviewPolicy(quizType),
                     fetch(`php/quiz-management.php?action=get_student_history&quiz_type=${encodeURIComponent(quizType)}`, {
                         credentials: 'include'
-                    })
+                    }),
+                    getCurrentStudentRankForQuiz(quizType)
                 ]);
 
                 const result = await historyResponse.json();
@@ -3393,6 +3416,9 @@
                         attempts.find(a => getAttemptId(a)) || attempts[0];
 
                     const attemptId = getAttemptId(candidateAttempt);
+                    if (!candidateAttempt.rank_position && Number.isInteger(fallbackRank)) {
+                        candidateAttempt.rank_position = fallbackRank;
+                    }
 
                     if (attemptId) {
                         // Get quiz answers
