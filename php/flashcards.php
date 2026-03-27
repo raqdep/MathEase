@@ -190,8 +190,13 @@ function extractLessonContextFromTopicHtml(string $topicFilePath, int $lessonNum
 }
 
 function truncate_chars(string $s, int $maxChars): string {
-    if (mb_strlen($s) <= $maxChars) return $s;
-    return mb_substr($s, 0, $maxChars) . '...';
+    if (function_exists('mb_strlen') && function_exists('mb_substr')) {
+        if (mb_strlen($s) <= $maxChars) return $s;
+        return mb_substr($s, 0, $maxChars) . '...';
+    }
+
+    if (strlen($s) <= $maxChars) return $s;
+    return substr($s, 0, $maxChars) . '...';
 }
 
 function extract_first_json_object(string $text): ?string {
