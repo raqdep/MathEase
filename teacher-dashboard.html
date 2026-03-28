@@ -2504,7 +2504,7 @@
                                         <th rowspan="2" class="px-4 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wider border-r border-gray-300 sticky left-12 bg-gray-50 z-10 min-w-[180px]">
                                             Student Name
                                         </th>
-                                        <th colspan="9" class="px-4 py-2 text-center text-xs font-bold text-indigo-700 uppercase tracking-wider border-r border-gray-300 bg-indigo-50">
+                                        <th colspan="10" class="px-4 py-2 text-center text-xs font-bold text-indigo-700 uppercase tracking-wider border-r border-gray-300 bg-indigo-50">
                                             Quiz Scores (Best Attempt)
                                         </th>
                                         <th rowspan="2" class="px-4 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider bg-green-50 border-r border-gray-200">
@@ -2586,6 +2586,14 @@
                                             </div>
                                         </th>
                                         <!-- Quiz 9 -->
+                                        <th class="px-3 py-2 text-center text-xs font-medium text-gray-600 border-r border-gray-200 bg-sky-50">
+                                            <div class="flex flex-col items-center">
+                                                <i class="fas fa-random text-sky-600 mb-1"></i>
+                                                <span>D/R Inverse</span>
+                                                <span class="text-xs text-gray-500 font-normal">(100)</span>
+                                            </div>
+                                        </th>
+                                        <!-- Quiz 10 -->
                                         <th class="px-3 py-2 text-center text-xs font-medium text-gray-600 border-r border-gray-300 bg-violet-50">
                                             <div class="flex flex-col items-center">
                                                 <i class="fas fa-exchange-alt text-violet-600 mb-1"></i>
@@ -2904,7 +2912,7 @@
                 
                 // Force show some content to test
                 if (tableBody) {
-                    tableBody.innerHTML = '<tr><td colspan="12" class="px-4 py-8 text-center text-green-500"><i class="fas fa-check-circle mr-2"></i>Class Performance section is working! Please select a class.</td></tr>';
+                    tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-green-500"><i class="fas fa-check-circle mr-2"></i>Class Performance section is working! Please select a class.</td></tr>';
                 }
                 
                 // Also force show the class selector
@@ -3483,6 +3491,7 @@
                                 </div>
                                 <div class="flex items-center space-x-3">
                                     ${topic.topic_slug ? `<a href="topics/${topic.topic_slug}.html?teacher_view=1" target="_blank" rel="noopener" class="p-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700" title="View topic page"><i class="fas fa-external-link-alt text-xs"></i></a>` : ''}
+                                    ${topic.topic_slug ? `<button type="button" onclick="downloadTopicAsPpt('${topic.topic_slug}', this)" class="p-2 rounded-lg bg-indigo-100 hover:bg-indigo-200 text-indigo-800 disabled:opacity-50" title="Download AI lesson outline as PowerPoint (no videos / visual aids)"><i class="fas fa-file-powerpoint text-xs"></i></button>` : ''}
                                     <!-- Topic lock switch -->
                                     <button onclick="toggleTopicLock('${topic.topic_id}', ${topic.is_locked}, '${topic.class_id}')"
                                             class="flex items-center px-2 py-1 rounded-full text-xs font-medium border transition-colors ${topic.is_locked ? 'bg-red-100 border-red-300 text-red-700' : 'bg-green-100 border-green-300 text-green-700'}"
@@ -3528,6 +3537,7 @@
                                 </div>
                                 <div class="flex items-center space-x-3">
                                     ${topic.topic_slug ? `<a href="topics/${topic.topic_slug}.html?teacher_view=1" target="_blank" rel="noopener" class="p-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700" title="View topic page"><i class="fas fa-external-link-alt text-xs"></i></a>` : ''}
+                                    ${topic.topic_slug ? `<button type="button" onclick="downloadTopicAsPpt('${topic.topic_slug}', this)" class="p-2 rounded-lg bg-indigo-100 hover:bg-indigo-200 text-indigo-800 disabled:opacity-50" title="Download AI lesson outline as PowerPoint (no videos / visual aids)"><i class="fas fa-file-powerpoint text-xs"></i></button>` : ''}
                                     <!-- Topic lock switch -->
                                     <button onclick="toggleTopicLock('${topic.topic_id}', ${topic.is_locked}, '${topic.class_id}')"
                                             class="flex items-center px-2 py-1 rounded-full text-xs font-medium border transition-colors ${topic.is_locked ? 'bg-red-100 border-red-300 text-red-700' : 'bg-green-100 border-green-300 text-green-700'}"
@@ -3548,6 +3558,69 @@
                     </div>
                 </div>
             `;
+        }
+
+        async function downloadTopicAsPpt(topicSlug, btn) {
+            if (!topicSlug || !btn) return;
+            btn.disabled = true;
+            const prevHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin text-xs"></i>';
+            try {
+                const fd = new FormData();
+                fd.append('topic_slug', topicSlug);
+                const res = await fetch('php/export-topic-ppt.php', {
+                    method: 'POST',
+                    body: fd,
+                    credentials: 'include'
+                });
+                if (res.status === 401) {
+                    window.location.href = 'teacher-login.html';
+                    return;
+                }
+                const ct = res.headers.get('Content-Type') || '';
+                if (!res.ok || ct.indexOf('json') !== -1) {
+                    let msg = 'Could not generate PowerPoint.';
+                    try {
+                        if (ct.indexOf('application/json') !== -1) {
+                            const err = await res.json();
+                            msg = err.message || msg;
+                        } else {
+                            const t = await res.text();
+                            if (t) msg = t.slice(0, 400);
+                        }
+                    } catch (e) { /* ignore */ }
+                    Swal.fire({ title: 'Download failed', text: msg, icon: 'error' });
+                    return;
+                }
+                const blob = await res.blob();
+                if (!blob || blob.size === 0) {
+                    Swal.fire({ title: 'Download failed', text: 'Empty file from server.', icon: 'error' });
+                    return;
+                }
+                let filename = topicSlug + '-lesson.pptx';
+                const dispo = res.headers.get('Content-Disposition');
+                if (dispo) {
+                    const m = dispo.match(/filename\*=UTF-8''([^;\n]+)|filename="([^"]+)"|filename=([^;\s]+)/i);
+                    if (m) {
+                        const raw = decodeURIComponent((m[1] || m[2] || m[3] || '').trim().replace(/^["']|["']$/g, ''));
+                        if (raw) filename = raw;
+                    }
+                }
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+            } catch (e) {
+                console.error(e);
+                Swal.fire({ title: 'Error', text: 'Network error while downloading.', icon: 'error' });
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = prevHtml;
+            }
         }
 
         // Show topic management error
@@ -3966,7 +4039,7 @@
             
             // Show a test message to verify the section is working
                 if (tableBody) {
-                    tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-blue-500"><i class="fas fa-info-circle mr-2"></i>Class Performance section is loading...</td></tr>';
+                    tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-blue-500"><i class="fas fa-info-circle mr-2"></i>Class Performance section is loading...</td></tr>';
                 }
             
             // Populate class selector with real-time data instead of old performance data
@@ -3974,7 +4047,7 @@
             
             // Initialize the table with default message
             if (tableBody) {
-                tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-gray-500">Please select a class to view student quiz scores</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-gray-500">Please select a class to view student quiz scores</td></tr>';
                 console.log('Table initialized with default message');
             } else {
                 console.error('Table body not found!');
@@ -6640,7 +6713,7 @@ let currentQuizResultsSearch = '';
                     // Initialize the table with "Please select a class" message
                     const tableBody = document.getElementById('performanceTableBody');
                     if (tableBody) {
-                        tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-gray-500">Please select a class to view student quiz scores</td></tr>';
+                        tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-gray-500">Please select a class to view student quiz scores</td></tr>';
                         console.log('Table updated with default message');
                     } else {
                         console.error('Table body not found in loadClassPerformanceData');
@@ -6673,7 +6746,7 @@ let currentQuizResultsSearch = '';
                                 populateClassSelector(fallbackResult.classes);
                                 const tableBody = document.getElementById('performanceTableBody');
                                 if (tableBody) {
-                                    tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-yellow-500"><i class="fas fa-info-circle mr-2"></i>Using fallback system - please run database migration for full features</td></tr>';
+                                    tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-yellow-500"><i class="fas fa-info-circle mr-2"></i>Using fallback system - please run database migration for full features</td></tr>';
                                 }
                                 updateLastUpdatedTime();
                                 return;
@@ -6692,7 +6765,7 @@ let currentQuizResultsSearch = '';
                 if (tableBody) {
                     tableBody.innerHTML = `
                         <tr>
-                            <td colspan="15" class="px-4 py-8 text-center text-orange-500">
+                            <td colspan="16" class="px-4 py-8 text-center text-orange-500">
                                 <i class="fas fa-exclamation-triangle mr-2"></i>
                                 Class Performance system is being set up. Please run the database migration first.
                                 <br><br>
@@ -6785,7 +6858,7 @@ let currentQuizResultsSearch = '';
             
             const selectedClassId = classSelector.value;
             if (!selectedClassId) {
-                tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-gray-500">Please select a class to view student quiz scores</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-gray-500">Please select a class to view student quiz scores</td></tr>';
                 // Hide summary and class info when no class is selected
                 const summaryDiv = document.getElementById('classPerformanceSummary');
                 if (summaryDiv) {
@@ -6801,13 +6874,13 @@ let currentQuizResultsSearch = '';
             const availableClasses = Array.from(classSelector.options).map(option => option.value).filter(value => value !== '');
             if (!availableClasses.includes(selectedClassId)) {
                 console.error('Security violation: Invalid class ID selected');
-                tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-red-500">Error: Invalid class selection</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-red-500">Error: Invalid class selection</td></tr>';
                 return;
             }
 
             try {
                 // Show loading state
-                tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-gray-500">Loading...</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-gray-500">Loading...</td></tr>';
 
                 // Use the same data source as quiz management - get quiz results for ALL quiz types
                 const quizTypes = [
@@ -6886,7 +6959,7 @@ let currentQuizResultsSearch = '';
                     renderClassPerformanceAnalytics(studentPerformanceData, allQuizResults);
                 } else {
                     console.log('No students found for class:', selectedClassId);
-                    tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-gray-500">No students found in this class</td></tr>';
+                    tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-gray-500">No students found in this class</td></tr>';
                     if (selectedClassInfo) {
                         selectedClassInfo.classList.add('hidden');
                     }
@@ -6894,7 +6967,7 @@ let currentQuizResultsSearch = '';
 
             } catch (error) {
                 console.error('Error loading class performance:', error);
-                tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-red-500">Failed to load data</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-red-500">Failed to load data</td></tr>';
             }
         }
 
@@ -6931,11 +7004,7 @@ let currentQuizResultsSearch = '';
                 const rank = start + idx + 1;
                 const name = x.student.student_name || `${x.student.first_name || ''} ${x.student.last_name || ''}`.trim() || 'Student';
                 const studentId = x.student.student_id || x.student.id || 0;
-                const lessonsCompleted = (x.student.functions_lessons_completed || 0) +
-                    (x.student.evaluating_functions_lessons_completed || 0) +
-                    (x.student.operations_lessons_completed || 0) +
-                    (x.student.rational_functions_lessons_completed || 0) +
-                    (x.student.real_life_lessons_completed || 0);
+                const lessonsCompleted = sumLessonProgress(x.student).completedLessons;
                 const tier = getLeaderboardTier(x.avg);
                 const scoreDisplay = x.quizzesTaken > 0 ? `${x.avg.toFixed(1)}%` : 'No quiz';
                 return `
@@ -6996,6 +7065,7 @@ let currentQuizResultsSearch = '';
                         s.solving_rational_equations_quiz_best_score || 0,
                         s.representations_of_rational_functions_quiz_best_score || 0,
                         s.domain_range_rational_functions_quiz_best_score || 0,
+                        s.domain_range_inverse_functions_quiz_best_score || 0,
                         s.one_to_one_functions_quiz_best_score || 0
                     ];
                     // Only count quizzes that have been taken (score > 0)
@@ -7042,15 +7112,6 @@ let currentQuizResultsSearch = '';
                     const key = x.student.student_id || x.student.id;
                     if (!key) return;
                     helpMap.set(key, { ...x, priority: 1, category: 'Critical' });
-                });
-                
-                needsSupportStudents.forEach(x => {
-                    const key = x.student.student_id || x.student.id;
-                    if (!key) return;
-                    const existing = helpMap.get(key);
-                    if (!existing || existing.priority > 2) {
-                        helpMap.set(key, { ...x, priority: 2, category: 'Needs Support' });
-                    }
                 });
                 
                 needsSupportStudents.forEach(x => {
@@ -7407,6 +7468,8 @@ let currentQuizResultsSearch = '';
                     representations_of_rational_functions_quiz_status: 'NOT_ATTEMPTED',
                     domain_range_rational_functions_quiz_best_score: 0,
                     domain_range_rational_functions_quiz_status: 'NOT_ATTEMPTED',
+                    domain_range_inverse_functions_quiz_best_score: 0,
+                    domain_range_inverse_functions_quiz_status: 'NOT_ATTEMPTED',
                     one_to_one_functions_quiz_best_score: 0,
                     one_to_one_functions_quiz_status: 'NOT_ATTEMPTED',
                     overall_performance_status: 'POOR'
@@ -7459,6 +7522,10 @@ let currentQuizResultsSearch = '';
                                 student.domain_range_rational_functions_quiz_best_score = Math.max(student.domain_range_rational_functions_quiz_best_score, percentage);
                                 student.domain_range_rational_functions_quiz_status = percentage >= 70 ? 'PASSED' : 'FAILED';
                                 break;
+                            case 'domain-range-inverse-functions':
+                                student.domain_range_inverse_functions_quiz_best_score = Math.max(student.domain_range_inverse_functions_quiz_best_score, percentage);
+                                student.domain_range_inverse_functions_quiz_status = percentage >= 70 ? 'PASSED' : 'FAILED';
+                                break;
                             case 'one-to-one-functions':
                                 student.one_to_one_functions_quiz_best_score = Math.max(student.one_to_one_functions_quiz_best_score, percentage);
                                 student.one_to_one_functions_quiz_status = percentage >= 70 ? 'PASSED' : 'FAILED';
@@ -7479,6 +7546,7 @@ let currentQuizResultsSearch = '';
                     (student.solving_rational_equations_quiz_status === 'PASSED' ? 1 : 0) +
                     (student.representations_of_rational_functions_quiz_status === 'PASSED' ? 1 : 0) +
                     (student.domain_range_rational_functions_quiz_status === 'PASSED' ? 1 : 0) +
+                    (student.domain_range_inverse_functions_quiz_status === 'PASSED' ? 1 : 0) +
                     (student.one_to_one_functions_quiz_status === 'PASSED' ? 1 : 0);
                 
                 if (passedQuizzes >= 8) {
@@ -7599,6 +7667,7 @@ let currentQuizResultsSearch = '';
                     student.solving_rational_equations_quiz_best_score || 0,
                     student.representations_of_rational_functions_quiz_best_score || 0,
                     student.domain_range_rational_functions_quiz_best_score || 0,
+                    student.domain_range_inverse_functions_quiz_best_score || 0,
                     student.one_to_one_functions_quiz_best_score || 0
                 ];
                 
@@ -7643,7 +7712,7 @@ let currentQuizResultsSearch = '';
             const pagedStudents = allStudents.slice(startIndex, startIndex + perPage);
 
             if (totalStudents === 0) {
-                tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-gray-500">No students in this class</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-gray-500">No students in this class</td></tr>';
                 if (typeof renderPerformancePagination === 'function') {
                     renderPerformancePagination(0, 1, 1, perPage);
                 }
@@ -7669,6 +7738,7 @@ let currentQuizResultsSearch = '';
                 const solvingScore = student.solving_rational_equations_quiz_best_score || 0;
                 const representationsScore = student.representations_of_rational_functions_quiz_best_score || 0;
                 const domainRangeScore = student.domain_range_rational_functions_quiz_best_score || 0;
+                const domainInverseScore = student.domain_range_inverse_functions_quiz_best_score || 0;
                 const oneToOneScore = student.one_to_one_functions_quiz_best_score || 0;
                 
                 // Get performance status
@@ -7677,7 +7747,7 @@ let currentQuizResultsSearch = '';
                 // Check if student has taken any quizzes
                 const hasTakenQuizzes = functionsScore > 0 || evaluatingScore > 0 || operationsScore > 0 || 
                                        realLifeScore > 0 || rationalScore > 0 || solvingScore > 0 ||
-                                       representationsScore > 0 || domainRangeScore > 0 || oneToOneScore > 0;
+                                       representationsScore > 0 || domainRangeScore > 0 || domainInverseScore > 0 || oneToOneScore > 0;
                 
                 // Overall status styling
                 let overallStatusClass = 'bg-gray-100 text-gray-600';
@@ -7731,6 +7801,7 @@ let currentQuizResultsSearch = '';
                     solvingScore,
                     representationsScore,
                     domainRangeScore,
+                    domainInverseScore,
                     oneToOneScore
                 ];
                 const takenQuizzes = quizScores.filter(score => score > 0);
@@ -7770,6 +7841,7 @@ let currentQuizResultsSearch = '';
                 const solvingClass = getScoreClass(solvingScore);
                 const representationsClass = getScoreClass(representationsScore);
                 const domainRangeClass = getScoreClass(domainRangeScore);
+                const domainInverseClass = getScoreClass(domainInverseScore);
                 const oneToOneClass = getScoreClass(oneToOneScore);
                 const avgClass = avgScore >= 70
                     ? 'bg-emerald-100 text-emerald-800 border border-emerald-200 font-bold px-3 py-1 rounded-full inline-flex items-center justify-center min-w-[78px]'
@@ -7781,16 +7853,8 @@ let currentQuizResultsSearch = '';
                 const passedQuizzes = quizScores.filter(score => score >= 70).length;
                 const totalQuizzesTaken = takenQuizzes.length;
                 
-                // Calculate total lessons completed
-                const totalLessonsCompleted = (student.functions_lessons_completed || 0) + 
-                                             (student.evaluating_functions_lessons_completed || 0) +
-                                             (student.operations_lessons_completed || 0) +
-                                             (student.rational_functions_lessons_completed || 0) +
-                                             (student.real_life_lessons_completed || 0) +
-                                             (student.solving_rational_equations_lessons_completed || 0) +
-                                             (student.representations_of_rational_functions_lessons_completed || 0) +
-                                             (student.domain_range_rational_functions_lessons_completed || 0) +
-                                             (student.one_to_one_functions_lessons_completed || 0);
+                // Calculate total lessons completed (aligned with lesson_completion topic slugs → PHP field names)
+                const totalLessonsCompleted = sumLessonProgress(student).completedLessons;
                 
                 // Get badges count from fetched data
                 const badgesCount = badgesData[student.student_id] || 0;
@@ -7824,6 +7888,9 @@ let currentQuizResultsSearch = '';
                     </td>
                     <td class="px-3 py-3 text-sm text-center border-r border-gray-200">
                         <span class="${domainRangeClass}">${domainRangeScore > 0 ? domainRangeScore.toFixed(1) : '-'}</span>
+                    </td>
+                    <td class="px-3 py-3 text-sm text-center border-r border-gray-200">
+                        <span class="${domainInverseClass}">${domainInverseScore > 0 ? domainInverseScore.toFixed(1) : '-'}</span>
                     </td>
                     <td class="px-3 py-3 text-sm text-center border-r border-gray-300">
                         <span class="${oneToOneClass}">${oneToOneScore > 0 ? oneToOneScore.toFixed(1) : '-'}</span>
@@ -7934,7 +8001,7 @@ let currentQuizResultsSearch = '';
             if (!tableBody) return;
 
             if (students.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="12" class="px-4 py-8 text-center text-gray-500">No students in this class</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-gray-500">No students in this class</td></tr>';
                 return;
             }
 
@@ -8085,14 +8152,8 @@ let currentQuizResultsSearch = '';
                 student.evaluating_functions_quiz_best || 0
             );
             
-            // Calculate overall progress
-            const totalLessons = 19; // 5 + 4 + 3 + 4 + 3
-            const completedLessons = (student.functions_lessons_completed || 0) + 
-                                   (student.evaluating_functions_lessons_completed || 0) + 
-                                   (student.operations_lessons_completed || 0) + 
-                                   (student.rational_functions_lessons_completed || 0) + 
-                                   (student.real_life_lessons_completed || 0);
-            const progressPercentage = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+            // Overall lesson progress (same 10 topics as quiz folder / complete-lesson.php slugs)
+            const { totalLessons, completedLessons, progressPercentage } = sumLessonProgress(student);
             
             // Determine performance level and color
             let performanceLevel = 'Beginner';
@@ -8473,7 +8534,7 @@ let currentQuizResultsSearch = '';
             // Show loading state
             const tableBody = document.getElementById('performanceTableBody');
             if (tableBody) {
-                tableBody.innerHTML = '<tr><td colspan="12" class="px-4 py-8 text-center text-blue-500"><i class="fas fa-spinner fa-spin mr-2"></i>Syncing performance data...</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-blue-500"><i class="fas fa-spinner fa-spin mr-2"></i>Syncing performance data...</td></tr>';
             }
             
             // Show confirmation dialog
@@ -8485,7 +8546,7 @@ let currentQuizResultsSearch = '';
             if (!confirmSync) {
                 // Restore previous state
                 if (tableBody) {
-                    tableBody.innerHTML = '<tr><td colspan="12" class="px-4 py-8 text-center text-gray-500">Please select a class to view student quiz scores</td></tr>';
+                    tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-gray-500">Please select a class to view student quiz scores</td></tr>';
                 }
                 return;
             }
@@ -8505,7 +8566,7 @@ let currentQuizResultsSearch = '';
                     if (tableBody) {
                         tableBody.innerHTML = `
                             <tr>
-                                <td colspan="12" class="px-4 py-8 text-center text-green-600">
+                                <td colspan="16" class="px-4 py-8 text-center text-green-600">
                                     <i class="fas fa-check-circle mr-2"></i>
                                     ${result.message}
                                     <br><br>
@@ -8533,7 +8594,7 @@ let currentQuizResultsSearch = '';
                     if (tableBody) {
                         tableBody.innerHTML = `
                             <tr>
-                                <td colspan="12" class="px-4 py-8 text-center text-red-500">
+                                <td colspan="16" class="px-4 py-8 text-center text-red-500">
                                     <i class="fas fa-exclamation-triangle mr-2"></i>
                                     Sync failed: ${result.message}
                                     <br><br>
@@ -8554,7 +8615,7 @@ let currentQuizResultsSearch = '';
                 if (tableBody) {
                     tableBody.innerHTML = `
                         <tr>
-                            <td colspan="12" class="px-4 py-8 text-center text-red-500">
+                            <td colspan="16" class="px-4 py-8 text-center text-red-500">
                                 <i class="fas fa-exclamation-triangle mr-2"></i>
                                 Sync failed: ${error.message}
                                 <br><br>
@@ -8574,7 +8635,7 @@ let currentQuizResultsSearch = '';
             // Show loading state
             const tableBody = document.getElementById('performanceTableBody');
             if (tableBody) {
-                tableBody.innerHTML = '<tr><td colspan="12" class="px-4 py-8 text-center text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Refreshing data...</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Refreshing data...</td></tr>';
             }
             
             // Refresh the class selector with real-time data
@@ -8647,56 +8708,183 @@ let currentQuizResultsSearch = '';
             return statusMap[status] || status;
         }
 
+        const STUDENT_DETAIL_QUIZ_TYPES = [
+            'functions', 'evaluating-functions', 'operations-on-functions',
+            'real-life-problems', 'rational-functions', 'solving-rational-equations-inequalities',
+            'representations-of-rational-functions', 'domain-range-rational-functions',
+            'domain-range-inverse-functions', 'one-to-one-functions'
+        ];
+
+        // Keys must match php/independent-class-performance.php: str_replace('-', '_', lesson_completion.topic_name) + '_lessons_completed'
+        // Quiz slug "real-life-problems" maps to topic slug "solving-real-life-problems" in lesson_completion / complete-lesson.php
+        // 2nd quarter slugs match php/get-progress.php and php/complete-lesson.php
+        const STUDENT_LESSON_TRACKS = [
+            { label: 'Functions', key: 'functions_lessons_completed', max: 4, quarter: 1 },
+            { label: 'Evaluating Functions', key: 'evaluating_functions_lessons_completed', max: 4, quarter: 1 },
+            { label: 'Operations on Functions', key: 'operations_lessons_completed', max: 5, quarter: 1 },
+            { label: 'Real-Life Problems', key: 'solving_real_life_problems_lessons_completed', altKey: 'real_life_lessons_completed', max: 4, quarter: 1 },
+            { label: 'Rational Functions', key: 'rational_functions_lessons_completed', max: 4, quarter: 1 },
+            { label: 'Solving Rational Equations', key: 'solving_rational_equations_inequalities_lessons_completed', altKey: 'solving_rational_equations_lessons_completed', max: 4, quarter: 1 },
+            { label: 'Representations of Rational Functions', key: 'representations_of_rational_functions_lessons_completed', max: 4, quarter: 1 },
+            { label: 'Domain & Range (Rational)', key: 'domain_range_rational_functions_lessons_completed', max: 4, quarter: 1 },
+            { label: 'Domain & Range (Inverse)', key: 'domain_range_inverse_functions_lessons_completed', max: 4, quarter: 1 },
+            { label: 'One-to-One Functions', key: 'one_to_one_functions_lessons_completed', max: 4, quarter: 1 },
+            { label: 'Simple Interest', key: 'simple_interest_lessons_completed', max: 4, quarter: 2 },
+            { label: 'Compound Interest', key: 'compound_interest_lessons_completed', max: 5, quarter: 2 },
+            { label: 'Interest, Maturity, Future & Present Values', key: 'simple_and_compound_values_lessons_completed', max: 5, quarter: 2 },
+            { label: 'Solving Interest Problems', key: 'solving_interest_problems_lessons_completed', max: 5, quarter: 2 }
+        ];
+
+        const QUIZ_CHART_SHORT_LABELS = {
+            'functions': 'Functions',
+            'evaluating-functions': 'Evaluating',
+            'operations-on-functions': 'Operations',
+            'real-life-problems': 'Real-Life',
+            'rational-functions': 'Rational',
+            'solving-rational-equations-inequalities': 'Solving Eq.',
+            'representations-of-rational-functions': 'Represent.',
+            'domain-range-rational-functions': 'D/R Rat.',
+            'domain-range-inverse-functions': 'D/R Inv.',
+            'one-to-one-functions': 'One-to-One'
+        };
+
+        function quizSlugToFieldPrefix(slug) {
+            return slug.replace(/-/g, '_');
+        }
+
+        function normalizeStudentQuizFields(raw) {
+            const s = { ...(raw || {}) };
+            const solveBest = parseFloat(s.solving_rational_equations_inequalities_quiz_best_score);
+            if (!(parseFloat(s.solving_rational_equations_quiz_best_score) > 0) && !isNaN(solveBest) && solveBest > 0) {
+                s.solving_rational_equations_quiz_best_score = solveBest;
+            }
+            const solveAtt = parseInt(s.solving_rational_equations_inequalities_quiz_attempts, 10);
+            if (!(parseInt(s.solving_rational_equations_quiz_attempts, 10) > 0) && !isNaN(solveAtt) && solveAtt > 0) {
+                s.solving_rational_equations_quiz_attempts = solveAtt;
+            }
+            return s;
+        }
+
+        function sumLessonProgress(student) {
+            let total = 0;
+            let done = 0;
+            STUDENT_LESSON_TRACKS.forEach(t => {
+                const raw = student[t.key] != null ? student[t.key] : (t.altKey ? student[t.altKey] : 0);
+                const n = Math.min(Math.max(0, parseInt(raw, 10) || 0), t.max);
+                total += t.max;
+                done += n;
+            });
+            return {
+                totalLessons: total,
+                completedLessons: done,
+                progressPercentage: total > 0 ? Math.round((done / total) * 100) : 0
+            };
+        }
+
+        function buildQuizStatisticsFromStudent(student) {
+            return STUDENT_DETAIL_QUIZ_TYPES.map(quizType => {
+                const prefix = quizSlugToFieldPrefix(quizType);
+                let best = parseFloat(student[`${prefix}_quiz_best_score`]) || 0;
+                let attempts = parseInt(student[`${prefix}_quiz_attempts`], 10) || 0;
+                if (quizType === 'solving-rational-equations-inequalities') {
+                    best = best || parseFloat(student.solving_rational_equations_quiz_best_score) || 0;
+                    attempts = attempts || parseInt(student.solving_rational_equations_quiz_attempts, 10) || 0;
+                }
+                const passRate = attempts > 0 ? (best >= 70 ? 100 : 0) : 0;
+                return {
+                    quiz_type: quizType,
+                    best_score: best,
+                    average_score: best,
+                    total_attempts: attempts,
+                    passed_attempts: attempts > 0 && best >= 70 ? attempts : 0,
+                    pass_rate: passRate
+                };
+            });
+        }
+
+        function mergeQuizStatisticsForCharts(serverStats, student) {
+            const built = buildQuizStatisticsFromStudent(normalizeStudentQuizFields(student));
+            if (!serverStats || serverStats.length === 0) return built;
+            const byType = new Map(serverStats.map(s => [s.quiz_type, s]));
+            return built.map(b => {
+                const sv = byType.get(b.quiz_type);
+                return sv ? { ...b, ...sv, quiz_type: b.quiz_type } : b;
+            });
+        }
+
+        /** Format seconds from lesson timers (study_time) for display */
+        function formatSecondsFriendly(totalSeconds) {
+            const s = Math.max(0, parseInt(totalSeconds, 10) || 0);
+            if (s === 0) return '0m';
+            const h = Math.floor(s / 3600);
+            const m = Math.floor((s % 3600) / 60);
+            const sec = s % 60;
+            if (h > 0) return `${h}h ${m}m`;
+            if (m > 0) return sec ? `${m}m ${sec}s` : `${m}m`;
+            return `${sec}s`;
+        }
+
         function displayStudentDetails(data) {
-            const { student, quiz_attempts, quiz_statistics, lesson_completions } = data;
+            const { quiz_attempts, quiz_statistics, lesson_completions, topic_study_time } = data;
+            const student = normalizeStudentQuizFields(data.student || {});
+            const chartQuizStats = mergeQuizStatisticsForCharts(quiz_statistics, student);
             const detailsContent = document.getElementById('studentDetailsContent');
             
-            // Calculate performance metrics
-            const totalLessons = 19; // 5 + 4 + 3 + 4 + 3
-            const completedLessons = (student.functions_lessons_completed || 0) + 
-                                   (student.evaluating_functions_lessons_completed || 0) + 
-                                   (student.operations_lessons_completed || 0) + 
-                                   (student.rational_functions_lessons_completed || 0) + 
-                                   (student.real_life_lessons_completed || 0);
-            const progressPercentage = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+            const topicStudyTimeRows = Array.isArray(topic_study_time) ? topic_study_time : [];
+            const totalStudySeconds = topicStudyTimeRows.reduce((a, r) => a + (parseInt(r.total_seconds, 10) || 0), 0);
             
+            const { totalLessons, completedLessons, progressPercentage } = sumLessonProgress(student);
+            
+            const numQuizScore = (v) => {
+                const n = parseFloat(v);
+                return Number.isFinite(n) ? n : 0;
+            };
             // Calculate quiz average from actual quiz scores (only count quizzes taken)
             const quizScores = [
-                student.functions_quiz_best_score || 0,
-                student.evaluating_functions_quiz_best_score || 0,
-                student.operations_on_functions_quiz_best_score || 0,
-                student.real_life_problems_quiz_best_score || 0,
-                student.rational_functions_quiz_best_score || 0,
-                student.solving_rational_equations_quiz_best_score || 0,
-                student.representations_of_rational_functions_quiz_best_score || 0,
-                student.domain_range_rational_functions_quiz_best_score || 0,
-                student.one_to_one_functions_quiz_best_score || 0
+                numQuizScore(student.functions_quiz_best_score),
+                numQuizScore(student.evaluating_functions_quiz_best_score),
+                numQuizScore(student.operations_on_functions_quiz_best_score),
+                numQuizScore(student.real_life_problems_quiz_best_score),
+                numQuizScore(student.rational_functions_quiz_best_score),
+                numQuizScore(student.solving_rational_equations_quiz_best_score || student.solving_rational_equations_inequalities_quiz_best_score),
+                numQuizScore(student.representations_of_rational_functions_quiz_best_score),
+                numQuizScore(student.domain_range_rational_functions_quiz_best_score),
+                numQuizScore(student.domain_range_inverse_functions_quiz_best_score),
+                numQuizScore(student.one_to_one_functions_quiz_best_score)
             ];
             const takenQuizzes = quizScores.filter(score => score > 0);
-            const quizAverage = takenQuizzes.length > 0 
-                ? takenQuizzes.reduce((sum, score) => sum + score, 0) / takenQuizzes.length 
+            const rawQuizAvg = takenQuizzes.length > 0
+                ? takenQuizzes.reduce((sum, score) => sum + score, 0) / takenQuizzes.length
                 : 0;
+            const quizAverage = Number.isFinite(rawQuizAvg) ? rawQuizAvg : 0;
             
-            // Calculate total score (average of all quiz scores)
-            const totalScore = quizAverage;
+            const headerMetricScore = takenQuizzes.length > 0 ? Math.round(quizAverage) : progressPercentage;
+            const headerMetricLabel = takenQuizzes.length > 0 ? 'Quiz average' : 'Lesson progress';
             
-            // Determine performance level
+            // Determine performance level from quiz average when available, else lesson progress
+            const profileScore = takenQuizzes.length > 0 ? quizAverage : progressPercentage;
             let performanceLevel = 'Beginner';
             let performanceColor = 'from-gray-400 to-gray-500';
             
-            if (progressPercentage >= 80) {
+            if (profileScore >= 80) {
                 performanceLevel = 'Excellent';
                 performanceColor = 'from-emerald-400 to-emerald-600';
-            } else if (progressPercentage >= 60) {
+            } else if (profileScore >= 60) {
                 performanceLevel = 'Good';
                 performanceColor = 'from-blue-400 to-blue-600';
-            } else if (progressPercentage >= 40) {
+            } else if (profileScore >= 40) {
                 performanceLevel = 'Average';
                 performanceColor = 'from-yellow-400 to-yellow-600';
-            } else if (progressPercentage >= 20) {
+            } else if (profileScore >= 20) {
                 performanceLevel = 'Needs Improvement';
                 performanceColor = 'from-orange-400 to-orange-600';
             }
+
+            const chartQuizPassed = chartQuizStats.filter(q => (parseFloat(q.best_score) || 0) >= 70).length;
+            const chartQuizTaken = chartQuizStats.filter(q =>
+                (parseInt(q.total_attempts, 10) || 0) > 0 || (parseFloat(q.best_score) || 0) > 0
+            ).length;
+            const chartTotalAttempts = chartQuizStats.reduce((s, q) => s + (parseInt(q.total_attempts, 10) || 0), 0);
 
             detailsContent.innerHTML = `
                 <!-- Student Header -->
@@ -8715,8 +8903,8 @@ let currentQuizResultsSearch = '';
                             </div>
                         </div>
                         <div class="text-right">
-                            <div class="text-3xl font-bold">${progressPercentage}%</div>
-                            <div class="text-white text-opacity-90">Overall Progress</div>
+                            <div class="text-3xl font-bold">${headerMetricScore}%</div>
+                            <div class="text-white text-opacity-90">${headerMetricLabel}</div>
                         </div>
                     </div>
                 </div>
@@ -8727,8 +8915,8 @@ let currentQuizResultsSearch = '';
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-sm font-medium text-blue-600">Quiz Average</p>
-                                <p class="text-2xl font-bold text-blue-900">${quizAverage.toFixed(1)}%</p>
-                                <p class="text-xs text-blue-600 mt-1">${takenQuizzes.length} of 9 quizzes</p>
+                                <p class="text-2xl font-bold text-blue-900">${Number.isFinite(quizAverage) ? quizAverage.toFixed(1) : '0.0'}%</p>
+                                <p class="text-xs text-blue-600 mt-1">${takenQuizzes.length} of 10 quizzes</p>
                             </div>
                             <i class="fas fa-chart-line text-blue-500 text-2xl"></i>
                         </div>
@@ -8791,21 +8979,55 @@ let currentQuizResultsSearch = '';
                 </div>
                 `}
 
-                <!-- Quiz Performance Charts -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                    <!-- Quiz Scores Radar Chart -->
-                    <div class="bg-white border border-gray-200 rounded-lg p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Quiz Performance Overview</h3>
-                        <div class="h-80">
-                            <canvas id="studentQuizRadarChart"></canvas>
+                <!-- Quiz performance charts -->
+                <div class="mb-6 rounded-2xl border border-indigo-100/90 bg-gradient-to-br from-slate-50 via-white to-indigo-50/50 p-1 shadow-sm ring-1 ring-black/5">
+                    <div class="rounded-[0.875rem] bg-white/95 p-5 sm:p-6 backdrop-blur-sm">
+                        <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between mb-5">
+                            <div class="min-w-0">
+                                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-3">
+                                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-md shadow-indigo-500/25">
+                                        <i class="fas fa-chart-column text-sm"></i>
+                                    </span>
+                                    <span>Quiz performance</span>
+                                </h3>
+                                <p class="text-sm text-slate-600 mt-2 max-w-2xl leading-relaxed">
+                                    Best score at a glance; pass rate shows how often attempts reached <span class="font-semibold text-indigo-700">70%</span> (dashed line). Attempts show practice volume per quiz.
+                                </p>
+                            </div>
+                            <div class="flex flex-wrap gap-2 lg:justify-end lg:max-w-md">
+                                <span class="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-800">
+                                    <i class="fas fa-check-circle text-emerald-600"></i> ${chartQuizPassed}/10 passed
+                                </span>
+                                <span class="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700">
+                                    <i class="fas fa-pen text-slate-500"></i> ${chartQuizTaken} with activity
+                                </span>
+                                <span class="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-xs font-semibold text-indigo-800">
+                                    <i class="fas fa-redo text-indigo-600"></i> ${chartTotalAttempts} total attempts
+                                </span>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <!-- Quiz Attempts Bar Chart -->
-                    <div class="bg-white border border-gray-200 rounded-lg p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Quiz Attempts & Success Rate</h3>
-                        <div class="h-80">
-                            <canvas id="studentQuizAttemptsChart"></canvas>
+                        <div class="grid grid-cols-1 gap-8 xl:grid-cols-2 xl:gap-10">
+                            <div>
+                                <div class="mb-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500">
+                                    <span class="font-semibold uppercase tracking-wide text-slate-600">Scores &amp; pass rate</span>
+                                    <span class="hidden sm:inline text-slate-300">|</span>
+                                    <span class="flex items-center gap-1.5"><span class="inline-block h-2.5 w-2.5 rounded-sm bg-emerald-500"></span> Best score</span>
+                                    <span class="flex items-center gap-1.5"><span class="inline-block h-2.5 w-2.5 rounded-sm bg-indigo-400/90"></span> Pass rate</span>
+                                </div>
+                                <div class="h-[min(28rem,70vh)] min-h-[280px] rounded-xl border border-slate-100 bg-slate-50/50 p-2 sm:p-3">
+                                    <canvas id="studentQuizScoresCompareChart" aria-label="Best score and pass rate by quiz"></canvas>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="mb-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500">
+                                    <span class="font-semibold uppercase tracking-wide text-slate-600">Attempts per quiz</span>
+                                    <span class="hidden sm:inline text-slate-300">|</span>
+                                    <span>Darker = more tries</span>
+                                </div>
+                                <div class="h-[min(28rem,70vh)] min-h-[260px] rounded-xl border border-slate-100 bg-slate-50/50 p-2 sm:p-3">
+                                    <canvas id="studentQuizAttemptsChart" aria-label="Quiz attempts by type"></canvas>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -8833,6 +9055,7 @@ let currentQuizResultsSearch = '';
                                     { name: 'Solving Rational Equations', score: student.solving_rational_equations_quiz_best_score, attempts: student.solving_rational_equations_quiz_attempts },
                                     { name: 'Representations of Rational Functions', score: student.representations_of_rational_functions_quiz_best_score, attempts: student.representations_of_rational_functions_quiz_attempts },
                                     { name: 'Domain & Range Rational Functions', score: student.domain_range_rational_functions_quiz_best_score, attempts: student.domain_range_rational_functions_quiz_attempts },
+                                    { name: 'Domain & Range Inverse Functions', score: student.domain_range_inverse_functions_quiz_best_score, attempts: student.domain_range_inverse_functions_quiz_attempts },
                                     { name: 'One-to-One Functions', score: student.one_to_one_functions_quiz_best_score, attempts: student.one_to_one_functions_quiz_attempts }
                                 ].map(quiz => {
                                     const scoreNum = Number(quiz.score);
@@ -8904,52 +9127,70 @@ let currentQuizResultsSearch = '';
                 <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Lesson Progress</h3>
                     <div class="space-y-4">
+                        ${STUDENT_LESSON_TRACKS.map((t, i) => {
+                            const barColors = ['bg-indigo-500', 'bg-orange-500', 'bg-purple-500', 'bg-teal-500', 'bg-emerald-500', 'bg-rose-500', 'bg-cyan-500', 'bg-lime-500', 'bg-sky-500', 'bg-violet-500', 'bg-amber-500', 'bg-fuchsia-600', 'bg-pink-500', 'bg-slate-600'];
+                            const prev = STUDENT_LESSON_TRACKS[i - 1];
+                            const quarterHeader = (t.quarter === 1 && i === 0)
+                                ? '<p class="text-sm font-semibold text-gray-800 mb-3">1st Quarter</p>'
+                                : (t.quarter === 2 && (!prev || prev.quarter === 1))
+                                ? '<p class="text-sm font-semibold text-gray-800 mt-2 mb-3 pt-4 border-t border-gray-200">2nd Quarter</p>'
+                                : '';
+                            const raw = student[t.key] != null ? student[t.key] : (t.altKey ? student[t.altKey] : 0);
+                            const v = Math.min(Math.max(0, parseInt(raw, 10) || 0), t.max);
+                            const pct = t.max > 0 ? Math.round((v / t.max) * 100) : 0;
+                            const cls = barColors[i % barColors.length];
+                            return quarterHeader + `
                         <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="font-medium text-gray-700">Functions</span>
+                            <span class="font-medium text-gray-700">${t.label}</span>
                             <div class="flex items-center space-x-3">
                                 <div class="w-32 bg-gray-200 rounded-full h-2">
-                                    <div class="bg-indigo-500 h-2 rounded-full" style="width: ${Math.round(((student.functions_lessons_completed || 0) / 5) * 100)}%"></div>
+                                    <div class="${cls} h-2 rounded-full" style="width: ${pct}%"></div>
                                 </div>
-                                <span class="text-sm font-medium text-gray-700">${student.functions_lessons_completed || 0}/5</span>
+                                <span class="text-sm font-medium text-gray-700">${v}/${t.max}</span>
                             </div>
+                        </div>`;
+                        }).join('')}
+                    </div>
+                </div>
+
+                <!-- Time spent per topic (lesson timers → study_time) -->
+                <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Time spent per topic</h3>
+                            <p class="text-sm text-gray-600 mt-1">Estimated from lesson timers while studying (stored in <span class="font-mono text-xs text-gray-500">study_time</span>).</p>
                         </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="font-medium text-gray-700">Evaluating Functions</span>
-                            <div class="flex items-center space-x-3">
-                                <div class="w-32 bg-gray-200 rounded-full h-2">
-                                    <div class="bg-orange-500 h-2 rounded-full" style="width: ${Math.round(((student.evaluating_functions_lessons_completed || 0) / 4) * 100)}%"></div>
-                                </div>
-                                <span class="text-sm font-medium text-gray-700">${student.evaluating_functions_lessons_completed || 0}/4</span>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="font-medium text-gray-700">Operations on Functions</span>
-                            <div class="flex items-center space-x-3">
-                                <div class="w-32 bg-gray-200 rounded-full h-2">
-                                    <div class="bg-purple-500 h-2 rounded-full" style="width: ${Math.round(((student.operations_lessons_completed || 0) / 3) * 100)}%"></div>
-                                </div>
-                                <span class="text-sm font-medium text-gray-700">${student.operations_lessons_completed || 0}/3</span>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="font-medium text-gray-700">Rational Functions</span>
-                            <div class="flex items-center space-x-3">
-                                <div class="w-32 bg-gray-200 rounded-full h-2">
-                                    <div class="bg-green-500 h-2 rounded-full" style="width: ${Math.round(((student.rational_functions_lessons_completed || 0) / 4) * 100)}%"></div>
-                                </div>
-                                <span class="text-sm font-medium text-gray-700">${student.rational_functions_lessons_completed || 0}/4</span>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <span class="font-medium text-gray-700">Solving Real-Life Problems</span>
-                            <div class="flex items-center space-x-3">
-                                <div class="w-32 bg-gray-200 rounded-full h-2">
-                                    <div class="bg-red-500 h-2 rounded-full" style="width: ${Math.round(((student.real_life_lessons_completed || 0) / 4) * 100)}%"></div>
-                                </div>
-                                <span class="text-sm font-medium text-gray-700">${student.real_life_lessons_completed || 0}/4</span>
-                            </div>
+                        <div class="text-left sm:text-right shrink-0">
+                            <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Total time</p>
+                            <p class="text-xl font-bold text-indigo-700">${formatSecondsFriendly(totalStudySeconds)}</p>
                         </div>
                     </div>
+                    ${topicStudyTimeRows.length > 0 ? `
+                    <div class="overflow-x-auto rounded-lg border border-gray-200">
+                        <table class="min-w-full divide-y divide-gray-200 text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-2.5 text-left font-semibold text-gray-700">Topic</th>
+                                    <th class="px-4 py-2.5 text-right font-semibold text-gray-700">Time</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100 bg-white">
+                                ${topicStudyTimeRows.map(row => `
+                                <tr class="hover:bg-indigo-50/40">
+                                    <td class="px-4 py-2.5 text-gray-900">${row.label || row.topic}</td>
+                                    <td class="px-4 py-2.5 text-right font-semibold text-indigo-800">${formatSecondsFriendly(row.total_seconds)}</td>
+                                </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    ` : `
+                    <div class="text-center py-8 text-gray-500 border border-dashed border-gray-200 rounded-lg bg-gray-50/50">
+                        <i class="fas fa-stopwatch text-3xl mb-2 text-gray-400"></i>
+                        <p class="font-medium">No study time recorded yet.</p>
+                        <p class="text-xs mt-1 max-w-md mx-auto">Time appears here when the student uses lessons with timers.</p>
+                    </div>
+                    `}
                 </div>
 
                 <!-- Recent Activity -->
@@ -8980,114 +9221,187 @@ let currentQuizResultsSearch = '';
 
             // Render Charts after DOM is updated
             setTimeout(() => {
-                renderStudentQuizCharts(quiz_statistics);
+                renderStudentQuizCharts(chartQuizStats);
             }, 100);
         }
 
-        let _studentRadarChart = null;
+        let _studentScoresCompareChart = null;
         let _studentAttemptsChart = null;
+
+        const studentPassThresholdPlugin = {
+            id: 'studentPassThresholdLine',
+            afterDraw(chart) {
+                if (chart.config.options.plugins && chart.config.options.plugins.studentPassThresholdLine === false) return;
+                const xScale = chart.scales.x;
+                const area = chart.chartArea;
+                if (!xScale || !area) return;
+                const x70 = xScale.getPixelForValue(70);
+                if (!Number.isFinite(x70)) return;
+                const ctx = chart.ctx;
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(x70, area.top);
+                ctx.lineTo(x70, area.bottom);
+                ctx.strokeStyle = 'rgba(99, 102, 241, 0.55)';
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([5, 5]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                const labelX = Math.min(x70 + 5, area.right - 58);
+                ctx.fillStyle = 'rgba(67, 56, 202, 0.95)';
+                ctx.font = '600 11px system-ui, -apple-system, "Segoe UI", sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText('70% pass', labelX, area.top + 14);
+                ctx.restore();
+            }
+        };
+
+        /** When API pass_rate is 0 but best score shows a pass, derive a sensible pass rate for display */
+        function effectivePassRatePercent(q) {
+            const att = parseInt(q.total_attempts, 10) || 0;
+            const best = parseFloat(q.best_score) || 0;
+            const pr = parseFloat(q.pass_rate);
+            if (att === 0) return 0;
+            if (Number.isFinite(pr) && pr > 0) return Math.min(100, Math.max(0, pr));
+            return best >= 70 ? 100 : 0;
+        }
 
         function renderStudentQuizCharts(quizStats) {
             if (!quizStats || quizStats.length === 0) return;
 
-            const radarCtx = document.getElementById('studentQuizRadarChart');
+            const labels = quizStats.map(q => {
+                const short = QUIZ_CHART_SHORT_LABELS[q.quiz_type];
+                if (short) return short;
+                const type = (q.quiz_type || '').replace(/-/g, ' ').replace(/_/g, ' ');
+                return type.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            });
+
+            const bestScores = quizStats.map(q => {
+                const n = parseFloat(q.best_score);
+                return Number.isFinite(n) ? Math.min(100, Math.max(0, n)) : 0;
+            });
+            const passRates = quizStats.map(q => effectivePassRatePercent(q));
+            const attempts = quizStats.map(q => parseInt(q.total_attempts, 10) || 0);
+
+            const bestBarColors = bestScores.map(s => {
+                if (s <= 0) return 'rgba(148, 163, 184, 0.82)';
+                if (s >= 70) return 'rgba(16, 185, 129, 0.88)';
+                if (s >= 50) return 'rgba(251, 191, 36, 0.92)';
+                return 'rgba(251, 113, 133, 0.88)';
+            });
+            const bestBorderColors = bestScores.map(s => {
+                if (s <= 0) return 'rgba(100, 116, 139, 0.95)';
+                if (s >= 70) return 'rgba(5, 150, 105, 1)';
+                if (s >= 50) return 'rgba(217, 119, 6, 1)';
+                return 'rgba(225, 29, 72, 1)';
+            });
+
+            const compareCtx = document.getElementById('studentQuizScoresCompareChart');
             const attemptsCtx = document.getElementById('studentQuizAttemptsChart');
 
-            if (radarCtx && window.Chart) {
-                const labels = quizStats.map(q => {
-                    const type = q.quiz_type.replace(/-/g, ' ').replace(/_/g, ' ');
-                    return type.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-                });
-                const bestScores = quizStats.map(q => parseFloat(q.best_score) || 0);
-                const avgScores = quizStats.map(q => parseFloat(q.average_score) || 0);
+            const tooltipDefaults = {
+                backgroundColor: 'rgba(15, 23, 42, 0.94)',
+                titleColor: '#f8fafc',
+                bodyColor: '#e2e8f0',
+                padding: 12,
+                cornerRadius: 10,
+                displayColors: true,
+                boxPadding: 6,
+                titleFont: { size: 13, weight: '600' },
+                bodyFont: { size: 12 }
+            };
 
-                if (_studentRadarChart) _studentRadarChart.destroy();
-                _studentRadarChart = new Chart(radarCtx, {
-                    type: 'radar',
+            if (compareCtx && window.Chart) {
+                if (_studentScoresCompareChart) _studentScoresCompareChart.destroy();
+                _studentScoresCompareChart = new Chart(compareCtx, {
+                    type: 'bar',
+                    plugins: [studentPassThresholdPlugin],
                     data: {
                         labels: labels,
                         datasets: [
                             {
-                                label: 'Best Score',
+                                label: 'Best score',
                                 data: bestScores,
-                                backgroundColor: 'rgba(79, 70, 229, 0.2)',
-                                borderColor: 'rgba(79, 70, 229, 1)',
-                                borderWidth: 2,
-                                pointBackgroundColor: 'rgba(79, 70, 229, 1)',
-                                pointBorderColor: '#fff',
-                                pointHoverBackgroundColor: '#fff',
-                                pointHoverBorderColor: 'rgba(79, 70, 229, 1)',
-                                pointRadius: 4,
-                                pointHoverRadius: 6
+                                backgroundColor: bestBarColors,
+                                borderColor: bestBorderColors,
+                                borderWidth: 1,
+                                borderRadius: 6,
+                                barPercentage: 0.58,
+                                categoryPercentage: 0.72
                             },
                             {
-                                label: 'Average Score',
-                                data: avgScores,
-                                backgroundColor: 'rgba(34, 197, 94, 0.2)',
-                                borderColor: 'rgba(34, 197, 94, 1)',
-                                borderWidth: 2,
-                                pointBackgroundColor: 'rgba(34, 197, 94, 1)',
-                                pointBorderColor: '#fff',
-                                pointHoverBackgroundColor: '#fff',
-                                pointHoverBorderColor: 'rgba(34, 197, 94, 1)',
-                                pointRadius: 4,
-                                pointHoverRadius: 6
+                                label: 'Pass rate',
+                                data: passRates,
+                                backgroundColor: 'rgba(165, 180, 252, 0.45)',
+                                borderColor: 'rgba(99, 102, 241, 0.95)',
+                                borderWidth: 1,
+                                borderRadius: 6,
+                                barPercentage: 0.58,
+                                categoryPercentage: 0.72
                             }
                         ]
                     },
                     options: {
+                        indexAxis: 'y',
                         responsive: true,
                         maintainAspectRatio: false,
+                        animation: { duration: 520, easing: 'easeOutCubic' },
+                        interaction: { mode: 'index', intersect: false },
                         plugins: {
+                            studentPassThresholdLine: true,
                             legend: {
-                                display: true,
-                                position: 'top',
-                                labels: {
-                                    usePointStyle: true,
-                                    padding: 15,
-                                    font: {
-                                        size: 12,
-                                        weight: '600'
-                                    }
-                                }
+                                display: false
                             },
                             tooltip: {
-                                enabled: true,
-                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                titleColor: '#fff',
-                                bodyColor: '#fff',
-                                borderColor: '#4f46e5',
-                                borderWidth: 1,
-                                padding: 12,
+                                ...tooltipDefaults,
                                 callbacks: {
-                                    label: function(context) {
-                                        return context.dataset.label + ': ' + context.parsed.r.toFixed(1) + '%';
+                                    title: function(items) {
+                                        if (!items.length) return '';
+                                        return labels[items[0].dataIndex] || '';
+                                    },
+                                    label: function(ctx) {
+                                        const q = quizStats[ctx.dataIndex];
+                                        const att = parseInt(q.total_attempts, 10) || 0;
+                                        const v = ctx.parsed.x;
+                                        if (ctx.datasetIndex === 0) {
+                                            return 'Best score: ' + Number(v).toFixed(1) + '%' +
+                                                (att ? ' · ' + att + ' attempt' + (att !== 1 ? 's' : '') : ' · not taken yet');
+                                        }
+                                        return 'Pass rate: ' + Number(v).toFixed(0) + '% of attempts ≥ 70%';
                                     }
                                 }
                             }
                         },
                         scales: {
-                            r: {
-                                beginAtZero: true,
+                            x: {
+                                min: 0,
                                 max: 100,
                                 ticks: {
-                                    stepSize: 20,
                                     callback: function(value) {
                                         return value + '%';
                                     },
-                                    font: {
-                                        size: 10
-                                    }
+                                    font: { size: 11, family: "system-ui, sans-serif" },
+                                    color: '#64748b',
+                                    maxTicksLimit: 11
                                 },
-                                grid: {
-                                    color: 'rgba(0, 0, 0, 0.1)'
-                                },
-                                pointLabels: {
-                                    font: {
-                                        size: 11,
-                                        weight: '600'
-                                    }
+                                grid: { color: 'rgba(148, 163, 184, 0.22)', drawBorder: false },
+                                border: { display: false },
+                                title: {
+                                    display: true,
+                                    text: 'Percent (same scale for both)',
+                                    color: '#475569',
+                                    font: { size: 12, weight: '600', family: "system-ui, sans-serif" },
+                                    padding: { top: 8 }
                                 }
+                            },
+                            y: {
+                                ticks: {
+                                    font: { size: 11, weight: '500', family: "system-ui, sans-serif" },
+                                    color: '#334155',
+                                    autoSkip: false
+                                },
+                                grid: { display: false },
+                                border: { display: false }
                             }
                         }
                     }
@@ -9095,153 +9409,83 @@ let currentQuizResultsSearch = '';
             }
 
             if (attemptsCtx && window.Chart) {
-                const labels = quizStats.map(q => {
-                    const type = q.quiz_type.replace(/-/g, ' ').replace(/_/g, ' ');
-                    const words = type.split(' ');
-                    return words.length > 2 ? words.slice(0, 2).join(' ') : type;
-                });
-                const attempts = quizStats.map(q => parseInt(q.total_attempts) || 0);
-                const passRates = quizStats.map(q => parseFloat(q.pass_rate) || 0);
-
                 if (_studentAttemptsChart) _studentAttemptsChart.destroy();
+                const maxAtt = Math.max(1, ...attempts);
+                const xMax = Math.max(5, maxAtt + Math.max(1, Math.ceil(maxAtt * 0.12)));
+
+                const attemptsBg = attempts.map(a => {
+                    const t = maxAtt <= 0 ? 0.25 : 0.28 + (a / maxAtt) * 0.62;
+                    return `rgba(79, 70, 229, ${t.toFixed(3)})`;
+                });
+                const attemptsBorder = attempts.map(a => {
+                    const t = maxAtt <= 0 ? 0.45 : 0.45 + (a / maxAtt) * 0.45;
+                    return `rgba(55, 48, 163, ${t.toFixed(3)})`;
+                });
+
                 _studentAttemptsChart = new Chart(attemptsCtx, {
                     type: 'bar',
                     data: {
                         labels: labels,
-                        datasets: [
-                            {
-                                label: 'Total Attempts',
-                                data: attempts,
-                                backgroundColor: 'rgba(59, 130, 246, 0.7)',
-                                borderColor: 'rgba(59, 130, 246, 1)',
-                                borderWidth: 2,
-                                borderRadius: 6,
-                                yAxisID: 'y'
-                            },
-                            {
-                                label: 'Pass Rate (%)',
-                                data: passRates,
-                                backgroundColor: 'rgba(34, 197, 94, 0.7)',
-                                borderColor: 'rgba(34, 197, 94, 1)',
-                                borderWidth: 2,
-                                borderRadius: 6,
-                                yAxisID: 'y1',
-                                type: 'line',
-                                tension: 0.4,
-                                pointRadius: 5,
-                                pointHoverRadius: 7,
-                                pointBackgroundColor: 'rgba(34, 197, 94, 1)',
-                                pointBorderColor: '#fff',
-                                pointBorderWidth: 2
-                            }
-                        ]
+                        datasets: [{
+                            label: 'Attempts',
+                            data: attempts,
+                            backgroundColor: attemptsBg,
+                            borderColor: attemptsBorder,
+                            borderWidth: 1,
+                            borderRadius: 6,
+                            barPercentage: 0.68,
+                            categoryPercentage: 0.82
+                        }]
                     },
                     options: {
+                        indexAxis: 'y',
                         responsive: true,
                         maintainAspectRatio: false,
-                        interaction: {
-                            mode: 'index',
-                            intersect: false
-                        },
+                        animation: { duration: 520, easing: 'easeOutCubic' },
                         plugins: {
-                            legend: {
-                                display: true,
-                                position: 'top',
-                                labels: {
-                                    usePointStyle: true,
-                                    padding: 15,
-                                    font: {
-                                        size: 12,
-                                        weight: '600'
-                                    }
-                                }
-                            },
+                            legend: { display: false },
                             tooltip: {
-                                enabled: true,
-                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                titleColor: '#fff',
-                                bodyColor: '#fff',
-                                borderColor: '#4f46e5',
-                                borderWidth: 1,
-                                padding: 12,
+                                ...tooltipDefaults,
                                 callbacks: {
-                                    label: function(context) {
-                                        let label = context.dataset.label || '';
-                                        if (label) {
-                                            label += ': ';
-                                        }
-                                        if (context.dataset.yAxisID === 'y1') {
-                                            label += context.parsed.y.toFixed(1) + '%';
-                                        } else {
-                                            label += context.parsed.y;
-                                        }
-                                        return label;
+                                    title: function(items) {
+                                        if (!items.length) return '';
+                                        return labels[items[0].dataIndex] || '';
+                                    },
+                                    label: function(ctx) {
+                                        const n = ctx.parsed.x;
+                                        return 'Attempts: ' + n + (n === 1 ? ' time' : ' times');
                                     }
                                 }
                             }
                         },
                         scales: {
-                            y: {
-                                type: 'linear',
-                                display: true,
-                                position: 'left',
-                                beginAtZero: true,
-                                ticks: {
-                                    precision: 0,
-                                    font: {
-                                        size: 11
-                                    }
-                                },
-                                title: {
-                                    display: true,
-                                    text: 'Attempts',
-                                    font: {
-                                        size: 12,
-                                        weight: '600'
-                                    }
-                                },
-                                grid: {
-                                    color: 'rgba(0, 0, 0, 0.05)'
-                                }
-                            },
-                            y1: {
-                                type: 'linear',
-                                display: true,
-                                position: 'right',
-                                beginAtZero: true,
-                                max: 100,
-                                ticks: {
-                                    callback: function(value) {
-                                        return value + '%';
-                                    },
-                                    font: {
-                                        size: 11
-                                    }
-                                },
-                                title: {
-                                    display: true,
-                                    text: 'Pass Rate',
-                                    font: {
-                                        size: 12,
-                                        weight: '600'
-                                    }
-                                },
-                                grid: {
-                                    drawOnChartArea: false
-                                }
-                            },
                             x: {
-                                grid: {
-                                    display: false
-                                },
+                                min: 0,
+                                max: xMax,
                                 ticks: {
-                                    font: {
-                                        size: 10,
-                                        weight: '600'
-                                    },
-                                    maxRotation: 45,
-                                    minRotation: 0
+                                    stepSize: 1,
+                                    precision: 0,
+                                    font: { size: 11, family: "system-ui, sans-serif" },
+                                    color: '#64748b'
+                                },
+                                grid: { color: 'rgba(148, 163, 184, 0.22)', drawBorder: false },
+                                border: { display: false },
+                                title: {
+                                    display: true,
+                                    text: 'Number of attempts',
+                                    color: '#475569',
+                                    font: { size: 12, weight: '600', family: "system-ui, sans-serif" },
+                                    padding: { top: 8 }
                                 }
+                            },
+                            y: {
+                                ticks: {
+                                    font: { size: 11, weight: '500', family: "system-ui, sans-serif" },
+                                    color: '#334155',
+                                    autoSkip: false
+                                },
+                                grid: { display: false },
+                                border: { display: false }
                             }
                         }
                     }
@@ -9605,6 +9849,7 @@ let currentQuizResultsSearch = '';
                         student.solving_rational_equations_quiz_best_score || 0,
                         student.representations_of_rational_functions_quiz_best_score || 0,
                         student.domain_range_rational_functions_quiz_best_score || 0,
+                        student.domain_range_inverse_functions_quiz_best_score || 0,
                         student.one_to_one_functions_quiz_best_score || 0
                     ];
                     // Calculate average only from quizzes that have been taken

@@ -474,7 +474,8 @@ function getStudentPerformanceDetails() {
             $quizTypes = [
                 'functions', 'evaluating-functions', 'operations-on-functions', 
                 'real-life-problems', 'rational-functions', 'solving-rational-equations-inequalities',
-                'representations-of-rational-functions', 'domain-range-rational-functions', 'one-to-one-functions'
+                'representations-of-rational-functions', 'domain-range-rational-functions', 'domain-range-inverse-functions',
+                'one-to-one-functions'
             ];
             
             // Initialize quiz scores
@@ -543,6 +544,7 @@ function getStudentPerformanceDetails() {
                 $student['solving_rational_equations_inequalities_quiz_best_score'] ?? 0,
                 $student['representations_of_rational_functions_quiz_best_score'] ?? 0,
                 $student['domain_range_rational_functions_quiz_best_score'] ?? 0,
+                $student['domain_range_inverse_functions_quiz_best_score'] ?? 0,
                 $student['one_to_one_functions_quiz_best_score'] ?? 0
             ];
             $takenQuizzes = array_filter($quizScores, function($score) { return $score > 0; });
@@ -637,20 +639,24 @@ function getStudentPerformanceDetails() {
             ]
         ];
         
-        // Build quiz_statistics array for charts
+        // Build quiz_statistics for charts — all 10 core quizzes (aligned with class performance)
         $quizStatistics = [];
         $quizTypesForStats = [
-            'functions', 'evaluating-functions', 'operations-on-functions', 
-            'real-life-problems', 'rational-functions'
+            'functions', 'evaluating-functions', 'operations-on-functions',
+            'real-life-problems', 'rational-functions', 'solving-rational-equations-inequalities',
+            'representations-of-rational-functions', 'domain-range-rational-functions',
+            'domain-range-inverse-functions', 'one-to-one-functions'
         ];
-        
+
         foreach ($quizTypesForStats as $quizType) {
             $fieldPrefix = str_replace('-', '_', $quizType);
-            $bestScore = $student[$fieldPrefix . '_quiz_best_score'] ?? 0;
-            $attempts = $student[$fieldPrefix . '_quiz_attempts'] ?? 0;
-            
+            $bestScore = floatval($student[$fieldPrefix . '_quiz_best_score'] ?? 0);
+            $attempts = intval($student[$fieldPrefix . '_quiz_attempts'] ?? 0);
+
+            $avgScore = $bestScore;
+            $passedAttempts = 0;
+
             if ($attempts > 0) {
-                // Get average score and passed attempts from quiz_attempts
                 $stmt = $pdo->prepare("
                     SELECT 
                         AVG(ROUND((score / NULLIF(total_questions, 0)) * 100, 1)) as avg_score, 
@@ -660,19 +666,25 @@ function getStudentPerformanceDetails() {
                 ");
                 $stmt->execute([$studentId, $quizType]);
                 $avgData = $stmt->fetch();
-                
-                $avgScore = $avgData && $avgData['avg_score'] !== null ? floatval($avgData['avg_score']) : $bestScore;
-                $passedAttempts = $avgData && $avgData['passed'] !== null ? intval($avgData['passed']) : ($bestScore >= 70 ? 1 : 0);
-                
-                $quizStatistics[] = [
-                    'quiz_type' => $quizType,
-                    'best_score' => $bestScore,
-                    'average_score' => $avgScore,
-                    'total_attempts' => $attempts,
-                    'passed_attempts' => $passedAttempts,
-                    'pass_rate' => $attempts > 0 ? round(($passedAttempts / $attempts) * 100, 1) : 0
-                ];
+
+                if ($avgData && $avgData['avg_score'] !== null) {
+                    $avgScore = floatval($avgData['avg_score']);
+                }
+                if ($avgData && $avgData['passed'] !== null) {
+                    $passedAttempts = intval($avgData['passed']);
+                }
             }
+
+            $passRate = $attempts > 0 ? round(($passedAttempts / $attempts) * 100, 1) : 0;
+
+            $quizStatistics[] = [
+                'quiz_type' => $quizType,
+                'best_score' => $bestScore,
+                'average_score' => $avgScore,
+                'total_attempts' => $attempts,
+                'passed_attempts' => $passedAttempts,
+                'pass_rate' => $passRate
+            ];
         }
         
         // Get lesson completions
@@ -691,6 +703,49 @@ function getStudentPerformanceDetails() {
             // Table doesn't exist, skip
         }
         
+        // Time spent per topic (lesson timers → study_time; student_id = users.id)
+        $topicStudyTime = [];
+        $topicStudyLabelMap = [
+            'functions' => 'Functions',
+            'evaluating-functions' => 'Evaluating Functions',
+            'operations-on-functions' => 'Operations on Functions',
+            'solving-real-life-problems' => 'Solving Real-Life Problems',
+            'rational-functions' => 'Rational Functions',
+            'solving-rational-equations-inequalities' => 'Solving Rational Equations & Inequalities',
+            'representations-of-rational-functions' => 'Representations of Rational Functions',
+            'domain-range-rational-functions' => 'Domain & Range (Rational)',
+            'domain-range-inverse-functions' => 'Domain & Range (Inverse)',
+            'one-to-one-functions' => 'One-to-One Functions',
+            'simple-interest' => 'Simple Interest',
+            'compound-interest' => 'Compound Interest',
+            'simple-and-compound-values' => 'Interest & Present Values',
+            'solving-interest-problems' => 'Solving Interest Problems',
+        ];
+        try {
+            $chkSt = $pdo->query("SHOW TABLES LIKE 'study_time'");
+            if ($chkSt && $chkSt->rowCount() > 0) {
+                $stmt = $pdo->prepare("
+                    SELECT topic, SUM(time_spent_seconds) AS total_seconds
+                    FROM study_time
+                    WHERE student_id = ?
+                    GROUP BY topic
+                    ORDER BY total_seconds DESC
+                ");
+                $stmt->execute([$studentId]);
+                $stRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                foreach ($stRows as $row) {
+                    $slug = $row['topic'];
+                    $topicStudyTime[] = [
+                        'topic' => $slug,
+                        'total_seconds' => (int) $row['total_seconds'],
+                        'label' => $topicStudyLabelMap[$slug] ?? ucwords(str_replace('-', ' ', $slug)),
+                    ];
+                }
+            }
+        } catch (Exception $e) {
+            $topicStudyTime = [];
+        }
+        
         echo json_encode([
             'success' => true,
             'student' => $student,
@@ -698,6 +753,7 @@ function getStudentPerformanceDetails() {
             'performance_history' => $performanceHistory,
             'quiz_statistics' => $quizStatistics,
             'lesson_completions' => $lessonCompletions,
+            'topic_study_time' => $topicStudyTime,
             'data_source' => 'Independent Performance Tracking System'
         ]);
         

@@ -28,9 +28,11 @@ function loadEnv($path) {
                 $value = substr($value, 1, -1);
             }
             
-            // Set environment variable if not already set
-            if (!getenv($key)) {
-                putenv("$key=$value");
+            // Set from file when missing OR empty (system may define GROQ_* as blank and block real keys)
+            $existing = getenv($key);
+            $isEmpty = ($existing === false || $existing === null || (is_string($existing) && trim($existing) === ''));
+            if ($isEmpty && $value !== '') {
+                putenv("{$key}={$value}");
                 $_ENV[$key] = $value;
                 $_SERVER[$key] = $value;
             }

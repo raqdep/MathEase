@@ -1,6 +1,10 @@
 # Environment variables
 .env
 
+# Composer (run `composer install` after clone)
+/vendor/
+composer.phar
+
 # Logs
 *.log
 error_log

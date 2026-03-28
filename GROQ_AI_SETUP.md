@@ -69,3 +69,12 @@ You can also set (optional):
 - `GROQ_API_URL=https://api.groq.com/openai/v1/chat/completions` (default)
 
 Only `GROQ_API_KEY` is required for Cassy to work.
+
+## Teacher dashboard: download topic as PowerPoint (optional)
+
+In **Topic Management**, teachers can download a **.pptx** outline for each canonical topic. The server reads `topics/{slug}.html`, removes video and visual-aid sections, calls Groq to build slide titles and bullets, and generates a file with [PhpPresentation](https://github.com/PHPOffice/PHPPresentation) (Composer).
+
+1. Set `GROQ_API_KEY` in `.env` (or optional `GROQ_PPT_API_KEY` / `GROQ_PPT_MODEL` to override).
+2. From the project root, install PHP dependencies: `composer install` (if `ext-gd` is missing, you may need `composer install --ignore-platform-req=ext-gd` or enable `extension=gd` in `php.ini` for full compatibility).
+
+The Groq key is **only** used on the server (`php/export-topic-ppt.php`); it is never sent to the browser.

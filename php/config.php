@@ -1,6 +1,6 @@
 <?php
-// Load environment variables
-require_once __DIR__ . '/load-env.php';
+// Environment, session, timezone (shared with endpoints that skip DB; see bootstrap-session-env.php)
+require_once __DIR__ . '/bootstrap-session-env.php';
 
 // Database configuration for MathEase (env from `.env` wins; see deploy/.env.example)
 // Local XAMPP: set DB_HOST=localhost (and local user/pass) in project root `.env`.
@@ -17,21 +17,6 @@ try {
 } catch(PDOException $e) {
     die("Connection failed: " . $e->getMessage());
 }
-
-// Start session if not already started
-if (session_status() == PHP_SESSION_NONE) {
-    // Configure session settings for better security and isolation
-    ini_set('session.cookie_httponly', 1);
-    ini_set('session.use_only_cookies', 1);
-    ini_set('session.cookie_secure', 0); // Set to 1 for HTTPS
-    ini_set('session.cookie_samesite', 'Lax');
-    ini_set('session.cookie_path', '/'); // Ensure cookies are available for all paths
-    
-    session_start();
-}
-
-// Set timezone
-date_default_timezone_set('Asia/Manila');
 
 // Helper functions
 function sanitize_input($data) {
