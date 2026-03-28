@@ -29,7 +29,7 @@ sudo bash deploy/setup-ec2.sh
 If the server is empty, copy the script first. From your **PC** (PowerShell):
 
 ```powershell
-scp -i "C:\xampp\htdocs\MathEase_Key.pem" "C:\xampp\htdocs\seas6\Episode 39\MathEase\deploy\setup-ec2.sh" ubuntu@54.206.4.117:~/
+scp -i "C:\xampp\htdocs\MathEase_Key.pem" "C:\xampp\htdocs\ep59\MathEase\deploy\setup-ec2.sh" ubuntu@54.206.4.117:~/
 ```
 
 Then on the **server**:
@@ -94,11 +94,12 @@ Open in browser: **http://54.206.4.117/**
 After you’ve pushed changes to GitHub, on the **server**:
 
 ```bash
-sudo -u www-data bash -c 'cd /var/www/MathEase && git pull origin main'
+sudo apt-get install -y composer php-zip  # once, if Composer/vendor missing
+sudo -u www-data bash -c 'cd /var/www/MathEase && git fetch origin && git checkout main && git pull origin main && composer install --no-dev --no-interaction --optimize-autoloader'
 sudo systemctl reload apache2
 ```
 
-Your `.env` and database stay as-is; only code is updated.
+Your `.env` and database stay as-is; only code and Composer packages are updated.
 
 ---
 
@@ -108,7 +109,7 @@ To push files from your machine without going through GitHub:
 
 ```powershell
 # From PC (run from MathEase project root)
-scp -i "C:\xampp\htdocs\MathEase_Key.pem" -r "C:\xampp\htdocs\seas6\Episode 39\MathEase\*" ubuntu@54.206.4.117:/tmp/mathease-upload/
+scp -i "C:\xampp\htdocs\MathEase_Key.pem" -r "C:\xampp\htdocs\ep59\MathEase\*" ubuntu@54.206.4.117:/tmp/mathease-upload/
 ```
 
 Then on the server:

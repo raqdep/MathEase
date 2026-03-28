@@ -9,7 +9,7 @@ WEB_ROOT="/var/www/MathEase"
 
 echo "==> Installing Apache, PHP, MariaDB (optional), Git..."
 sudo apt-get update
-sudo apt-get install -y apache2 php php-mysql php-mbstring php-xml php-curl php-json php-gd mariadb-server git unzip
+sudo apt-get install -y apache2 php php-mysql php-mbstring php-xml php-curl php-json php-gd php-zip mariadb-server git unzip composer
 
 echo "==> Enabling Apache modules..."
 sudo a2enmod rewrite
@@ -17,13 +17,16 @@ sudo a2enmod headers
 
 echo "==> Cloning MathEase from GitHub..."
 sudo mkdir -p /var/www
-if [ -d "$WEB_ROOT" ]; then
-  echo "    $WEB_ROOT exists; pulling latest..."
-  sudo -u www-data bash -c "cd $WEB_ROOT && git fetch origin && git reset --hard origin/master"
+if [ -d "$WEB_ROOT/.git" ]; then
+  echo "    $WEB_ROOT exists; pulling latest main..."
+  sudo -u www-data bash -c "cd $WEB_ROOT && git fetch origin && git checkout main 2>/dev/null || true && git reset --hard origin/main"
 else
-  sudo git clone "$REPO_URL" "$WEB_ROOT"
+  sudo git clone -b main "$REPO_URL" "$WEB_ROOT"
   sudo chown -R www-data:www-data "$WEB_ROOT"
 fi
+
+echo "==> Composer dependencies (phpoffice/phppresentation, etc.)..."
+sudo -u www-data bash -c "cd $WEB_ROOT && composer install --no-dev --optimize-autoloader --no-interaction"
 
 echo "==> Creating .env from example (edit with your credentials)..."
 if [ ! -f "$WEB_ROOT/.env" ]; then
@@ -35,9 +38,9 @@ else
   echo "    .env already exists; skipping."
 fi
 
-echo "==> Creating uploads directory..."
-sudo mkdir -p "$WEB_ROOT/uploads/profiles"
-sudo touch "$WEB_ROOT/uploads/profiles/.gitkeep"
+echo "==> Creating uploads directories..."
+sudo mkdir -p "$WEB_ROOT/uploads/profiles" "$WEB_ROOT/uploads/teacher-profiles"
+sudo touch "$WEB_ROOT/uploads/profiles/.gitkeep" "$WEB_ROOT/uploads/teacher-profiles/.gitkeep"
 sudo chown -R www-data:www-data "$WEB_ROOT/uploads"
 
 echo "==> Configuring Apache DocumentRoot..."
@@ -65,8 +68,8 @@ sudo systemctl reload apache2
 
 echo ""
 echo "=== Next steps ==="
-echo "1. .env was copied from deploy/.env.example (original RDS: admin / mathease_database3)."
-echo "2. Edit .env if needed: sudo nano $WEB_ROOT/.env  (MAIL_*, optional GROQ_API_KEY)"
+echo "1. .env was copied from deploy/.env.example — set DB_PASS and MAIL_* (RDS host is in the example)."
+echo "2. Edit .env: sudo nano $WEB_ROOT/.env  (DB_*, MAIL_*, optional GROQ_API_KEY)"
 echo "3. Open in browser: http://$(curl -s ifconfig.me 2>/dev/null || echo 'YOUR_EC2_IP')/"
 echo "   (If using MariaDB on EC2 instead of RDS, create DB/user and import schema; set DB_HOST=localhost in .env)"
 echo ""

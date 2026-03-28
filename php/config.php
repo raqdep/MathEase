@@ -2,11 +2,12 @@
 // Environment, session, timezone (shared with endpoints that skip DB; see bootstrap-session-env.php)
 require_once __DIR__ . '/bootstrap-session-env.php';
 
-// Database configuration for MathEase (env from `.env` wins; see deploy/.env.example)
-// Local XAMPP: set DB_HOST=localhost (and local user/pass) in project root `.env`.
-define('DB_HOST', getenv('DB_HOST') ?: 'mathease-db.crqqmwqm0c6s.ap-southeast-2.rds.amazonaws.com');
-define('DB_USER', getenv('DB_USER') ?: 'admin');
-define('DB_PASS', getenv('DB_PASS') ?: 'mathease123');
+// Database configuration for MathEase (required: project root `.env`; see deploy/.env.example)
+// EC2/RDS: copy deploy/.env.example to `.env` and set DB_* (never commit real passwords).
+// Local XAMPP: DB_HOST=localhost, DB_USER=root, DB_PASS=, DB_NAME=...
+define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+define('DB_USER', getenv('DB_USER') ?: 'root');
+define('DB_PASS', getenv('DB_PASS') ?: '');
 define('DB_NAME', getenv('DB_NAME') ?: 'mathease_database3');
 
 // Create database connection
