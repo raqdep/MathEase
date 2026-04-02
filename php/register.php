@@ -126,14 +126,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Hash password
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         
-        // Generate verification token (no OTP needed)
-        $verificationToken = generate_token();
-        $linkExpires = date('Y-m-d H:i:s', strtotime('+24 hours'));
+        // Generate OTP for email verification
+        $otp = (string) random_int(100000, 999999);
+        $otpExpires = date('Y-m-d H:i:s', strtotime('+15 minutes'));
         
-        // Insert user into database with verification fields (LRN is now optional)
+        // Insert user into database with OTP verification fields (LRN is optional)
         $stmt = $pdo->prepare("
-            INSERT INTO users (first_name, last_name, email, student_id, grade_level, strand, password, newsletter_subscribed, email_verified, verification_link_token, verification_link_expires, created_at) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, NOW())
+            INSERT INTO users (first_name, last_name, email, student_id, grade_level, strand, password, newsletter_subscribed, email_verified, otp, expiration_otp, verification_link_token, verification_link_expires, created_at) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?, NULL, NULL, NOW())
         ");
         
         $stmt->execute([
@@ -145,8 +145,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $strand,
             $hashedPassword,
             $newsletter,
-            $verificationToken,
-            $linkExpires
+            $otp,
+            $otpExpires
         ]);
         
         $userId = $pdo->lastInsertId();
@@ -158,10 +158,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ");
         $stmt->execute([$userId]);
         
-        // Send verification email using enhanced system
-        $verificationLink = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['REQUEST_URI']) . "/verify-email.php?token=" . $verificationToken;
-        
-        $subject = 'Welcome to MathEase - Verify Your Email';
+        // Send OTP email using enhanced system
+        $subject = 'Welcome to MathEase - Your verification code';
         $htmlBody = '
         <!DOCTYPE html>
         <html>
@@ -186,24 +184,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         Hi ' . htmlspecialchars($firstName) . ',
                     </p>
                     
-                    <p style="color: #666666; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
-                        Thank you for registering with MathEase! To complete your registration and start learning, please verify your email address by clicking the button below.
+                    <p style="color: #666666; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                        Thank you for registering with MathEase! Enter this OTP to complete your registration:
                     </p>
                     
-                    <!-- Verification Link -->
-                    <div style="text-align: center; margin: 40px 0;">
-                        <a href="' . $verificationLink . '" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; padding: 18px 40px; border-radius: 10px; font-weight: bold; font-size: 18px; display: inline-block; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">Verify Email Address</a>
-                    </div>
-                    
-                    <div style="background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 6px; padding: 15px; margin: 20px 0;">
-                        <p style="color: #2d5a2d; margin: 0; font-size: 14px; font-weight: 500;">
-                            ✅ Simply click the "Verify Email Address" button above to complete your registration.
-                        </p>
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 10px; text-align: center; margin: 30px 0;">
+                        <p style="color: #ffffff; margin: 0 0 10px 0; font-size: 14px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">Your Verification Code</p>
+                        <div style="background: #ffffff; color: #667eea; font-size: 32px; font-weight: bold; letter-spacing: 8px; padding: 15px; border-radius: 8px; display: inline-block; min-width: 200px;">' . $otp . '</div>
                     </div>
                     
                     <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 6px; padding: 15px; margin: 20px 0;">
                         <p style="color: #856404; margin: 0; font-size: 14px; font-weight: 500;">
-                            ⏰ Your verification link will expire in 24 hours for security reasons.
+                            ⏰ Your verification code will expire in 15 minutes for security reasons.
                         </p>
                     </div>
                     
@@ -226,10 +218,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </body>
         </html>';
         
-        // Send verification email using dedicated Gmail SMTP
-        $verificationLink = "http://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['REQUEST_URI']) . "/verify-email.php?token=" . $verificationToken;
-        
-        $subject = 'Welcome to MathEase - Verify Your Email';
+        // Duplicate template block retained from legacy file; keep subject/body aligned to OTP flow
+        $subject = 'Welcome to MathEase - Your verification code';
         $htmlBody = '
         <!DOCTYPE html>
         <html>
@@ -254,24 +244,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         Hi ' . htmlspecialchars($firstName) . ',
                     </p>
                     
-                    <p style="color: #666666; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
-                        Thank you for registering with MathEase! To complete your registration and start learning, please verify your email address by clicking the button below.
+                    <p style="color: #666666; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                        Thank you for registering with MathEase! Enter this OTP to complete your registration:
                     </p>
                     
-                    <!-- Verification Link -->
-                    <div style="text-align: center; margin: 40px 0;">
-                        <a href="' . $verificationLink . '" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; padding: 18px 40px; border-radius: 10px; font-weight: bold; font-size: 18px; display: inline-block; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">Verify Email Address</a>
-                    </div>
-                    
-                    <div style="background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 6px; padding: 15px; margin: 20px 0;">
-                        <p style="color: #2d5a2d; margin: 0; font-size: 14px; font-weight: 500;">
-                            ✅ Simply click the "Verify Email Address" button above to complete your registration.
-                        </p>
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 10px; text-align: center; margin: 30px 0;">
+                        <p style="color: #ffffff; margin: 0 0 10px 0; font-size: 14px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">Your Verification Code</p>
+                        <div style="background: #ffffff; color: #667eea; font-size: 32px; font-weight: bold; letter-spacing: 8px; padding: 15px; border-radius: 8px; display: inline-block; min-width: 200px;">' . $otp . '</div>
                     </div>
                     
                     <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 6px; padding: 15px; margin: 20px 0;">
                         <p style="color: #856404; margin: 0; font-size: 14px; font-weight: 500;">
-                            ⏰ Your verification link will expire in 24 hours for security reasons.
+                            ⏰ Your verification code will expire in 15 minutes for security reasons.
                         </p>
                     </div>
                     
@@ -306,10 +290,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Set success response
         $response = array(
             'success' => true,
-            'message' => 'Registration successful! Please resend verification email.',
+            'message' => 'Registration successful! Enter the OTP sent to your email to verify your account.',
             'user_id' => $userId,
             'email_sent' => $emailSent,
-            'verification_required' => true
+            'verification_required' => true,
+            'account_type' => 'student'
         );
         
         // Log successful registration

@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$user['email_verified']) {
             $response = array(
                 'success' => false,
-                'message' => 'Please verify your email before logging in. Check your email for verification instructions.',
+                'message' => 'Please verify your email before logging in. Enter the OTP sent to your email during signup.',
                 'error_type' => 'email_not_verified',
                 'field' => 'email'
             );

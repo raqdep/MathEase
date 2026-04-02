@@ -19,7 +19,7 @@
                         <h1>MathEase</h1>
                     </div>
                     <h2>Verify your Account</h2>
-                    <p>Please check your email and click the verification link to activate your account.</p>
+                    <p>Please enter the OTP code sent to your email to activate your account.</p>
                 </div>
 
                 <div class="auth-form">
@@ -30,17 +30,17 @@
                             </div>
                             <div class="step-content">
                                 <h3>Check Your Email</h3>
-                                <p>We've sent a verification link to your email address.</p>
+                                <p>We've sent a 6-digit OTP code to your email address.</p>
                             </div>
                         </div>
                         
                         <div class="instruction-step">
                             <div class="step-icon">
-                                <i class="fas fa-link"></i>
+                                <i class="fas fa-key"></i>
                             </div>
                             <div class="step-content">
-                                <h3>Click the Link</h3>
-                                <p>Open the email and click the "Verify Account" button or link.</p>
+                                <h3>Enter OTP</h3>
+                                <p>Type the OTP code in the field below and click Verify.</p>
                             </div>
                         </div>
                         
@@ -56,15 +56,17 @@
                     </div>
 
                     <div class="form-group">
-                        <button class="btn btn-outline" id="resendEmailBtn">Resend Email</button>
-                        <button class="btn btn-primary" id="checkEmailBtn">I've Verified My Email</button>
+                        <label for="otpCode" id="otpLabel" style="font-weight:600;display:block;margin-bottom:8px;">Enter OTP</label>
+                        <input id="otpCode" type="text" inputmode="numeric" maxlength="6" placeholder="123456" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:8px;margin-bottom:10px;">
+                        <button class="btn btn-outline" id="resendEmailBtn">Resend OTP</button>
+                        <button class="btn btn-primary" id="checkEmailBtn">Verify OTP</button>
                     </div>
                     
                     <div id="verificationMessage" style="color:#666;margin-bottom:0.5rem;font-size:0.95rem;"></div>
                 </div>
 
                 <div class="auth-footer">
-                    <p>Didn't receive the email? Check your spam folder or <a href="#" id="resendLink">resend verification email</a></p>
+                    <p>Didn't receive the email? Check your spam folder or <a href="#" id="resendLink">resend OTP code</a></p>
                     <p>Return to <a href="login.html">Sign in</a></p>
                 </div>
             </div>

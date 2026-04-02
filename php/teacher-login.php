@@ -330,7 +330,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($hasEmailVerified && isset($teacher['email_verified']) && $teacher['email_verified'] == 0) {
             $response = array(
                 'success' => false,
-                'message' => 'Please verify your email address before logging in. Check your inbox for the verification link.',
+                'message' => 'Please verify your email address before logging in. Enter the OTP sent to your email during signup.',
                 'error_type' => 'email_not_verified',
                 'field' => 'email'
             );

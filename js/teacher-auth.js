@@ -519,14 +519,26 @@ async function handleTeacherRegister(e) {
         
         if (data.success) {
             if (typeof Swal !== 'undefined') {
-                Swal.fire({ icon: 'success', title: 'Account created', text: 'Redirecting to teacher login...', timer: 1200, showConfirmButton: false });
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Account created',
+                    text: 'OTP sent to your email. Redirecting to verification...',
+                    timer: 1400,
+                    showConfirmButton: false
+                });
                 setTimeout(() => {
-                    window.location.href = 'teacher-login.html';
+                    if (data.teacher_id) {
+                        localStorage.setItem('registeredTeacherId', data.teacher_id);
+                    }
+                    window.location.href = `verify_code_signup.html?type=teacher&id=${encodeURIComponent(data.teacher_id || '')}`;
                 }, 1200);
             } else {
-                alert('Account created successfully! Redirecting...');
+                alert('Account created successfully. OTP sent to your email.');
                 setTimeout(() => {
-                    window.location.href = 'teacher-login.html';
+                    if (data.teacher_id) {
+                        localStorage.setItem('registeredTeacherId', data.teacher_id);
+                    }
+                    window.location.href = `verify_code_signup.html?type=teacher&id=${encodeURIComponent(data.teacher_id || '')}`;
                 }, 1000);
             }
         } else {

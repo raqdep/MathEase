@@ -80,9 +80,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Hash password
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         
-        // Generate email verification token
-        $verification_token = bin2hex(random_bytes(32));
+        // Generate OTP for email verification
+        $otp = (string) random_int(100000, 999999);
+        $otpExpires = date('Y-m-d H:i:s', strtotime('+15 minutes'));
         
+        // Ensure OTP columns exist for teacher email verification
+        try {
+            $pdo->exec("ALTER TABLE teachers ADD COLUMN otp VARCHAR(10) NULL");
+        } catch (Exception $e) {
+            // ignore if column already exists
+        }
+        try {
+            $pdo->exec("ALTER TABLE teachers ADD COLUMN expiration_otp DATETIME NULL");
+        } catch (Exception $e) {
+            // ignore if column already exists
+        }
+
         // Check if approval_status column exists
         $stmt = $pdo->prepare("SHOW COLUMNS FROM teachers LIKE 'approval_status'");
         $stmt->execute();
@@ -93,10 +106,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute();
         $hasEmailVerified = $stmt->rowCount() > 0;
         
-        // Check if verification_token column exists
-        $stmt = $pdo->prepare("SHOW COLUMNS FROM teachers LIKE 'verification_token'");
+        // Check if OTP columns exist
+        $stmt = $pdo->prepare("SHOW COLUMNS FROM teachers LIKE 'otp'");
         $stmt->execute();
-        $hasVerificationToken = $stmt->rowCount() > 0;
+        $hasOtpColumn = $stmt->rowCount() > 0;
+
+        $stmt = $pdo->prepare("SHOW COLUMNS FROM teachers LIKE 'expiration_otp'");
+        $stmt->execute();
+        $hasOtpExpiryColumn = $stmt->rowCount() > 0;
         
         // Build INSERT query based on available columns (teacher_id is now optional)
         $columns = ['first_name', 'last_name', 'email', 'department', 'subject', 'password', 'created_at'];
@@ -122,9 +139,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $placeholders[] = '?';
         }
         
-        if ($hasVerificationToken) {
-            $columns[] = 'verification_token';
-            $values[] = $verification_token;
+        if ($hasOtpColumn) {
+            $columns[] = 'otp';
+            $values[] = $otp;
+            $placeholders[] = '?';
+        }
+
+        if ($hasOtpExpiryColumn) {
+            $columns[] = 'expiration_otp';
+            $values[] = $otpExpires;
             $placeholders[] = '?';
         }
         
@@ -161,14 +184,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             error_log("Teacher profile table not found: " . $e->getMessage());
         }
         
-        // Send verification email
-        // Construct verification URL - teacher-verify-email.php is in the php directory
-        $base_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . 
-                   '://' . $_SERVER['HTTP_HOST'];
-        $script_path = dirname($_SERVER['PHP_SELF']); // Gets /MathEase/php
-        $verification_url = $base_url . $script_path . '/teacher-verify-email.php?token=' . $verification_token;
-        
-        $email_subject = "Verify Your MathEase Teacher Account";
+        // Send OTP email
+        $email_subject = "Your MathEase Teacher verification code";
         $email_body = "
         <!DOCTYPE html>
         <html>
@@ -193,20 +210,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <h1 style='margin: 0;'>MathEase Teacher Portal</h1>
                 </div>
                 <div class='content'>
-                    <h2 style='color: #667eea; margin-top: 0;'>Email Verification Required</h2>
+                    <h2 style='color: #667eea; margin-top: 0;'>Teacher Email Verification Required</h2>
                     <p>Hello " . htmlspecialchars($firstName) . " " . htmlspecialchars($lastName) . ",</p>
-                    <p>Thank you for registering as a teacher on MathEase! Please verify your email address to continue.</p>
-                    <p>Click the button below to verify your email:</p>
+                    <p>Thank you for registering as a teacher on MathEase! Enter this OTP to verify your email:</p>
                     <div style='text-align: center; margin: 30px 0;'>
-                        <a href='{$verification_url}' class='button'>Verify Email Address</a>
+                        <div style='background: #ffffff; color: #667eea; font-size: 32px; font-weight: bold; letter-spacing: 8px; padding: 15px; border-radius: 8px; display: inline-block; min-width: 220px; border: 1px solid #e5e7eb;'>{$otp}</div>
                     </div>
-                    <p>Or copy and paste this link into your browser:</p>
-                    <p style='word-break: break-all; color: #667eea; background: #f8f9fa; padding: 10px; border-radius: 5px;'>{$verification_url}</p>
                     <div class='info-box'>
-                        <p style='margin: 0; color: #2d5a2d; font-weight: 500;'><strong>✓ Next Steps:</strong> After verifying your email, your account will be sent to the admin for approval. You will receive another email once your account is approved.</p>
+                        <p style='margin: 0; color: #2d5a2d; font-weight: 500;'><strong>✓ Next Steps:</strong> After entering this OTP, your account will be sent to the admin for approval. You will receive another email once your account is approved.</p>
                     </div>
                     <div class='warning-box'>
-                        <p style='margin: 0; color: #856404; font-weight: 500;'><strong>⏰ Important:</strong> This verification link will expire in 24 hours for security reasons.</p>
+                        <p style='margin: 0; color: #856404; font-weight: 500;'><strong>⏰ Important:</strong> This OTP expires in 15 minutes for security reasons.</p>
                     </div>
                     <p style='color: #666; font-size: 14px; margin-top: 30px;'>If you did not register for MathEase, please ignore this email.</p>
                 </div>
@@ -234,9 +248,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Set success response
         $response = array(
             'success' => true,
-            'message' => 'Registration successful! Please check your email to verify your account. After verification, your account will be sent to admin for approval.',
+            'message' => 'Registration successful! Enter the OTP sent to your email to verify your account.',
             'teacher_id' => $teacherDbId,
-            'email_sent' => $email_sent
+            'email_sent' => $email_sent,
+            'verification_required' => true,
+            'account_type' => 'teacher'
         );
         
         // Log successful registration

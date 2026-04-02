@@ -543,7 +543,7 @@ async function handleRegister(e) {
                     title: 'Account Created!', 
                     html: `
                         <p>Registration successful!</p>
-                        <p>Please resend verification email.</p>
+                        <p>Please enter the OTP sent to your email.</p>
                         <p><strong>Email sent:</strong> ${data.email_sent ? 'Yes' : 'No (check email logs)'}</p>
                     `,
                     confirmButtonText: 'Go to Verification',
@@ -551,7 +551,7 @@ async function handleRegister(e) {
                     cancelButtonText: 'Stay Here'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.href = 'verify_code_signup.html';
+                        window.location.href = `verify_code_signup.html?type=student&id=${encodeURIComponent(data.user_id || '')}`;
                     }
                 });
             } else {
@@ -863,7 +863,7 @@ async function checkEmailExistence(email) {
             if (data.verified) {
                 showFieldSuccess(document.getElementById('email'), 'Email already registered and verified');
             } else {
-                showFieldError(document.getElementById('email'), 'Email already registered but not verified. Please resend verification email.');
+                showFieldError(document.getElementById('email'), 'Email already registered but not verified. Please resend OTP.');
                 // Show resend verification option
                 showResendVerificationOption(email);
             }
@@ -894,7 +894,7 @@ function showResendVerificationOption(email) {
     const resendButton = document.createElement('button');
     resendButton.type = 'button';
     resendButton.className = 'btn btn-outline-primary btn-sm';
-    resendButton.innerHTML = '</i> Resend Verification Email';
+    resendButton.innerHTML = '</i> Resend OTP Code';
     resendButton.style.color = '#6d6d6d';
     resendButton.style.fontSize = '14px';
     resendButton.style.padding = '8px 16px';
@@ -924,12 +924,17 @@ async function resendVerificationEmail(email, button) {
     }
     
     try {
-        const response = await fetch('php/resend-verification.php', {
+        const registeredId = localStorage.getItem('registeredUserId');
+        const response = await fetch('php/resend-signup-otp.php', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: JSON.stringify({ email: email }),
+            body: new URLSearchParams({
+                account_type: 'student',
+                id: registeredId || '',
+                email: email || ''
+            }).toString(),
             credentials: 'same-origin'
         });
         
@@ -939,10 +944,10 @@ async function resendVerificationEmail(email, button) {
             // Show success notification
             Swal.fire({
                 icon: 'success',
-                title: 'Email Sent!',
+                title: 'OTP Sent!',
                 html: `
                     <p>${data.message}</p>
-                    <p><strong>Please check your Gmail inbox</strong> for the verification email.</p>
+                    <p><strong>Please check your Gmail inbox</strong> for the OTP code.</p>
                     <p>If you don't see it, check your spam folder.</p>
                 `,
                 confirmButtonText: 'OK',
@@ -952,7 +957,7 @@ async function resendVerificationEmail(email, button) {
             
             // Update button if provided
             if (button) {
-                button.innerHTML = '<i class="fas fa-check"></i> Email Sent!';
+                button.innerHTML = '<i class="fas fa-check"></i> OTP Sent!';
                 button.style.backgroundColor = '#28a745';
                 button.style.borderColor = '#28a745';
                 button.style.color = 'white';

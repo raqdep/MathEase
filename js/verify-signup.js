@@ -1,128 +1,132 @@
-// Verify signup JS - Updated for email link verification
 document.addEventListener('DOMContentLoaded', function() {
-    const getQueryParam = (name) => {
-        const params = new URLSearchParams(window.location.search);
-        return params.get(name);
-    };
-
-    const userId = getQueryParam('user_id') || window.__registeredUserId || localStorage.getItem('registeredUserId');
-    if (userId) {
-        // persist for refreshes
-        localStorage.setItem('registeredUserId', userId);
-    }
+    const params = new URLSearchParams(window.location.search);
+    const accountType = params.get('type') === 'teacher' ? 'teacher' : 'student';
+    const accountId = params.get('id') || localStorage.getItem(accountType === 'teacher' ? 'registeredTeacherId' : 'registeredUserId');
 
     const resendBtn = document.getElementById('resendEmailBtn');
-    const checkEmailBtn = document.getElementById('checkEmailBtn');
+    const verifyBtn = document.getElementById('checkEmailBtn');
     const resendLink = document.getElementById('resendLink');
     const messageDiv = document.getElementById('verificationMessage');
+    const otpInput = document.getElementById('otpCode');
+    const otpLabel = document.getElementById('otpLabel');
+
+    if (accountType === 'teacher' && otpLabel) {
+        otpLabel.textContent = 'Enter Teacher OTP';
+    }
 
     function setMessage(msg, color = '#666') {
-        if (messageDiv) {
-            messageDiv.textContent = msg;
-            messageDiv.style.color = color;
-        }
+        if (!messageDiv) return;
+        messageDiv.textContent = msg;
+        messageDiv.style.color = color;
     }
 
-    // Function to resend verification email
-    async function resendVerificationEmail() {
-        if (!userId) {
-            setMessage('Missing user information. Please register again.', '#e74c3c');
+    async function resendOtp(button) {
+        if (!accountId) {
+            setMessage('Missing account information. Please register again.', '#e74c3c');
             return;
         }
-        
-        const button = event.target;
-        const originalText = button.textContent;
-        button.disabled = true;
-        button.textContent = 'Sending...';
-        
+
+        const originalText = button ? button.textContent : '';
+        if (button) {
+            button.disabled = true;
+            button.textContent = 'Sending...';
+        }
+
         try {
-            const resp = await fetch('php/resend-verification.php', {
+            const resp = await fetch('php/resend-signup-otp.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({ user_id: userId }).toString(),
+                body: new URLSearchParams({ account_type: accountType, id: accountId }).toString(),
                 credentials: 'same-origin'
             });
-
-            const text = await resp.text();
-            let data;
-            try { data = JSON.parse(text); } catch (e) { data = null; }
-
-            if (resp.ok && data && data.success) {
-                setMessage('Verification email sent! Please check your inbox and spam folder.', '#27ae60');
+            const data = await resp.json();
+            if (data.success) {
+                setMessage('OTP sent. Check your email inbox/spam.', '#27ae60');
             } else {
-                const msg = data && data.message ? data.message : (text || 'Could not resend email.');
-                setMessage(msg, '#e74c3c');
+                setMessage(data.message || 'Could not resend OTP.', '#e74c3c');
             }
         } catch (err) {
-            console.error('Resend error', err);
-            setMessage('An error occurred. Please try again.', '#e74c3c');
+            console.error('Resend OTP error', err);
+            setMessage('An error occurred while resending OTP.', '#e74c3c');
         } finally {
-            button.disabled = false;
-            button.textContent = originalText;
+            if (button) {
+                button.disabled = false;
+                button.textContent = originalText;
+            }
         }
     }
 
-    // Function to check if email is verified
-    async function checkEmailVerification() {
-        if (!userId) {
-            setMessage('Missing user information. Please register again.', '#e74c3c');
+    async function verifyOtp() {
+        if (!accountId) {
+            setMessage('Missing account information. Please register again.', '#e74c3c');
             return;
         }
-        
-        const button = event.target;
-        const originalText = button.textContent;
-        button.disabled = true;
-        button.textContent = 'Checking...';
-        
+
+        const otp = otpInput ? otpInput.value.trim() : '';
+        if (!/^\d{6}$/.test(otp)) {
+            setMessage('Please enter a valid 6-digit OTP.', '#e74c3c');
+            return;
+        }
+
+        const originalText = verifyBtn ? verifyBtn.textContent : '';
+        if (verifyBtn) {
+            verifyBtn.disabled = true;
+            verifyBtn.textContent = 'Verifying...';
+        }
+
         try {
-            const resp = await fetch('php/check-email.php', {
+            const resp = await fetch('php/verify-signup-otp.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({ user_id: userId }).toString(),
+                body: new URLSearchParams({ account_type: accountType, id: accountId, otp }).toString(),
                 credentials: 'same-origin'
             });
-
-            const text = await resp.text();
-            let data;
-            try { data = JSON.parse(text); } catch (e) { data = null; }
-
-            if (resp.ok && data && data.success) {
-                setMessage('Email verified successfully! Redirecting to login...', '#27ae60');
+            const data = await resp.json();
+            if (data.success) {
+                setMessage('OTP verified successfully. Redirecting to login...', '#27ae60');
                 localStorage.removeItem('registeredUserId');
-                setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+                localStorage.removeItem('registeredTeacherId');
+                setTimeout(() => {
+                    window.location.href = accountType === 'teacher' ? 'teacher-login.html' : 'login.html';
+                }, 1200);
             } else {
-                const msg = data && data.message ? data.message : 'Email not yet verified. Please check your email and click the verification link.';
-                setMessage(msg, '#f39c12');
+                setMessage(data.message || 'Invalid OTP.', '#e74c3c');
             }
         } catch (err) {
-            console.error('Check verification error', err);
-            setMessage('An error occurred. Please try again.', '#e74c3c');
+            console.error('Verify OTP error', err);
+            setMessage('An error occurred while verifying OTP.', '#e74c3c');
         } finally {
-            button.disabled = false;
-            button.textContent = originalText;
+            if (verifyBtn) {
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = originalText;
+            }
         }
     }
 
-    // Event listeners
     if (resendBtn) {
-        resendBtn.addEventListener('click', resendVerificationEmail);
+        resendBtn.addEventListener('click', function() { resendOtp(resendBtn); });
     }
-    
-    if (checkEmailBtn) {
-        checkEmailBtn.addEventListener('click', checkEmailVerification);
+    if (verifyBtn) {
+        verifyBtn.addEventListener('click', verifyOtp);
     }
-    
     if (resendLink) {
         resendLink.addEventListener('click', function(e) {
             e.preventDefault();
-            resendVerificationEmail();
+            resendOtp(resendBtn);
+        });
+    }
+    if (otpInput) {
+        otpInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                verifyOtp();
+            }
         });
     }
 
-    // Initial message
-    if (userId) {
-        setMessage('Please check your email and click the verification link to activate your account.');
+    if (accountId) {
+        setMessage('Enter the 6-digit OTP sent to your email.');
     } else {
-        setMessage('No user information found. Please register first.', '#e74c3c');
+        setMessage('No account information found. Please register first.', '#e74c3c');
     }
 });
