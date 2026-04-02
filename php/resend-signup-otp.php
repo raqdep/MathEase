@@ -18,6 +18,15 @@ try {
     $otpExpires = date('Y-m-d H:i:s', strtotime('+15 minutes'));
 
     if ($accountType === 'teacher') {
+        if ($id <= 0 && $email !== '') {
+            $lookup = $pdo->prepare("SELECT id FROM teachers WHERE email = ?");
+            $lookup->execute([$email]);
+            $found = $lookup->fetch(PDO::FETCH_ASSOC);
+            if ($found) {
+                $id = (int) $found['id'];
+            }
+        }
+
         if ($id <= 0) {
             throw new Exception('Missing teacher account id.');
         }

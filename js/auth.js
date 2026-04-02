@@ -440,6 +440,22 @@ async function handleLogin(e) {
                 });
                 return;
             }
+            if (data.error_type === 'email_not_verified') {
+                const emailVal = (form.querySelector('#email')?.value || '').trim();
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Email not verified',
+                    text: data.message || 'Please verify your email via OTP.',
+                    showCancelButton: true,
+                    confirmButtonText: 'Verify with OTP',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = `verify_code_signup.html?type=student&email=${encodeURIComponent(emailVal)}`;
+                    }
+                });
+                return;
+            }
             // Show specific error on the correct field
             const errorField = data.field || 'email';
             const fieldElement = form.querySelector(`#${errorField}`);

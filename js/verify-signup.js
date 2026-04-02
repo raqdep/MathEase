@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     const params = new URLSearchParams(window.location.search);
     const accountType = params.get('type') === 'teacher' ? 'teacher' : 'student';
-    const accountId = params.get('id') || localStorage.getItem(accountType === 'teacher' ? 'registeredTeacherId' : 'registeredUserId');
+    let accountId = params.get('id') || localStorage.getItem(accountType === 'teacher' ? 'registeredTeacherId' : 'registeredUserId');
+    const emailParam = (params.get('email') || '').trim();
 
     const resendBtn = document.getElementById('resendEmailBtn');
     const verifyBtn = document.getElementById('checkEmailBtn');
@@ -9,6 +10,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const messageDiv = document.getElementById('verificationMessage');
     const otpInput = document.getElementById('otpCode');
     const otpLabel = document.getElementById('otpLabel');
+    const emailInput = document.getElementById('verifyEmail');
+    const emailLabel = document.getElementById('emailLabel');
 
     if (accountType === 'teacher' && otpLabel) {
         otpLabel.textContent = 'Enter Teacher OTP';
@@ -20,10 +23,42 @@ document.addEventListener('DOMContentLoaded', function() {
         messageDiv.style.color = color;
     }
 
+    async function ensureAccountIdFromEmail() {
+        if (accountId) return true;
+
+        const email = (emailParam || (emailInput ? emailInput.value.trim() : '')).trim();
+        if (!email) return false;
+
+        try {
+            const resp = await fetch('php/lookup-signup-account.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ account_type: accountType, email }).toString(),
+                credentials: 'same-origin'
+            });
+            const data = await resp.json();
+            if (data && data.success && data.id) {
+                accountId = String(data.id);
+                if (accountType === 'teacher') {
+                    localStorage.setItem('registeredTeacherId', accountId);
+                } else {
+                    localStorage.setItem('registeredUserId', accountId);
+                }
+                return true;
+            }
+        } catch (e) {
+            console.error('Lookup account error', e);
+        }
+        return false;
+    }
+
     async function resendOtp(button) {
         if (!accountId) {
-            setMessage('Missing account information. Please register again.', '#e74c3c');
-            return;
+            const ok = await ensureAccountIdFromEmail();
+            if (!ok) {
+                setMessage('Enter your email above first, then resend OTP.', '#e74c3c');
+                return;
+            }
         }
 
         const originalText = button ? button.textContent : '';
@@ -36,7 +71,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const resp = await fetch('php/resend-signup-otp.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({ account_type: accountType, id: accountId }).toString(),
+                body: new URLSearchParams({
+                    account_type: accountType,
+                    id: accountId,
+                    email: (emailParam || (emailInput ? emailInput.value.trim() : '')) || ''
+                }).toString(),
                 credentials: 'same-origin'
             });
             const data = await resp.json();
@@ -58,8 +97,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function verifyOtp() {
         if (!accountId) {
-            setMessage('Missing account information. Please register again.', '#e74c3c');
-            return;
+            const ok = await ensureAccountIdFromEmail();
+            if (!ok) {
+                setMessage('Enter your email above first, then verify OTP.', '#e74c3c');
+                return;
+            }
         }
 
         const otp = otpInput ? otpInput.value.trim() : '';
@@ -124,9 +166,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    if (accountId) {
-        setMessage('Enter the 6-digit OTP sent to your email.');
+    // Show email input only if we don't have an id
+    if (!accountId && emailInput && emailLabel) {
+        emailLabel.style.display = 'block';
+        emailInput.style.display = 'block';
+        if (emailParam) emailInput.value = emailParam;
+        setMessage('Enter your email and the 6-digit OTP sent to you.', '#666');
     } else {
-        setMessage('No account information found. Please register first.', '#e74c3c');
+        setMessage('Enter the 6-digit OTP sent to your email.');
     }
 });
