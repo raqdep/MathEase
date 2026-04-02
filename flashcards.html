@@ -233,25 +233,25 @@
                 <div class="hidden md:flex items-center space-x-4">
                     <!-- Notifications -->
                     <div class="relative group">
-                        <button onclick="toggleNotifications()" id="notificationButton" class="relative p-2 text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition-all duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center">
+                        <button type="button" onclick="toggleNotifications()" id="notificationButton" class="relative p-2 text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition-all duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center">
                             <i class="fas fa-bell text-lg"></i>
                             <span id="notificationBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
                         </button>
-                        <div id="notificationsDropdown" class="absolute right-0 mt-2 w-80 bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-200/60 py-2 z-50 opacity-0 invisible transition-all duration-200">
+                        <div id="notificationsDropdown" class="absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-200/60 py-2 z-50 opacity-0 invisible transition-all duration-200 hidden">
                             <div class="px-4 py-2 border-b border-slate-200/60">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center space-x-2">
                                         <h3 class="text-sm font-semibold text-slate-800">Notifications</h3>
                                         <span id="dropdownNotificationCount" class="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded-full font-medium">0</span>
                                     </div>
-                                    <button onclick="markAllNotificationsAsRead()" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">Mark all read</button>
+                                    <button type="button" onclick="markAllNotificationsAsRead()" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">Mark all read</button>
                                 </div>
                             </div>
                             <div id="notificationsList" class="max-h-64 overflow-y-auto">
                                 <div class="px-4 py-4 text-sm text-slate-500">Loading...</div>
                             </div>
                             <div class="px-4 py-2 border-t border-slate-200/60">
-                                <a href="#" onclick="showAllNotifications()" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">View all notifications</a>
+                                <a href="#" onclick="showAllNotifications(); return false;" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">View all notifications</a>
                             </div>
                         </div>
                     </div>
@@ -461,6 +461,7 @@
     <script src="js/session-manager.js"></script>
     <script src="js/join-class-modal.js"></script>
     <script src="js/student-enrollment-check.js"></script>
+    <script src="js/student-notifications.js"></script>
     <script src="js/flashcards-sequential.js"></script>
 
     <script>
@@ -474,70 +475,6 @@
     </script>
 
     <script>
-        function toggleNotifications() {
-            const dropdown = document.getElementById('notificationsDropdown');
-            if (!dropdown) return;
-            const isHidden = dropdown.classList.contains('hidden');
-            if (isHidden) {
-                dropdown.classList.remove('hidden');
-                dropdown.classList.remove('opacity-0', 'invisible');
-                dropdown.classList.add('opacity-100', 'visible');
-                loadNotificationsIfNeeded();
-            } else {
-                dropdown.classList.add('hidden');
-                dropdown.classList.remove('opacity-100', 'visible');
-            }
-        }
-
-        let notificationsLoaded = false;
-        async function loadNotificationsIfNeeded() {
-            if (notificationsLoaded) return;
-            notificationsLoaded = true;
-            const list = document.getElementById('notificationsList');
-            if (!list) return;
-
-            try {
-                list.innerHTML = '<div class="px-4 py-4 text-sm text-slate-500">Loading...</div>';
-                const res = await fetch('php/notifications.php?action=get_notifications&limit=5', {
-                    credentials: 'include',
-                    cache: 'no-store'
-                });
-                const data = await res.json();
-                if (!data?.success) {
-                    list.innerHTML = '<div class="px-4 py-4 text-sm text-slate-500">No notifications.</div>';
-                    return;
-                }
-
-                const notifications = Array.isArray(data.notifications) ? data.notifications : [];
-                const badgeCount = notifications.length || 0;
-                const badge = document.getElementById('notificationBadge');
-                const dropdownCount = document.getElementById('dropdownNotificationCount');
-                if (badge) badge.textContent = String(badgeCount);
-                if (dropdownCount) dropdownCount.textContent = String(badgeCount);
-                if (badge) badge.classList.toggle('hidden', badgeCount <= 0);
-
-                if (notifications.length === 0) {
-                    list.innerHTML = '<div class="px-4 py-4 text-sm text-slate-500">No notifications.</div>';
-                    return;
-                }
-
-                list.innerHTML = notifications.map(n => {
-                    const title = n.title || 'Notification';
-                    const message = n.message || '';
-                    const time = n.created_at || n.created_timestamp || '';
-                    return `
-                        <div class="px-4 py-3 hover:bg-slate-50 transition-colors cursor-pointer ${n.is_read ? '' : 'bg-blue-50 border-l-4 border-blue-500'}" onclick="void(0)">
-                            <div class="font-semibold text-sm text-slate-800">${title}</div>
-                            <div class="text-xs text-slate-600 mt-1 line-clamp-2">${message}</div>
-                            ${time ? `<div class="text-[11px] text-slate-400 mt-1">${String(time)}</div>` : ''}
-                        </div>
-                    `;
-                }).join('');
-            } catch (e) {
-                list.innerHTML = '<div class="px-4 py-4 text-sm text-slate-500">Could not load notifications.</div>';
-            }
-        }
-
         function toggleProfileDropdown() {
             const dropdown = document.getElementById('profileDropdown');
             const icon = document.getElementById('profileDropdownIcon');
@@ -563,22 +500,11 @@
         document.addEventListener('click', function(event) {
             const profileContainer = document.getElementById('profileDropdownContainer');
             const profileDropdown = document.getElementById('profileDropdown');
-            const notificationsDropdown = document.getElementById('notificationsDropdown');
 
-            // Close profile dropdown when clicking outside
             if (profileContainer && profileDropdown && !profileContainer.contains(event.target)) {
                 profileDropdown.classList.add('hidden');
                 const icon = document.getElementById('profileDropdownIcon');
                 if (icon) icon.style.transform = 'rotate(0deg)';
-            }
-
-            // Close notifications dropdown when clicking outside
-            if (notificationsDropdown && !notificationsDropdown.contains(event.target)) {
-                const bellBtn = document.getElementById('notificationButton');
-                if (bellBtn && !bellBtn.contains(event.target)) {
-                    notificationsDropdown.classList.add('hidden');
-                    notificationsDropdown.classList.remove('opacity-100', 'visible');
-                }
             }
         });
 

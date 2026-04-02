@@ -2421,6 +2421,22 @@
                     </div>
                     <div class="bg-white rounded-lg p-4 border border-red-200">
                         <p class="font-semibold text-red-800 mb-2 flex items-center">
+                            <i class="fas fa-expand text-red-500 mr-2"></i>
+                            Fullscreen Mode
+                        </p>
+                        <ul class="text-sm space-y-2 ml-6">
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2">•</span>
+                                <span>The quiz requests <strong>fullscreen</strong> when you start</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2">•</span>
+                                <span><strong>3 fullscreen exits</strong> during the quiz marks the attempt as cheating with score <strong>0</strong></span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 border border-red-200">
+                        <p class="font-semibold text-red-800 mb-2 flex items-center">
                             <i class="fas fa-ban text-red-500 mr-2"></i>
                             Other Prohibited Actions
                         </p>
@@ -3170,6 +3186,23 @@
         let quizDeadline = null;
         let quizStarted = false; // Track if quiz has been started
 
+        let isQuizActive = false;
+        let tabSwitchCount = 0;
+        let focusLostTime = null;
+        let isPageVisible = true;
+        let hasExitedQuiz = false;
+        let hasLoggedOut = false;
+        let heartbeatInterval = null;
+        let lastHeartbeat = null;
+        const maxAllowedTabSwitches = 3;
+        const maxAllowedFocusLoss = 30000;
+
+        let fullscreenExitCount = 0;
+        const maxFullscreenExitsBeforeCheat = 3;
+        let intentionalFullscreenExit = false;
+        let hasEnteredQuizFullscreen = false;
+        let fullscreenListenersAttached = false;
+
         // Quiz data with correct answers
         const TOTAL_MCQ = 15;
         const quizData = {
@@ -3234,10 +3267,32 @@
         }
 
         // Start quiz function
-        function startQuiz() {
+        async function startQuiz() {
             try {
-                // Set quiz started flag
+                fullscreenExitCount = 0;
+                intentionalFullscreenExit = false;
+                hasEnteredQuizFullscreen = false;
+                attachFullscreenListeners();
+                try {
+                    requestFullscreen(document.documentElement).then(() => {
+                        hasEnteredQuizFullscreen = true;
+                    }).catch(() => {});
+                } catch (e) {}
+
+                const ok = await startQuizInDatabase();
+                if (!ok) {
+                    Swal.fire({
+                        title: 'Quiz Start Error',
+                        text: 'Could not start your quiz session. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#667eea'
+                    });
+                    return;
+                }
+
                 quizStarted = true;
+                isQuizActive = true;
                 
                 // Hide instructions container
                 const instructionsContainer = document.querySelector('.max-w-4xl.mx-auto.px-4.sm\\:px-6.lg\\:px-8.py-8');
@@ -3259,6 +3314,8 @@
                 
                 // Initialize quiz
                 initializeQuiz();
+
+                initializeAntiCheating();
             } catch (error) {
                 console.error('Error starting quiz:', error);
                 Swal.fire({
@@ -3283,6 +3340,198 @@
         function initializeQuiz() {
             // Add any initialization logic here
             console.log('Quiz initialized');
+        }
+
+        function requestFullscreen(element) {
+            if (element.requestFullscreen) return element.requestFullscreen();
+            if (element.webkitRequestFullscreen) return element.webkitRequestFullscreen();
+            if (element.mozRequestFullScreen) return element.mozRequestFullScreen();
+            if (element.msRequestFullscreen) return element.msRequestFullscreen();
+            return Promise.reject(new Error('Fullscreen not supported'));
+        }
+
+        function exitFullscreen() {
+            if (document.exitFullscreen) return document.exitFullscreen();
+            if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
+            if (document.mozCancelFullScreen) return document.mozCancelFullScreen();
+            if (document.msExitFullscreen) return document.msExitFullscreen();
+        }
+
+        function isFullscreen() {
+            return !!(document.fullscreenElement || document.webkitFullscreenElement ||
+                document.mozFullScreenElement || document.msFullscreenElement);
+        }
+
+        function attachFullscreenListeners() {
+            if (fullscreenListenersAttached) return;
+            fullscreenListenersAttached = true;
+            document.addEventListener('fullscreenchange', handleFullscreenChange);
+            document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+            document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+            document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+        }
+
+        function handleFullscreenChange() {
+            if (!isQuizActive || intentionalFullscreenExit) return;
+            if (isFullscreen()) {
+                hasEnteredQuizFullscreen = true;
+                return;
+            }
+            if (!hasEnteredQuizFullscreen) return;
+            fullscreenExitCount++;
+            if (fullscreenExitCount >= maxFullscreenExitsBeforeCheat) {
+                markAsCheating('excessive_fullscreen_exits');
+                return;
+            }
+            const remaining = maxFullscreenExitsBeforeCheat - fullscreenExitCount;
+            showCheatingWarning('Fullscreen Required',
+                `You left fullscreen (${fullscreenExitCount}/${maxFullscreenExitsBeforeCheat}). ${remaining} more exit(s) may result in score 0.`);
+        }
+
+        function initializeAntiCheating() {
+            stopAntiCheating();
+            tabSwitchCount = 0;
+            focusLostTime = null;
+            isQuizActive = true;
+            startHeartbeat();
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+            window.addEventListener('focus', handleWindowFocus);
+            window.addEventListener('blur', handleWindowBlur);
+            window.addEventListener('beforeunload', handleBeforeUnload);
+            window.addEventListener('unload', handlePageUnload);
+            document.addEventListener('keydown', handleKeyboardShortcuts);
+        }
+
+        function stopAntiCheating() {
+            if (heartbeatInterval) {
+                clearInterval(heartbeatInterval);
+                heartbeatInterval = null;
+            }
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            window.removeEventListener('focus', handleWindowFocus);
+            window.removeEventListener('blur', handleWindowBlur);
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            window.removeEventListener('unload', handlePageUnload);
+            document.removeEventListener('keydown', handleKeyboardShortcuts);
+            isQuizActive = false;
+        }
+
+        function startHeartbeat() {
+            heartbeatInterval = setInterval(async () => {
+                if (!isQuizActive || !currentAttemptId) return;
+                try {
+                    await fetch('../php/quiz-management.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `action=heartbeat&attempt_id=${currentAttemptId}`,
+                        credentials: 'include'
+                    });
+                } catch (e) {}
+            }, 10000);
+        }
+
+        function handleVisibilityChange() {
+            if (!isQuizActive) return;
+            if (document.hidden) {
+                focusLostTime = Date.now();
+                setTimeout(() => {
+                    if (document.hidden && isQuizActive) {
+                        tabSwitchCount++;
+                        if (tabSwitchCount >= maxAllowedTabSwitches) {
+                            isQuizActive = false;
+                            stopTimer();
+                            markAsCheating('excessive_tab_switches');
+                            return;
+                        }
+                        if (tabSwitchCount === 1) {
+                            showCheatingWarning('Tab Switch', 'One more tab switch may end the quiz with score 0.');
+                        }
+                    }
+                }, 100);
+            } else {
+                if (focusLostTime && (Date.now() - focusLostTime) > maxAllowedFocusLoss) {
+                    markAsCheating('excessive_focus_loss');
+                    return;
+                }
+                focusLostTime = null;
+            }
+        }
+
+        function handleWindowFocus() {
+            if (!isQuizActive) return;
+            focusLostTime = null;
+        }
+
+        function handleWindowBlur() {
+            if (!isQuizActive) return;
+            focusLostTime = Date.now();
+        }
+
+        function handleBeforeUnload(e) {
+            if (!isQuizActive) return;
+            markAsCheating('page_exit');
+            e.preventDefault();
+            e.returnValue = '';
+            return '';
+        }
+
+        function handlePageUnload() {
+            if (!isQuizActive) return;
+            markAsCheating('page_unload');
+        }
+
+        function handleKeyboardShortcuts(e) {
+            if (!isQuizActive) return;
+            if ((e.ctrlKey || e.metaKey) && (e.key === 't' || e.key === 'n')) {
+                e.preventDefault();
+                showCheatingWarning('Blocked', 'New tabs are not allowed during the quiz.');
+            }
+        }
+
+        async function markAsCheating(reason) {
+            intentionalFullscreenExit = true;
+            if (!currentAttemptId) {
+                try {
+                    const r = await fetch('../php/quiz-management.php?action=check_existing_attempt&quiz_type=solving-rational-equations-inequalities', { credentials: 'include' });
+                    const j = await r.json();
+                    if (j.success && j.attempt) {
+                        currentAttemptId = j.attempt.attempt_id;
+                    } else {
+                        showCheatingNotification(reason);
+                        return;
+                    }
+                } catch (err) {
+                    showCheatingNotification(reason);
+                    return;
+                }
+            }
+            isQuizActive = false;
+            stopTimer();
+            stopAntiCheating();
+            try {
+                await fetch('../php/quiz-management.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `action=mark_cheating&attempt_id=${currentAttemptId}&reason=${encodeURIComponent(reason)}`,
+                    credentials: 'include'
+                });
+            } catch (err) {}
+            showCheatingNotification(reason);
+        }
+
+        function showCheatingWarning(title, text) {
+            Swal.fire({ title, text, icon: 'warning', confirmButtonColor: '#f59e0b' });
+        }
+
+        function showCheatingNotification(reason) {
+            const m = {
+                excessive_tab_switches: 'Too many tab switches.',
+                excessive_focus_loss: 'Away from the quiz too long.',
+                excessive_fullscreen_exits: 'Too many fullscreen exits.',
+                page_exit: 'Page exit.',
+                page_unload: 'Page closed.'
+            };
+            Swal.fire({ title: 'Quiz ended', text: m[reason] || 'Policy violation.', icon: 'error' });
         }
 
         // Submit quiz function
@@ -3395,6 +3644,13 @@
             
             // Stop the timer
             stopTimer();
+
+            intentionalFullscreenExit = true;
+            if (isFullscreen()) {
+                try {
+                    exitFullscreen();
+                } catch (e) {}
+            }
             
             // Show loading
             Swal.fire({
@@ -3437,6 +3693,7 @@
             Swal.close();
             
             if (dbResult && dbResult.success) {
+                stopAntiCheating();
                 // Clear localStorage since quiz is successfully submitted
                 clearQuizStateFromLocalStorage();
                 
@@ -3645,6 +3902,13 @@
             try {
                 // Stop the timer when showing results
                 stopTimer();
+
+                intentionalFullscreenExit = true;
+                if (isFullscreen()) {
+                    try {
+                        exitFullscreen();
+                    } catch (e) {}
+                }
                 
                 // Hide progress and timer header when quiz is submitted
                 const progressTimerHeader = document.getElementById('progressTimerHeader');
@@ -4120,11 +4384,8 @@
             try {
                 const response = await fetch('../php/quiz-management.php', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'start_quiz',
-                        quiz_type: 'solving-rational-equations-inequalities'
-                    }),
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'action=start_quiz&quiz_type=solving-rational-equations-inequalities',
                     credentials: 'include'
                 });
                 const result = await response.json();
@@ -4132,6 +4393,7 @@
                     currentAttemptId = result.attempt_id;
                     return true;
                 }
+                console.warn('start_quiz failed:', result.message);
                 return false;
             } catch (error) {
                 console.error('Error starting quiz in database:', error);

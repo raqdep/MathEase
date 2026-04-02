@@ -8,16 +8,199 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>MathEase - Interactive General Mathematics Learning Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Bootstrap 5: base system + utilities (loads before project CSS so style.css keeps control of .btn / layout) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
     <link rel="stylesheet" href="css/style.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Custom animations for the screenshot */
+        /* MathEase motion system: purposeful, 200–500ms, subtle (aligned with Bootstrap transition feel) */
+        :root {
+            --me-ease: cubic-bezier(0.4, 0, 0.2, 1);
+            --me-duration: 280ms;
+            --me-duration-slow: 420ms;
+            --bs-body-font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+
         html { scroll-behavior: smooth; }
-        .nav-link { transition: color 200ms ease; }
+
+        .navbar {
+            transition: box-shadow var(--me-duration-slow) var(--me-ease), backdrop-filter var(--me-duration-slow) ease;
+        }
+        .nav-link {
+            transition: color var(--me-duration) var(--me-ease), transform var(--me-duration) var(--me-ease);
+        }
         .nav-link:hover, .nav-link:focus { color: #ffffff; }
         .nav-link.active { color: #ffffff; font-weight: 600; }
+        .nav-link:hover { transform: translateY(-1px); }
         .navbar.scrolled { box-shadow: 0 8px 24px rgba(0,0,0,0.08); backdrop-filter: saturate(1.2) blur(6px); }
+
+        /* Hero: quick fade-up on load (not scroll) */
+        @keyframes me-fade-up {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .me-hero-in {
+            animation: me-fade-up 0.45s var(--me-ease) both;
+        }
+        .me-hero-in-delay {
+            animation-delay: 0.1s;
+        }
+
+        /* Scroll reveal: one-time fade + lift */
+        .me-reveal {
+            opacity: 0;
+            transform: translateY(14px);
+            transition: opacity var(--me-duration-slow) var(--me-ease), transform var(--me-duration-slow) var(--me-ease);
+            will-change: opacity, transform;
+        }
+        .me-reveal.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Disable Tailwind entrance anim on elements we control with scroll */
+        .me-reveal.animate-scale-in { animation: none !important; }
+
+        /* Cards: consistent hover affordance (clickable / interactive) */
+        section .backdrop-blur-sm.rounded-2xl.border {
+            transition: box-shadow var(--me-duration) var(--me-ease), transform var(--me-duration) var(--me-ease), border-color var(--me-duration) ease;
+        }
+        section .backdrop-blur-sm.rounded-2xl.border:hover {
+            transform: translateY(-2px);
+        }
+
+        #backToTop {
+            transition: opacity var(--me-duration) var(--me-ease), transform var(--me-duration) var(--me-ease), background-color var(--me-duration) ease !important;
+        }
+        #backToTop:not(.hidden):hover {
+            transform: translateY(-2px);
+        }
+
+        footer a.inline-block { transition: color var(--me-duration) ease, transform var(--me-duration) var(--me-ease); }
+
+        /* Softer icon emphasis on card hover (was scale-110) */
+        .group:hover .group-hover\:scale-110 {
+            transform: scale(1.06);
+        }
+
+        /* Screenshot frame: subtle shadow only (no infinite pulse) */
+        .me-screenshot-frame {
+            transition: box-shadow var(--me-duration-slow) var(--me-ease);
+            box-shadow: 0 25px 50px -12px rgba(79, 70, 229, 0.12);
+        }
+        .me-screenshot-frame:hover {
+            box-shadow: 0 28px 56px -12px rgba(79, 70, 229, 0.18);
+        }
+        .me-badge-icon {
+            transition: transform var(--me-duration) var(--me-ease), opacity var(--me-duration) ease;
+        }
+        .screenshot-container:hover .me-badge-icon {
+            transform: scale(1.04);
+        }
+
+        /* Font Awesome: consistent optical size & alignment sitewide on this page */
+        i[class*="fa-"] {
+            vertical-align: -0.125em;
+        }
+        /* Nav: equal width when icons show (mobile) */
+        .navbar .nav-icon.fas {
+            font-size: 1rem;
+            width: 1.25em;
+            text-align: center;
+        }
+        /* Why: feature icon tiles */
+        #why .feature-item .w-16 .fas {
+            font-size: 1.375rem;
+            line-height: 1;
+            width: 1.375rem;
+            height: 1.375rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* Topics: lesson card hero icons */
+        #topics .grid > div > div[class*="w-20"] .fas {
+            font-size: 1.75rem;
+            line-height: 1;
+            width: 1.75rem;
+            height: 1.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* Teachers / Students: three-up cards */
+        #teachers .grid.mb-12 > div > div.w-16 .fas,
+        #students .grid.mb-12 > div > div.w-16 .fas {
+            font-size: 1.375rem;
+            line-height: 1;
+            width: 1.375rem;
+            height: 1.375rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* Team + About: small value / mission icons */
+        #team .w-12 .fas,
+        #about .w-12 .fas {
+            font-size: 1rem;
+            line-height: 1;
+            width: 1rem;
+            height: 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #about .w-8 .fas {
+            font-size: 0.875rem;
+            line-height: 1;
+            width: 0.875rem;
+            height: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #about .grid .w-16 .fas {
+            font-size: 1.375rem;
+            line-height: 1;
+            width: 1.375rem;
+            height: 1.375rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .me-fa-preview {
+            width: 1.125rem;
+            text-align: center;
+        }
+        .me-fa-cta {
+            width: 1.125em;
+            text-align: center;
+        }
+        .me-fa-social {
+            font-size: 0.875rem;
+            width: 1rem;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* Screenshot floating badges: one size */
+        .screenshot-container .me-badge-icon .fas {
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            .me-hero-in, .me-hero-in-delay { animation: none !important; opacity: 1 !important; transform: none !important; }
+            .me-reveal {
+                opacity: 1 !important;
+                transform: none !important;
+                transition: none !important;
+            }
+            .nav-link { transition: color 0.15s ease !important; transform: none !important; }
+            section .backdrop-blur-sm.rounded-2xl.border:hover { transform: none !important; }
+        }
         @keyframes float-gentle {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
             25% { transform: translateY(-10px) rotate(1deg); }
@@ -25,15 +208,10 @@
             75% { transform: translateY(-15px) rotate(-1deg); }
         }
         
+        /* Kept for legacy class names; screenshot uses static .me-screenshot-frame instead */
         @keyframes pulse-glow {
-            0%, 100% { 
-                transform: scale(1);
-                box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
-            }
-            50% { 
-                transform: scale(1.05);
-                box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
-            }
+            0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.15); }
+            50% { box-shadow: 0 0 24px 2px rgba(99, 102, 241, 0.12); }
         }
         
         @keyframes slide-in-right {
@@ -60,9 +238,8 @@
             /* Animation disabled for performance */
         }
         
-        /* Glow effect for the image container */
         .animate-glow {
-            animation: pulse-glow 4s ease-in-out infinite;
+            animation: none;
         }
         
         /* Slide in animation for features */
@@ -895,9 +1072,9 @@
                         }
                     },
                     animation: {
-                        'fade-in': 'fadeIn 0.5s ease-in-out',
-                        'slide-up': 'slideUp 0.6s ease-out',
-                        'scale-in': 'scaleIn 0.4s ease-out',
+                        'fade-in': 'fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                        'slide-up': 'slideUp 0.45s cubic-bezier(0.4, 0, 0.2, 1)',
+                        'scale-in': 'scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                         'float': 'float 3s ease-in-out infinite',
                     },
                     keyframes: {
@@ -906,11 +1083,11 @@
                             '100%': { opacity: '1' },
                         },
                         slideUp: {
-                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '0%': { transform: 'translateY(14px)', opacity: '0' },
                             '100%': { transform: 'translateY(0)', opacity: '1' },
                         },
                         scaleIn: {
-                            '0%': { transform: 'scale(0.95)', opacity: '0' },
+                            '0%': { transform: 'scale(0.98)', opacity: '0' },
                             '100%': { transform: 'scale(1)', opacity: '1' },
                         },
                         float: {
@@ -951,7 +1128,7 @@
                     <a href="#about" class="nav-link"><i class="nav-icon fas fa-info-circle" aria-hidden="true"></i><span class="nav-text">About Us</span></a>
                 </li>
                 <li class="nav-item">
-                    <a href="login.html" class="nav-link"><i class="nav-icon fas fa-sign-in-alt" aria-hidden="true"></i><span class="nav-text">Login</span></a>
+                    <a href="login.html" class="nav-link"><i class="nav-icon fas fa-right-to-bracket" aria-hidden="true"></i><span class="nav-text">Login</span></a>
                 </li>
             </ul>
             <div class="hamburger">
@@ -968,7 +1145,7 @@
     <!-- Hero Section -->
     <section id="home" class="hero">
         <div class="hero-container">
-            <div class="hero-content">
+            <div class="hero-content me-hero-in">
                 <h1 class="hero-title">Master General Mathematics with <span class="highlight">MathEase</span></h1>
                 <p class="hero-description">
                     An interactive learning platform designed specifically for Grade 11 STEM students. 
@@ -979,7 +1156,7 @@
                     <a href="#why" class="btn btn-secondary">More Info</a>
                 </div>
             </div>
-            <div class="hero-image">
+            <div class="hero-image me-hero-in me-hero-in-delay">
                 <div class="math-animation">
                     <div class="formula">Simple Interest: I = Prt</div>
                     <div class="formula">Slope of a line: m = (y₂−y₁)/(x₂−x₁)</div>
@@ -1014,7 +1191,7 @@
                         <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60 feature-item">
                             <div class="flex items-start space-x-4">
                                 <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                                    <i class="fas fa-gamepad text-2xl text-white"></i>
+                                    <i class="fas fa-gamepad text-white" aria-hidden="true"></i>
                                 </div>
                                 <div>
                                     <h3 class="text-xl font-bold text-slate-800 mb-4">Gamified Learning</h3>
@@ -1026,7 +1203,7 @@
                         <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60 feature-item">
                             <div class="flex items-start space-x-4">
                                 <div class="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                                    <i class="fas fa-chart-line text-2xl text-white"></i>
+                                    <i class="fas fa-chart-line text-white" aria-hidden="true"></i>
                                 </div>
                                 <div>
                                     <h3 class="text-xl font-bold text-slate-800 mb-4">Progress Tracking</h3>
@@ -1038,7 +1215,7 @@
                         <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60 feature-item">
                             <div class="flex items-start space-x-4">
                                 <div class="w-16 h-16 bg-gradient-to-br from-violet-500 to-violet-600 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                                    <i class="fas fa-lightbulb text-2xl text-white"></i>
+                                    <i class="fas fa-lightbulb text-white" aria-hidden="true"></i>
                                 </div>
                                 <div>
                                     <h3 class="text-xl font-bold text-slate-800 mb-4">Step-by-Step Solutions</h3>
@@ -1054,31 +1231,25 @@
                     <div class="relative animate-slide-up order-1 lg:order-2">
                         <div class="relative z-10">
                             <!-- Main Image Container with Animation -->
-                            <div class="relative overflow-hidden rounded-3xl shadow-2xl bg-gradient-to-br from-indigo-100 to-violet-100 p-6 lg:p-8 animate-glow screenshot-container">
+                            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-100 to-violet-100 p-6 lg:p-8 screenshot-container me-screenshot-frame">
                                 <img src="Img/Character/laptop-removebg-preview.png" 
                                      alt="Student learning mathematics with interactive elements" 
-                                     class="w-full h-auto rounded-2xl screenshot-image animate-float-enhanced transition-all duration-700 ease-out"
+                                     class="w-full h-auto rounded-2xl screenshot-image animate-float-enhanced transition-all duration-300 ease-out"
                                      style="filter: drop-shadow(0 20px 40px rgba(0,0,0,0.1));">
                                 
-                                <!-- Animated Overlay Elements -->
                                 <div class="absolute inset-0 pointer-events-none">
-                                    <!-- Floating Math Elements -->
-                                    <div class="absolute top-4 right-4 w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg animate-bounce" style="animation-delay: 0.5s;">
-                                        <i class="fas fa-calculator text-white text-lg"></i>
+                                    <div class="absolute top-4 right-4 w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg me-badge-icon">
+                                        <i class="fas fa-calculator text-white" aria-hidden="true"></i>
                                     </div>
-                                    
-                                    <div class="absolute bottom-8 left-6 w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center shadow-lg animate-pulse" style="animation-delay: 1s;">
-                                        <i class="fas fa-chart-bar text-white text-sm"></i>
+                                    <div class="absolute bottom-8 left-6 w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center shadow-lg me-badge-icon">
+                                        <i class="fas fa-chart-column text-white" aria-hidden="true"></i>
                                     </div>
-                                    
-                                    <div class="absolute top-1/2 left-4 w-8 h-8 bg-gradient-to-br from-violet-400 to-violet-600 rounded-full flex items-center justify-center shadow-lg animate-ping" style="animation-delay: 1.5s;">
-                                        <i class="fas fa-star text-white text-xs"></i>
+                                    <div class="absolute top-1/2 left-4 w-8 h-8 bg-gradient-to-br from-violet-400 to-violet-600 rounded-full flex items-center justify-center shadow-lg me-badge-icon">
+                                        <i class="fas fa-star text-white" aria-hidden="true"></i>
                                     </div>
-                                    
-                                    <!-- Progress Indicator -->
                                     <div class="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm rounded-xl p-3 shadow-lg">
                                         <div class="flex items-center space-x-2">
-                                            <div class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></div>
+                                            <div class="w-3 h-3 bg-emerald-500 rounded-full"></div>
                                             <span class="text-xs font-semibold text-slate-700">Learning Active</span>
                                         </div>
                                     </div>
@@ -1086,9 +1257,8 @@
                             </div>
                         </div>
                         
-                        <!-- Background Decorative Elements -->
-                        <div class="absolute -top-6 -right-6 w-24 h-24 bg-gradient-to-br from-indigo-200/30 to-violet-200/30 rounded-full animate-pulse" style="animation-delay: 2s;"></div>
-                        <div class="absolute -bottom-6 -left-6 w-20 h-20 bg-gradient-to-br from-emerald-200/30 to-emerald-300/30 rounded-full animate-pulse" style="animation-delay: 2.5s;"></div>
+                        <div class="absolute -top-6 -right-6 w-24 h-24 bg-gradient-to-br from-indigo-200/30 to-violet-200/30 rounded-full opacity-80"></div>
+                        <div class="absolute -bottom-6 -left-6 w-20 h-20 bg-gradient-to-br from-emerald-200/30 to-emerald-300/30 rounded-full opacity-80"></div>
                     </div>
                 </div>
             </div>
@@ -1106,130 +1276,130 @@
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60">
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" role="button" tabindex="0" onclick="openLessonPreview('functions')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLessonPreview('functions');}">
                     <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-project-diagram text-3xl text-white"></i>
+                        <i class="fas fa-book text-white" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-slate-800 mb-4">Functions</h3>
                     <p class="text-slate-600 leading-relaxed mb-6">Master the fundamentals of functions and function notation.</p>
-                    <a href="#" onclick="showLoginNotification('Functions')" class="inline-flex items-center text-indigo-600 hover:text-indigo-700 font-semibold transition-colors group">Start Learning<i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></a>
+                    <span class="inline-flex items-center text-indigo-600 font-semibold"><i class="fas fa-eye me-fa-preview mr-2" aria-hidden="true"></i>Click for preview</span>
                 </div>
 
-                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.05s;">
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60 cursor-pointer focus:outline-none focus:ring-2 focus:ring-fuchsia-500 focus:ring-offset-2" style="animation-delay: 0.05s;" role="button" tabindex="0" onclick="openLessonPreview('evaluating_functions')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLessonPreview('evaluating_functions');}">
                     <div class="w-20 h-20 bg-gradient-to-br from-fuchsia-500 to-fuchsia-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-equals text-3xl text-white"></i>
+                        <i class="fas fa-book text-white" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-slate-800 mb-4">Evaluating Functions</h3>
                     <p class="text-slate-600 leading-relaxed mb-6">Evaluate functions correctly using substitution and simplification.</p>
-                    <a href="#" onclick="showLoginNotification('Evaluating Functions')" class="inline-flex items-center text-fuchsia-600 hover:text-fuchsia-700 font-semibold transition-colors group">Start Learning<i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></a>
+                    <span class="inline-flex items-center text-fuchsia-600 font-semibold"><i class="fas fa-eye me-fa-preview mr-2" aria-hidden="true"></i>Click for preview</span>
                 </div>
 
-                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.1s;">
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60 cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2" style="animation-delay: 0.1s;" role="button" tabindex="0" onclick="openLessonPreview('operations_functions')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLessonPreview('operations_functions');}">
                     <div class="w-20 h-20 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-calculator text-3xl text-white"></i>
+                        <i class="fas fa-book text-white" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-slate-800 mb-4">Operations on Functions</h3>
                     <p class="text-slate-600 leading-relaxed mb-6">Perform addition, subtraction, multiplication, and division of functions.</p>
-                    <a href="#" onclick="showLoginNotification('Operations on Functions')" class="inline-flex items-center text-amber-600 hover:text-amber-700 font-semibold transition-colors group">Start Learning<i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></a>
+                    <span class="inline-flex items-center text-amber-600 font-semibold"><i class="fas fa-eye me-fa-preview mr-2" aria-hidden="true"></i>Click for preview</span>
                 </div>
 
-                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.15s;">
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60 cursor-pointer focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2" style="animation-delay: 0.15s;" role="button" tabindex="0" onclick="openLessonPreview('real_life_problems')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLessonPreview('real_life_problems');}">
                     <div class="w-20 h-20 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-lightbulb text-3xl text-white"></i>
+                        <i class="fas fa-book text-white" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-slate-800 mb-4">Solving Real-Life Problems</h3>
                     <p class="text-slate-600 leading-relaxed mb-6">Apply function concepts to practical and real-world situations.</p>
-                    <a href="#" onclick="showLoginNotification('Solving Real-Life Problems')" class="inline-flex items-center text-cyan-600 hover:text-cyan-700 font-semibold transition-colors group">Start Learning<i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></a>
+                    <span class="inline-flex items-center text-cyan-600 font-semibold"><i class="fas fa-eye me-fa-preview mr-2" aria-hidden="true"></i>Click for preview</span>
                 </div>
 
-                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.2s;">
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2" style="animation-delay: 0.2s;" role="button" tabindex="0" onclick="openLessonPreview('rational_functions')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLessonPreview('rational_functions');}">
                     <div class="w-20 h-20 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-chart-line text-3xl text-white"></i>
+                        <i class="fas fa-book text-white" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-slate-800 mb-4">Rational Functions</h3>
                     <p class="text-slate-600 leading-relaxed mb-6">Understand rational function forms and their key properties.</p>
-                    <a href="#" onclick="showLoginNotification('Rational Functions')" class="inline-flex items-center text-emerald-600 hover:text-emerald-700 font-semibold transition-colors group">Start Learning<i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></a>
+                    <span class="inline-flex items-center text-emerald-600 font-semibold"><i class="fas fa-eye me-fa-preview mr-2" aria-hidden="true"></i>Click for preview</span>
                 </div>
 
-                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.25s;">
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60 cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2" style="animation-delay: 0.25s;" role="button" tabindex="0" onclick="openLessonPreview('rational_equations')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLessonPreview('rational_equations');}">
                     <div class="w-20 h-20 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-not-equal text-3xl text-white"></i>
+                        <i class="fas fa-book text-white" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-slate-800 mb-4">Solving Rational Equations and Inequalities</h3>
                     <p class="text-slate-600 leading-relaxed mb-6">Solve rational equations and inequalities with valid restrictions.</p>
-                    <a href="#" onclick="showLoginNotification('Solving Rational Equations and Inequalities')" class="inline-flex items-center text-red-600 hover:text-red-700 font-semibold transition-colors group">Start Learning<i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></a>
+                    <span class="inline-flex items-center text-red-600 font-semibold"><i class="fas fa-eye me-fa-preview mr-2" aria-hidden="true"></i>Click for preview</span>
                 </div>
 
-                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.3s;">
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60 cursor-pointer focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2" style="animation-delay: 0.3s;" role="button" tabindex="0" onclick="openLessonPreview('rational_representations')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLessonPreview('rational_representations');}">
                     <div class="w-20 h-20 bg-gradient-to-br from-sky-500 to-sky-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-shapes text-3xl text-white"></i>
+                        <i class="fas fa-book text-white" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-slate-800 mb-4">Representations of Rational Functions</h3>
                     <p class="text-slate-600 leading-relaxed mb-6">Represent rational functions in tables, graphs, and equations.</p>
-                    <a href="#" onclick="showLoginNotification('Representations of Rational Functions')" class="inline-flex items-center text-sky-600 hover:text-sky-700 font-semibold transition-colors group">Start Learning<i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></a>
+                    <span class="inline-flex items-center text-sky-600 font-semibold"><i class="fas fa-eye me-fa-preview mr-2" aria-hidden="true"></i>Click for preview</span>
                 </div>
 
-                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.35s;">
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60 cursor-pointer focus:outline-none focus:ring-2 focus:ring-lime-500 focus:ring-offset-2" style="animation-delay: 0.35s;" role="button" tabindex="0" onclick="openLessonPreview('domain_range_rational')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLessonPreview('domain_range_rational');}">
                     <div class="w-20 h-20 bg-gradient-to-br from-lime-500 to-lime-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-border-all text-3xl text-white"></i>
+                        <i class="fas fa-book text-white" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-slate-800 mb-4">Domain and Range of Rational Functions</h3>
                     <p class="text-slate-600 leading-relaxed mb-6">Determine domain and range using restrictions and graph behavior.</p>
-                    <a href="#" onclick="showLoginNotification('Domain and Range of Rational Functions')" class="inline-flex items-center text-lime-600 hover:text-lime-700 font-semibold transition-colors group">Start Learning<i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></a>
+                    <span class="inline-flex items-center text-lime-600 font-semibold"><i class="fas fa-eye me-fa-preview mr-2" aria-hidden="true"></i>Click for preview</span>
                 </div>
 
-                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.4s;">
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60 cursor-pointer focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2" style="animation-delay: 0.4s;" role="button" tabindex="0" onclick="openLessonPreview('one_to_one')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLessonPreview('one_to_one');}">
                     <div class="w-20 h-20 bg-gradient-to-br from-violet-500 to-violet-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-exchange-alt text-3xl text-white"></i>
+                        <i class="fas fa-book text-white" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-slate-800 mb-4">One-to-One Functions</h3>
                     <p class="text-slate-600 leading-relaxed mb-6">Identify one-to-one functions and connect them to inverse functions.</p>
-                    <a href="#" onclick="showLoginNotification('One-to-One Functions')" class="inline-flex items-center text-violet-600 hover:text-violet-700 font-semibold transition-colors group">Start Learning<i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></a>
+                    <span class="inline-flex items-center text-violet-600 font-semibold"><i class="fas fa-eye me-fa-preview mr-2" aria-hidden="true"></i>Click for preview</span>
                 </div>
 
-                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.45s;">
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2" style="animation-delay: 0.45s;" role="button" tabindex="0" onclick="openLessonPreview('inverse_domain_range')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLessonPreview('inverse_domain_range');}">
                     <div class="w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-random text-3xl text-white"></i>
+                        <i class="fas fa-book text-white" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-slate-800 mb-4">Domain and Range of Inverse Functions</h3>
                     <p class="text-slate-600 leading-relaxed mb-6">Relate inverse functions to switched domain and range values.</p>
-                    <a href="#" onclick="showLoginNotification('Domain and Range of Inverse Functions')" class="inline-flex items-center text-purple-600 hover:text-purple-700 font-semibold transition-colors group">Start Learning<i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></a>
+                    <span class="inline-flex items-center text-purple-600 font-semibold"><i class="fas fa-eye me-fa-preview mr-2" aria-hidden="true"></i>Click for preview</span>
                 </div>
 
-                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.5s;">
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60 cursor-pointer focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2" style="animation-delay: 0.5s;" role="button" tabindex="0" onclick="openLessonPreview('simple_interest')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLessonPreview('simple_interest');}">
                     <div class="w-20 h-20 bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-piggy-bank text-3xl text-white"></i>
+                        <i class="fas fa-book text-white" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-slate-800 mb-4">Simple Interest</h3>
                     <p class="text-slate-600 leading-relaxed mb-6">Master the basics of simple interest calculations and applications.</p>
-                    <a href="#" onclick="showLoginNotification('Simple Interest')" class="inline-flex items-center text-rose-600 hover:text-rose-700 font-semibold transition-colors group">Start Learning<i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></a>
+                    <span class="inline-flex items-center text-rose-600 font-semibold"><i class="fas fa-eye me-fa-preview mr-2" aria-hidden="true"></i>Click for preview</span>
                 </div>
 
-                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.55s;">
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60 cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2" style="animation-delay: 0.55s;" role="button" tabindex="0" onclick="openLessonPreview('compound_interest')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLessonPreview('compound_interest');}">
                     <div class="w-20 h-20 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-chart-bar text-3xl text-white"></i>
+                        <i class="fas fa-book text-white" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-slate-800 mb-4">Compound Interest</h3>
                     <p class="text-slate-600 leading-relaxed mb-6">Explore compound interest formulas and real-world applications.</p>
-                    <a href="#" onclick="showLoginNotification('Compound Interest')" class="inline-flex items-center text-teal-600 hover:text-teal-700 font-semibold transition-colors group">Start Learning<i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></a>
+                    <span class="inline-flex items-center text-teal-600 font-semibold"><i class="fas fa-eye me-fa-preview mr-2" aria-hidden="true"></i>Click for preview</span>
                 </div>
 
-                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.6s;">
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" style="animation-delay: 0.6s;" role="button" tabindex="0" onclick="openLessonPreview('simple_compound_values')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLessonPreview('simple_compound_values');}">
                     <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-coins text-3xl text-white"></i>
+                        <i class="fas fa-book text-white" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-slate-800 mb-4">Simple and Compound Values</h3>
                     <p class="text-slate-600 leading-relaxed mb-6">Compute interest, maturity value, future value, and present value.</p>
-                    <a href="#" onclick="showLoginNotification('Simple and Compound Values')" class="inline-flex items-center text-blue-600 hover:text-blue-700 font-semibold transition-colors group">Start Learning<i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></a>
+                    <span class="inline-flex items-center text-blue-600 font-semibold"><i class="fas fa-eye me-fa-preview mr-2" aria-hidden="true"></i>Click for preview</span>
                 </div>
 
-                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.65s;">
+                <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60 cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2" style="animation-delay: 0.65s;" role="button" tabindex="0" onclick="openLessonPreview('interest_problems')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLessonPreview('interest_problems');}">
                     <div class="w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-file-invoice-dollar text-3xl text-white"></i>
+                        <i class="fas fa-book text-white" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-slate-800 mb-4">Solving Interest Problems</h3>
                     <p class="text-slate-600 leading-relaxed mb-6">Solve mixed interest word problems using complete solution steps.</p>
-                    <a href="#" onclick="showLoginNotification('Solving Interest Problems')" class="inline-flex items-center text-green-600 hover:text-green-700 font-semibold transition-colors group">Start Learning<i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></a>
+                    <span class="inline-flex items-center text-green-600 font-semibold"><i class="fas fa-eye me-fa-preview mr-2" aria-hidden="true"></i>Click for preview</span>
                 </div>
             </div>
         </div>
@@ -1246,7 +1416,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
                 <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60">
                     <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-chart-bar text-2xl text-white"></i>
+                        <i class="fas fa-chart-column text-white" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-xl font-bold text-slate-800 mb-4">Progress Tracking</h3>
                     <p class="text-slate-600 leading-relaxed">Monitor student performance and identify areas needing attention with real-time analytics.</p>
@@ -1254,7 +1424,7 @@
                 
                 <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.1s;">
                     <div class="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-users-cog text-2xl text-white"></i>
+                        <i class="fas fa-users-gear text-white" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-xl font-bold text-slate-800 mb-4">Class Management</h3>
                     <p class="text-slate-600 leading-relaxed">Create classes, manage student enrollment, and organize learning materials efficiently.</p>
@@ -1262,7 +1432,7 @@
                 
                 <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.2s;">
                     <div class="w-16 h-16 bg-gradient-to-br from-violet-500 to-violet-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-trophy text-2xl text-white"></i>
+                        <i class="fas fa-trophy text-white" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-xl font-bold text-slate-800 mb-4">Gamification</h3>
                     <p class="text-slate-600 leading-relaxed">Motivate students with leaderboards, achievements, and competitive learning elements.</p>
@@ -1271,9 +1441,9 @@
             
             <div class="text-center">
                 <a href="teacher-login.html" class="inline-flex items-center bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg">
-                    <i class="fas fa-chalkboard-teacher mr-3"></i>
+                    <i class="fas fa-chalkboard-teacher me-fa-cta mr-3" aria-hidden="true"></i>
                     Teacher Login
-                    <i class="fas fa-arrow-right ml-3"></i>
+                    <i class="fas fa-arrow-right me-fa-cta ml-3" aria-hidden="true"></i>
                 </a>
             </div>
         </div>
@@ -1290,7 +1460,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
                 <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60">
                     <div class="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-play text-2xl text-white"></i>
+                        <i class="fas fa-circle-play text-white" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-xl font-bold text-slate-800 mb-4">Interactive Lessons</h3>
                     <p class="text-slate-600 leading-relaxed">Step-by-step explanations with visual aids and practice problems to build your understanding.</p>
@@ -1298,7 +1468,7 @@
                 
                 <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.1s;">
                     <div class="w-16 h-16 bg-gradient-to-br from-violet-500 to-violet-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-medal text-2xl text-white"></i>
+                        <i class="fas fa-medal text-white" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-xl font-bold text-slate-800 mb-4">Achievement System</h3>
                     <p class="text-slate-600 leading-relaxed">Earn badges and unlock rewards as you complete lessons and quizzes successfully.</p>
@@ -1306,7 +1476,7 @@
                 
                 <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 text-center hover:shadow-xl transition-all duration-300 group animate-scale-in border border-slate-200/60" style="animation-delay: 0.2s;">
                     <div class="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-chart-line text-2xl text-white"></i>
+                        <i class="fas fa-chart-line text-white" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-xl font-bold text-slate-800 mb-4">Progress Tracking</h3>
                     <p class="text-slate-600 leading-relaxed">Monitor your improvement and identify areas for focused study with detailed analytics.</p>
@@ -1315,9 +1485,9 @@
             
             <div class="text-center">
                 <a href="register.html" class="inline-flex items-center bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg">
-                    <i class="fas fa-user-plus mr-3"></i>
+                    <i class="fas fa-user-plus me-fa-cta mr-3" aria-hidden="true"></i>
                     Start Learning
-                    <i class="fas fa-arrow-right ml-3"></i>
+                    <i class="fas fa-arrow-right me-fa-cta ml-3" aria-hidden="true"></i>
                 </a>
             </div>
         </div>
@@ -1344,7 +1514,7 @@
                     </p>
                     <div class="flex justify-center space-x-3">
                         <a href="https://www.facebook.com/edwin.solayao.2025" target="_blank" rel="noopener noreferrer" class="w-8 h-8 bg-slate-100 hover:bg-indigo-600 rounded-full flex items-center justify-center transition-colors group">
-                            <i class="fab fa-facebook-f text-slate-600 group-hover:text-white text-sm"></i>
+                            <i class="fab fa-facebook-f me-fa-social text-slate-600 group-hover:text-white" aria-hidden="true"></i>
                         </a>
                     </div>
                 </div>
@@ -1361,7 +1531,7 @@
                     </p>
                     <div class="flex justify-center space-x-3">
                         <a href="https://www.facebook.com/kimzacharyocampo" target="_blank" rel="noopener noreferrer" class="w-8 h-8 bg-slate-100 hover:bg-emerald-600 rounded-full flex items-center justify-center transition-colors group">
-                            <i class="fab fa-facebook-f text-slate-600 group-hover:text-white text-sm"></i>
+                            <i class="fab fa-facebook-f me-fa-social text-slate-600 group-hover:text-white" aria-hidden="true"></i>
                         </a>
                     </div>
                 </div>
@@ -1378,7 +1548,7 @@
                     </p>
                     <div class="flex justify-center space-x-3">
                         <a href="https://www.facebook.com/ramquilvic.delapena" target="_blank" rel="noopener noreferrer" class="w-8 h-8 bg-slate-100 hover:bg-violet-600 rounded-full flex items-center justify-center transition-colors group">
-                            <i class="fab fa-facebook-f text-slate-600 group-hover:text-white text-sm"></i>
+                            <i class="fab fa-facebook-f me-fa-social text-slate-600 group-hover:text-white" aria-hidden="true"></i>
                         </a>
                     </div>
                 </div>
@@ -1398,7 +1568,7 @@
                     </p>
                     <div class="flex justify-center space-x-3">
                         <a href="https://www.facebook.com/arnel650" target="_blank" rel="noopener noreferrer" class="w-8 h-8 bg-slate-100 hover:bg-amber-600 rounded-full flex items-center justify-center transition-colors group">
-                            <i class="fab fa-facebook-f text-slate-600 group-hover:text-white text-sm"></i>
+                            <i class="fab fa-facebook-f me-fa-social text-slate-600 group-hover:text-white" aria-hidden="true"></i>
                         </a>
                     </div>
                 </div>
@@ -1415,7 +1585,7 @@
                     </p>
                     <div class="flex justify-center space-x-3">
                         <a href="https://www.facebook.com/Maui.Roxas.17" target="_blank" rel="noopener noreferrer" class="w-8 h-8 bg-slate-100 hover:bg-rose-600 rounded-full flex items-center justify-center transition-colors group">
-                            <i class="fab fa-facebook-f text-slate-600 group-hover:text-white text-sm"></i>
+                            <i class="fab fa-facebook-f me-fa-social text-slate-600 group-hover:text-white" aria-hidden="true"></i>
                         </a>
                     </div>
                 </div>
@@ -1430,28 +1600,28 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     <div class="text-center">
                         <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-graduation-cap text-white"></i>
+                            <i class="fas fa-graduation-cap text-white" aria-hidden="true"></i>
                         </div>
                         <h4 class="font-semibold text-slate-800 mb-2">Academic Excellence</h4>
                         <p class="text-slate-600 text-sm">We strive for academic excellence in our Computer Science thesis project and educational platform development.</p>
                     </div>
                     <div class="text-center">
                         <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-code text-white"></i>
+                            <i class="fas fa-code text-white" aria-hidden="true"></i>
                         </div>
                         <h4 class="font-semibold text-slate-800 mb-2">Technical Innovation</h4>
                         <p class="text-slate-600 text-sm">We apply cutting-edge Computer Science principles to create innovative educational technology solutions.</p>
                     </div>
                     <div class="text-center">
                         <div class="w-12 h-12 bg-gradient-to-br from-violet-500 to-violet-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-users text-white"></i>
+                            <i class="fas fa-users text-white" aria-hidden="true"></i>
                         </div>
                         <h4 class="font-semibold text-slate-800 mb-2">Student-Centered</h4>
                         <p class="text-slate-600 text-sm">We design our platform with Grade 11 STEM students' learning needs and challenges in mind.</p>
                     </div>
                     <div class="text-center">
                         <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-                            <i class="fas fa-lightbulb text-white"></i>
+                            <i class="fas fa-lightbulb text-white" aria-hidden="true"></i>
                         </div>
                         <h4 class="font-semibold text-slate-800 mb-2">Research-Driven</h4>
                         <p class="text-slate-600 text-sm">Our thesis project is grounded in educational research and real-world classroom insights.</p>
@@ -1485,19 +1655,19 @@
                         </p>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="flex items-center">
-                                <i class="fas fa-check-circle text-emerald-500 mr-3"></i>
+                                <i class="fas fa-circle-check text-emerald-500 mr-3" aria-hidden="true"></i>
                                 <span class="text-slate-700">Curriculum-aligned content</span>
                             </div>
                             <div class="flex items-center">
-                                <i class="fas fa-check-circle text-emerald-500 mr-3"></i>
+                                <i class="fas fa-circle-check text-emerald-500 mr-3" aria-hidden="true"></i>
                                 <span class="text-slate-700">Research-based materials</span>
                             </div>
                             <div class="flex items-center">
-                                <i class="fas fa-check-circle text-emerald-500 mr-3"></i>
+                                <i class="fas fa-circle-check text-emerald-500 mr-3" aria-hidden="true"></i>
                                 <span class="text-slate-700">Student-focused design</span>
                             </div>
                             <div class="flex items-center">
-                                <i class="fas fa-check-circle text-emerald-500 mr-3"></i>
+                                <i class="fas fa-circle-check text-emerald-500 mr-3" aria-hidden="true"></i>
                                 <span class="text-slate-700">Educational standards compliance</span>
                             </div>
                         </div>
@@ -1507,7 +1677,7 @@
                         <div class="space-y-4">
                             <div class="flex items-start">
                                 <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center mr-3 mt-1">
-                                    <i class="fas fa-search text-indigo-600 text-sm"></i>
+                                    <i class="fas fa-magnifying-glass text-indigo-600" aria-hidden="true"></i>
                                 </div>
                                 <div>
                                     <h5 class="font-semibold text-slate-800">Educational Research</h5>
@@ -1516,7 +1686,7 @@
                             </div>
                             <div class="flex items-start">
                                 <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center mr-3 mt-1">
-                                    <i class="fas fa-graduation-cap text-indigo-600 text-sm"></i>
+                                    <i class="fas fa-graduation-cap text-indigo-600" aria-hidden="true"></i>
                                 </div>
                                 <div>
                                     <h5 class="font-semibold text-slate-800">Academic Standards</h5>
@@ -1525,7 +1695,7 @@
                             </div>
                             <div class="flex items-start">
                                 <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center mr-3 mt-1">
-                                    <i class="fas fa-lightbulb text-indigo-600 text-sm"></i>
+                                    <i class="fas fa-lightbulb text-indigo-600" aria-hidden="true"></i>
                                 </div>
                                 <div>
                                     <h5 class="font-semibold text-slate-800">Innovation Focus</h5>
@@ -1540,7 +1710,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
                 <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 hover:shadow-xl transition-all duration-300 animate-scale-in border border-slate-200/60">
                     <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-6">
-                        <i class="fas fa-graduation-cap text-2xl text-white"></i>
+                        <i class="fas fa-graduation-cap text-white" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-slate-800 mb-4">Our Mission</h3>
                     <p class="text-slate-600 leading-relaxed">To develop an innovative educational technology platform as part of our Computer Science thesis project that makes General Mathematics accessible, enjoyable, and effective for Grade 11 STEM students. Through our research and development at Norzagaray College, we aim to contribute to the field of educational technology while helping students excel in mathematics.</p>
@@ -1548,7 +1718,7 @@
                 
                 <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 hover:shadow-xl transition-all duration-300 animate-scale-in border border-slate-200/60" style="animation-delay: 0.1s;">
                     <div class="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mb-6">
-                        <i class="fas fa-eye text-2xl text-white"></i>
+                        <i class="fas fa-eye text-white" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-slate-800 mb-4">Our Vision</h3>
                     <p class="text-slate-600 leading-relaxed">To demonstrate the potential of educational technology through our Computer Science thesis project, contributing to the advancement of digital learning solutions in the Philippines. We envision MathEase as a stepping stone toward fostering confident and competent STEM students who are well-prepared for higher education and future careers in science and technology.</p>
@@ -1559,7 +1729,7 @@
             <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 hover:shadow-xl transition-all duration-300 animate-scale-in border border-slate-200/60">
                 <div class="text-center mb-12">
                     <div class="w-16 h-16 bg-gradient-to-br from-violet-500 to-violet-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                        <i class="fas fa-book text-2xl text-white"></i>
+                        <i class="fas fa-book text-white" aria-hidden="true"></i>
                     </div>
                     <h3 class="text-3xl font-bold text-slate-800 mb-4">Educational References</h3>
                     <p class="text-xl text-slate-600 max-w-3xl mx-auto">Our content is developed using various educational resources and references to ensure comprehensive coverage of General Mathematics topics.</p>
@@ -1615,21 +1785,21 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="text-center">
                             <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                <i class="fas fa-code text-2xl text-white"></i>
+                                <i class="fas fa-code text-white" aria-hidden="true"></i>
                             </div>
                             <h5 class="text-lg font-bold text-slate-800 mb-2">Innovative Learning Platform</h5>
                             <p class="text-slate-600 text-sm">Developing an interactive platform that makes General Mathematics more engaging and accessible for students.</p>
                         </div>
                         <div class="text-center">
                             <div class="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                <i class="fas fa-graduation-cap text-2xl text-white"></i>
+                                <i class="fas fa-graduation-cap text-white" aria-hidden="true"></i>
                             </div>
                             <h5 class="text-lg font-bold text-slate-800 mb-2">Academic Research</h5>
                             <p class="text-slate-600 text-sm">Contributing to educational technology research through our Computer Science thesis project.</p>
                         </div>
                         <div class="text-center">
                             <div class="w-16 h-16 bg-gradient-to-br from-violet-500 to-violet-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                <i class="fas fa-users text-2xl text-white"></i>
+                                <i class="fas fa-users text-white" aria-hidden="true"></i>
                             </div>
                             <h5 class="text-lg font-bold text-slate-800 mb-2">Student-Centered Design</h5>
                             <p class="text-slate-600 text-sm">Creating solutions that address real educational challenges faced by Grade 11 STEM students.</p>
@@ -1682,25 +1852,70 @@
 
     <!-- Back to Top Button -->
     <button id="backToTop" aria-label="Back to top" class="fixed bottom-6 right-6 z-40 hidden bg-indigo-600 hover:bg-indigo-700 text-white rounded-full w-12 h-12 shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-        <i class="fas fa-arrow-up"></i>
+        <i class="fas fa-arrow-up" aria-hidden="true"></i>
     </button>
 
-    <!-- Login Notification Modal -->
-    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-2xl p-8 max-w-md mx-4 transform transition-all duration-300 scale-95 opacity-0" id="modalContent">
-            <div class="text-center">
-                <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                    <i class="fas fa-lock text-2xl text-white"></i>
+    <!-- Lesson preview modal (card click → definition + intro; Learn more → login modal) -->
+    <div id="lessonPreviewModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-[2px] flex items-center justify-center z-[10060] hidden p-3 sm:p-4" aria-modal="true" role="dialog" aria-labelledby="lessonPreviewTitle">
+        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] shadow-2xl shadow-indigo-900/10 overflow-hidden flex flex-col transform transition-all duration-300 scale-95 opacity-0 border border-white/20 ring-1 ring-slate-200/80" id="lessonPreviewModalInner">
+            <div class="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-indigo-500 to-amber-400 px-5 pt-5 pb-4 sm:px-7 sm:pt-6 sm:pb-5 flex-shrink-0">
+                <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(circle at 20% 80%, white 0%, transparent 45%), radial-gradient(circle at 80% 20%, #fde68a 0%, transparent 40%);"></div>
+                <button type="button" onclick="closeLessonPreview()" class="absolute top-3 right-3 z-10 w-10 h-10 rounded-xl bg-white/15 hover:bg-white/25 text-white flex items-center justify-center transition-colors backdrop-blur-sm" aria-label="Close preview">
+                    <i class="fas fa-xmark" aria-hidden="true"></i>
+                </button>
+                <div class="relative flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-6 pr-2">
+                    <div class="flex-1 min-w-0 pb-1 sm:pb-0 pr-8 sm:pr-4">
+                        <p class="text-[11px] sm:text-xs font-semibold text-indigo-100/95 uppercase tracking-[0.12em] mb-1.5">MathEase lesson</p>
+                        <h3 id="lessonPreviewTitle" class="text-xl sm:text-2xl font-bold text-white leading-snug drop-shadow-sm"></h3>
+                    </div>
+                    <div class="flex justify-center sm:justify-end flex-shrink-0 sm:-mr-1">
+                        <img src="Img/Character/happy__1_-removebg-preview.png" alt="MathEase mascot" width="160" height="160" class="w-28 h-28 sm:w-36 sm:h-36 object-contain object-bottom drop-shadow-[0_12px_24px_rgba(0,0,0,0.2)] select-none pointer-events-none" decoding="async">
+                    </div>
                 </div>
-                <h3 class="text-2xl font-bold text-slate-800 mb-4">Login Required</h3>
-                <p class="text-slate-600 leading-relaxed mb-6">
+            </div>
+            <div class="flex-1 min-h-0 overflow-y-auto px-5 sm:px-8 py-5 sm:py-6 bg-gradient-to-b from-white to-slate-50/90">
+                <p class="text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-2">What it is</p>
+                <p id="lessonPreviewDefinition" class="text-slate-800 leading-relaxed mb-5 text-[15px] sm:text-base"></p>
+                <p id="lessonPreviewBody" class="text-slate-600 leading-relaxed text-sm sm:text-[15px] border-l-4 border-amber-400/90 pl-4 py-0.5"></p>
+            </div>
+            <div class="flex-shrink-0 px-5 sm:px-8 py-4 sm:py-5 bg-slate-50 border-t border-slate-200/80">
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button type="button" onclick="learnMoreFromLessonPreview()" class="flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white px-6 py-3.5 rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg text-center ring-1 ring-indigo-500/30">
+                        <span>Learn more</span>
+                        <i class="fas fa-arrow-right me-fa-cta text-sm opacity-90" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" onclick="closeLessonPreview()" class="flex-1 bg-white hover:bg-slate-100 text-slate-700 px-6 py-3.5 rounded-xl font-semibold transition-all duration-300 border border-slate-200 shadow-sm">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Notification Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-[2px] flex items-center justify-center z-[10055] hidden p-3 sm:p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl shadow-indigo-900/10 transform transition-all duration-300 scale-95 opacity-0 border border-white/20 ring-1 ring-slate-200/80" id="modalContent">
+            <div class="relative bg-gradient-to-br from-indigo-600 via-indigo-500 to-amber-400 px-6 pt-8 pb-6 text-center overflow-hidden">
+                <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(circle at 30% 70%, white 0%, transparent 50%), radial-gradient(circle at 70% 30%, #fde68a 0%, transparent 45%);"></div>
+                <button type="button" onclick="closeLoginModal()" class="absolute top-3 right-3 z-10 w-10 h-10 rounded-xl bg-white/15 hover:bg-white/25 text-white flex items-center justify-center transition-colors backdrop-blur-sm" aria-label="Close">
+                    <i class="fas fa-xmark" aria-hidden="true"></i>
+                </button>
+                <div class="relative mx-auto w-32 h-32 sm:w-36 sm:h-36 flex items-center justify-center">
+                    <img src="Img/Character/happy__1_-removebg-preview.png" alt="MathEase mascot" width="144" height="144" class="w-full h-full object-contain drop-shadow-[0_14px_28px_rgba(0,0,0,0.22)] select-none pointer-events-none" decoding="async">
+                </div>
+                <h3 class="relative text-xl sm:text-2xl font-bold text-white mt-2 drop-shadow-sm">Login Required</h3>
+                <p class="relative text-indigo-100 text-sm mt-1.5">Sign in to continue your lesson</p>
+            </div>
+            <div class="px-6 sm:px-8 py-6 sm:py-7 bg-white">
+                <p class="text-slate-600 leading-relaxed mb-6 text-center text-[15px] sm:text-base">
                     To access <span id="topicName" class="font-semibold text-indigo-600"></span> lessons, please log in to your MathEase account.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-3">
-                    <a href="login.html" class="flex-1 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg text-center">
+                    <a href="login.html" class="flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white px-6 py-3.5 rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg text-center ring-1 ring-indigo-500/30">
+                        <i class="fas fa-right-to-bracket me-fa-cta text-sm opacity-90" aria-hidden="true"></i>
                         Login Now
                     </a>
-                    <button onclick="closeLoginModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-3 rounded-xl font-semibold transition-all duration-300">
+                    <button type="button" onclick="closeLoginModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-3.5 rounded-xl font-semibold transition-all duration-300 border border-slate-200/80">
                         Cancel
                     </button>
                 </div>
@@ -1709,6 +1924,120 @@
     </div>
 
     <script>
+        const LESSON_PREVIEWS = {
+            functions: {
+                title: 'Functions',
+                definition: 'A function is a rule that assigns exactly one output to each allowed input. In General Mathematics you describe that rule with notation like f(x), identify which inputs are valid, and read outputs from graphs or formulas.',
+                preview: 'You will explore domain and range, function notation f(x), and how graphs represent relationships between quantities. Along the way you will practice deciding whether a relation is a function and how to express rules in words and symbols. This lesson builds the language you need for every later topic on functions and real-world applications.'
+            },
+            evaluating_functions: {
+                title: 'Evaluating Functions',
+                definition: 'Evaluating a function means finding the output when you substitute a value into the rule. You replace x (or another variable) with a number or expression, then simplify carefully while respecting order of operations.',
+                preview: 'You will substitute numbers into f(x), simplify expressions step by step, and read values from graphs and tables when a formula is not given. You will also interpret answers in context—for example, as a cost, a height, or a population at a specific time. These skills appear whenever you model real quantities with formulas.'
+            },
+            operations_functions: {
+                title: 'Operations on Functions',
+                definition: 'You can add, subtract, multiply, and divide functions on overlapping domains, and you can compose one function with another by using the output of an inner function as the input of an outer function.',
+                preview: 'You will combine functions algebraically and interpret expressions like (f+g)(x), (f−g)(x), (fg)(x), (f/g)(x), and f(g(x)) in context. You will pay attention to domain restrictions, especially where denominators are zero. Composition is especially useful for modeling multi-step processes such as discounts applied after tax.'
+            },
+            real_life_problems: {
+                title: 'Solving Real-Life Problems',
+                definition: 'Functions let you translate everyday situations—costs, motion, growth, revenue—into equations and graphs you can analyze, compare, and optimize within sensible limits.',
+                preview: 'You will set up variables with clear meaning, choose a reasonable domain for the situation, and interpret answers with correct units. The focus is on reading a word problem carefully, building a model that fits the story, and checking whether the result is realistic before you state your final answer.'
+            },
+            rational_functions: {
+                title: 'Rational Functions',
+                definition: 'A rational function is a ratio of two polynomials, p(x)/q(x), where q(x) is not identically zero. Values that make the denominator zero are excluded from the domain and often correspond to vertical asymptotes or removable discontinuities.',
+                preview: 'You will study asymptotes, possible holes, and end behavior as x grows large in either direction. Understanding where the denominator is zero tells you where the graph may break, shoot upward or downward, or need a single-point gap. You will connect these features back to the algebraic form of the function.'
+            },
+            rational_equations: {
+                title: 'Solving Rational Equations and Inequalities',
+                definition: 'Rational equations involve fractions with variables in numerators or denominators. You typically multiply by the least common denominator or combine fractions, then solve the resulting equation—but you must always check solutions against the original domain and watch for extraneous roots.',
+                preview: 'You will find common denominators, solve related inequalities with careful sign charts or test points, and verify every candidate solution. Restrictions from zero denominators are essential: any value that makes a denominator zero cannot belong to the solution set even if it appears after clearing fractions.'
+            },
+            rational_representations: {
+                title: 'Representations of Rational Functions',
+                definition: 'The same rational relationship can appear as a formula, a table of selected values, or a graph. Each view highlights different information: exact formulas for algebra, trends and shape from graphs, and numerical estimates from tables.',
+                preview: 'You will move confidently between symbolic rules and graphs, estimate values where needed, and describe long-run behavior using horizontal asymptotes when they exist. Comparing several representations strengthens intuition about how rational models behave in applications such as average cost or concentration.'
+            },
+            domain_range_rational: {
+                title: 'Domain and Range of Rational Functions',
+                definition: 'The domain usually excludes every real number that makes the denominator zero; sometimes you must also exclude values that make an even root of a negative in a related form. The range depends on horizontal asymptotes, turning points, and whether the graph attains particular heights.',
+                preview: 'You will list algebraic restrictions, sketch or analyze graphs to infer which y-values occur, and express domains and ranges in interval notation or set notation as required. You will practice explaining your reasoning in short sentences so your answer matches both the algebra and the picture.'
+            },
+            one_to_one: {
+                title: 'One-to-One Functions',
+                definition: 'A function is one-to-one if different inputs always produce different outputs. On a graph, this is often checked with the horizontal line test: no horizontal line should intersect the graph more than once if an inverse is to exist over that region.',
+                preview: 'You will decide when a function is injective on a given interval, restrict the domain if necessary, and connect one-to-oneness to whether an inverse function is well defined. This lesson sets up inverse functions by making sure each output can be traced back to exactly one input.'
+            },
+            inverse_domain_range: {
+                title: 'Domain and Range of Inverse Functions',
+                definition: 'For an invertible function f, the inverse f⁻¹ undoes what f does: if f(a)=b then f⁻¹(b)=a. Consequently the domain of f becomes the range of f⁻¹, and the range of f becomes the domain of f⁻¹.',
+                preview: 'You will read inverse pairs from graphs and equations, express the domain of f⁻¹ using the range of f, and avoid common mistakes with signs and intervals when you switch x and y. Practice includes verifying that compositions f(f⁻¹(x)) and f⁻¹(f(x)) behave as expected on the correct domains.'
+            },
+            simple_interest: {
+                title: 'Simple Interest',
+                definition: 'Simple interest grows linearly with time on the original principal only. The familiar form is I = Prt, where P is principal, r is the annual rate in decimal form, and t is time in consistent units; total amount can be written as P + I or P(1 + rt) depending on the problem.',
+                preview: 'You will compute interest earned, total repayment or maturity value, and solve for missing rate or time when other quantities are known. Problems often mirror short-term loans or savings where interest is not reinvested, so the arithmetic stays straightforward and easy to audit step by step.'
+            },
+            compound_interest: {
+                title: 'Compound Interest',
+                definition: 'Compound interest is calculated on the principal and on interest that has already been added to the account. A standard discrete form is A = P(1 + r/n)^(nt), where n is how many times per year interest is compounded and t is time in years.',
+                preview: 'You will compare compounding annually, semiannually, quarterly, or monthly using the formulas from your course. You will see how increasing the compounding frequency affects the final amount and interpret the difference between nominal rate and effective growth over long horizons.'
+            },
+            simple_compound_values: {
+                title: 'Simple and Compound Values',
+                definition: 'Depending on the agreement, you may need future value, present value, maturity value, or principal under simple or compound rules. Choosing the correct formula depends on whether interest is earned only on the original principal or on a growing balance.',
+                preview: 'You will match each word problem to simple or compound growth, identify what is unknown, and rearrange formulas when you must solve for rate, time, or principal. Exercises often connect to banks, investments, and installment settings so you learn to read the problem before you compute.'
+            },
+            interest_problems: {
+                title: 'Solving Interest Problems',
+                definition: 'Mixed interest problems give you some of principal, rate, time, interest, or maturity value and ask for another quantity. You must decide whether the situation is simple or compound, align time units with the rate, and sometimes combine steps such as partial payments or comparing two plans.',
+                preview: 'You will translate sentences into equations, isolate the unknown systematically, and round money to a sensible precision. You will also check units and ask whether the answer is plausible—very large or very small results often signal a misread rate or time conversion.'
+            }
+        };
+
+        let currentLessonTopicName = '';
+
+        function openLessonPreview(lessonKey) {
+            const data = LESSON_PREVIEWS[lessonKey];
+            if (!data) return;
+            currentLessonTopicName = data.title;
+            document.getElementById('lessonPreviewTitle').textContent = data.title;
+            document.getElementById('lessonPreviewDefinition').textContent = data.definition;
+            document.getElementById('lessonPreviewBody').textContent = data.preview;
+
+            const modal = document.getElementById('lessonPreviewModal');
+            const inner = document.getElementById('lessonPreviewModalInner');
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => {
+                inner.classList.remove('scale-95', 'opacity-0');
+                inner.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeLessonPreview() {
+            const modal = document.getElementById('lessonPreviewModal');
+            const inner = document.getElementById('lessonPreviewModalInner');
+            inner.classList.remove('scale-100', 'opacity-100');
+            inner.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }, 300);
+        }
+
+        function learnMoreFromLessonPreview() {
+            const topic = currentLessonTopicName;
+            closeLessonPreview();
+            setTimeout(() => showLoginNotification(topic), 320);
+        }
+
+        document.getElementById('lessonPreviewModal').addEventListener('click', function(e) {
+            if (e.target === this) closeLessonPreview();
+        });
+
         // Login notification functionality
         function showLoginNotification(topicName) {
             document.getElementById('topicName').textContent = topicName;
@@ -1743,11 +2072,15 @@
             }
         });
 
-        // Close modal with Escape key
+        // Close modal with Escape key (lesson preview first, then login)
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeLoginModal();
+            if (e.key !== 'Escape') return;
+            const lessonModal = document.getElementById('lessonPreviewModal');
+            if (lessonModal && !lessonModal.classList.contains('hidden')) {
+                closeLessonPreview();
+                return;
             }
+            closeLoginModal();
         });
 
     </script>
@@ -1815,6 +2148,36 @@
             if (backToTop) {
                 backToTop.addEventListener('click', () => {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+
+            /* One-time scroll reveals: section titles, feature rows, topic grid, etc. */
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                var revealSelectors = [
+                    'section[id] > .max-w-7xl > .text-center.mb-16',
+                    '#why .feature-item',
+                    '#topics .max-w-7xl > .grid.gap-8 > div',
+                    '#teachers .max-w-7xl > .grid.gap-8.mb-12 > div',
+                    '#students .max-w-7xl > .grid.gap-8.mb-12 > div',
+                    '#team .max-w-7xl > .grid.gap-8.mb-8 > div',
+                    '#team .max-w-7xl .grid.gap-8.mb-16 > div',
+                    '#about .max-w-7xl > .grid.gap-12.mb-16 > div'
+                ];
+                var revealIo = new IntersectionObserver(function (entries) {
+                    entries.forEach(function (en) {
+                        if (en.isIntersecting) {
+                            en.target.classList.add('is-visible');
+                            revealIo.unobserve(en.target);
+                        }
+                    });
+                }, { root: null, rootMargin: '0px 0px -7% 0px', threshold: 0.1 });
+                revealSelectors.forEach(function (sel) {
+                    try {
+                        document.querySelectorAll(sel).forEach(function (el) {
+                            el.classList.add('me-reveal');
+                            revealIo.observe(el);
+                        });
+                    } catch (err) { /* ignore invalid selectors in older browsers */ }
                 });
             }
         })();

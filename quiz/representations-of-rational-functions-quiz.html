@@ -2455,6 +2455,22 @@
                     </div>
                     <div class="bg-white rounded-lg p-4 border border-red-200">
                         <p class="font-semibold text-red-800 mb-2 flex items-center">
+                            <i class="fas fa-expand text-red-500 mr-2"></i>
+                            Fullscreen Mode
+                        </p>
+                        <ul class="text-sm space-y-2 ml-6">
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2">•</span>
+                                <span>The quiz requests <strong>fullscreen</strong> when you start</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2">•</span>
+                                <span>Exiting fullscreen shows a warning; <strong>3 exits</strong> marks the quiz as <strong>cheating</strong> with score <strong>0</strong></span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 border border-red-200">
+                        <p class="font-semibold text-red-800 mb-2 flex items-center">
                             <i class="fas fa-ban text-red-500 mr-2"></i>
                             Other Prohibited Actions
                         </p>
@@ -3302,6 +3318,20 @@
         let isQuizCompleted = false;
         let isQuizActive = false;
         let hasLoggedOut = false;
+        let tabSwitchCount = 0;
+        let focusLostTime = null;
+        let isPageVisible = true;
+        let hasExitedQuiz = false;
+        let heartbeatInterval = null;
+        let lastHeartbeat = null;
+        const maxAllowedTabSwitches = 2;
+        const maxAllowedFocusLoss = 30000;
+
+        let fullscreenExitCount = 0;
+        const maxFullscreenExitsBeforeCheat = 3;
+        let intentionalFullscreenExit = false;
+        let hasEnteredQuizFullscreen = false;
+        let fullscreenListenersAttached = false;
 
         // Quiz data with correct answers
         const TOTAL_MCQ = 15;
@@ -3372,11 +3402,129 @@
             });
         }
 
-        // Start quiz function
-        function startQuiz() {
+        function requestFullscreen(element) {
+            if (element.requestFullscreen) {
+                return element.requestFullscreen();
+            } else if (element.webkitRequestFullscreen) {
+                return element.webkitRequestFullscreen();
+            } else if (element.mozRequestFullScreen) {
+                return element.mozRequestFullScreen();
+            } else if (element.msRequestFullscreen) {
+                return element.msRequestFullscreen();
+            }
+            return Promise.reject(new Error('Fullscreen not supported'));
+        }
+
+        function exitFullscreen() {
+            if (document.exitFullscreen) {
+                return document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                return document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                return document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                return document.msExitFullscreen();
+            }
+        }
+
+        function isFullscreen() {
+            return !!(document.fullscreenElement ||
+                document.webkitFullscreenElement ||
+                document.mozFullScreenElement ||
+                document.msFullscreenElement);
+        }
+
+        function attachFullscreenListeners() {
+            if (fullscreenListenersAttached) return;
+            fullscreenListenersAttached = true;
+            document.addEventListener('fullscreenchange', handleFullscreenChange);
+            document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+            document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+            document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+        }
+
+        function handleFullscreenChange() {
+            if (!isQuizActive || intentionalFullscreenExit) return;
+            if (isFullscreen()) {
+                hasEnteredQuizFullscreen = true;
+                return;
+            }
+            if (!hasEnteredQuizFullscreen) return;
+
+            fullscreenExitCount++;
+            if (fullscreenExitCount >= maxFullscreenExitsBeforeCheat) {
+                markAsCheating('excessive_fullscreen_exits');
+                return;
+            }
+
+            const remaining = maxFullscreenExitsBeforeCheat - fullscreenExitCount;
+            showCheatingWarning(
+                'Fullscreen Required',
+                `You left fullscreen mode (<strong>${fullscreenExitCount}</strong> of <strong>${maxFullscreenExitsBeforeCheat}</strong> allowed). ` +
+                `${remaining === 0 ? 'This was your last warning.' : `<strong>${remaining}</strong> more exit${remaining === 1 ? '' : 's'} will mark the quiz as cheating with a score of 0.`} ` +
+                `Please return to fullscreen using the browser control or refresh and start again if needed.`
+            );
+        }
+
+        async function startQuizAttempt() {
             try {
-                // Set quiz started flag
+                const response = await fetch('../php/quiz-management.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'action=start_quiz&quiz_type=representations-of-rational-functions',
+                    credentials: 'include'
+                });
+                const result = await response.json();
+                if (result.success && result.attempt_id) {
+                    currentAttemptId = result.attempt_id;
+                    return true;
+                }
+                Swal.fire({
+                    title: 'Quiz Start Error',
+                    text: result.message || 'Could not start the quiz session.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#667eea'
+                });
+                return false;
+            } catch (err) {
+                console.error('startQuizAttempt:', err);
+                Swal.fire({
+                    title: 'Quiz Start Error',
+                    text: 'Could not connect to the server. Please try again.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#667eea'
+                });
+                return false;
+            }
+        }
+
+        // Start quiz function
+        async function startQuiz() {
+            try {
+                fullscreenExitCount = 0;
+                intentionalFullscreenExit = false;
+                hasEnteredQuizFullscreen = false;
+                attachFullscreenListeners();
+                try {
+                    requestFullscreen(document.documentElement).then(() => {
+                        console.log('✅ Entered fullscreen mode');
+                        hasEnteredQuizFullscreen = true;
+                    }).catch(error => {
+                        console.warn('⚠️ Could not enter fullscreen:', error);
+                    });
+                } catch (e) {
+                    console.warn('⚠️ Fullscreen request error:', e);
+                }
+
+                const started = await startQuizAttempt();
+                if (!started) {
+                    return;
+                }
+
                 quizStarted = true;
+                isQuizActive = true;
                 
                 // Hide tips container
                 const tipsContainer = document.getElementById('tipsContainer');
@@ -3398,6 +3546,8 @@
                 
                 // Initialize quiz
                 initializeQuiz();
+
+                initializeAntiCheating();
             } catch (error) {
                 console.error('Error starting quiz:', error);
                 Swal.fire({
@@ -3422,6 +3572,218 @@
         function initializeQuiz() {
             // Add any initialization logic here
             console.log('Quiz initialized');
+        }
+
+        // ==================== ANTI-CHEATING SYSTEM ====================
+        function initializeAntiCheating() {
+            stopAntiCheating();
+            tabSwitchCount = 0;
+            focusLostTime = null;
+            isPageVisible = true;
+            hasExitedQuiz = false;
+            hasLoggedOut = false;
+            isQuizActive = true;
+            startHeartbeat();
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+            window.addEventListener('focus', handleWindowFocus);
+            window.addEventListener('blur', handleWindowBlur);
+            window.addEventListener('beforeunload', handleBeforeUnload);
+            window.addEventListener('unload', handlePageUnload);
+            document.addEventListener('keydown', handleKeyboardShortcuts);
+        }
+
+        function stopAntiCheating() {
+            if (heartbeatInterval) {
+                clearInterval(heartbeatInterval);
+                heartbeatInterval = null;
+            }
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            window.removeEventListener('focus', handleWindowFocus);
+            window.removeEventListener('blur', handleWindowBlur);
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            window.removeEventListener('unload', handlePageUnload);
+            document.removeEventListener('keydown', handleKeyboardShortcuts);
+            isQuizActive = false;
+        }
+
+        function startHeartbeat() {
+            lastHeartbeat = Date.now();
+            heartbeatInterval = setInterval(async () => {
+                if (!isQuizActive || !currentAttemptId) return;
+                try {
+                    await fetch('../php/quiz-management.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `action=heartbeat&attempt_id=${currentAttemptId}`,
+                        credentials: 'include'
+                    });
+                } catch (e) {
+                    console.error('Heartbeat error:', e);
+                }
+                lastHeartbeat = Date.now();
+            }, 10000);
+        }
+
+        function handleVisibilityChange() {
+            if (!isQuizActive) return;
+            if (document.hidden) {
+                focusLostTime = Date.now();
+                isPageVisible = false;
+                setTimeout(() => {
+                    if (document.hidden && isQuizActive) {
+                        tabSwitchCount++;
+                        if (tabSwitchCount >= maxAllowedTabSwitches) {
+                            isQuizActive = false;
+                            stopTimer();
+                            markAsCheating('excessive_tab_switches');
+                            return;
+                        }
+                        if (tabSwitchCount === 1) {
+                            showCheatingWarning('Tab Switch Detected',
+                                `You have switched tabs ${tabSwitchCount}/${maxAllowedTabSwitches} times. One more switch will result in automatic submission with zero score.`);
+                        }
+                    }
+                }, 100);
+            } else {
+                isPageVisible = true;
+                if (focusLostTime) {
+                    const focusLossDuration = Date.now() - focusLostTime;
+                    if (focusLossDuration > maxAllowedFocusLoss) {
+                        markAsCheating('excessive_focus_loss');
+                        return;
+                    }
+                }
+                focusLostTime = null;
+            }
+        }
+
+        function handleWindowFocus() {
+            if (!isQuizActive) return;
+            isPageVisible = true;
+            focusLostTime = null;
+        }
+
+        function handleWindowBlur() {
+            if (!isQuizActive) return;
+            focusLostTime = Date.now();
+        }
+
+        function handleBeforeUnload(event) {
+            if (!isQuizActive) return;
+            hasExitedQuiz = true;
+            markAsCheating('page_exit');
+            event.preventDefault();
+            event.returnValue = '';
+            return '';
+        }
+
+        function handlePageUnload() {
+            if (!isQuizActive) return;
+            hasExitedQuiz = true;
+            markAsCheating('page_unload');
+        }
+
+        function handleKeyboardShortcuts(event) {
+            if (!isQuizActive) return;
+            if ((event.ctrlKey || event.metaKey) && (event.key === 't' || event.key === 'n')) {
+                event.preventDefault();
+                showCheatingWarning('Shortcut Blocked',
+                    'Opening new tabs or windows during the quiz is not allowed and will result in a zero score.');
+            }
+        }
+
+        async function markAsCheating(reason) {
+            intentionalFullscreenExit = true;
+            if (!currentAttemptId) {
+                try {
+                    const response = await fetch('../php/quiz-management.php?action=check_existing_attempt&quiz_type=representations-of-rational-functions', {
+                        credentials: 'include'
+                    });
+                    const result = await response.json();
+                    if (result.success && result.attempt) {
+                        currentAttemptId = result.attempt.id || result.attempt.attempt_id;
+                    } else {
+                        showCheatingNotification(reason);
+                        stopQuizDueToCheating();
+                        return;
+                    }
+                } catch (e) {
+                    showCheatingNotification(reason);
+                    stopQuizDueToCheating();
+                    return;
+                }
+            }
+            isQuizActive = false;
+            stopTimer();
+            stopAntiCheating();
+            try {
+                const response = await fetch('../php/quiz-management.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `action=mark_cheating&attempt_id=${currentAttemptId}&reason=${encodeURIComponent(reason)}`,
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        showCheatingNotification(reason);
+                        stopQuizDueToCheating();
+                    } else {
+                        showCheatingNotification(reason);
+                        stopQuizDueToCheating();
+                    }
+                } else {
+                    showCheatingNotification(reason);
+                    stopQuizDueToCheating();
+                }
+            } catch (e) {
+                showCheatingNotification(reason);
+                stopQuizDueToCheating();
+            }
+        }
+
+        function showCheatingWarning(title, message) {
+            Swal.fire({
+                title: title,
+                html: `<div class="text-center"><p class="text-slate-600 text-lg leading-relaxed">${message}</p></div>`,
+                confirmButtonText: 'I Understand',
+                confirmButtonColor: '#f59e0b',
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            });
+        }
+
+        function showCheatingNotification(reason) {
+            const map = {
+                excessive_tab_switches: 'Too many tab switches.',
+                excessive_focus_loss: 'Focus lost for too long.',
+                excessive_fullscreen_exits: 'Fullscreen was exited too many times.',
+                page_exit: 'You tried to leave the quiz page.',
+                page_unload: 'The page was closed or refreshed.',
+                logout_during_quiz: 'You logged out during an active quiz.'
+            };
+            const msg = map[reason] || 'Suspicious activity.';
+            Swal.fire({
+                title: 'Quiz Terminated',
+                html: `<p class="text-gray-700">${msg}</p><p class="text-sm text-gray-500 mt-2">Score recorded as 0.</p>`,
+                icon: 'error',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#ef4444'
+            });
+        }
+
+        function stopQuizDueToCheating() {
+            stopTimer();
+            const quizContainer = document.getElementById('quizContainer');
+            if (quizContainer) {
+                quizContainer.style.pointerEvents = 'none';
+                quizContainer.style.opacity = '0.5';
+            }
+            const submitBtn = document.getElementById('submitQuizBtn');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+            }
+            isQuizCompleted = true;
         }
 
         // Submit quiz to database
@@ -3698,6 +4060,15 @@
             
             // Stop the timer
             stopTimer();
+
+            intentionalFullscreenExit = true;
+            if (isFullscreen()) {
+                try {
+                    exitFullscreen();
+                } catch (e) {
+                    console.warn('⚠️ Could not exit fullscreen:', e);
+                }
+            }
             
             // Show loading dialog
             Swal.fire({
@@ -3837,6 +4208,15 @@
             try {
                 // Stop the timer when showing results
                 stopTimer();
+
+                intentionalFullscreenExit = true;
+                if (isFullscreen()) {
+                    try {
+                        exitFullscreen();
+                    } catch (e) {
+                        console.warn('⚠️ Could not exit fullscreen:', e);
+                    }
+                }
                 
                 // Hide progress and timer header when quiz is submitted
                 const progressTimerHeader = document.getElementById('progressTimerHeader');
@@ -5106,10 +5486,12 @@
                 });
                 
                 if (result.isConfirmed) {
-                    // Mark as cheating before logout
                     hasLoggedOut = true;
-                    // Proceed with logout (markAsCheating would be called if it exists)
-                    window.location.href = '../php/logout.php';
+                    markAsCheating('logout_during_quiz').then(() => {
+                        window.location.href = '../php/logout.php';
+                    }).catch(() => {
+                        window.location.href = '../php/logout.php';
+                    });
                 }
                 
                 return false;

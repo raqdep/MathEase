@@ -2017,25 +2017,50 @@ async function loadMaintenancePanel() {
 function applyMaintenanceForm(d) {
     const titleEl = document.getElementById('maintenance-title');
     const msgEl = document.getElementById('maintenance-message');
-    const etaEl = document.getElementById('maintenance-eta');
+    const startEl = document.getElementById('maintenance-start-at');
+    const endEl = document.getElementById('maintenance-end-at');
     const label = document.getElementById('maintenance-status-label');
     const dot = document.getElementById('maintenance-status-dot');
     const badge = document.getElementById('maintenance-status-badge');
+    const emailStartEl = document.getElementById('maintenance-email-start');
     if (titleEl) titleEl.value = d.title || '';
     if (msgEl) msgEl.value = d.public_message || '';
-    if (etaEl) {
-        etaEl.value = d.estimated_end_at ? isoToDatetimeLocal(d.estimated_end_at) : '';
-    }
+    if (startEl) startEl.value = d.scheduled_start_at ? isoToDatetimeLocal(d.scheduled_start_at) : '';
+    if (endEl) endEl.value = (d.scheduled_end_at || d.estimated_end_at) ? isoToDatetimeLocal(d.scheduled_end_at || d.estimated_end_at) : '';
     if (label && dot && badge) {
         if (d.is_active) {
             label.textContent = 'Maintenance ON — students/teachers cannot log in';
             dot.className = 'w-2 h-2 rounded-full bg-amber-500 mr-2 animate-pulse';
             badge.className = 'mb-6 inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-amber-50 text-amber-900 border border-amber-200';
+        } else if (d.is_upcoming) {
+            label.textContent = 'Maintenance scheduled — login block starts at the configured time';
+            dot.className = 'w-2 h-2 rounded-full bg-indigo-500 mr-2';
+            badge.className = 'mb-6 inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-indigo-50 text-indigo-700 border border-indigo-200';
         } else {
             label.textContent = 'Normal — logins allowed';
             dot.className = 'w-2 h-2 rounded-full bg-emerald-500 mr-2';
             badge.className = 'mb-6 inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200';
         }
+    }
+    syncMaintenanceScheduleUi(d);
+}
+
+function syncMaintenanceScheduleUi(d) {
+    const notice = document.getElementById('maintenance-admin-notice');
+    const startBtn = document.getElementById('maintenance-start-btn');
+    if (notice) {
+        if (d && d.admin_notice) {
+            notice.textContent = d.admin_notice;
+            notice.classList.remove('hidden');
+        } else {
+            notice.textContent = '';
+            notice.classList.add('hidden');
+        }
+    }
+    const block = !!(d && (d.cannot_schedule_new != null ? d.cannot_schedule_new : (d.is_active || d.is_upcoming)));
+    if (startBtn) {
+        startBtn.disabled = block;
+        startBtn.title = block ? 'Maintenance is currently active. You cannot schedule another.' : '';
     }
 }
 
@@ -2061,6 +2086,33 @@ function showEmailResult(email) {
     el.textContent = `Last email run: sent ${email.sent}, failed ${email.failed}, total ${total}${durationText}`;
 }
 
+function clearMaintenanceComposeFields() {
+    const titleEl = document.getElementById('maintenance-title');
+    const msgEl = document.getElementById('maintenance-message');
+    const startEl = document.getElementById('maintenance-start-at');
+    const endEl = document.getElementById('maintenance-end-at');
+    if (titleEl) titleEl.value = '';
+    if (msgEl) msgEl.value = '';
+    if (startEl) startEl.value = '';
+    if (endEl) endEl.value = '';
+}
+
+function didEmailSendSuccessfully(email) {
+    if (!email || typeof email !== 'object') return false;
+    const sent = Number(email.sent || 0);
+    const failed = Number(email.failed || 0);
+    return sent > 0 && failed === 0;
+}
+
+/** datetime-local values (YYYY-MM-DDTHH:mm). Returns true if end is strictly before start. */
+function isMaintenanceEndBeforeStart(scheduledStart, scheduledEnd) {
+    if (!scheduledStart || !scheduledEnd) return false;
+    const s = new Date(scheduledStart);
+    const e = new Date(scheduledEnd);
+    if (isNaN(s.getTime()) || isNaN(e.getTime())) return false;
+    return e.getTime() < s.getTime();
+}
+
 function setMaintenanceActionBusy(isBusy, message) {
     const startBtn = document.getElementById('maintenance-start-btn');
     const saveBtn = document.getElementById('maintenance-save-btn');
@@ -2078,11 +2130,25 @@ function setMaintenanceActionBusy(isBusy, message) {
 async function startSystemMaintenance() {
     const title = document.getElementById('maintenance-title')?.value?.trim() || '';
     const public_message = document.getElementById('maintenance-message')?.value?.trim() || '';
-    const estimated_end_at = document.getElementById('maintenance-eta')?.value || '';
+    const scheduled_start_at = document.getElementById('maintenance-start-at')?.value || '';
+    const scheduled_end_at = document.getElementById('maintenance-end-at')?.value || '';
+    const estimated_end_at = scheduled_end_at || '';
     const send_email = document.getElementById('maintenance-email-start')?.checked;
+    if (!scheduled_start_at) {
+        Swal.fire('Required', 'Start date is required', 'warning');
+        return;
+    }
+    if (!scheduled_end_at) {
+        Swal.fire('Required', 'End date is required', 'warning');
+        return;
+    }
+    if (isMaintenanceEndBeforeStart(scheduled_start_at, scheduled_end_at)) {
+        Swal.fire('Invalid dates', 'End date and time must be on or after the start date and time.', 'warning');
+        return;
+    }
     const confirm = await Swal.fire({
-        title: 'Start maintenance?',
-        text: 'Students and teachers will not be able to log in until you end maintenance.',
+        title: 'Save maintenance schedule?',
+        text: 'Logins for students and teachers will be blocked automatically at the start time.',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Yes, start',
@@ -2090,20 +2156,35 @@ async function startSystemMaintenance() {
     });
     if (!confirm.isConfirmed) return;
     try {
-        setMaintenanceActionBusy(true, send_email
-            ? 'Sending maintenance email announcements... please wait.'
-            : 'Starting maintenance...');
+        setMaintenanceActionBusy(true, 'Saving maintenance schedule...');
         const res = await fetch('php/admin-maintenance.php', {
             method: 'POST',
             credentials: 'same-origin',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'start', title, public_message, estimated_end_at, send_email })
+            body: JSON.stringify({
+                action: 'start',
+                title,
+                public_message,
+                scheduled_start_at,
+                scheduled_end_at,
+                estimated_end_at,
+                send_email
+            })
         });
-        const data = await res.json();
+        const raw = await res.text();
+        let data;
+        try {
+            data = JSON.parse(raw);
+        } catch (parseErr) {
+            throw new Error('Server returned non-JSON response. Please check PHP logs and SMTP credentials.');
+        }
         if (data.success) {
             Swal.fire({ icon: 'success', title: 'Maintenance started', text: data.message || '' });
             applyMaintenanceForm(data.data);
             showEmailResult(data.email);
+            if (didEmailSendSuccessfully(data.email)) {
+                clearMaintenanceComposeFields();
+            }
         } else {
             Swal.fire('Error', data.message || 'Failed', 'error');
         }
@@ -2117,16 +2198,44 @@ async function startSystemMaintenance() {
 async function saveMaintenanceDraft() {
     const title = document.getElementById('maintenance-title')?.value?.trim() || '';
     const public_message = document.getElementById('maintenance-message')?.value?.trim() || '';
-    const estimated_end_at = document.getElementById('maintenance-eta')?.value || '';
+    const scheduled_start_at = document.getElementById('maintenance-start-at')?.value || '';
+    const scheduled_end_at = document.getElementById('maintenance-end-at')?.value || '';
+    const estimated_end_at = scheduled_end_at || '';
+    if (scheduled_start_at && !scheduled_end_at) {
+        Swal.fire('Required', 'End date is required', 'warning');
+        return;
+    }
+    if (!scheduled_start_at && scheduled_end_at) {
+        Swal.fire('Required', 'Start date is required', 'warning');
+        return;
+    }
+    if (scheduled_start_at && scheduled_end_at && isMaintenanceEndBeforeStart(scheduled_start_at, scheduled_end_at)) {
+        Swal.fire('Invalid dates', 'End date and time must be on or after the start date and time.', 'warning');
+        return;
+    }
     try {
         setMaintenanceActionBusy(true, 'Saving maintenance details...');
         const res = await fetch('php/admin-maintenance.php', {
             method: 'POST',
             credentials: 'same-origin',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'update', title, public_message, estimated_end_at })
+            body: JSON.stringify({
+                action: 'update',
+                title,
+                public_message,
+                scheduled_start_at,
+                scheduled_end_at,
+                estimated_end_at,
+                send_email_on_start: !!document.getElementById('maintenance-email-start')?.checked
+            })
         });
-        const data = await res.json();
+        const raw = await res.text();
+        let data;
+        try {
+            data = JSON.parse(raw);
+        } catch (parseErr) {
+            throw new Error('Server returned non-JSON response. Please check PHP logs.');
+        }
         if (data.success) {
             Swal.fire({ icon: 'success', title: 'Saved', text: data.message || 'Details updated.' });
             applyMaintenanceForm(data.data);
@@ -2144,7 +2253,12 @@ async function endSystemMaintenance() {
     const send_email = document.getElementById('maintenance-email-end')?.checked;
     const title = document.getElementById('maintenance-title')?.value?.trim() || '';
     const public_message = document.getElementById('maintenance-message')?.value?.trim() || '';
-    const estimated_end_at = document.getElementById('maintenance-eta')?.value || '';
+    const estimated_end_at = document.getElementById('maintenance-end-at')?.value || '';
+    const scheduled_start_at = document.getElementById('maintenance-start-at')?.value || '';
+    if (estimated_end_at && scheduled_start_at && isMaintenanceEndBeforeStart(scheduled_start_at, estimated_end_at)) {
+        Swal.fire('Invalid dates', 'End date and time must be on or after the start date and time.', 'warning');
+        return;
+    }
     const confirm = await Swal.fire({
         title: 'End maintenance?',
         text: 'Students and teachers will be able to log in again.',
@@ -2164,11 +2278,20 @@ async function endSystemMaintenance() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action: 'end', send_email, title, public_message, estimated_end_at })
         });
-        const data = await res.json();
+        const raw = await res.text();
+        let data;
+        try {
+            data = JSON.parse(raw);
+        } catch (parseErr) {
+            throw new Error('Server returned non-JSON response. Please check PHP logs and SMTP credentials.');
+        }
         if (data.success) {
             Swal.fire({ icon: 'success', title: 'Maintenance ended', text: data.message || '' });
             applyMaintenanceForm(data.data);
             showEmailResult(data.email);
+            if (didEmailSendSuccessfully(data.email)) {
+                clearMaintenanceComposeFields();
+            }
         } else {
             Swal.fire('Error', data.message || 'Failed', 'error');
         }

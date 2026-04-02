@@ -1597,6 +1597,22 @@
                     </div>
                     <div class="bg-white rounded-lg p-4 border border-red-200">
                         <p class="font-semibold text-red-800 mb-2 flex items-center">
+                            <i class="fas fa-expand text-red-500 mr-2"></i>
+                            Fullscreen Mode
+                        </p>
+                        <ul class="text-sm space-y-2 ml-6">
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2">•</span>
+                                <span>The quiz requests <strong>fullscreen</strong> as soon as you start (stay on this tab)</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2">•</span>
+                                <span>If you <strong>exit fullscreen</strong>, you get a warning; after <strong>3 exits</strong> you are marked <strong>cheating</strong> with score <strong>0</strong></span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-lg p-4 border border-red-200">
+                        <p class="font-semibold text-red-800 mb-2 flex items-center">
                             <i class="fas fa-ban text-red-500 mr-2"></i>
                             Other Prohibited Actions
                         </p>
@@ -2376,6 +2392,12 @@
         let hasLoggedOut = false;
         let hasExitedQuiz = false;
 
+        let fullscreenExitCount = 0;
+        const maxFullscreenExitsBeforeCheat = 3;
+        let intentionalFullscreenExit = false;
+        let hasEnteredQuizFullscreen = false;
+        let fullscreenListenersAttached = false;
+
         const TOTAL_MCQ = 15;
 
         // Quiz data with correct answers
@@ -2522,12 +2544,40 @@
                      document.mozFullScreenElement || 
                      document.msFullscreenElement);
         }
+
+        function attachFullscreenListeners() {
+            if (fullscreenListenersAttached) return;
+            fullscreenListenersAttached = true;
+            document.addEventListener('fullscreenchange', handleFullscreenChange);
+            document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+            document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+            document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+        }
         
-        // Handle fullscreen change
+        // Handle fullscreen change — warn on exit; 3 exits = cheating (score 0)
         function handleFullscreenChange() {
-            if (!isFullscreen()) {
-                console.log('⚠️ Exited fullscreen mode');
+            if (!isQuizActive || intentionalFullscreenExit) return;
+            if (isFullscreen()) {
+                hasEnteredQuizFullscreen = true;
+                return;
             }
+            if (!hasEnteredQuizFullscreen) return;
+
+            fullscreenExitCount++;
+            console.log(`⚠️ Fullscreen exited during quiz (${fullscreenExitCount}/${maxFullscreenExitsBeforeCheat})`);
+
+            if (fullscreenExitCount >= maxFullscreenExitsBeforeCheat) {
+                markAsCheating('excessive_fullscreen_exits');
+                return;
+            }
+
+            const remaining = maxFullscreenExitsBeforeCheat - fullscreenExitCount;
+            showCheatingWarning(
+                'Fullscreen Required',
+                `You left fullscreen mode (<strong>${fullscreenExitCount}</strong> of <strong>${maxFullscreenExitsBeforeCheat}</strong> allowed). ` +
+                `${remaining === 0 ? 'This was your last warning.' : `<strong>${remaining}</strong> more exit${remaining === 1 ? '' : 's'} will mark the quiz as cheating with a score of 0.`} ` +
+                `Please return to fullscreen using the browser control or refresh and start again if needed.`
+            );
         }
         
         // Start quiz function
@@ -2542,21 +2592,21 @@
                 
                 // Shuffle questions only (keep answer choices order fixed)
                 shuffleQuestions();
-                
-                // Request fullscreen
+
+                fullscreenExitCount = 0;
+                intentionalFullscreenExit = false;
+                hasEnteredQuizFullscreen = false;
+
+                attachFullscreenListeners();
                 try {
-                    const elementToFullscreen = document.documentElement;
-                    await requestFullscreen(elementToFullscreen);
-                    console.log('✅ Entered fullscreen mode');
-                    
-                    // Add fullscreen change listener
-                    document.addEventListener('fullscreenchange', handleFullscreenChange);
-                    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-                    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-                    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-                } catch (error) {
-                    console.warn('⚠️ Could not enter fullscreen:', error);
-                    // Continue with quiz even if fullscreen fails
+                    requestFullscreen(document.documentElement).then(() => {
+                        console.log('✅ Entered fullscreen mode');
+                        hasEnteredQuizFullscreen = true;
+                    }).catch(error => {
+                        console.warn('⚠️ Could not enter fullscreen:', error);
+                    });
+                } catch (e) {
+                    console.warn('⚠️ Fullscreen request error:', e);
                 }
                 
                 // Get quiz settings first to ensure time limit is loaded
@@ -3184,6 +3234,7 @@
 
         // Mark student as cheating
         async function markAsCheating(reason) {
+            intentionalFullscreenExit = true;
             console.log('🚨 Marking student as cheating - Reason:', reason);
             
             if (!currentAttemptId) {
@@ -3293,6 +3344,18 @@
         // Show cheating notification (final result)
         function showCheatingNotification(reason) {
             console.log('🚨 Showing cheating notification - Reason:', reason);
+
+            const reasonMessages = {
+                'excessive_tab_switches': 'You switched tabs too many times during the quiz.',
+                'excessive_focus_loss': 'You left the quiz page for too long.',
+                'excessive_fullscreen_exits': 'You left fullscreen mode too many times during the quiz.',
+                'page_exit': 'You attempted to leave the quiz page.',
+                'page_unload': 'You closed the browser or logged out during the quiz.',
+                'new_tab': 'You opened a new tab during the quiz.',
+                'keyboard_shortcut': 'A prohibited keyboard shortcut was used during the quiz.',
+                'logout_during_quiz': 'You logged out during the quiz.'
+            };
+            const message = reasonMessages[reason] || 'Suspicious activity detected during the quiz.';
             
             // Hide quiz container and show results
             const quizContainer = document.getElementById('quizContainer');
@@ -3330,7 +3393,7 @@
                         <i class="fas fa-exclamation-triangle text-red-500 mr-3"></i>
                         <div>
                             <h4 class="text-red-800 font-semibold">Cheating Detected</h4>
-                            <p class="text-red-700 text-sm">Your quiz has been terminated due to suspicious activity. Score: 0/15</p>
+                            <p class="text-red-700 text-sm">${message} Score: 0/15</p>
                         </div>
                     </div>
                 `;
@@ -3779,7 +3842,7 @@
             stopAntiCheating();
             isQuizActive = false;
             
-            // Exit fullscreen when submitting
+            intentionalFullscreenExit = true;
             if (isFullscreen()) {
                 try {
                     exitFullscreen();
@@ -3903,7 +3966,7 @@
             try {
                 console.log('📊 Showing results:', result);
                 
-                // Exit fullscreen when showing results
+                intentionalFullscreenExit = true;
                 if (isFullscreen()) {
                     try {
                         exitFullscreen();

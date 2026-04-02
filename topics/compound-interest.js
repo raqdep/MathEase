@@ -618,7 +618,7 @@ async function ciRunLessonQuiz(lessonNum) {
     Swal.fire({
         title: `Topic ${lessonNum} Quiz`,
         html: `
-            <div class="text-left space-y-4">
+            <div class="text-left space-y-4">${typeof mathEaseQuizIntroBanner === 'function' ? mathEaseQuizIntroBanner() : ''}
                 <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-5 border-l-4 border-blue-500">
                     <h4 class="text-lg font-bold text-gray-800 mb-3">
                         <i class="fas fa-info-circle text-blue-500 mr-2"></i>Purpose of these Questions

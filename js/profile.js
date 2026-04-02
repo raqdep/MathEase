@@ -74,7 +74,7 @@ async function loadProfileData() {
         applyNavProfile(profileResult.user);
         displayBadges(profileResult.badges);
         displayLessons(profileResult.lessons);
-        displayQuizzes(profileResult.quizzes);
+        displayQuizzesSplit(profileResult.quizzes);
         displayStatistics(profileResult);
         
     } catch (error) {
@@ -201,8 +201,8 @@ function displayLessons(lessons) {
         container.innerHTML = `
             <div class="text-center py-8">
                 <i class="fas fa-book-open text-6xl text-gray-300 mb-4"></i>
-                <p class="text-gray-500 text-lg">No lessons completed yet</p>
-                <a href="topics/functions.html" class="text-primary hover:underline mt-2 inline-block">Start Learning</a>
+                <p class="text-gray-500 text-lg">No topics completed yet</p>
+                <a href="dashboard.php#learning-path" class="text-primary hover:underline mt-2 inline-block">Go to learning path</a>
             </div>
         `;
         return;
@@ -227,38 +227,31 @@ function displayLessons(lessons) {
     `).join('');
 }
 
-// Display quizzes
-function displayQuizzes(quizzes) {
-    const container = document.getElementById('quizzesContainer');
-    
-    if (!quizzes || quizzes.length === 0) {
-        container.innerHTML = `
-            <div class="text-center py-8">
-                <i class="fas fa-clipboard-check text-6xl text-gray-300 mb-4"></i>
-                <p class="text-gray-500 text-lg">No quizzes taken yet</p>
-                <a href="quizzes.html" class="text-primary hover:underline mt-2 inline-block">Take a Quiz</a>
-            </div>
-        `;
-        return;
-    }
-    
-    container.innerHTML = quizzes.map(quiz => {
+/** Topic/lesson pages use quiz_type like *_topic_N, *_lesson_N, or *-lesson-N; /quiz pages use short slugs. */
+function isTopicLessonQuiz(quizType) {
+    if (!quizType || typeof quizType !== 'string') return false;
+    const t = quizType.trim();
+    return /_topic_\d+$/i.test(t) || /_lesson_\d+$/i.test(t) || /-lesson-\d+$/i.test(t);
+}
+
+function renderQuizCards(quizzes) {
+    return quizzes.map((quiz) => {
         const percentage = quiz.total_questions > 0 ? Math.round((quiz.score / quiz.total_questions) * 100) : 0;
         const colorClass = percentage >= 80 ? 'text-green-600' : percentage >= 60 ? 'text-yellow-600' : 'text-red-600';
         const bgClass = percentage >= 80 ? 'bg-green-50 border-green-500' : percentage >= 60 ? 'bg-yellow-50 border-yellow-500' : 'bg-red-50 border-red-500';
-        
+
         return `
             <div class="flex items-center justify-between p-4 ${bgClass} rounded-lg border-l-4">
-                <div class="flex items-center space-x-4">
-                    <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+                <div class="flex items-center space-x-4 min-w-0">
+                    <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
                         <i class="fas fa-clipboard-check text-white"></i>
                     </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-800">${formatQuizType(quiz.quiz_type)}</h3>
-                        <p class="text-sm text-gray-600">Score: ${quiz.score}/${quiz.total_questions}</p>
+                    <div class="min-w-0">
+                        <h3 class="font-semibold text-gray-800 break-words">${formatQuizType(quiz.quiz_type)}</h3>
+                        <p class="text-sm text-gray-600">${quiz.score}/${quiz.total_questions} correct</p>
                     </div>
                 </div>
-                <div class="text-right">
+                <div class="text-right flex-shrink-0 ml-2">
                     <p class="font-bold ${colorClass}">${percentage}%</p>
                     <p class="text-xs text-gray-400">${formatDate(quiz.completed_at)}</p>
                 </div>
@@ -267,24 +260,63 @@ function displayQuizzes(quizzes) {
     }).join('');
 }
 
+function displayQuizzesSplit(quizzes) {
+    const list = Array.isArray(quizzes) ? quizzes : [];
+    const topicQuizzes = list.filter((q) => isTopicLessonQuiz(q.quiz_type));
+    const standaloneQuizzes = list.filter((q) => !isTopicLessonQuiz(q.quiz_type));
+
+    const topicEl = document.getElementById('topicQuizzesContainer');
+    const standaloneEl = document.getElementById('standaloneQuizzesContainer');
+
+    if (topicEl) {
+        if (topicQuizzes.length === 0) {
+            topicEl.innerHTML = `
+                <div class="text-center py-8">
+                    <i class="fas fa-layer-group text-6xl text-gray-300 mb-4"></i>
+                    <p class="text-gray-500 text-lg">No topic quizzes yet</p>
+                    <a href="dashboard.php#learning-path" class="text-primary hover:underline mt-2 inline-block">Open a topic</a>
+                </div>
+            `;
+        } else {
+            topicEl.innerHTML = renderQuizCards(topicQuizzes);
+        }
+    }
+
+    if (standaloneEl) {
+        if (standaloneQuizzes.length === 0) {
+            standaloneEl.innerHTML = `
+                <div class="text-center py-8">
+                    <i class="fas fa-clipboard-check text-6xl text-gray-300 mb-4"></i>
+                    <p class="text-gray-500 text-lg">No course quizzes yet</p>
+                    <a href="quizzes.php" class="text-primary hover:underline mt-2 inline-block">Take a quiz</a>
+                </div>
+            `;
+        } else {
+            standaloneEl.innerHTML = renderQuizCards(standaloneQuizzes);
+        }
+    }
+}
+
 // Display statistics
 function displayStatistics(data) {
     const badges = data.badges || [];
     const lessons = data.lessons || [];
     const quizzes = data.quizzes || [];
-    
+    const topicQuizzes = quizzes.filter((q) => isTopicLessonQuiz(q.quiz_type));
+    const standaloneQuizzes = quizzes.filter((q) => !isTopicLessonQuiz(q.quiz_type));
+
     document.getElementById('totalBadges').textContent = badges.length;
     document.getElementById('completedLessons').textContent = lessons.length;
-    document.getElementById('completedQuizzes').textContent = quizzes.length;
-    
-    // Calculate total score
-    const totalScore = quizzes.reduce((sum, q) => sum + (q.score || 0), 0);
-    document.getElementById('totalScore').textContent = totalScore;
-    
-    // Calculate average score
+
+    const topicCountEl = document.getElementById('topicQuizCount');
+    const standaloneCountEl = document.getElementById('standaloneQuizCount');
+    if (topicCountEl) topicCountEl.textContent = topicQuizzes.length;
+    if (standaloneCountEl) standaloneCountEl.textContent = standaloneQuizzes.length;
+
+    const totalCorrect = quizzes.reduce((sum, q) => sum + (q.score || 0), 0);
     if (quizzes.length > 0) {
         const totalQuestions = quizzes.reduce((sum, q) => sum + (q.total_questions || 0), 0);
-        const averagePercentage = totalQuestions > 0 ? Math.round((totalScore / totalQuestions) * 100) : 0;
+        const averagePercentage = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
         document.getElementById('averageScore').textContent = averagePercentage + '%';
     } else {
         document.getElementById('averageScore').textContent = '0%';

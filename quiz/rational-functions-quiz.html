@@ -853,6 +853,13 @@
                 </div>
             </div>
 
+            <div class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 text-left">
+                <h3 class="font-semibold text-red-800 mb-2 text-sm sm:text-base">
+                    <i class="fas fa-shield-alt text-red-500 mr-2"></i>Anti-cheating: fullscreen &amp; tabs
+                </h3>
+                <p class="text-red-800 text-xs sm:text-sm">The quiz uses <strong>fullscreen</strong> when you start. Exiting fullscreen repeatedly or exceeding allowed <strong>tab switches</strong> can end the quiz with score <strong>0</strong>.</p>
+            </div>
+
             <div class="text-center">
                 <button onclick="startQuiz()" class="bg-gradient-to-r from-primary to-secondary text-white px-12 py-4 rounded-xl font-semibold text-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105">
                     <i class="fas fa-play mr-3"></i>
@@ -1588,6 +1595,23 @@
         let saveProgressTimeout = null; // Debounce progress saving
         let startQuizRetryCount = 0; // Prevent infinite recursion
 
+        let isQuizActive = false;
+        let tabSwitchCount = 0;
+        let focusLostTime = null;
+        let isPageVisible = true;
+        let hasExitedQuiz = false;
+        let hasLoggedOut = false;
+        let heartbeatInterval = null;
+        let lastHeartbeat = null;
+        const maxAllowedTabSwitches = 2;
+        const maxAllowedFocusLoss = 30000;
+
+        let fullscreenExitCount = 0;
+        const maxFullscreenExitsBeforeCheat = 3;
+        let intentionalFullscreenExit = false;
+        let hasEnteredQuizFullscreen = false;
+        let fullscreenListenersAttached = false;
+
         // Quiz data with correct answers
         const TOTAL_MCQ = 15;
         const quizData = {
@@ -1760,6 +1784,8 @@
         // Start quiz function
         async function startQuiz() {
             try {
+                beginQuizFullscreenSession();
+
                 console.log('Starting quiz... (attempt:', startQuizRetryCount + 1, ')');
                 
                 // Prevent infinite recursion
@@ -1895,6 +1921,8 @@
                 
                 // Initialize quiz
                 initializeQuiz();
+
+                initializeAntiCheating();
             } catch (error) {
                 console.error('Error starting quiz:', error);
                 
@@ -1917,6 +1945,8 @@
         // Start new quiz after clearing existing session
         async function startQuizNew() {
             try {
+                beginQuizFullscreenSession();
+
                 console.log('Starting new quiz after clearing existing session...');
                 
                 // Reset quiz state
@@ -1988,6 +2018,8 @@
                 
                 // Initialize quiz
                 initializeQuiz();
+
+                initializeAntiCheating();
             } catch (error) {
                 console.error('Error starting new quiz:', error);
                 
@@ -2015,10 +2047,256 @@
             }, 1000);
         }
 
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
         // Initialize quiz
         function initializeQuiz() {
             // Add any initialization logic here
             console.log('Quiz initialized');
+        }
+
+        function requestFullscreen(element) {
+            if (element.requestFullscreen) {
+                return element.requestFullscreen();
+            } else if (element.webkitRequestFullscreen) {
+                return element.webkitRequestFullscreen();
+            } else if (element.mozRequestFullScreen) {
+                return element.mozRequestFullScreen();
+            } else if (element.msRequestFullscreen) {
+                return element.msRequestFullscreen();
+            }
+            return Promise.reject(new Error('Fullscreen not supported'));
+        }
+
+        function exitFullscreen() {
+            if (document.exitFullscreen) {
+                return document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                return document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                return document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                return document.msExitFullscreen();
+            }
+        }
+
+        function isFullscreen() {
+            return !!(document.fullscreenElement ||
+                document.webkitFullscreenElement ||
+                document.mozFullScreenElement ||
+                document.msFullscreenElement);
+        }
+
+        function attachFullscreenListeners() {
+            if (fullscreenListenersAttached) return;
+            fullscreenListenersAttached = true;
+            document.addEventListener('fullscreenchange', handleFullscreenChange);
+            document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+            document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+            document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+        }
+
+        function handleFullscreenChange() {
+            if (!isQuizActive || intentionalFullscreenExit) return;
+            if (isFullscreen()) {
+                hasEnteredQuizFullscreen = true;
+                return;
+            }
+            if (!hasEnteredQuizFullscreen) return;
+            fullscreenExitCount++;
+            if (fullscreenExitCount >= maxFullscreenExitsBeforeCheat) {
+                markAsCheating('excessive_fullscreen_exits');
+                return;
+            }
+            const remaining = maxFullscreenExitsBeforeCheat - fullscreenExitCount;
+            showCheatingWarning(
+                'Fullscreen Required',
+                `You left fullscreen (${fullscreenExitCount}/${maxFullscreenExitsBeforeCheat}). ${remaining} more exit(s) may result in a score of 0.`
+            );
+        }
+
+        function beginQuizFullscreenSession() {
+            fullscreenExitCount = 0;
+            intentionalFullscreenExit = false;
+            hasEnteredQuizFullscreen = false;
+            attachFullscreenListeners();
+            try {
+                requestFullscreen(document.documentElement).then(() => {
+                    hasEnteredQuizFullscreen = true;
+                }).catch(() => {});
+            } catch (e) {}
+        }
+
+        // ==================== ANTI-CHEATING SYSTEM ====================
+        function initializeAntiCheating() {
+            stopAntiCheating();
+            tabSwitchCount = 0;
+            focusLostTime = null;
+            isPageVisible = true;
+            hasExitedQuiz = false;
+            hasLoggedOut = false;
+            isQuizActive = true;
+            startHeartbeat();
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+            window.addEventListener('focus', handleWindowFocus);
+            window.addEventListener('blur', handleWindowBlur);
+            window.addEventListener('beforeunload', handleBeforeUnload);
+            window.addEventListener('unload', handlePageUnload);
+            document.addEventListener('keydown', handleKeyboardShortcuts);
+        }
+
+        function stopAntiCheating() {
+            if (heartbeatInterval) {
+                clearInterval(heartbeatInterval);
+                heartbeatInterval = null;
+            }
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            window.removeEventListener('focus', handleWindowFocus);
+            window.removeEventListener('blur', handleWindowBlur);
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            window.removeEventListener('unload', handlePageUnload);
+            document.removeEventListener('keydown', handleKeyboardShortcuts);
+            isQuizActive = false;
+        }
+
+        function startHeartbeat() {
+            heartbeatInterval = setInterval(async () => {
+                if (!isQuizActive || !currentAttemptId) return;
+                try {
+                    await fetch('../php/quiz-management.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: `action=heartbeat&attempt_id=${currentAttemptId}`,
+                        credentials: 'include'
+                    });
+                } catch (e) {}
+            }, 10000);
+        }
+
+        function handleVisibilityChange() {
+            if (!isQuizActive) return;
+            if (document.hidden) {
+                focusLostTime = Date.now();
+                setTimeout(() => {
+                    if (document.hidden && isQuizActive) {
+                        tabSwitchCount++;
+                        if (tabSwitchCount >= maxAllowedTabSwitches) {
+                            isQuizActive = false;
+                            if (timerInterval) clearInterval(timerInterval);
+                            markAsCheating('excessive_tab_switches');
+                            return;
+                        }
+                        if (tabSwitchCount === 1) {
+                            showCheatingWarning('Tab Switch Detected', 'One more tab switch will end the quiz with a score of 0.');
+                        }
+                    }
+                }, 100);
+            } else {
+                if (focusLostTime) {
+                    const d = Date.now() - focusLostTime;
+                    if (d > maxAllowedFocusLoss) {
+                        markAsCheating('excessive_focus_loss');
+                        return;
+                    }
+                }
+                focusLostTime = null;
+            }
+        }
+
+        function handleWindowFocus() {
+            if (!isQuizActive) return;
+            focusLostTime = null;
+        }
+
+        function handleWindowBlur() {
+            if (!isQuizActive) return;
+            focusLostTime = Date.now();
+        }
+
+        function handleBeforeUnload(event) {
+            if (!isQuizActive) return;
+            markAsCheating('page_exit');
+            event.preventDefault();
+            event.returnValue = '';
+            return '';
+        }
+
+        function handlePageUnload() {
+            if (!isQuizActive) return;
+            markAsCheating('page_unload');
+        }
+
+        function handleKeyboardShortcuts(event) {
+            if (!isQuizActive) return;
+            if ((event.ctrlKey || event.metaKey) && (event.key === 't' || event.key === 'n')) {
+                event.preventDefault();
+                showCheatingWarning('Shortcut Blocked', 'New tabs/windows are not allowed during the quiz.');
+            }
+        }
+
+        async function markAsCheating(reason) {
+            intentionalFullscreenExit = true;
+            if (!currentAttemptId) {
+                try {
+                    const response = await fetch('../php/quiz-management.php?action=check_existing_attempt&quiz_type=rational-functions', {
+                        credentials: 'include'
+                    });
+                    const result = await response.json();
+                    if (result.success && result.attempt) {
+                        currentAttemptId = result.attempt.attempt_id || result.attempt.id;
+                    } else {
+                        showCheatingNotification(reason);
+                        return;
+                    }
+                } catch (e) {
+                    showCheatingNotification(reason);
+                    return;
+                }
+            }
+            isQuizActive = false;
+            if (timerInterval) clearInterval(timerInterval);
+            stopAntiCheating();
+            try {
+                await fetch('../php/quiz-management.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `action=mark_cheating&attempt_id=${currentAttemptId}&reason=${encodeURIComponent(reason)}`,
+                    credentials: 'include'
+                });
+            } catch (e) {}
+            showCheatingNotification(reason);
+        }
+
+        function showCheatingWarning(title, message) {
+            Swal.fire({
+                title: title,
+                text: message,
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#f59e0b'
+            });
+        }
+
+        function showCheatingNotification(reason) {
+            const map = {
+                excessive_tab_switches: 'Too many tab switches.',
+                excessive_focus_loss: 'Away from the quiz for too long.',
+                excessive_fullscreen_exits: 'Too many fullscreen exits.',
+                page_exit: 'Page exit detected.',
+                page_unload: 'Page closed or refreshed.',
+                logout_during_quiz: 'Logout during quiz.'
+            };
+            Swal.fire({
+                title: 'Quiz terminated',
+                text: map[reason] || 'Violation detected.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
         }
 
         // Check for existing quiz session
@@ -2211,6 +2489,8 @@
 
         // Resume quiz
         function resumeQuiz() {
+            beginQuizFullscreenSession();
+
             // Hide instructions container
             const instructionsContainer = document.querySelector('.max-w-4xl.mx-auto.px-4.sm\\:px-6.lg\\:px-8.py-8');
             if (instructionsContainer) {
@@ -2228,6 +2508,8 @@
             
             // Initialize quiz
             initializeQuiz();
+
+            initializeAntiCheating();
         }
 
         // Start quiz session
@@ -2368,6 +2650,13 @@
 
                 if (!result.isConfirmed) {
                     return;
+                }
+
+                intentionalFullscreenExit = true;
+                if (isFullscreen()) {
+                    try {
+                        exitFullscreen();
+                    } catch (e) {}
                 }
 
                 // Show loading state
@@ -2568,6 +2857,13 @@
             try {
                 // Stop the timer when showing results
                 stopTimer();
+
+                intentionalFullscreenExit = true;
+                if (isFullscreen()) {
+                    try {
+                        exitFullscreen();
+                    } catch (e) {}
+                }
                 
                 // Collect student answers BEFORE hiding quiz container
                 const studentAnswers = {};

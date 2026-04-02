@@ -3717,26 +3717,6 @@
                 }
             });
             
-            // Request fullscreen immediately when page loads (for immersive experience)
-            // Try multiple times to ensure it works
-            requestFullscreen();
-            
-            // Also try after a short delay (in case browser needs time)
-            setTimeout(() => {
-                if (!document.fullscreenElement && !document.webkitFullscreenElement && 
-                    !document.mozFullScreenElement && !document.msFullscreenElement) {
-                    requestFullscreen();
-                }
-            }, 500);
-            
-            // Try again after page is fully interactive
-            setTimeout(() => {
-                if (!document.fullscreenElement && !document.webkitFullscreenElement && 
-                    !document.mozFullScreenElement && !document.msFullscreenElement) {
-                    requestFullscreen();
-                }
-            }, 1000);
-            
             // Start study time tracking
             startStudyTimeTracking();
             
@@ -3765,13 +3745,6 @@
                         // Just update display for completed lesson (don't start timer)
                         updateLiveTimer();
                     }
-                    // Request fullscreen when page becomes visible again
-                    setTimeout(() => {
-                        if (!document.fullscreenElement && !document.webkitFullscreenElement && 
-                            !document.mozFullScreenElement && !document.msFullscreenElement) {
-                            requestFullscreen();
-                        }
-                    }, 300);
                 } else {
                     // Page hidden, save current time (only if lesson is not completed)
                     if (!completedLessons.has(currentLesson)) {
@@ -3785,41 +3758,12 @@
                 }
             });
             
-            // Request fullscreen when window gains focus (user switches back to this tab)
-            window.addEventListener('focus', function() {
-                setTimeout(() => {
-                    if (!document.fullscreenElement && !document.webkitFullscreenElement && 
-                        !document.mozFullScreenElement && !document.msFullscreenElement) {
-                        requestFullscreen();
-                    }
-                }, 300);
-            });
-            
             // Save study time before page unload
             window.addEventListener('beforeunload', function() {
                 saveStudyTimeForCurrentLesson();
                 // Send final time to server
                 sendStudyTimeToServer();
             });
-            
-            // Request fullscreen on first user interaction (some browsers require this)
-            let fullscreenRequested = false;
-            const requestFullscreenOnInteraction = function() {
-                if (!fullscreenRequested && (!document.fullscreenElement && !document.webkitFullscreenElement && 
-                    !document.mozFullScreenElement && !document.msFullscreenElement)) {
-                    fullscreenRequested = true;
-                    requestFullscreen();
-                    // Remove listeners after first interaction
-                    document.removeEventListener('click', requestFullscreenOnInteraction);
-                    document.removeEventListener('keydown', requestFullscreenOnInteraction);
-                    document.removeEventListener('touchstart', requestFullscreenOnInteraction);
-                }
-            };
-            
-            // Add listeners for user interaction
-            document.addEventListener('click', requestFullscreenOnInteraction, { once: true });
-            document.addEventListener('keydown', requestFullscreenOnInteraction, { once: true });
-            document.addEventListener('touchstart', requestFullscreenOnInteraction, { once: true });
 
             // Wire presets: Ice Cream Function Machine
             const ruleButtons = document.querySelectorAll('#functionRulePresets [data-rule]');
@@ -4547,103 +4491,6 @@
             });
         }
         
-        // Request fullscreen mode (aggressive - for immersive lesson experience)
-        function requestFullscreen() {
-            // Check if fullscreen is already active
-            if (document.fullscreenElement || document.webkitFullscreenElement || 
-                document.mozFullScreenElement || document.msFullscreenElement) {
-                return; // Already in fullscreen
-            }
-            
-            const element = document.documentElement; // Full page
-            
-            // Try different fullscreen methods for browser compatibility
-            const tryFullscreen = () => {
-                if (element.requestFullscreen) {
-                    element.requestFullscreen().catch(err => {
-                        console.log('Fullscreen request failed:', err);
-                        // Retry after a short delay if it failed (might need user interaction)
-                        setTimeout(() => {
-                            if (!document.fullscreenElement) {
-                                element.requestFullscreen().catch(() => {
-                                    console.log('Fullscreen retry also failed');
-                                });
-                            }
-                        }, 500);
-                    });
-                } else if (element.webkitRequestFullscreen) {
-                    element.webkitRequestFullscreen();
-                } else if (element.mozRequestFullScreen) {
-                    element.mozRequestFullScreen();
-                } else if (element.msRequestFullscreen) {
-                    element.msRequestFullscreen();
-                }
-            };
-            
-            // Try immediately
-            tryFullscreen();
-            
-            // Also try after page is fully loaded (in case DOM isn't ready)
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', tryFullscreen);
-            }
-        }
-        
-        // Listen for fullscreen changes and retry if exited
-        document.addEventListener('fullscreenchange', function() {
-            if (!document.fullscreenElement) {
-                // Fullscreen was exited, try to re-enter after a short delay
-                setTimeout(() => {
-                    if (!document.fullscreenElement && currentLesson) {
-                        requestFullscreen();
-                    }
-                }, 1000);
-            }
-        });
-        
-        document.addEventListener('webkitfullscreenchange', function() {
-            if (!document.webkitFullscreenElement) {
-                setTimeout(() => {
-                    if (!document.webkitFullscreenElement && currentLesson) {
-                        requestFullscreen();
-                    }
-                }, 1000);
-            }
-        });
-        
-        document.addEventListener('mozfullscreenchange', function() {
-            if (!document.mozFullScreenElement) {
-                setTimeout(() => {
-                    if (!document.mozFullScreenElement && currentLesson) {
-                        requestFullscreen();
-                    }
-                }, 1000);
-            }
-        });
-        
-        document.addEventListener('MSFullscreenChange', function() {
-            if (!document.msFullscreenElement) {
-                setTimeout(() => {
-                    if (!document.msFullscreenElement && currentLesson) {
-                        requestFullscreen();
-                    }
-                }, 1000);
-            }
-        });
-        
-        // Exit fullscreen mode
-        function exitFullscreen() {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            } else if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen();
-            } else if (document.msExitFullscreen) {
-                document.msExitFullscreen();
-            }
-        }
-        
         // Show specific lesson
         function showLesson(lessonNum) {
             const lessonSections = document.querySelectorAll('.lesson-section');
@@ -4654,9 +4501,6 @@
             }
             
             currentLesson = lessonNum;
-            
-            // Request fullscreen when showing a lesson
-            requestFullscreen();
             
             // Start tracking for new lesson - only if not completed
             if (!completedLessons.has(lessonNum)) {
@@ -5053,7 +4897,7 @@
             Swal.fire({
                 title: `📚 Topic ${lessonNum} Quiz`,
                 html: `
-                    <div class="text-left space-y-4">
+                    <div class="text-left space-y-4">${typeof mathEaseQuizIntroBanner === 'function' ? mathEaseQuizIntroBanner() : ''}
                         <div class="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg p-5 border-l-4 border-primary">
                             <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
                                 <i class="fas fa-info-circle text-primary mr-2"></i>
@@ -5184,6 +5028,17 @@
                                 setTimeout(displayQuestion, 80);
                             }, 400);
                         });
+                    }
+                }).then((result) => {
+                    if (result.isDismissed && result.dismiss === Swal.DismissReason.cancel) {
+                        if (typeof mathEaseConfirmTopicQuizCancel === 'function') {
+                            mathEaseConfirmTopicQuizCancel().then((cr) => {
+                                if (cr.isConfirmed) showLesson(lessonNum);
+                                else displayQuestion();
+                            });
+                        } else {
+                            showLesson(lessonNum);
+                        }
                     }
                 });
             }
@@ -5471,7 +5326,7 @@
             Swal.fire({
                 title: '📚 Topic 1 Quiz',
                 html: `
-                    <div class="text-left space-y-4">
+                    <div class="text-left space-y-4">${typeof mathEaseQuizIntroBanner === 'function' ? mathEaseQuizIntroBanner() : ''}
                         <div class="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg p-5 border-l-4 border-primary">
                             <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
                                 <i class="fas fa-info-circle text-primary mr-2"></i>
@@ -5623,6 +5478,17 @@
                                 setTimeout(displayQuestion, 80);
                             }, 400);
                         });
+                    }
+                }).then((result) => {
+                    if (result.isDismissed && result.dismiss === Swal.DismissReason.cancel) {
+                        if (typeof mathEaseConfirmTopicQuizCancel === 'function') {
+                            mathEaseConfirmTopicQuizCancel().then((cr) => {
+                                if (cr.isConfirmed) showLesson(1);
+                                else displayQuestion();
+                            });
+                        } else {
+                            showLesson(1);
+                        }
                     }
                 });
             }

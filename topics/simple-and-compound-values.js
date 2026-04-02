@@ -350,7 +350,7 @@ async function scRunLessonQuiz(lessonNum) {
     const introResult = await Swal.fire({
         title: `📚 Topic ${lessonNum} Quiz`,
         html: `
-            <div class="text-left space-y-4">
+            <div class="text-left space-y-4">${typeof mathEaseQuizIntroBanner === 'function' ? mathEaseQuizIntroBanner() : ''}
                 <div class="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg p-5 border-l-4 border-primary">
                     <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
                         <i class="fas fa-info-circle text-primary mr-2"></i>

@@ -5,6 +5,8 @@ class ViewStudentsModal {
         this.isOpen = false;
         this.currentClassId = null;
         this.students = [];
+        this.currentPage = 1;
+        this.pageSize = 10;
         this.init();
     }
 
@@ -58,52 +60,53 @@ class ViewStudentsModal {
                                 </div>
                             </div>
 
-                            <!-- Students List -->
-                            <div id="viewStudentsList" class="space-y-4 max-h-96 overflow-y-auto">
-                                <!-- Students will be populated by JavaScript -->
+                            <!-- Summary (above roster) -->
+                            <div id="viewStudentsStats" class="hidden mb-5">
+                                <div class="rounded-xl border border-purple-200 bg-gradient-to-br from-purple-50 via-white to-indigo-50/80 p-4 sm:p-5 shadow-sm">
+                                    <p class="text-xs font-semibold uppercase tracking-wide text-purple-800/80 mb-3">Class summary</p>
+                                    <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                                        <span class="text-sm font-medium text-slate-600">Total students</span>
+                                        <span class="text-2xl sm:text-3xl font-bold text-purple-800 tabular-nums leading-tight" id="totalStudents">0</span>
+                                    </div>
+                                </div>
                             </div>
 
-                            <!-- Statistics -->
-                            <div id="viewStudentsStats" class="hidden mt-6 pt-6 border-t border-slate-200">
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div class="bg-purple-50 rounded-xl p-4 border border-purple-200">
-                                        <div class="flex items-center space-x-3">
-                                            <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
-                                                <i class="fas fa-users text-white text-sm"></i>
-                                            </div>
-                                            <div>
-                                                <div class="text-2xl font-bold text-purple-700" id="totalStudents">0</div>
-                                                <div class="text-xs text-purple-600">Total Students</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="bg-purple-50 rounded-xl p-4 border border-purple-200">
-                                        <div class="flex items-center space-x-3">
-                                            <div class="w-10 h-10 bg-purple-700 rounded-lg flex items-center justify-center">
-                                                <i class="fas fa-check-circle text-white text-sm"></i>
-                                            </div>
-                                            <div>
-                                                <div class="text-2xl font-bold text-purple-700" id="activeStudents">0</div>
-                                                <div class="text-xs text-purple-600">Active Students</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="bg-purple-50 rounded-xl p-4 border border-purple-200">
-                                        <div class="flex items-center space-x-3">
-                                            <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
-                                                <i class="fas fa-clock text-white text-sm"></i>
-                                            </div>
-                                            <div>
-                                                <div class="text-2xl font-bold text-purple-700" id="recentEnrollments">0</div>
-                                                <div class="text-xs text-purple-600">Recent (7 days)</div>
-                                            </div>
-                                        </div>
+                            <!-- Student roster: table + pagination -->
+                            <div id="viewStudentsList" class="hidden space-y-3">
+                                <div class="flex items-baseline justify-between gap-2 flex-wrap">
+                                    <h4 class="text-sm font-semibold text-slate-800">Student roster</h4>
+                                    <span class="text-xs text-slate-500 sm:hidden">Swipe horizontally to see all columns.</span>
+                                </div>
+                                <div class="overflow-x-auto max-h-[min(28rem,52vh)] overflow-y-auto rounded-xl border border-purple-200/70 bg-white shadow-sm">
+                                    <table class="w-full min-w-[520px] text-left text-sm">
+                                        <thead class="bg-purple-50 sticky top-0 z-10 border-b border-purple-100">
+                                            <tr>
+                                                <th scope="col" class="px-3 py-3 font-semibold text-slate-700 whitespace-nowrap">#</th>
+                                                <th scope="col" class="px-3 py-3 font-semibold text-slate-700 whitespace-nowrap">Name</th>
+                                                <th scope="col" class="px-3 py-3 font-semibold text-slate-700 whitespace-nowrap">Email</th>
+                                                <th scope="col" class="px-3 py-3 font-semibold text-slate-700 whitespace-nowrap">Enrolled</th>
+                                                <th scope="col" class="px-3 py-3 font-semibold text-slate-700 text-right whitespace-nowrap">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="viewStudentsTableBody" class="divide-y divide-slate-100">
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div id="viewStudentsPagination" class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-1">
+                                    <p class="text-sm text-slate-600" id="viewStudentsPageInfo"></p>
+                                    <div class="flex items-center gap-2">
+                                        <button type="button" id="viewStudentsPrev" class="px-4 py-2 rounded-lg border border-slate-200 text-slate-700 text-sm font-medium hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition-colors">
+                                            Previous
+                                        </button>
+                                        <button type="button" id="viewStudentsNext" class="px-4 py-2 rounded-lg border border-slate-200 text-slate-700 text-sm font-medium hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition-colors">
+                                            Next
+                                        </button>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Action Buttons -->
-                            <div class="flex justify-end space-x-3 mt-6 pt-6 border-t border-slate-200 flex-shrink-0">
+                            <div class="flex justify-end space-x-3 mt-5 pt-5 border-t border-slate-200 flex-shrink-0">
                                 <button 
                                     id="closeViewStudents" 
                                     class="px-6 py-3 text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl font-medium transition-all duration-200"
@@ -131,27 +134,21 @@ class ViewStudentsModal {
         // Add custom styles for better scrolling
         const style = document.createElement('style');
         style.textContent = `
-            #viewStudentsList {
+            #viewStudentsList .overflow-x-auto {
                 scrollbar-width: thin;
                 scrollbar-color: #9333ea #f3f4f6;
             }
-            
-            #viewStudentsList::-webkit-scrollbar {
-                width: 6px;
+            #viewStudentsList .overflow-x-auto::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
             }
-            
-            #viewStudentsList::-webkit-scrollbar-track {
+            #viewStudentsList .overflow-x-auto::-webkit-scrollbar-track {
                 background: #f3f4f6;
                 border-radius: 3px;
             }
-            
-            #viewStudentsList::-webkit-scrollbar-thumb {
+            #viewStudentsList .overflow-x-auto::-webkit-scrollbar-thumb {
                 background: #9333ea;
                 border-radius: 3px;
-            }
-            
-            #viewStudentsList::-webkit-scrollbar-thumb:hover {
-                background: #7e22ce;
             }
         `;
         document.head.appendChild(style);
@@ -173,6 +170,20 @@ class ViewStudentsModal {
         document.getElementById('refreshViewStudents').addEventListener('click', () => {
             if (this.currentClassId) {
                 this.loadClassStudents(this.currentClassId);
+            }
+        });
+
+        document.getElementById('viewStudentsPrev').addEventListener('click', () => {
+            if (this.currentPage > 1) {
+                this.currentPage--;
+                this.updateStudentsList();
+            }
+        });
+        document.getElementById('viewStudentsNext').addEventListener('click', () => {
+            const totalPages = Math.max(1, Math.ceil(this.students.length / this.pageSize));
+            if (this.currentPage < totalPages) {
+                this.currentPage++;
+                this.updateStudentsList();
             }
         });
 
@@ -208,6 +219,7 @@ class ViewStudentsModal {
             
             if (data.success) {
                 this.students = data.students || [];
+                this.currentPage = 1;
                 console.log('Students loaded:', this.students.length);
                 this.updateStudentsList();
                 this.updateClassInfo(data.class_info);
@@ -229,14 +241,27 @@ class ViewStudentsModal {
         }
     }
 
+    escapeHtml(value) {
+        if (value === null || value === undefined) return '';
+        return String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
     updateStudentsList() {
         const studentsList = document.getElementById('viewStudentsList');
+        const tableBody = document.getElementById('viewStudentsTableBody');
+        const paginationEl = document.getElementById('viewStudentsPagination');
+        const pageInfo = document.getElementById('viewStudentsPageInfo');
+        const btnPrev = document.getElementById('viewStudentsPrev');
+        const btnNext = document.getElementById('viewStudentsNext');
         const emptyState = document.getElementById('viewStudentsEmpty');
         const loadingState = document.getElementById('viewStudentsLoading');
-        
-        // Hide loading
+
         loadingState.classList.add('hidden');
-        
+
         if (this.students.length === 0) {
             studentsList.classList.add('hidden');
             emptyState.classList.remove('hidden');
@@ -245,91 +270,50 @@ class ViewStudentsModal {
 
         emptyState.classList.add('hidden');
         studentsList.classList.remove('hidden');
-        studentsList.innerHTML = '';
 
-        this.students.forEach((student, index) => {
-            const studentCard = document.createElement('div');
-            studentCard.className = 'bg-white rounded-xl p-4 border border-purple-200/60 hover:shadow-lg transition-all duration-300';
-            studentCard.innerHTML = `
-                <div class="flex items-center justify-between mb-3">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-user text-white text-sm"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-base font-semibold text-slate-800">${student.first_name} ${student.last_name}</h4>
-                            <p class="text-xs text-slate-600">${student.email} • ID: ${student.student_number}</p>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-xs font-semibold ${student.enrollment_status === 'approved' ? 'text-purple-700 bg-purple-100' : 'text-purple-900 bg-purple-200'} px-2 py-1 rounded-full">
-                            ${student.enrollment_status === 'approved' ? 'Active' : 'Pending'}
-                        </div>
-                        <div class="text-xs text-slate-500 mt-1">
-                            Joined ${new Date(student.enrolled_at).toLocaleDateString()}
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-4">
-                        <div class="text-xs text-slate-500">
-                            <i class="fas fa-calendar mr-1"></i>
-                            Enrolled: ${this.formatTimeAgo(student.enrolled_at)}
-                        </div>
-                        ${student.last_activity ? `
-                            <div class="text-xs text-slate-500">
-                                <i class="fas fa-clock mr-1"></i>
-                                Last active: ${this.formatTimeAgo(student.last_activity)}
-                            </div>
-                        ` : ''}
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        ${student.enrollment_status === 'pending' ? `
-                            <button 
-                                onclick="approveStudentEnrollment(${student.enrollment_id})"
-                                class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition-all duration-200"
-                            >
-                                <i class="fas fa-check mr-1"></i>
-                                Approve
-                            </button>
-                            <button 
-                                onclick="rejectStudentEnrollment(${student.enrollment_id})"
-                                class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition-all duration-200"
-                            >
-                                <i class="fas fa-times mr-1"></i>
-                                Reject
-                            </button>
-                        ` : `
-                            <span class="text-xs font-semibold text-purple-700 bg-purple-100 px-2 py-1 rounded-full">
-                                <i class="fas fa-check-circle mr-1"></i>
-                                Approved
-                            </span>
-                        `}
-                    </div>
-                </div>
-            `;
-            studentsList.appendChild(studentCard);
-        });
+        const total = this.students.length;
+        const totalPages = Math.max(1, Math.ceil(total / this.pageSize));
+        if (this.currentPage > totalPages) this.currentPage = totalPages;
+        const start = (this.currentPage - 1) * this.pageSize;
+        const pageRows = this.students.slice(start, start + this.pageSize);
+
+        tableBody.innerHTML = pageRows.map((student, i) => {
+            const globalIndex = start + i + 1;
+            const name = this.escapeHtml(`${student.first_name || ''} ${student.last_name || ''}`.trim() || '—');
+            const email = this.escapeHtml(student.email || '—');
+            const enrolled = student.enrolled_at
+                ? new Date(student.enrolled_at).toLocaleDateString()
+                : '—';
+            const actions = student.enrollment_status === 'pending'
+                ? `<button type="button" onclick="approveStudentEnrollment(${Number(student.enrollment_id)})" class="bg-purple-600 hover:bg-purple-700 text-white px-2 py-1 rounded-md text-xs font-medium mr-1">Approve</button>
+                   <button type="button" onclick="rejectStudentEnrollment(${Number(student.enrollment_id)})" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded-md text-xs font-medium">Reject</button>`
+                : `<span class="text-xs font-semibold text-purple-700 bg-purple-100 px-2 py-1 rounded-full inline-block"><i class="fas fa-check-circle mr-1"></i>Approved</span>`;
+
+            return `<tr class="hover:bg-purple-50/40">
+                <td class="px-3 py-2.5 text-slate-500">${globalIndex}</td>
+                <td class="px-3 py-2.5 font-medium text-slate-800">${name}</td>
+                <td class="px-3 py-2.5 text-slate-600 max-w-[200px] break-all">${email}</td>
+                <td class="px-3 py-2.5 text-slate-600 whitespace-nowrap">${enrolled}</td>
+                <td class="px-3 py-2.5 text-right whitespace-nowrap">${actions}</td>
+            </tr>`;
+        }).join('');
+
+        const from = total === 0 ? 0 : start + 1;
+        const to = Math.min(start + pageRows.length, total);
+        pageInfo.textContent = `Showing ${from}–${to} of ${total} students · Page ${this.currentPage} of ${totalPages}`;
+        btnPrev.disabled = this.currentPage <= 1;
+        btnNext.disabled = this.currentPage >= totalPages;
+        paginationEl.classList.toggle('hidden', totalPages <= 1);
     }
 
     updateStatistics() {
         const totalStudents = this.students.length;
-        const activeStudents = this.students.filter(s => s.enrollment_status === 'approved').length;
-        const recentEnrollments = this.students.filter(s => {
-            const enrollmentDate = new Date(s.enrolled_at);
-            const weekAgo = new Date();
-            weekAgo.setDate(weekAgo.getDate() - 7);
-            return enrollmentDate >= weekAgo;
-        }).length;
 
         document.getElementById('totalStudents').textContent = totalStudents;
-        document.getElementById('activeStudents').textContent = activeStudents;
-        document.getElementById('recentEnrollments').textContent = recentEnrollments;
-        
-        // Show statistics if there are students
-        if (totalStudents > 0) {
-            document.getElementById('viewStudentsStats').classList.remove('hidden');
+
+        const statsEl = document.getElementById('viewStudentsStats');
+        if (statsEl) {
+            statsEl.classList.toggle('hidden', totalStudents === 0);
         }
     }
 
@@ -383,7 +367,9 @@ class ViewStudentsModal {
         document.getElementById('viewStudentsLoading').classList.add('hidden');
         document.getElementById('viewStudentsEmpty').classList.add('hidden');
         document.getElementById('viewStudentsList').classList.add('hidden');
-        
+        const statsEl = document.getElementById('viewStudentsStats');
+        if (statsEl) statsEl.classList.add('hidden');
+
         // Create error display
         const errorDiv = document.createElement('div');
         errorDiv.className = 'text-center py-8';

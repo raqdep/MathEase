@@ -204,21 +204,21 @@
                     <i class="fas fa-book-open text-3xl opacity-80"></i>
                     <span class="text-3xl font-bold" id="completedLessons">0</span>
                 </div>
-                <p class="text-white/90">Lessons Completed</p>
+                <p class="text-white/90">Topics completed</p>
+            </div>
+            <div class="stat-card rounded-xl p-6 text-white">
+                <div class="flex items-center justify-between mb-4">
+                    <i class="fas fa-layer-group text-3xl opacity-80"></i>
+                    <span class="text-3xl font-bold" id="topicQuizCount">0</span>
+                </div>
+                <p class="text-white/90">Topic quizzes</p>
             </div>
             <div class="stat-card rounded-xl p-6 text-white">
                 <div class="flex items-center justify-between mb-4">
                     <i class="fas fa-clipboard-check text-3xl opacity-80"></i>
-                    <span class="text-3xl font-bold" id="completedQuizzes">0</span>
+                    <span class="text-3xl font-bold" id="standaloneQuizCount">0</span>
                 </div>
-                <p class="text-white/90">Quizzes Taken</p>
-            </div>
-            <div class="stat-card rounded-xl p-6 text-white">
-                <div class="flex items-center justify-between mb-4">
-                    <i class="fas fa-star text-3xl opacity-80"></i>
-                    <span class="text-3xl font-bold" id="totalScore">0</span>
-                </div>
-                <p class="text-white/90">Total Score</p>
+                <p class="text-white/90">Course quizzes</p>
             </div>
         </div>
 
@@ -294,28 +294,44 @@
                     </div>
                 </div>
 
-                <!-- Lessons Completed -->
+                <!-- Topics completed (lesson progress) -->
                 <div class="bg-white rounded-xl shadow-lg p-6 profile-card">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">
-                        <i class="fas fa-book-open text-green-500 mr-3"></i>Lessons Completed
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">
+                        <i class="fas fa-book-open text-green-500 mr-3"></i>Topics completed
                     </h2>
+                    <p class="text-sm text-gray-500 mb-6">Topics you finished on the learning path</p>
                     <div id="lessonsContainer" class="space-y-3">
                         <div class="text-center py-8">
                             <i class="fas fa-spinner fa-spin text-4xl text-gray-400 mb-4"></i>
-                            <p class="text-gray-500">Loading lessons...</p>
+                            <p class="text-gray-500">Loading...</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Quizzes Taken -->
+                <!-- Topic quizzes (inside each topic / lesson) -->
                 <div class="bg-white rounded-xl shadow-lg p-6 profile-card">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-6">
-                        <i class="fas fa-clipboard-check text-blue-500 mr-3"></i>Quizzes Taken
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">
+                        <i class="fas fa-layer-group text-indigo-500 mr-3"></i>Topic quizzes
                     </h2>
-                    <div id="quizzesContainer" class="space-y-3">
+                    <p class="text-sm text-gray-500 mb-6">Short quizzes completed inside a topic lesson</p>
+                    <div id="topicQuizzesContainer" class="space-y-3">
                         <div class="text-center py-8">
                             <i class="fas fa-spinner fa-spin text-4xl text-gray-400 mb-4"></i>
-                            <p class="text-gray-500">Loading quizzes...</p>
+                            <p class="text-gray-500">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Course quizzes (Quizzes page) -->
+                <div class="bg-white rounded-xl shadow-lg p-6 profile-card">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">
+                        <i class="fas fa-clipboard-check text-blue-500 mr-3"></i>Course quizzes
+                    </h2>
+                    <p class="text-sm text-gray-500 mb-6">Full quizzes from the Quizzes page</p>
+                    <div id="standaloneQuizzesContainer" class="space-y-3">
+                        <div class="text-center py-8">
+                            <i class="fas fa-spinner fa-spin text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-500">Loading...</p>
                         </div>
                     </div>
                 </div>

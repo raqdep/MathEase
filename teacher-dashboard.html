@@ -3468,29 +3468,29 @@
             container.innerHTML = `
                 <!-- 1st Quarter Section -->
                 <div class="mb-8">
-                    <div class="flex items-center mb-6">
-                        <div class="w-12 h-12 bg-gradient-to-br from-blue-200 via-indigo-200 to-purple-200 rounded-2xl flex items-center justify-center shadow-lg mr-4">
+                    <div class="flex items-start sm:items-center mb-6 gap-4 min-w-0">
+                        <div class="w-12 h-12 shrink-0 bg-gradient-to-br from-blue-200 via-indigo-200 to-purple-200 rounded-2xl flex items-center justify-center shadow-lg">
                             <i class="fas fa-function text-2xl text-blue-600"></i>
                         </div>
-                        <div>
-                            <h3 class="text-2xl font-bold bg-gradient-to-r from-blue-500 to-indigo-500 bg-clip-text text-transparent">1st Quarter</h3>
-                            <p class="text-sm text-gray-600">Functions and Rational Functions</p>
+                        <div class="min-w-0 flex-1">
+                            <h3 class="text-2xl font-bold text-blue-700 leading-tight break-words">1st Quarter</h3>
+                            <p class="text-sm text-gray-600 mt-1 break-words">Functions and Rational Functions</p>
                         </div>
                     </div>
                     <div class="space-y-3">
                         ${firstQuarterTopics.length > 0 ? firstQuarterTopics.map(topic => `
-                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors">
-                                <div class="flex items-center space-x-4">
-                                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors">
+                                <div class="flex items-start space-x-4 min-w-0 flex-1">
+                                    <div class="w-10 h-10 shrink-0 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
                                         <i class="fas fa-book text-white text-sm"></i>
                                     </div>
-                                    <div>
-                                        <h5 class="font-semibold text-gray-900">${topic.topic_name}</h5>
-                                        <p class="text-sm text-gray-600">${topic.description || 'No description available'}</p>
+                                    <div class="min-w-0">
+                                        <h5 class="font-semibold text-gray-900 break-words">${topic.topic_name}</h5>
+                                        <p class="text-sm text-gray-600 break-words">${topic.description || 'No description available'}</p>
                                     </div>
                                 </div>
-                                <div class="flex items-center space-x-3">
-                                    ${topic.topic_slug ? `<a href="topics/${topic.topic_slug}.html?teacher_view=1" target="_blank" rel="noopener" class="p-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700" title="View topic page"><i class="fas fa-external-link-alt text-xs"></i></a>` : ''}
+                                <div class="flex items-center flex-wrap gap-2 sm:gap-3 shrink-0 sm:pl-2">
+                                    ${topic.topic_slug ? `<a href="topics/${topic.topic_slug}.html?teacher_view=1" class="p-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700" title="View topic page (same tab)"><i class="fas fa-eye text-xs"></i></a>` : ''}
                                     ${topic.topic_slug ? `<button type="button" onclick="downloadTopicAsPpt('${topic.topic_slug}', this)" class="p-2 rounded-lg bg-indigo-100 hover:bg-indigo-200 text-indigo-800 disabled:opacity-50" title="Download AI lesson outline as PowerPoint (no videos / visual aids)"><i class="fas fa-file-powerpoint text-xs"></i></button>` : ''}
                                     <!-- Topic lock switch -->
                                     <button onclick="toggleTopicLock('${topic.topic_id}', ${topic.is_locked}, '${topic.class_id}')"
@@ -3514,29 +3514,29 @@
 
                 <!-- 2nd Quarter Section -->
                 <div class="mb-8">
-                    <div class="flex items-center mb-6">
-                        <div class="w-12 h-12 bg-gradient-to-br from-green-200 via-emerald-200 to-teal-200 rounded-2xl flex items-center justify-center shadow-lg mr-4">
+                    <div class="flex items-start sm:items-center mb-6 gap-4 min-w-0">
+                        <div class="w-12 h-12 shrink-0 bg-gradient-to-br from-green-200 via-emerald-200 to-teal-200 rounded-2xl flex items-center justify-center shadow-lg">
                             <i class="fas fa-calculator text-2xl text-green-600"></i>
                         </div>
-                        <div>
-                            <h3 class="text-2xl font-bold bg-gradient-to-r from-green-500 to-emerald-500 bg-clip-text text-transparent">2nd Quarter</h3>
-                            <p class="text-sm text-gray-600">Financial Mathematics and Interest Calculations</p>
+                        <div class="min-w-0 flex-1">
+                            <h3 class="text-2xl font-bold text-emerald-700 leading-tight break-words">2nd Quarter</h3>
+                            <p class="text-sm text-gray-600 mt-1 break-words">Financial Mathematics and Interest Calculations</p>
                         </div>
                     </div>
                     <div class="space-y-3">
                         ${secondQuarterTopics.length > 0 ? secondQuarterTopics.map(topic => `
-                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors">
-                                <div class="flex items-center space-x-4">
-                                    <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors">
+                                <div class="flex items-start space-x-4 min-w-0 flex-1">
+                                    <div class="w-10 h-10 shrink-0 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
                                         <i class="fas fa-calculator text-white text-sm"></i>
                                     </div>
-                                    <div>
-                                        <h5 class="font-semibold text-gray-900">${topic.topic_name}</h5>
-                                        <p class="text-sm text-gray-600">${topic.description || 'No description available'}</p>
+                                    <div class="min-w-0">
+                                        <h5 class="font-semibold text-gray-900 break-words">${topic.topic_name}</h5>
+                                        <p class="text-sm text-gray-600 break-words">${topic.description || 'No description available'}</p>
                                     </div>
                                 </div>
-                                <div class="flex items-center space-x-3">
-                                    ${topic.topic_slug ? `<a href="topics/${topic.topic_slug}.html?teacher_view=1" target="_blank" rel="noopener" class="p-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700" title="View topic page"><i class="fas fa-external-link-alt text-xs"></i></a>` : ''}
+                                <div class="flex items-center flex-wrap gap-2 sm:gap-3 shrink-0 sm:pl-2">
+                                    ${topic.topic_slug ? `<a href="topics/${topic.topic_slug}.html?teacher_view=1" class="p-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700" title="View topic page (same tab)"><i class="fas fa-eye text-xs"></i></a>` : ''}
                                     ${topic.topic_slug ? `<button type="button" onclick="downloadTopicAsPpt('${topic.topic_slug}', this)" class="p-2 rounded-lg bg-indigo-100 hover:bg-indigo-200 text-indigo-800 disabled:opacity-50" title="Download AI lesson outline as PowerPoint (no videos / visual aids)"><i class="fas fa-file-powerpoint text-xs"></i></button>` : ''}
                                     <!-- Topic lock switch -->
                                     <button onclick="toggleTopicLock('${topic.topic_id}', ${topic.is_locked}, '${topic.class_id}')"

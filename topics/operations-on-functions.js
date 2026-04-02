@@ -879,7 +879,7 @@ function runLessonQuiz(quizArray, lessonNum, onPassed) {
     Swal.fire({
         title: `📚 Topic ${lessonNum} Quiz`,
         html: `
-            <div class="text-left space-y-4">
+            <div class="text-left space-y-4">${typeof mathEaseQuizIntroBanner === 'function' ? mathEaseQuizIntroBanner() : ''}
                 <div class="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg p-5 border-l-4 border-primary">
                     <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
                         <i class="fas fa-info-circle text-primary mr-2"></i>
@@ -1029,6 +1029,17 @@ function runLessonQuiz(quizArray, lessonNum, onPassed) {
                     });
                 }, 100);
             }
+        }).then((result) => {
+            if (result.isDismissed && result.dismiss === Swal.DismissReason.cancel) {
+                if (typeof mathEaseConfirmTopicQuizCancel === 'function') {
+                    mathEaseConfirmTopicQuizCancel().then((cr) => {
+                        if (cr.isConfirmed) showLesson(lessonNum, true);
+                        else displayQuestion();
+                    });
+                } else {
+                    showLesson(lessonNum, true);
+                }
+            }
         });
     }
 
@@ -1145,7 +1156,7 @@ function showLesson1Quiz() {
     Swal.fire({
         title: `📚 Topic 1 Quiz`,
         html: `
-            <div class="text-left space-y-4">
+            <div class="text-left space-y-4">${typeof mathEaseQuizIntroBanner === 'function' ? mathEaseQuizIntroBanner() : ''}
                 <div class="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg p-5 border-l-4 border-primary">
                     <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
                         <i class="fas fa-info-circle text-primary mr-2"></i>
@@ -1302,6 +1313,17 @@ function showLesson1Quiz() {
                         });
                     });
                 }, 100);
+            }
+        }).then((result) => {
+            if (result.isDismissed && result.dismiss === Swal.DismissReason.cancel) {
+                if (typeof mathEaseConfirmTopicQuizCancel === 'function') {
+                    mathEaseConfirmTopicQuizCancel().then((cr) => {
+                        if (cr.isConfirmed) showLesson(1, true);
+                        else displayQuestion();
+                    });
+                } else {
+                    showLesson(1, true);
+                }
             }
         });
     }

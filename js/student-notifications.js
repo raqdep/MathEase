@@ -102,7 +102,10 @@
         _wireCloseOnOutsideClick() {
             document.addEventListener('click', (e) => {
                 const { dropdown } = this.els;
-                const button = e.target.closest('[onclick="toggleNotifications()"]') || e.target.closest('#notificationButton');
+                const button =
+                    e.target.closest('#notificationButton') ||
+                    e.target.closest('[data-notification-toggle="1"]') ||
+                    e.target.closest('[onclick*="toggleNotifications"]');
                 if (!button && dropdown && !dropdown.contains(e.target)) {
                     this.closeDropdown();
                 }
@@ -255,8 +258,42 @@
         }
     }
 
+    function enrollmentAllowsNotifications() {
+        if (!window.studentEnrollmentCheck) return true;
+        const es = window.studentEnrollmentCheck.enrollmentStatus;
+        return !!(es && es.has_approved_enrollment);
+    }
+
+    function promptEnrollmentIfNeeded() {
+        if (window.studentEnrollmentCheck && typeof window.studentEnrollmentCheck.showEnrollmentRequiredModal === 'function') {
+            window.studentEnrollmentCheck.showEnrollmentRequiredModal();
+            return;
+        }
+        if (window.Swal) {
+            window.Swal.fire({
+                title: 'Enrollment Required',
+                text: 'You need to join a class to access notifications. Please ask your teacher for the class code.',
+                icon: 'info',
+                confirmButtonText: 'Join Class',
+                confirmButtonColor: '#6366f1',
+                background: '#ffffff',
+                customClass: { popup: 'rounded-2xl', title: 'text-slate-800', content: 'text-slate-600' }
+            }).then(function (result) {
+                if (result.isConfirmed && typeof window.openJoinClassModal === 'function') {
+                    window.openJoinClassModal();
+                }
+            });
+        } else {
+            alert('You need to join a class to access notifications.');
+        }
+    }
+
     // Global functions expected by existing HTML onclick handlers
     window.toggleNotifications = function toggleNotifications() {
+        if (window.studentEnrollmentCheck && !enrollmentAllowsNotifications()) {
+            promptEnrollmentIfNeeded();
+            return;
+        }
         if (window.notificationSystem) {
             window.notificationSystem.toggleDropdown();
         }
@@ -311,8 +348,15 @@
 
     // Optional: older pages call this
     window.showAllNotifications = async function showAllNotifications() {
+        if (window.studentEnrollmentCheck && !enrollmentAllowsNotifications()) {
+            promptEnrollmentIfNeeded();
+            return;
+        }
         if (window.notificationSystem) {
             await window.notificationSystem.loadNotifications(100);
+            if (!window.notificationSystem.isDropdownOpen) {
+                window.notificationSystem.toggleDropdown();
+            }
         }
     };
 

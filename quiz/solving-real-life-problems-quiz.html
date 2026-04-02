@@ -1229,6 +1229,16 @@
                 </div>
             </div>
 
+            <div class="bg-gradient-to-r from-red-50 to-pink-50 rounded-xl p-6 mb-8 border-l-4 border-red-500">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-shield-alt text-red-500 mr-3"></i>Anti-Cheating: Fullscreen
+                </h3>
+                <div class="space-y-3 text-gray-700 text-sm">
+                    <p class="flex items-start"><span class="text-red-500 mr-2">•</span><span>The quiz requests <strong>fullscreen</strong> as soon as you start (stay on this tab).</span></p>
+                    <p class="flex items-start"><span class="text-red-500 mr-2">•</span><span>If you <strong>exit fullscreen</strong>, you get a warning; after <strong>3 exits</strong> you are marked <strong>cheating</strong> with score <strong>0</strong>.</span></p>
+                </div>
+            </div>
+
             <!-- Badges Section -->
             <div class="bg-gradient-to-r from-yellow-50 via-amber-50 to-orange-50 rounded-xl p-6 mb-8 border-l-4 border-yellow-500">
                 <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
@@ -2085,6 +2095,12 @@
         let hasLoggedOut = false;
         let heartbeatInterval = null;
         let lastHeartbeat = null;
+
+        let fullscreenExitCount = 0;
+        const maxFullscreenExitsBeforeCheat = 3;
+        let intentionalFullscreenExit = false;
+        let hasEnteredQuizFullscreen = false;
+        let fullscreenListenersAttached = false;
         
         // Anti-cheating limits
         const maxAllowedTabSwitches = 2; // Allow 2 tab switches before termination
@@ -2164,9 +2180,88 @@
             });
         }
 
+        function requestFullscreen(element) {
+            if (element.requestFullscreen) {
+                return element.requestFullscreen();
+            } else if (element.webkitRequestFullscreen) {
+                return element.webkitRequestFullscreen();
+            } else if (element.mozRequestFullScreen) {
+                return element.mozRequestFullScreen();
+            } else if (element.msRequestFullscreen) {
+                return element.msRequestFullscreen();
+            }
+            return Promise.reject(new Error('Fullscreen not supported'));
+        }
+
+        function exitFullscreen() {
+            if (document.exitFullscreen) {
+                return document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                return document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                return document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                return document.msExitFullscreen();
+            }
+        }
+
+        function isFullscreen() {
+            return !!(document.fullscreenElement ||
+                document.webkitFullscreenElement ||
+                document.mozFullScreenElement ||
+                document.msFullscreenElement);
+        }
+
+        function attachFullscreenListeners() {
+            if (fullscreenListenersAttached) return;
+            fullscreenListenersAttached = true;
+            document.addEventListener('fullscreenchange', handleFullscreenChange);
+            document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+            document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+            document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+        }
+
+        function handleFullscreenChange() {
+            if (!isQuizActive || intentionalFullscreenExit) return;
+            if (isFullscreen()) {
+                hasEnteredQuizFullscreen = true;
+                return;
+            }
+            if (!hasEnteredQuizFullscreen) return;
+
+            fullscreenExitCount++;
+            if (fullscreenExitCount >= maxFullscreenExitsBeforeCheat) {
+                markAsCheating('excessive_fullscreen_exits');
+                return;
+            }
+
+            const remaining = maxFullscreenExitsBeforeCheat - fullscreenExitCount;
+            showCheatingWarning(
+                'Fullscreen Required',
+                `You left fullscreen mode (<strong>${fullscreenExitCount}</strong> of <strong>${maxFullscreenExitsBeforeCheat}</strong> allowed). ` +
+                `${remaining === 0 ? 'This was your last warning.' : `<strong>${remaining}</strong> more exit${remaining === 1 ? '' : 's'} will mark the quiz as cheating with a score of 0.`} ` +
+                `Please return to fullscreen using the browser control or refresh and start again if needed.`
+            );
+        }
+
         // Start quiz function
         async function startQuiz() {
             try {
+                fullscreenExitCount = 0;
+                intentionalFullscreenExit = false;
+                hasEnteredQuizFullscreen = false;
+                attachFullscreenListeners();
+                try {
+                    requestFullscreen(document.documentElement).then(() => {
+                        console.log('✅ Entered fullscreen mode');
+                        hasEnteredQuizFullscreen = true;
+                    }).catch(error => {
+                        console.warn('⚠️ Could not enter fullscreen:', error);
+                    });
+                } catch (e) {
+                    console.warn('⚠️ Fullscreen request error:', e);
+                }
+
                 // First, start the quiz attempt on the server
                 const startResult = await startQuizAttempt();
                 if (!startResult) {
@@ -2677,6 +2772,15 @@
                 
                 // Stop the timer
                 stopTimer();
+
+                intentionalFullscreenExit = true;
+                if (isFullscreen()) {
+                    try {
+                        exitFullscreen();
+                    } catch (e) {
+                        console.warn('⚠️ Could not exit fullscreen:', e);
+                    }
+                }
                 
                 // Stop anti-cheating monitoring
                 stopAntiCheating();
@@ -2952,6 +3056,15 @@
             try {
                 // Stop the timer when showing results
                 stopTimer();
+
+                intentionalFullscreenExit = true;
+                if (isFullscreen()) {
+                    try {
+                        exitFullscreen();
+                    } catch (e) {
+                        console.warn('⚠️ Could not exit fullscreen:', e);
+                    }
+                }
                 
                 // Show results
                 const quizContainer = document.getElementById('quizContainer');
@@ -4329,6 +4442,7 @@
         
         // Mark attempt as cheating
         async function markAsCheating(reason) {
+            intentionalFullscreenExit = true;
             if (!currentAttemptId) {
                 console.log('❌ No current attempt ID - trying to get current attempt...');
                 
@@ -4445,6 +4559,9 @@
                     break;
                 case 'page_unload':
                     reasonText = 'Quiz page was closed or refreshed';
+                    break;
+                case 'excessive_fullscreen_exits':
+                    reasonText = 'Fullscreen was exited too many times during the quiz';
                     break;
                 default:
                     reasonText = 'Suspicious activity detected';

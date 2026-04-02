@@ -143,18 +143,18 @@
                 <div class="flex items-center space-x-4">
                     <!-- Notifications -->
                     <div class="relative group">
-                        <button onclick="toggleNotifications()" id="notificationButton" class="relative p-2 text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition-all duration-200">
+                        <button type="button" onclick="toggleNotifications()" id="notificationButton" class="relative p-2 text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition-all duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center">
                             <i class="fas fa-bell text-lg"></i>
                             <span id="notificationBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
                         </button>
-                        <div id="notificationsDropdown" class="absolute right-0 mt-2 w-80 bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-200/60 py-2 z-50 opacity-0 invisible transition-all duration-200 hidden">
+                        <div id="notificationsDropdown" class="absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-200/60 py-2 z-50 opacity-0 invisible transition-all duration-200 hidden">
                             <div class="px-4 py-2 border-b border-slate-200/60">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center space-x-2">
                                         <h3 class="text-sm font-semibold text-slate-800">Notifications</h3>
                                         <span id="dropdownNotificationCount" class="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded-full font-medium">0</span>
                                     </div>
-                                    <button onclick="markAllNotificationsAsRead()" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">Mark all read</button>
+                                    <button type="button" onclick="markAllNotificationsAsRead()" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">Mark all read</button>
                                 </div>
                             </div>
                             <div id="notificationsList" class="max-h-64 overflow-y-auto">

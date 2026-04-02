@@ -1,17 +1,26 @@
 <?php
 /**
- * Bulk email students and teachers about maintenance start/end.
+ * Email students and teachers about maintenance schedule and status.
+ * Sends one recipient per email to avoid BCC/scam-like appearance.
  * Requires config + gmail-fixed-test (send_gmail_verification_fixed).
  *
  * @return array{sent: int, failed: int, errors: string[], total_recipients: int, duration_ms: int}
  */
 function sendMaintenanceAnnouncementEmails(PDO $pdo, string $phase, array $payload): array
 {
+    @set_time_limit(0);
+    @ini_set('max_execution_time', '0');
     $startedAt = microtime(true);
-    $phase = $phase === 'end' ? 'end' : 'start';
-    $title = $payload['title'] ?? '';
-    $message = $payload['message'] ?? '';
-    $eta = $payload['estimated_end_at'] ?? null;
+    $phase = in_array($phase, ['advance', 'start', 'end'], true) ? $phase : 'start';
+    $title = trim((string)($payload['title'] ?? ''));
+    $message = trim((string)($payload['message'] ?? $payload['public_message'] ?? ''));
+    $eta = $payload['estimated_end_at'] ?? ($payload['scheduled_end_at'] ?? null);
+    $scheduledStart = $payload['scheduled_start_at'] ?? null;
+    $scheduledEnd = $payload['scheduled_end_at'] ?? null;
+    $advanceNoticeMinutes = (int) ($payload['advance_notice_minutes'] ?? 30);
+    if ($advanceNoticeMinutes < 1) {
+        $advanceNoticeMinutes = 1;
+    }
 
     $sent = 0;
     $failed = 0;
@@ -56,62 +65,77 @@ function sendMaintenanceAnnouncementEmails(PDO $pdo, string $phase, array $paylo
             'duration_ms' => (int) round((microtime(true) - $startedAt) * 1000),
         ];
     }
-
-    if ($phase === 'start') {
-        $subject = 'MathEase — Scheduled system update';
-        $body = maintenanceBuildEmailHtml(
-            'System update in progress',
-            $title,
-            $message,
-            $eta,
-            'We are applying updates to MathEase. You may be unable to log in until the work is finished.',
-            false
-        );
-    } else {
-        $subject = 'MathEase — System update complete';
-        $body = maintenanceBuildEmailHtml(
-            'You can log in again',
-            $title,
-            $message,
-            null,
-            'The scheduled maintenance has ended. You can sign in and use MathEase as usual.',
-            true
-        );
+    if (!defined('MAIL_USERNAME') || trim((string) MAIL_USERNAME) === '') {
+        return [
+            'sent' => 0,
+            'failed' => count($list),
+            'errors' => ['MAIL_USERNAME is missing in .env.'],
+            'total_recipients' => count($list),
+            'duration_ms' => (int) round((microtime(true) - $startedAt) * 1000),
+        ];
+    }
+    if (!defined('MAIL_PASSWORD') || trim((string) MAIL_PASSWORD) === '') {
+        return [
+            'sent' => 0,
+            'failed' => count($list),
+            'errors' => ['MAIL_PASSWORD is missing in .env. Use a Gmail App Password.'],
+            'total_recipients' => count($list),
+            'duration_ms' => (int) round((microtime(true) - $startedAt) * 1000),
+        ];
     }
 
-    // Fast path: send in BCC batches using one SMTP auth per batch.
-    $batchSize = 40;
-    $chunks = array_chunk(array_values(array_filter($list, static function ($email) {
-        return filter_var($email, FILTER_VALIDATE_EMAIL);
-    })), $batchSize);
+    [$subject, $body] = maintenanceBuildStandardEmail($phase, [
+        'title' => $title,
+        'message' => $message,
+        'estimated_end_at' => $eta,
+        'scheduled_start_at' => $scheduledStart,
+        'scheduled_end_at' => $scheduledEnd,
+        'advance_notice_minutes' => $advanceNoticeMinutes,
+    ]);
 
-    foreach ($chunks as $chunk) {
-        if (empty($chunk)) continue;
+    if (!empty($list)) {
+        $probeTo = $list[0];
+        if (filter_var($probeTo, FILTER_VALIDATE_EMAIL)) {
+            $probeOk = false;
+            try {
+                $probeOk = send_gmail_verification_fixed($probeTo, $subject, $body);
+            } catch (Throwable $e) {
+                $errors[] = 'smtp_probe: ' . $e->getMessage();
+            }
+            if (!$probeOk) {
+                return [
+                    'sent' => 0,
+                    'failed' => count($list),
+                    'errors' => array_slice(array_merge($errors, [
+                        'SMTP authentication/delivery failed. Check MAIL_USERNAME and MAIL_PASSWORD in .env.',
+                    ]), 0, 20),
+                    'total_recipients' => count($list),
+                    'duration_ms' => (int) round((microtime(true) - $startedAt) * 1000),
+                ];
+            }
+            $sent++;
+        }
+    }
+
+    $startIndex = $sent > 0 ? 1 : 0;
+    $total = count($list);
+    for ($i = $startIndex; $i < $total; $i++) {
+        $to = $list[$i];
+        if (!filter_var($to, FILTER_VALIDATE_EMAIL)) {
+            $failed++;
+            $errors[] = $to . ': invalid_email';
+            continue;
+        }
         try {
-            $ok = maintenanceSendBulkGmail($chunk, $subject, $body);
-            if ($ok) {
-                $sent += count($chunk);
+            $singleOk = send_gmail_verification_fixed($to, $subject, $body);
+            if ($singleOk) {
+                $sent++;
             } else {
-                // Fallback to per-recipient to isolate failures.
-                foreach ($chunk as $to) {
-                    try {
-                        $singleOk = send_gmail_verification_fixed($to, $subject, $body);
-                        if ($singleOk) {
-                            $sent++;
-                        } else {
-                            $failed++;
-                        }
-                    } catch (Throwable $e) {
-                        $failed++;
-                        $errors[] = $to . ': ' . $e->getMessage();
-                    }
-                }
+                $failed++;
             }
         } catch (Throwable $e) {
-            foreach ($chunk as $to) {
-                $failed++;
-                $errors[] = $to . ': ' . $e->getMessage();
-            }
+            $failed++;
+            $errors[] = $to . ': ' . $e->getMessage();
         }
     }
 
@@ -125,149 +149,73 @@ function sendMaintenanceAnnouncementEmails(PDO $pdo, string $phase, array $paylo
     ];
 }
 
-function maintenanceSendBulkGmail(array $recipients, string $subject, string $htmlBody): bool
+function maintenanceFormatDateTime(?string $value): string
 {
-    if (empty($recipients)) return true;
-
-    $smtpHost = 'smtp.gmail.com';
-    $smtpPort = 465;
-    $smtpUser = defined('MAIL_USERNAME') ? MAIL_USERNAME : '';
-    $smtpPass = defined('MAIL_PASSWORD') ? MAIL_PASSWORD : '';
-    $fromEmail = defined('MAIL_FROM') ? MAIL_FROM : $smtpUser;
-    $fromName = defined('MAIL_FROM_NAME') ? MAIL_FROM_NAME : 'MathEase';
-
-    if ($smtpUser === '' || $smtpPass === '' || $fromEmail === '') {
-        return false;
+    if (!$value) {
+        return 'TBA';
     }
-
-    $context = stream_context_create([
-        'ssl' => [
-            'verify_peer' => false,
-            'verify_peer_name' => false,
-            'allow_self_signed' => true,
-        ],
-    ]);
-
-    $socket = @stream_socket_client("ssl://{$smtpHost}:{$smtpPort}", $errno, $errstr, 15, STREAM_CLIENT_CONNECT, $context);
-    if (!$socket) return false;
-
-    $readCode = static function ($sock) {
-        $line = fgets($sock, 1024);
-        if ($line === false) return '';
-        while (strlen($line) >= 4 && $line[3] === '-') {
-            $line = fgets($sock, 1024);
-            if ($line === false) break;
-        }
-        return (string)$line;
-    };
-    $expect = static function ($line, array $codes): bool {
-        $code = substr((string)$line, 0, 3);
-        return in_array($code, $codes, true);
-    };
-
-    try {
-        if (!$expect($readCode($socket), ['220'])) {
-            fclose($socket);
-            return false;
-        }
-
-        fputs($socket, "EHLO localhost\r\n");
-        if (!$expect($readCode($socket), ['250'])) {
-            fclose($socket);
-            return false;
-        }
-
-        fputs($socket, "AUTH LOGIN\r\n");
-        $resp = $readCode($socket);
-        if (!$expect($resp, ['334'])) {
-            fclose($socket);
-            return false;
-        }
-
-        fputs($socket, base64_encode($smtpUser) . "\r\n");
-        if (!$expect($readCode($socket), ['334'])) {
-            fclose($socket);
-            return false;
-        }
-
-        fputs($socket, base64_encode($smtpPass) . "\r\n");
-        if (!$expect($readCode($socket), ['235'])) {
-            fclose($socket);
-            return false;
-        }
-
-        fputs($socket, "MAIL FROM: <{$fromEmail}>\r\n");
-        if (!$expect($readCode($socket), ['250'])) {
-            fclose($socket);
-            return false;
-        }
-
-        // Envelope recipients
-        foreach ($recipients as $to) {
-            fputs($socket, "RCPT TO: <{$to}>\r\n");
-            if (!$expect($readCode($socket), ['250', '251'])) {
-                fclose($socket);
-                return false;
-            }
-        }
-
-        fputs($socket, "DATA\r\n");
-        if (!$expect($readCode($socket), ['354'])) {
-            fclose($socket);
-            return false;
-        }
-
-        $encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
-        $toHeader = 'undisclosed-recipients:;';
-        $bccHeader = implode(', ', array_map(static function ($to) {
-            return '<' . $to . '>';
-        }, $recipients));
-
-        fputs($socket, "Subject: {$encodedSubject}\r\n");
-        fputs($socket, "To: {$toHeader}\r\n");
-        fputs($socket, "Bcc: {$bccHeader}\r\n");
-        fputs($socket, "From: {$fromName} <{$fromEmail}>\r\n");
-        fputs($socket, "MIME-Version: 1.0\r\n");
-        fputs($socket, "Content-Type: text/html; charset=UTF-8\r\n");
-        fputs($socket, "X-Mailer: MathEase Maintenance System\r\n\r\n");
-        fputs($socket, $htmlBody);
-        fputs($socket, "\r\n.\r\n");
-
-        if (!$expect($readCode($socket), ['250'])) {
-            fclose($socket);
-            return false;
-        }
-
-        fputs($socket, "QUIT\r\n");
-        fclose($socket);
-        return true;
-    } catch (Throwable $e) {
-        @fclose($socket);
-        return false;
+    $ts = strtotime((string) $value);
+    if ($ts === false) {
+        return (string) $value;
     }
+    return date('M d, Y h:i A', $ts);
 }
 
-function maintenanceBuildEmailHtml(
-    string $headline,
-    string $title,
-    string $message,
-    ?string $eta,
-    string $footerNote,
-    bool $completed
-): string {
-    $etaHtml = '';
-    if ($eta) {
-        $etaHtml = '<p><strong>Estimated completion:</strong> ' . htmlspecialchars($eta, ENT_QUOTES, 'UTF-8') . '</p>';
+function maintenanceBuildStandardEmail(string $phase, array $payload): array
+{
+    $title = trim((string) ($payload['title'] ?? ''));
+    $message = trim((string) ($payload['message'] ?? ''));
+    $startAtRaw = $payload['scheduled_start_at'] ?? ($payload['started_at'] ?? null);
+    $endAtRaw = $payload['scheduled_end_at'] ?? ($payload['estimated_end_at'] ?? null);
+    if ($phase === 'end') {
+        $startAtRaw = $payload['started_at'] ?? ($payload['scheduled_start_at'] ?? null);
+        $endAtRaw = $payload['ended_at'] ?? ($payload['scheduled_end_at'] ?? ($payload['estimated_end_at'] ?? null));
     }
-    $titleHtml = $title !== '' ? '<p><strong>' . htmlspecialchars($title, ENT_QUOTES, 'UTF-8') . '</strong></p>' : '';
-    $msgHtml = $message !== '' ? '<p style="white-space:pre-wrap;">' . nl2br(htmlspecialchars($message, ENT_QUOTES, 'UTF-8')) . '</p>' : '';
+    $startAt = maintenanceFormatDateTime($startAtRaw);
+    $endAt = maintenanceFormatDateTime($endAtRaw);
+    $leadMinutes = (int) ($payload['advance_notice_minutes'] ?? 30);
 
-    $color = $completed ? '#059669' : '#b45309';
-    return '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="font-family:Arial,sans-serif;line-height:1.6;color:#333;">
-    <div style="max-width:560px;margin:0 auto;padding:24px;">
-      <h2 style="color:' . $color . ';">' . htmlspecialchars($headline, ENT_QUOTES, 'UTF-8') . '</h2>
-      ' . $titleHtml . $msgHtml . $etaHtml . '
-      <p>' . htmlspecialchars($footerNote, ENT_QUOTES, 'UTF-8') . '</p>
-      <p style="font-size:12px;color:#666;">— MathEase</p>
-    </div></body></html>';
+    if ($phase === 'end') {
+        $subject = 'MathEase Maintenance Complete - Services Restored';
+        $headline = 'Maintenance Completed';
+        $intro = 'MathEase maintenance has been completed. You can now log in and continue using the platform.';
+    } elseif ($phase === 'advance') {
+        $subject = 'Scheduled Maintenance Notice - MathEase';
+        $headline = 'Upcoming Scheduled Maintenance';
+        $intro = 'This is an advance notice that MathEase will undergo scheduled maintenance soon.';
+    } else {
+        $subject = 'Maintenance Started - MathEase';
+        $headline = 'Scheduled Maintenance Is Now Active';
+        $intro = 'MathEase maintenance has started. Student and teacher login is temporarily unavailable until maintenance ends.';
+    }
+
+    $reason = $message !== '' ? $message : 'System improvements and performance updates.';
+    $titleLine = $title !== '' ? htmlspecialchars($title, ENT_QUOTES, 'UTF-8') : 'MathEase System Maintenance';
+    $contact = defined('MAIL_FROM') && MAIL_FROM ? MAIL_FROM : 'support@mathease.com';
+
+    $body = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="font-family:Arial,sans-serif;line-height:1.6;color:#1f2937;">'
+        . '<div style="max-width:620px;margin:0 auto;padding:24px;">'
+        . '<h2 style="margin:0 0 12px;color:#1e3a8a;">' . htmlspecialchars($headline, ENT_QUOTES, 'UTF-8') . '</h2>'
+        . '<p style="margin:0 0 12px;">Hello,</p>'
+        . '<p style="margin:0 0 16px;">' . htmlspecialchars($intro, ENT_QUOTES, 'UTF-8') . '</p>'
+        . '<div style="border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;background:#f9fafb;">'
+        . '<p style="margin:0 0 8px;"><strong>Title:</strong> ' . $titleLine . '</p>'
+        . '<p style="margin:0 0 8px;"><strong>Start:</strong> ' . htmlspecialchars($startAt, ENT_QUOTES, 'UTF-8') . '</p>'
+        . '<p style="margin:0 0 8px;"><strong>End:</strong> ' . htmlspecialchars($endAt, ENT_QUOTES, 'UTF-8') . '</p>'
+        . '<p style="margin:0 0 8px;"><strong>Reason:</strong> ' . nl2br(htmlspecialchars($reason, ENT_QUOTES, 'UTF-8')) . '</p>';
+
+    if ($phase === 'advance') {
+        $body .= '<p style="margin:0;"><strong>Advance Notice:</strong> ' . (int) $leadMinutes . ' minutes before maintenance start.</p>';
+    } elseif ($phase === 'end') {
+        $body .= '<p style="margin:0;"><strong>Status:</strong> Maintenance completed successfully. Student and teacher login access has been restored.</p>';
+    } else {
+        $body .= '<p style="margin:0;"><strong>Impact:</strong> Student and teacher login may be unavailable during this period.</p>';
+    }
+
+    $body .= '</div>'
+        . '<p style="margin:16px 0 0;">If you have questions, contact us at ' . htmlspecialchars($contact, ENT_QUOTES, 'UTF-8') . '.</p>'
+        . '<p style="margin:12px 0 0;">- MathEase Team</p>'
+        . '</div></body></html>';
+
+    return [$subject, $body];
 }

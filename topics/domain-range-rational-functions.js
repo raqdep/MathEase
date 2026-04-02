@@ -474,7 +474,7 @@ async function drrfRunLessonQuiz(lessonNum) {
     const introResult = await Swal.fire({
         title: `📚 Topic ${lessonNum} Quiz`,
         html: `
-            <div class="text-left space-y-4">
+            <div class="text-left space-y-4">${typeof mathEaseQuizIntroBanner === 'function' ? mathEaseQuizIntroBanner() : ''}
                 <div class="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg p-5 border-l-4 border-primary">
                     <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
                         <i class="fas fa-info-circle text-primary mr-2"></i>
@@ -610,6 +610,28 @@ async function drrfRunLessonQuiz(lessonNum) {
                             setTimeout(displayQuestion, 80);
                         }, 400);
                     });
+                }
+            }).then((result) => {
+                if (result.isDismissed && result.dismiss === Swal.DismissReason.cancel) {
+                    if (typeof mathEaseConfirmTopicQuizCancel === 'function') {
+                        mathEaseConfirmTopicQuizCancel().then((cr) => {
+                            if (cr.isConfirmed) {
+                                drrfShowLesson(lessonNum, true);
+                                if (window.drrfQuizResolve) {
+                                    window.drrfQuizResolve(false);
+                                    window.drrfQuizResolve = null;
+                                }
+                            } else {
+                                displayQuestion();
+                            }
+                        });
+                    } else {
+                        drrfShowLesson(lessonNum, true);
+                        if (window.drrfQuizResolve) {
+                            window.drrfQuizResolve(false);
+                            window.drrfQuizResolve = null;
+                        }
+                    }
                 }
             });
         }
