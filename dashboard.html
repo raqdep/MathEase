@@ -306,7 +306,8 @@
                             Master General Mathematics with interactive topics, personalized progress tracking, and engaging virtual tools.
                         </p>
                         <div class="flex flex-col sm:flex-row gap-4">
-                            <button type="button" id="heroJoinClassBtn" onclick="openJoinClassModal()" class="hidden bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 inline-flex items-center justify-center">
+                            <!-- Do not put inline-flex on the same element as hidden (Tailwind display conflict). Visibility toggled in js/student-enrollment-check.js -->
+                            <button type="button" id="heroJoinClassBtn" onclick="openJoinClassModal()" class="hidden w-full sm:w-auto bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105">
                                 <i class="fas fa-users mr-3"></i>
                                 Join Class
                             </button>

@@ -324,6 +324,10 @@
     gap: 1rem;
 }
 
+.login-page .form-options {
+    justify-content: flex-end;
+}
+
 /* Form options within right column - register page only */
 .register-page .form-column-right .form-options {
     justify-content: flex-start;

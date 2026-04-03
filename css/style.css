@@ -1075,3 +1075,16 @@ a:focus-visible {
         width: auto !important;
     }
 }
+
+/* Student dashboard hero: avoid Tailwind hidden + inline-flex display conflict; hide Join Class when enrolled (mobile + desktop) */
+#heroJoinClassBtn.hidden {
+    display: none !important;
+}
+
+@media (max-width: 767px) {
+    body[data-student-enrolled="true"] #heroJoinClassBtn {
+        display: none !important;
+        visibility: hidden;
+        pointer-events: none;
+    }
+}

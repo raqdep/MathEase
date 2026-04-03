@@ -108,7 +108,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         $email = sanitize_input($_POST['email']);
         $password = $_POST['password'];
-        $remember = isset($_POST['remember']) ? true : false;
         
         // Validate email format
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -373,22 +372,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['subject'] = $teacher['subject'];
         $_SESSION['login_time'] = time();
         $_SESSION['user_type'] = 'teacher';
-        
-        // Handle remember me functionality
-        if ($remember) {
-            $token = generate_token();
-            $expiry = date('Y-m-d H:i:s', strtotime('+30 days'));
-            
-            // Store remember me token in database
-            $stmt = $pdo->prepare("
-                INSERT INTO teacher_remember_tokens (teacher_id, token, expires_at) 
-                VALUES (?, ?, ?)
-            ");
-            $stmt->execute([$teacher['id'], $token, $expiry]);
-            
-            // Set remember me cookie
-            setcookie('teacher_remember_token', $token, time() + (30 * 24 * 60 * 60), '/', '', true, true);
-        }
         
         // Update last login time
         $stmt = $pdo->prepare("UPDATE teachers SET last_login = NOW() WHERE id = ?");

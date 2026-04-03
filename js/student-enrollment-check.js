@@ -192,9 +192,21 @@ class StudentEnrollmentCheck {
         const heroJoinBtn = document.getElementById('heroJoinClassBtn');
         const banner = document.getElementById('enrollmentStatusBanner');
         if (!gate || !main) return;
-        // Hide hero "Join Class" once enrolled (it was incorrectly shown after approval). Unenrolled users use the gate below.
+
+        document.body.setAttribute('data-student-enrolled', canAccess ? 'true' : 'false');
+
         if (heroJoinBtn) {
-            heroJoinBtn.classList.add('hidden');
+            if (canAccess) {
+                heroJoinBtn.classList.add('hidden');
+                heroJoinBtn.classList.remove('inline-flex', 'items-center', 'justify-center');
+                heroJoinBtn.setAttribute('aria-hidden', 'true');
+                heroJoinBtn.style.display = 'none';
+            } else {
+                heroJoinBtn.classList.remove('hidden');
+                heroJoinBtn.classList.add('inline-flex', 'items-center', 'justify-center');
+                heroJoinBtn.setAttribute('aria-hidden', 'false');
+                heroJoinBtn.style.display = '';
+            }
         }
         if (canAccess) {
             gate.classList.add('hidden');
