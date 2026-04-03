@@ -5,8 +5,10 @@
 
 /* ---------- 0️⃣  Constants & helpers ---------- */
 define('MAX_PDF_SIZE', 10 * 1024 * 1024);      // 10 MiB
-define('MAX_CONTENT_CHARS', 12_000);          // characters sent to the LLM
-define('MAX_TOKENS', 4000);                   // max tokens for lesson generation
+/** Hard cap on extracted PDF text before tiered Groq attempts (memory / sanity). */
+define('MAX_PDF_TEXT_FOR_LLM', 8000);
+/** Groq on_demand ~6k TPM per request: prompt + max_tokens must stay below cap. */
+define('GROQ_LESSON_TIMEOUT_SEC', 90);
 define('MATH_KEYWORDS', [
     'function','mathematics','math','equation','formula','graph','domain','range',
     'rational','polynomial','algebra','calculus','trigonometry','statistics',
@@ -147,15 +149,15 @@ if (!$isMath) {
 }
 
 /* ---------- 8️⃣  Prepare content for LLM ---------- */
-$promptContent = (strlen($pdfText) > MAX_CONTENT_CHARS)
-    ? substr($pdfText, 0, MAX_CONTENT_CHARS) .
-      "\n\n[Content truncated for processing – only the first part of the PDF was used.]"
+$pdfForGroq = strlen($pdfText) > MAX_PDF_TEXT_FOR_LLM
+    ? substr($pdfText, 0, MAX_PDF_TEXT_FOR_LLM)
+        . "\n\n[Long PDF truncated before AI — first portion only.]"
     : $pdfText;
 
 /* ---------- 9️⃣  Generate lesson via Groq ---------- */
 try {
     $lessonHtml = generateLessonViaGroq(
-        $promptContent,
+        $pdfForGroq,
         $lessonTitle,
         $topicCategory,
         $groqKey,
@@ -284,7 +286,8 @@ function containsMathKeywords(string $text): bool
 }
 
 /**
- * Call Groq (or any compatible OpenAI‑style endpoint) to build the lesson.
+ * Call Groq to build the lesson. Retries with smaller PDF excerpts / lower max_tokens
+ * when the API returns HTTP 413 (request too large for on_demand TPM limits).
  *
  * @throws Exception on any HTTP / JSON / content error
  */
@@ -300,7 +303,61 @@ function generateLessonViaGroq(
         throw new Exception('cURL extension is not enabled on the server.');
     }
 
-    // Human‑readable descriptions for the supported categories
+    $attempts = [
+        ['label' => 'standard', 'maxChars' => 2200, 'max_tokens' => 2600],
+        ['label' => 'compact', 'maxChars' => 1400, 'max_tokens' => 2200],
+        ['label' => 'minimal', 'maxChars' => 800, 'max_tokens' => 1800],
+    ];
+
+    $lastException = null;
+    foreach ($attempts as $attempt) {
+        $excerpt = $pdfContent;
+        if (strlen($excerpt) > $attempt['maxChars']) {
+            $excerpt = substr($excerpt, 0, $attempt['maxChars'])
+                . "\n\n[Excerpt truncated for API limits — use only the text above.]";
+        }
+
+        try {
+            return generateLessonViaGroqOnce(
+                $excerpt,
+                $title,
+                $topic,
+                $apiKey,
+                $model,
+                $apiUrl,
+                (int) $attempt['max_tokens']
+            );
+        } catch (Exception $e) {
+            $lastException = $e;
+            $msg = $e->getMessage();
+            $is413 = (strpos($msg, '413') !== false)
+                || stripos($msg, 'too large') !== false
+                || stripos($msg, 'TPM') !== false;
+            if ($is413) {
+                log_msg('Groq attempt ' . $attempt['label'] . ' failed (size): ' . $msg);
+                continue;
+            }
+            throw $e;
+        }
+    }
+
+    throw $lastException ?? new Exception('Groq lesson generation failed after all attempts.');
+}
+
+/**
+ * Single Groq request for one PDF excerpt.
+ *
+ * @throws Exception on any HTTP / JSON / content error
+ */
+function generateLessonViaGroqOnce(
+    string $pdfContent,
+    string $title,
+    string $topic,
+    string $apiKey,
+    string $model,
+    string $apiUrl,
+    int $maxTokens
+): string {
     $topicMap = [
         'functions'               => 'Functions – introduction, notation, domain & range',
         'evaluating-functions'    => 'Evaluating Functions – plugging values into functions',
@@ -312,25 +369,15 @@ function generateLessonViaGroq(
     $topicDesc = $topicMap[$topic] ?? 'General Mathematics Topic';
 
     $prompt = <<<PROMPT
-You are an expert mathematics educator tasked with turning the following PDF excerpt into a **single, self‑contained HTML lesson** for Grade 11 students.
+Turn the PDF excerpt below into one self‑contained HTML lesson fragment for Grade 11 General Mathematics.
 
-**IMPORTANT**: Use **only** the information that appears in the PDF excerpt below. Do **not** hallucinate new content. Expand every explanation, add step‑by‑step reasoning, and make the text as clear as possible. The final output must be **pure HTML fragment** (no <html>, <head>, <body> tags).
+Rules: Use only information from the excerpt; do not invent facts. Output **HTML fragment only** (no `<html>`, `<head>`, or `<body>`). Start with `<div class="lesson">`. Use `<section>`, `<h2>`, `<h3>`, `<p>`, lists. Put math in `<code class="math">` or `<pre>`. Include worked examples from the excerpt if present; end with a brief summary and self‑check questions when the source supports it.
 
---- PDF EXCERPT (source material) ---
+--- PDF excerpt ---
 {$pdfContent}
---- End of excerpt ---
+---
 
-**Lesson metadata**
-- Title: {$title}
-- Topic category: {$topic} ({$topicDesc})
-
-**Output format**
-- Begin with a `<div class="lesson">` container.
-- Separate logical sections with `<section>` tags.
-- Use `<h2>` for major headings, `<h3>` for sub‑headings.
-- Present formulas inside `<code class="math">…</code>` or `<pre>` blocks.
-- Include **example problems** from the PDF (if any) and provide **full worked‑out solutions**.
-- End with a short **summary** and **self‑check questions** (again, taken from the PDF if they exist).
+Metadata: title "{$title}"; topic "{$topic}" ({$topicDesc}).
 
 Generate the HTML now.
 PROMPT;
@@ -338,11 +385,11 @@ PROMPT;
     $payload = [
         'model'       => $model,
         'messages'    => [
-            ['role' => 'system',  'content' => 'You are a helpful assistant specialized in educational content creation.'],
+            ['role' => 'system',  'content' => 'You write concise Grade 11 math lessons as HTML fragments only.'],
             ['role' => 'user',    'content' => $prompt]
         ],
         'temperature' => 0.6,
-        'max_tokens'  => MAX_TOKENS
+        'max_tokens'  => $maxTokens
     ];
 
     $ch = curl_init($apiUrl);
@@ -354,7 +401,7 @@ PROMPT;
             'Content-Type: application/json',
             'Authorization: Bearer ' . $apiKey
         ],
-        CURLOPT_TIMEOUT        => 60,
+        CURLOPT_TIMEOUT        => GROQ_LESSON_TIMEOUT_SEC,
         CURLOPT_CONNECTTIMEOUT => 10
     ]);
 
@@ -368,14 +415,14 @@ PROMPT;
     }
     if ($httpCode !== 200) {
         $msg = "Groq returned HTTP {$httpCode}";
-        $decoded = json_decode($rawResponse, true);
-        if (isset($decoded['error']['message'])) {
+        $decoded = json_decode((string) $rawResponse, true);
+        if (is_array($decoded) && isset($decoded['error']['message'])) {
             $msg .= ': ' . $decoded['error']['message'];
         }
         throw new Exception($msg);
     }
 
-    $data = json_decode($rawResponse, true);
+    $data = json_decode((string) $rawResponse, true);
     if (json_last_error() !== JSON_ERROR_NONE) {
         throw new Exception('Failed to parse Groq response JSON: ' . json_last_error_msg());
     }
