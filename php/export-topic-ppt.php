@@ -17,8 +17,9 @@ use PhpOffice\PhpPresentation\Style\Color;
 use PhpOffice\PhpPresentation\Style\Fill;
 use PhpOffice\PhpPresentation\Shape\RichText as RichTextShape;
 
-const MAX_HTML_CHARS = 9000;
-const MAX_LESSON_PROMPT_CHARS = 6500;
+/** Keep extracted lesson text bounded so Groq request stays under free/on_demand per-request limits (~6k TPM). */
+const MAX_HTML_CHARS = 5000;
+const MAX_LESSON_PROMPT_CHARS = 2200;
 const GROQ_TIMEOUT_SEC = 120;
 
 /** PPTX theme: ARGB + Calibri. Set paragraph font BEFORE createTextRun() or text stays black. */
@@ -403,9 +404,11 @@ function requestSlideDeckFromGroq(
         $lessonText = substr($lessonText, 0, MAX_LESSON_PROMPT_CHARS) . "\n[Lesson text truncated for AI.]";
     }
 
+    // Per-request token budget includes prompt + max_tokens; large max_tokens + long lesson triggers HTTP 413 on on_demand (e.g. 6000 TPM cap).
     $attempts = [
-        ['label' => 'full', 'text' => $lessonText, 'slideMin' => 14, 'slideMax' => 15, 'max_tokens' => 9000],
-        ['label' => 'short', 'text' => substr($lessonText, 0, min(3200, strlen($lessonText))), 'slideMin' => 12, 'slideMax' => 15, 'max_tokens' => 7500],
+        ['label' => 'standard', 'text' => $lessonText, 'slideMin' => 10, 'slideMax' => 12, 'max_tokens' => 2800],
+        ['label' => 'compact', 'text' => substr($lessonText, 0, min(1400, strlen($lessonText))), 'slideMin' => 8, 'slideMax' => 10, 'max_tokens' => 2200],
+        ['label' => 'minimal', 'text' => substr($lessonText, 0, min(700, strlen($lessonText))), 'slideMin' => 6, 'slideMax' => 8, 'max_tokens' => 1800],
     ];
 
     $lastParseError = null;
@@ -418,7 +421,7 @@ function requestSlideDeckFromGroq(
         $payload = [
             'model' => $model,
             'messages' => [
-                ['role' => 'system', 'content' => 'You must reply with a single JSON object only. Valid JSON. No markdown. No code fences.'],
+                ['role' => 'system', 'content' => 'Reply with one JSON object only. No markdown.'],
                 ['role' => 'user', 'content' => $prompt],
             ],
             'temperature' => 0.15,
@@ -461,21 +464,17 @@ function requestSlideDeckFromGroq(
 function buildSlideDeckPrompt(string $lessonExcerpt, string $topicTitle, int $slideMin, int $slideMax): string
 {
     return <<<PROMPT
-Create a PowerPoint deck outline for Grade 11 General Mathematics.
+Grade 11 General Mathematics — PPT outline JSON only.
 
-Topic name: "{$topicTitle}"
+Topic: "{$topicTitle}"
 
-Lesson text (excerpt; no videos or interactive aids):
+Lesson excerpt:
 ---
 {$lessonExcerpt}
 ---
 
-Output one JSON object with keys "title" (string) and "slides" (array).
-- "title": short deck title including "{$topicTitle}".
-- "slides": {$slideMin} to {$slideMax} objects. Each object: "title" (string) and "bullets" (array of 3–6 short strings).
-- Cover definitions, examples, steps, and a short recap across the slides (richer content).
-- Use straight double quotes only. Escape internal double quotes as \".
-- Do not include markdown, comments, or text outside the JSON object.
+Return ONE JSON object: "title" (string), "slides" (array length {$slideMin}-{$slideMax}).
+Each slide: "title", "bullets" (3–5 short strings). Be concise. No markdown, no code fences, only JSON.
 PROMPT;
 }
 
@@ -493,7 +492,7 @@ function requestSlideDeckOutlineFallback(
     $prompt = <<<PROMPT
 Topic: "{$topicTitle}" (Grade 11 General Mathematics).
 Return one JSON object: {"title":"string","slides":[{"title":"string","bullets":["a","b","c"]}]}
-Use exactly 15 slides. Each bullets array has 3 or 4 items. No markdown. No prose outside JSON.
+Use exactly 10 slides. Each bullets array has 3 short items. No markdown. No prose outside JSON.
 PROMPT;
     $payload = [
         'model' => $model,
@@ -502,7 +501,7 @@ PROMPT;
             ['role' => 'user', 'content' => $prompt],
         ],
         'temperature' => 0.1,
-        'max_tokens' => 8000,
+        'max_tokens' => 2400,
         'response_format' => ['type' => 'json_object'],
     ];
     $raw = groqChatCompletionJsonModeFirst($apiUrl, $apiKey, $payload);
