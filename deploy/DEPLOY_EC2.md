@@ -29,7 +29,7 @@ sudo bash deploy/setup-ec2.sh
 If the server is empty, copy the script first. From your **PC** (PowerShell):
 
 ```powershell
-scp -i "C:\xampp\htdocs\MathEase_Key.pem" "C:\xampp\htdocs\ep59\MathEase\deploy\setup-ec2.sh" ubuntu@54.206.4.117:~/
+scp -i "C:\xampp\htdocs\MathEase_Key.pem" "C:\xampp\htdocs\ep67\MathEase\deploy\setup-ec2.sh" ubuntu@54.206.4.117:~/
 ```
 
 Then on the **server**:
@@ -42,15 +42,17 @@ sudo chown -R www-data:www-data /var/www/MathEase
 sudo bash /var/www/MathEase/deploy/setup-ec2.sh
 ```
 
-### 3. Database (original: AWS RDS)
+### 3. Database (AWS RDS)
 
-The app uses **AWS RDS** by default (same as in `config.php`):
+The app reads **database settings from `.env`** (see `php/config.php`). Your RDS instance:
 
-- **Host:** `mathease-db.crqqmwqm0c6s.ap-southeast-2.rds.amazonaws.com`
+- **Host:** `mathtry-db.c9aqi8mg6z1y.ap-southeast-2.rds.amazonaws.com`
 - **User:** `admin`
 - **Database:** `mathease_database3`
 
-No DB setup on EC2 needed — just ensure `.env` has these values (see step 4). The schema is already on RDS.
+**Security group:** RDS must allow inbound **MySQL (3306)** from your EC2 instance’s security group (or its private IP). EC2 does not need a public rule on RDS if both are in the same VPC.
+
+No MySQL install on EC2 is required for RDS — import or migrate schema into RDS if the database is new (see `database/` SQL files).
 
 *If you prefer MariaDB on EC2 instead,* create DB/user and import schema:
 
@@ -109,7 +111,7 @@ To push files from your machine without going through GitHub:
 
 ```powershell
 # From PC (run from MathEase project root)
-scp -i "C:\xampp\htdocs\MathEase_Key.pem" -r "C:\xampp\htdocs\ep59\MathEase\*" ubuntu@54.206.4.117:/tmp/mathease-upload/
+scp -i "C:\xampp\htdocs\MathEase_Key.pem" -r "C:\xampp\htdocs\ep67\MathEase\*" ubuntu@54.206.4.117:/tmp/mathease-upload/
 ```
 
 Then on the server:
