@@ -4,6 +4,7 @@ ob_start();
 
 session_start();
 require_once 'config.php';
+require_once __DIR__ . '/teacher-lessons-schema.php';
 
 // Clean any output that might have been generated
 ob_clean();
@@ -21,21 +22,7 @@ if (!isset($_SESSION['teacher_id']) || !isset($_SESSION['user_type']) || $_SESSI
 
 try {
     $teacher_id = $_SESSION['teacher_id'];
-    
-    // Ensure table exists
-    $pdo->exec("
-        CREATE TABLE IF NOT EXISTS teacher_lessons (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            teacher_id INT NOT NULL,
-            title VARCHAR(255) NOT NULL,
-            topic VARCHAR(100) NOT NULL,
-            html_content LONGTEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            INDEX idx_teacher (teacher_id),
-            INDEX idx_topic (topic)
-        )
-    ");
+    ensure_teacher_lessons_schema($pdo);
 
     // Handle DELETE request
     if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
@@ -84,9 +71,11 @@ try {
         $lesson_id = (int)$_GET['lesson_id'];
         
         $stmt = $pdo->prepare("
-            SELECT id, title, topic, html_content, created_at, updated_at
-            FROM teacher_lessons
-            WHERE id = ? AND teacher_id = ?
+            SELECT tl.id, tl.title, tl.topic, tl.html_content, tl.created_at, tl.updated_at,
+                   tl.class_id, c.class_name
+            FROM teacher_lessons tl
+            LEFT JOIN classes c ON c.id = tl.class_id
+            WHERE tl.id = ? AND tl.teacher_id = ?
         ");
         
         $stmt->execute([$lesson_id, $teacher_id]);
@@ -113,10 +102,11 @@ try {
     
     // Handle GET request for all lessons
     $stmt = $pdo->prepare("
-        SELECT id, title, topic, created_at, updated_at
-        FROM teacher_lessons
-        WHERE teacher_id = ?
-        ORDER BY created_at DESC
+        SELECT tl.id, tl.title, tl.topic, tl.created_at, tl.updated_at, tl.class_id, c.class_name
+        FROM teacher_lessons tl
+        LEFT JOIN classes c ON c.id = tl.class_id
+        WHERE tl.teacher_id = ?
+        ORDER BY tl.created_at DESC
     ");
 
     $stmt->execute([$teacher_id]);

@@ -5,19 +5,70 @@ document.addEventListener('DOMContentLoaded', function() {
     const emailParam = (params.get('email') || '').trim();
 
     const resendBtn = document.getElementById('resendEmailBtn');
-    const verifyBtn = document.getElementById('checkEmailBtn');
     const resendLink = document.getElementById('resendLink');
+    const verifyBtn = document.getElementById('checkEmailBtn');
     const messageDiv = document.getElementById('verificationMessage');
-    const otpInput = document.getElementById('otpCode');
-    const otpLabel = document.getElementById('otpLabel');
+    const otpHidden = document.getElementById('otpCode');
     const emailInput = document.getElementById('verifyEmail');
-    const emailLabel = document.getElementById('emailLabel');
+    const emailBlock = document.getElementById('emailBlock');
 
-    if (accountType === 'teacher' && otpLabel) {
-        otpLabel.textContent = 'Enter Teacher OTP';
+    const otpDigits = document.querySelectorAll('#otpInputs .otp-digit');
+
+    function getOtpValue() {
+        if (otpDigits.length === 6) {
+            return Array.from(otpDigits).map(function(el) { return (el.value || '').replace(/\D/g, ''); }).join('');
+        }
+        return otpHidden ? (otpHidden.value || '').trim() : '';
     }
 
-    function setMessage(msg, color = '#666') {
+    function syncHiddenOtp() {
+        if (otpHidden) otpHidden.value = getOtpValue();
+    }
+
+    function initOtpBoxes() {
+        if (otpDigits.length !== 6) return;
+
+        otpDigits.forEach(function(box, i) {
+            box.addEventListener('input', function(e) {
+                let v = (e.target.value || '').replace(/\D/g, '');
+                if (v.length > 1) v = v.slice(-1);
+                e.target.value = v;
+                syncHiddenOtp();
+                if (v && i < otpDigits.length - 1) {
+                    otpDigits[i + 1].focus();
+                }
+            });
+
+            box.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && !e.target.value && i > 0) {
+                    otpDigits[i - 1].focus();
+                    otpDigits[i - 1].value = '';
+                    syncHiddenOtp();
+                    e.preventDefault();
+                }
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    verifyOtp();
+                }
+            });
+
+            box.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const text = (e.clipboardData || window.clipboardData).getData('text') || '';
+                const digits = text.replace(/\D/g, '').slice(0, 6);
+                if (!digits) return;
+                digits.split('').forEach(function(ch, j) {
+                    if (otpDigits[j]) otpDigits[j].value = ch;
+                });
+                const next = Math.min(digits.length, 5);
+                otpDigits[next].focus();
+                syncHiddenOtp();
+            });
+        });
+    }
+
+    function setMessage(msg, color) {
+        if (color === undefined) color = '#666';
         if (!messageDiv) return;
         messageDiv.textContent = msg;
         messageDiv.style.color = color;
@@ -33,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const resp = await fetch('php/lookup-signup-account.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({ account_type: accountType, email }).toString(),
+                body: new URLSearchParams({ account_type: accountType, email: email }).toString(),
                 credentials: 'same-origin'
             });
             const data = await resp.json();
@@ -56,7 +107,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!accountId) {
             const ok = await ensureAccountIdFromEmail();
             if (!ok) {
-                setMessage('Enter your email above first, then resend OTP.', '#e74c3c');
+                setMessage('Enter your email first, then resend the code.', '#e74c3c');
+                if (emailInput) emailInput.focus();
                 return;
             }
         }
@@ -80,13 +132,13 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             const data = await resp.json();
             if (data.success) {
-                setMessage('OTP sent. Check your email inbox/spam.', '#27ae60');
+                setMessage('Code sent. Check your inbox or spam folder.', '#27ae60');
             } else {
-                setMessage(data.message || 'Could not resend OTP.', '#e74c3c');
+                setMessage(data.message || 'Could not resend code.', '#e74c3c');
             }
         } catch (err) {
             console.error('Resend OTP error', err);
-            setMessage('An error occurred while resending OTP.', '#e74c3c');
+            setMessage('An error occurred while resending the code.', '#e74c3c');
         } finally {
             if (button) {
                 button.disabled = false;
@@ -96,17 +148,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     async function verifyOtp() {
+        syncHiddenOtp();
+
         if (!accountId) {
             const ok = await ensureAccountIdFromEmail();
             if (!ok) {
-                setMessage('Enter your email above first, then verify OTP.', '#e74c3c');
+                setMessage('Enter your email first, then enter the 6-digit code.', '#e74c3c');
+                if (emailInput) emailInput.focus();
                 return;
             }
         }
 
-        const otp = otpInput ? otpInput.value.trim() : '';
+        const otp = getOtpValue();
         if (!/^\d{6}$/.test(otp)) {
-            setMessage('Please enter a valid 6-digit OTP.', '#e74c3c');
+            setMessage('Please enter the full 6-digit code.', '#e74c3c');
+            if (otpDigits[0]) otpDigits[0].focus();
             return;
         }
 
@@ -120,23 +176,23 @@ document.addEventListener('DOMContentLoaded', function() {
             const resp = await fetch('php/verify-signup-otp.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({ account_type: accountType, id: accountId, otp }).toString(),
+                body: new URLSearchParams({ account_type: accountType, id: accountId, otp: otp }).toString(),
                 credentials: 'same-origin'
             });
             const data = await resp.json();
             if (data.success) {
-                setMessage('OTP verified successfully. Redirecting to login...', '#27ae60');
+                setMessage('Verified successfully. Redirecting to sign in...', '#27ae60');
                 localStorage.removeItem('registeredUserId');
                 localStorage.removeItem('registeredTeacherId');
-                setTimeout(() => {
+                setTimeout(function() {
                     window.location.href = accountType === 'teacher' ? 'teacher-login.html' : 'login.html';
                 }, 1200);
             } else {
-                setMessage(data.message || 'Invalid OTP.', '#e74c3c');
+                setMessage(data.message || 'Invalid code. Try again.', '#e74c3c');
             }
         } catch (err) {
             console.error('Verify OTP error', err);
-            setMessage('An error occurred while verifying OTP.', '#e74c3c');
+            setMessage('An error occurred while verifying.', '#e74c3c');
         } finally {
             if (verifyBtn) {
                 verifyBtn.disabled = false;
@@ -145,11 +201,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    initOtpBoxes();
+    syncHiddenOtp();
+
     if (resendBtn) {
         resendBtn.addEventListener('click', function() { resendOtp(resendBtn); });
-    }
-    if (verifyBtn) {
-        verifyBtn.addEventListener('click', verifyOtp);
     }
     if (resendLink) {
         resendLink.addEventListener('click', function(e) {
@@ -157,22 +213,16 @@ document.addEventListener('DOMContentLoaded', function() {
             resendOtp(resendBtn);
         });
     }
-    if (otpInput) {
-        otpInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                verifyOtp();
-            }
-        });
+    if (verifyBtn) {
+        verifyBtn.addEventListener('click', verifyOtp);
     }
 
-    // Show email input only if we don't have an id
-    if (!accountId && emailInput && emailLabel) {
-        emailLabel.style.display = 'block';
-        emailInput.style.display = 'block';
+    if (!accountId && emailInput && emailBlock) {
+        emailBlock.style.display = 'block';
         if (emailParam) emailInput.value = emailParam;
-        setMessage('Enter your email and the 6-digit OTP sent to you.', '#666');
+        setMessage('Enter your email and the 6-digit code sent to you.', '#666');
     } else {
-        setMessage('Enter the 6-digit OTP sent to your email.');
+        setMessage('Enter the 6-digit code sent to your email.', '#666');
+        if (otpDigits[0]) otpDigits[0].focus();
     }
 });

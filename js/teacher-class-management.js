@@ -226,6 +226,9 @@ class TeacherClassManagement {
                 await this.loadPendingEnrollments();
                 await this.loadTeacherClasses();
                 this.updateClassesList();
+                if (window.teacherDashboard && typeof window.teacherDashboard.refreshEnrollmentStatsQuiet === 'function') {
+                    await window.teacherDashboard.refreshEnrollmentStatsQuiet();
+                }
                 return { success: true };
             } else {
                 return { success: false, message: result.message };

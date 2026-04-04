@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'config.php';
+require_once __DIR__ . '/teacher-lessons-schema.php';
 
 header('Content-Type: application/json');
 
@@ -54,32 +55,19 @@ try {
     }
     
     $teacher_id = $class['teacher_id'];
-    
-    // Ensure teacher_lessons table exists
-    $pdo->exec("
-        CREATE TABLE IF NOT EXISTS teacher_lessons (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            teacher_id INT NOT NULL,
-            title VARCHAR(255) NOT NULL,
-            topic VARCHAR(100) NOT NULL,
-            html_content LONGTEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            INDEX idx_teacher (teacher_id),
-            INDEX idx_topic (topic),
-            FOREIGN KEY (teacher_id) REFERENCES teachers(id) ON DELETE CASCADE
-        )
-    ");
-    
-    // Get teacher-created lessons
+
+    ensure_teacher_lessons_schema($pdo);
+
+    // Lessons for this class only, plus legacy rows with no class (backward compatibility)
     $stmt = $pdo->prepare("
         SELECT id, title, topic, created_at, updated_at
         FROM teacher_lessons
         WHERE teacher_id = ?
+          AND (class_id IS NULL OR class_id = ?)
         ORDER BY created_at DESC
     ");
-    
-    $stmt->execute([$teacher_id]);
+
+    $stmt->execute([$teacher_id, $class_id]);
     $lessons = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     error_log("Found " . count($lessons) . " teacher lessons for teacher_id: " . $teacher_id);

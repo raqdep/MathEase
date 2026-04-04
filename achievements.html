@@ -350,6 +350,8 @@
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/logout-confirm.js"></script>
     <script src="js/student-notifications.js"></script>
     <script src="js/student-mobile-nav-shared.js"></script>
     <script>
@@ -879,13 +881,7 @@
             }
         });
 
-        // Logout confirmation
-        function confirmLogout(event) {
-            event.preventDefault();
-            if (confirm('Are you sure you want to logout?')) {
-                window.location.href = 'php/smart-logout.php?type=student';
-            }
-        }
+        // Logout: js/logout-confirm.js (confirmLogout)
 
         // Profile dropdown toggle
         function toggleProfileDropdown() {

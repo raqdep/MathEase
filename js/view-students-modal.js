@@ -319,37 +319,57 @@ class ViewStudentsModal {
 
     async approveStudentEnrollment(enrollmentId) {
         console.log('Approving enrollment ID:', enrollmentId);
-        if (window.teacherClassManagement) {
-            const result = await window.teacherClassManagement.updateEnrollmentStatus(enrollmentId, 'approved');
-            console.log('Approval result:', result);
-            if (result.success) {
-                this.loadClassStudents(this.currentClassId);
-                if (window.teacherClassManagement.showNotification) {
-                    window.teacherClassManagement.showNotification('Student enrollment approved!', 'success');
-                }
-            } else {
-                if (window.teacherClassManagement.showNotification) {
-                    window.teacherClassManagement.showNotification(result.message || 'Failed to approve enrollment', 'error');
-                }
+        const id = Number(enrollmentId);
+        if (!Number.isFinite(id) || id <= 0) {
+            if (window.teacherClassManagement && window.teacherClassManagement.showNotification) {
+                window.teacherClassManagement.showNotification('Invalid enrollment. Refresh the page and try again.', 'error');
             }
+            return;
+        }
+        const mgr = window.teacherClassManagement;
+        if (!mgr || typeof mgr.updateEnrollmentStatus !== 'function') {
+            if (mgr && mgr.showNotification) {
+                mgr.showNotification('Class management is still loading. Please try again in a moment.', 'warning');
+            }
+            return;
+        }
+        const result = await mgr.updateEnrollmentStatus(id, 'approved');
+        console.log('Approval result:', result);
+        if (result.success) {
+            this.loadClassStudents(this.currentClassId);
+            if (mgr.showNotification) {
+                mgr.showNotification('Student enrollment approved!', 'success');
+            }
+        } else if (mgr.showNotification) {
+            mgr.showNotification(result.message || 'Failed to approve enrollment', 'error');
         }
     }
 
     async rejectStudentEnrollment(enrollmentId) {
         console.log('Rejecting enrollment ID:', enrollmentId);
-        if (window.teacherClassManagement) {
-            const result = await window.teacherClassManagement.updateEnrollmentStatus(enrollmentId, 'rejected');
-            console.log('Rejection result:', result);
-            if (result.success) {
-                this.loadClassStudents(this.currentClassId);
-                if (window.teacherClassManagement.showNotification) {
-                    window.teacherClassManagement.showNotification('Student enrollment rejected', 'info');
-                }
-            } else {
-                if (window.teacherClassManagement.showNotification) {
-                    window.teacherClassManagement.showNotification(result.message || 'Failed to reject enrollment', 'error');
-                }
+        const id = Number(enrollmentId);
+        if (!Number.isFinite(id) || id <= 0) {
+            if (window.teacherClassManagement && window.teacherClassManagement.showNotification) {
+                window.teacherClassManagement.showNotification('Invalid enrollment. Refresh the page and try again.', 'error');
             }
+            return;
+        }
+        const mgr = window.teacherClassManagement;
+        if (!mgr || typeof mgr.updateEnrollmentStatus !== 'function') {
+            if (mgr && mgr.showNotification) {
+                mgr.showNotification('Class management is still loading. Please try again in a moment.', 'warning');
+            }
+            return;
+        }
+        const result = await mgr.updateEnrollmentStatus(id, 'rejected');
+        console.log('Rejection result:', result);
+        if (result.success) {
+            this.loadClassStudents(this.currentClassId);
+            if (mgr.showNotification) {
+                mgr.showNotification('Student enrollment rejected', 'info');
+            }
+        } else if (mgr.showNotification) {
+            mgr.showNotification(result.message || 'Failed to reject enrollment', 'error');
         }
     }
 

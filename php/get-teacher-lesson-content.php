@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'config.php';
+require_once __DIR__ . '/teacher-lessons-schema.php';
 
 header('Content-Type: application/json');
 
@@ -12,6 +13,8 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 try {
+    ensure_teacher_lessons_schema($pdo);
+
     $student_id = $_SESSION['user_id'];
     $lesson_id = $_GET['lesson_id'] ?? null;
     
@@ -58,17 +61,24 @@ try {
     
     // Get lesson content
     $stmt = $pdo->prepare("
-        SELECT id, title, topic, html_content, created_at
+        SELECT id, title, topic, html_content, created_at, class_id
         FROM teacher_lessons
         WHERE id = ? AND teacher_id = ?
     ");
-    
+
     $stmt->execute([$lesson_id, $teacher_id]);
     $lesson = $stmt->fetch(PDO::FETCH_ASSOC);
-    
+
     if (!$lesson) {
         http_response_code(404);
         echo json_encode(['success' => false, 'message' => 'Lesson not found or you do not have access.']);
+        exit;
+    }
+
+    $lessonClassId = isset($lesson['class_id']) ? (int)$lesson['class_id'] : 0;
+    if ($lessonClassId > 0 && $lessonClassId !== (int)$class_id) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'message' => 'This lesson is not available for your class.']);
         exit;
     }
     

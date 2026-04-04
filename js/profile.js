@@ -635,20 +635,7 @@ function toggleProfileDropdown() {
     if (icon) icon.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
 }
 
-function confirmLogout(event) {
-    if (event) event.preventDefault();
-    Swal.fire({
-        title: 'Logout?',
-        text: 'Are you sure you want to logout?',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, Logout',
-        cancelButtonText: 'Cancel',
-        confirmButtonColor: '#ef4444'
-    }).then((result) => {
-        if (result.isConfirmed) window.location.href = 'php/smart-logout.php?type=student';
-    });
-}
+// Logout: js/logout-confirm.js (confirmLogout)
 
 function startProfileIconSync() {
     setInterval(async () => {

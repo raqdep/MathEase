@@ -50,6 +50,7 @@ session_start();
 
 require_once __DIR__ . '/config.php';      // must only define $pdo, no output
 require_once __DIR__ . '/load-env.php';   // loads .env into getenv()
+require_once __DIR__ . '/teacher-lessons-schema.php';
 
 /* ---------- 2️⃣  Auth ---------- */
 if (
@@ -125,6 +126,30 @@ if ($file['size'] > MAX_PDF_SIZE) {
 /* ---------- 6️⃣  Extract PDF text ---------- */
 $lessonTitle   = trim($_POST['lesson_title'] ?? 'Untitled Lesson');
 $topicCategory = trim($_POST['topic_category'] ?? 'custom');
+$classId       = isset($_POST['class_id']) ? (int)$_POST['class_id'] : 0;
+
+ensure_teacher_lessons_schema($pdo);
+
+if ($classId <= 0) {
+    json_response([
+        'success' => false,
+        'message' => 'Please select which class this lesson is for.',
+        'error_type' => 'MISSING_CLASS'
+    ], 400);
+}
+
+$classCheck = $pdo->prepare("
+    SELECT id FROM classes
+    WHERE id = ? AND teacher_id = ? AND is_active = TRUE
+");
+$classCheck->execute([$classId, (int)$_SESSION['teacher_id']]);
+if (!$classCheck->fetch(PDO::FETCH_ASSOC)) {
+    json_response([
+        'success' => false,
+        'message' => 'Invalid class or you do not have access to that class.',
+        'error_type' => 'INVALID_CLASS'
+    ], 403);
+}
 
 try {
     $pdfText = extractPdfText($file['tmp_name']);
@@ -184,6 +209,7 @@ try {
     $lessonId = storeLesson(
         $pdo,
         (int)$_SESSION['teacher_id'],
+        $classId,
         $lessonTitle,
         $topicCategory,
         $lessonHtml
@@ -440,30 +466,18 @@ PROMPT;
  *
  * @throws PDOException on any DB error
  */
-function storeLesson(PDO $pdo, int $teacherId, string $title, string $topic, string $html): int
+function storeLesson(PDO $pdo, int $teacherId, int $classId, string $title, string $topic, string $html): int
 {
-    // Table creation – run once per deployment (kept here for demo purposes)
-    $pdo->exec(
-        "CREATE TABLE IF NOT EXISTS teacher_lessons (
-            id          INT AUTO_INCREMENT PRIMARY KEY,
-            teacher_id  INT NOT NULL,
-            title       VARCHAR(255) NOT NULL,
-            topic       VARCHAR(100) NOT NULL,
-            html_content LONGTEXT NOT NULL,
-            created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            INDEX idx_teacher (teacher_id),
-            INDEX idx_topic (topic)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
-    );
+    ensure_teacher_lessons_schema($pdo);
 
     $stmt = $pdo->prepare(
-        "INSERT INTO teacher_lessons (teacher_id, title, topic, html_content)
-         VALUES (:tid, :title, :topic, :html)"
+        "INSERT INTO teacher_lessons (teacher_id, class_id, title, topic, html_content)
+         VALUES (:tid, :cid, :title, :topic, :html)"
     );
 
     $stmt->execute([
         ':tid'   => $teacherId,
+        ':cid'   => $classId,
         ':title' => $title,
         ':topic' => $topic,
         ':html'  => $html

@@ -191,6 +191,11 @@ class PendingRequestsModal {
         requestsList.innerHTML = '';
 
         this.pendingEnrollments.forEach((enrollment, index) => {
+            const eid = Number(enrollment.enrollment_id);
+            if (!Number.isFinite(eid) || eid <= 0) {
+                console.error('Pending enrollment missing valid enrollment_id:', enrollment);
+                return;
+            }
             const requestCard = document.createElement('div');
             requestCard.className = 'bg-white rounded-xl p-4 border border-purple-200/60 hover:shadow-lg transition-all duration-300';
             requestCard.innerHTML = `
@@ -228,14 +233,14 @@ class PendingRequestsModal {
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-2">
                         <button 
-                            onclick="approveEnrollment(${enrollment.enrollment_id})"
+                            onclick="approveEnrollment(${eid})"
                             class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
                         >
                             <i class="fas fa-check mr-1"></i>
                             Approve
                         </button>
                         <button 
-                            onclick="rejectEnrollment(${enrollment.enrollment_id})"
+                            onclick="rejectEnrollment(${eid})"
                             class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
                         >
                             <i class="fas fa-times mr-1"></i>
@@ -254,56 +259,95 @@ class PendingRequestsModal {
 
     async approveEnrollment(enrollmentId) {
         console.log('Approving enrollment ID:', enrollmentId);
-        
+        const id = Number(enrollmentId);
+        if (!Number.isFinite(id) || id <= 0) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Invalid enrollment. Please refresh the page and try again.',
+                icon: 'error',
+                confirmButtonColor: '#ef4444'
+            });
+            return;
+        }
+
         // Find the enrollment to get student name
-        const enrollment = this.pendingEnrollments.find(e => e.enrollment_id == enrollmentId);
+        const enrollment = this.pendingEnrollments.find(e => Number(e.enrollment_id) === id);
         const studentName = enrollment ? `${enrollment.first_name} ${enrollment.last_name}` : 'Student';
-        
-        if (window.teacherClassManagement) {
-            const result = await window.teacherClassManagement.updateEnrollmentStatus(enrollmentId, 'approved');
-            console.log('Approval result:', result);
-            if (result.success) {
-                this.loadPendingEnrollments();
-                
-                // Show success notification with student name
-                Swal.fire({
-                    title: 'Enrollment Approved!',
-                    text: `${studentName} has been approved and notified.`,
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    confirmButtonColor: '#10b981',
-                    background: '#ffffff',
-                    customClass: {
-                        popup: 'rounded-2xl',
-                        title: 'text-slate-800',
-                        content: 'text-slate-600'
-                    }
-                });
-            } else {
-                Swal.fire({
-                    title: 'Error',
-                    text: result.message || 'Failed to approve enrollment',
-                    icon: 'error',
-                    confirmButtonText: 'OK',
-                    confirmButtonColor: '#ef4444',
-                    background: '#ffffff',
-                    customClass: {
-                        popup: 'rounded-2xl',
-                        title: 'text-slate-800',
-                        content: 'text-slate-600'
-                    }
-                });
-            }
+
+        const mgr = window.teacherClassManagement;
+        if (!mgr || typeof mgr.updateEnrollmentStatus !== 'function') {
+            Swal.fire({
+                title: 'Error',
+                text: 'Class management is still loading. Please wait a moment and try again, or refresh the page.',
+                icon: 'warning',
+                confirmButtonColor: '#6366f1'
+            });
+            return;
+        }
+
+        const result = await mgr.updateEnrollmentStatus(id, 'approved');
+        console.log('Approval result:', result);
+        if (result.success) {
+            this.loadPendingEnrollments();
+
+            Swal.fire({
+                title: 'Enrollment Approved!',
+                text: `${studentName} has been approved and notified.`,
+                icon: 'success',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#10b981',
+                background: '#ffffff',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    title: 'text-slate-800',
+                    content: 'text-slate-600'
+                }
+            });
+        } else {
+            Swal.fire({
+                title: 'Error',
+                text: result.message || 'Failed to approve enrollment',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#ef4444',
+                background: '#ffffff',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    title: 'text-slate-800',
+                    content: 'text-slate-600'
+                }
+            });
         }
     }
 
     async rejectEnrollment(enrollmentId) {
         console.log('Rejecting enrollment ID:', enrollmentId);
-        
+        const id = Number(enrollmentId);
+        if (!Number.isFinite(id) || id <= 0) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Invalid enrollment. Please refresh the page and try again.',
+                icon: 'error',
+                confirmButtonColor: '#ef4444'
+            });
+            return;
+        }
+
         // Find the enrollment to get student name
-        const enrollment = this.pendingEnrollments.find(e => e.enrollment_id == enrollmentId);
+        const enrollment = this.pendingEnrollments.find(e => Number(e.enrollment_id) === id);
         const studentName = enrollment ? `${enrollment.first_name} ${enrollment.last_name}` : 'Student';
-        
+
+        const mgr = window.teacherClassManagement;
+        if (!mgr || typeof mgr.updateEnrollmentStatus !== 'function') {
+            Swal.fire({
+                title: 'Error',
+                text: 'Class management is still loading. Please wait a moment and try again, or refresh the page.',
+                icon: 'warning',
+                confirmButtonColor: '#6366f1'
+            });
+            return;
+        }
+
         // Show confirmation dialog for rejection
         const { value: notes } = await Swal.fire({
             title: 'Reject Enrollment?',
@@ -331,42 +375,39 @@ class PendingRequestsModal {
         if (notes === undefined) {
             return;
         }
-        
-        if (window.teacherClassManagement) {
-            const result = await window.teacherClassManagement.updateEnrollmentStatus(enrollmentId, 'rejected', notes || '');
-            console.log('Rejection result:', result);
-            if (result.success) {
-                this.loadPendingEnrollments();
-                
-                // Show success notification with student name
-                Swal.fire({
-                    title: 'Enrollment Rejected',
-                    text: `${studentName} has been rejected and notified.`,
-                    icon: 'info',
-                    confirmButtonText: 'OK',
-                    confirmButtonColor: '#6b7280',
-                    background: '#ffffff',
-                    customClass: {
-                        popup: 'rounded-2xl',
-                        title: 'text-slate-800',
-                        content: 'text-slate-600'
-                    }
-                });
-            } else {
-                Swal.fire({
-                    title: 'Error',
-                    text: result.message || 'Failed to reject enrollment',
-                    icon: 'error',
-                    confirmButtonText: 'OK',
-                    confirmButtonColor: '#ef4444',
-                    background: '#ffffff',
-                    customClass: {
-                        popup: 'rounded-2xl',
-                        title: 'text-slate-800',
-                        content: 'text-slate-600'
-                    }
-                });
-            }
+
+        const result = await mgr.updateEnrollmentStatus(id, 'rejected', notes || '');
+        console.log('Rejection result:', result);
+        if (result.success) {
+            this.loadPendingEnrollments();
+
+            Swal.fire({
+                title: 'Enrollment Rejected',
+                text: `${studentName} has been rejected and notified.`,
+                icon: 'info',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#6b7280',
+                background: '#ffffff',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    title: 'text-slate-800',
+                    content: 'text-slate-600'
+                }
+            });
+        } else {
+            Swal.fire({
+                title: 'Error',
+                text: result.message || 'Failed to reject enrollment',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#ef4444',
+                background: '#ffffff',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    title: 'text-slate-800',
+                    content: 'text-slate-600'
+                }
+            });
         }
     }
 

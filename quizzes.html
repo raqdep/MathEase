@@ -637,22 +637,12 @@
     </footer>
 
     <script src="js/main.js"></script>
+    <script src="js/logout-confirm.js"></script>
     <script src="js/student-mobile-nav-shared.js"></script>
     <script src="js/student-enrollment-check.js"></script>
     <script src="js/student-notifications.js"></script>
     <script src="js/session-manager.js"></script>
     
-    <script>
-        // Notifications are handled globally by `js/student-notifications.js` (loaded via shared nav).
-        // Logout confirmation (used by nav dropdown)
-        function confirmLogout(event) {
-            event.preventDefault();
-            if (confirm('Are you sure you want to logout?')) {
-                window.location.href = 'php/smart-logout.php?type=student';
-            }
-        }
-    </script>
-
     <script>
         // Auth guard and user recognition
         document.addEventListener('DOMContentLoaded', async function() {
@@ -2877,13 +2867,7 @@
         `;
         document.head.appendChild(style);
 
-        // Logout confirmation
-        function confirmLogout(event) {
-            event.preventDefault();
-            if (confirm('Are you sure you want to logout?')) {
-                window.location.href = 'php/smart-logout.php?type=student';
-            }
-        }
+        // Logout: js/logout-confirm.js (confirmLogout)
 
         // Profile dropdown toggle
         function toggleProfileDropdown() {

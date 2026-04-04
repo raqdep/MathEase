@@ -1297,6 +1297,7 @@
     </footer>
 
     <script src="js/main.js"></script>
+    <script src="js/logout-confirm.js"></script>
     <script src="js/student-mobile-nav-shared.js"></script>
     <script src="js/dashboard.js"></script>
     <script src="js/join-class-modal.js"></script>
@@ -6103,14 +6104,8 @@
             checkTeacherStatus();
         });
 
-        // Logout confirmation
-        function confirmLogout(event) {
-            event.preventDefault();
-            if (confirm('Are you sure you want to logout?')) {
-                window.location.href = 'php/smart-logout.php?type=student';
-            }
-        }
-        
+        // Logout: SweetAlert via js/logout-confirm.js (confirmLogout)
+
         // Mobile Menu Functions - Sidebar Style
         function toggleMobileMenu() {
             const mobileMenu = document.getElementById('mobileMenu');

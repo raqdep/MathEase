@@ -338,12 +338,12 @@ class TeacherDashboardManager {
             });
         });
 
-        // SweetAlert logout confirm
+        // SweetAlert logout confirm (anchor must use id="logoutLink" and href="#")
         const logoutLink = document.getElementById('logoutLink');
+        const teacherLogoutUrl = 'php/smart-logout.php?type=teacher';
         if (logoutLink) {
             logoutLink.addEventListener('click', (e) => {
                 e.preventDefault();
-                const href = logoutLink.getAttribute('href') || 'php/teacher-logout.php';
                 if (window.Swal) {
                     Swal.fire({
                         title: 'Logout?',
@@ -353,15 +353,15 @@ class TeacherDashboardManager {
                         confirmButtonColor: '#f59e0b',
                         cancelButtonColor: '#6b7280',
                         confirmButtonText: 'Yes, logout',
-                        cancelButtonText: 'Cancel'
+                        cancelButtonText: 'Cancel',
+                        focusCancel: true
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            window.location.href = href;
+                            window.location.href = teacherLogoutUrl;
                         }
                     });
-                } else {
-                    const ok = confirm('Are you sure you want to logout?');
-                    if (ok) window.location.href = href;
+                } else if (confirm('Are you sure you want to logout?')) {
+                    window.location.href = teacherLogoutUrl;
                 }
             });
         }
@@ -415,6 +415,12 @@ class TeacherDashboardManager {
         await this.loadClassManagementData();
         this.updateDashboard();
         this.showNotification('Dashboard refreshed', 'success');
+    }
+
+    /** Reload class/pending stats and update header cards without a toast (e.g. after approve/reject enrollment). */
+    async refreshEnrollmentStatsQuiet() {
+        await this.loadClassManagementData();
+        this.updateProgressStats();
     }
 
     // Method to simulate progress update

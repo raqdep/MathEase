@@ -8,130 +8,278 @@
     <link rel="stylesheet" href="css/auth.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* OTP verification page — layout matches account verification design */
+        .verify-otp-page {
+            min-height: 100vh;
+            background: #e8eaed !important;
+            margin: 0;
+        }
+
+        .verify-otp-page .auth-section {
+            min-height: 100vh;
+            background: transparent !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1.25rem;
+        }
+
+        .verify-otp-page .auth-container {
+            max-width: 440px;
+            width: 100%;
+        }
+
+        .verify-otp-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(15, 23, 42, 0.08), 0 2px 8px rgba(15, 23, 42, 0.04);
+            padding: 2.5rem 2rem 2rem;
+            text-align: center;
+        }
+
+        .verify-otp-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .verify-otp-brand img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+        }
+
+        .verify-otp-brand span {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #111827;
+            letter-spacing: -0.02em;
+        }
+
+        .verify-otp-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #111827;
+            margin: 0 0 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .verify-otp-subtitle {
+            font-size: 0.95rem;
+            font-weight: 400;
+            color: #6b7280;
+            margin: 0 0 1.75rem;
+        }
+
+        .verify-email-block {
+            text-align: left;
+            margin-bottom: 1.25rem;
+        }
+
+        .verify-email-block label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.35rem;
+        }
+
+        .verify-email-block input {
+            width: 100%;
+            padding: 0.65rem 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            background: #f9fafb;
+        }
+
+        .verify-email-block input:focus {
+            outline: none;
+            border-color: #7dd3fc;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+        }
+
+        .otp-input-row {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.75rem;
+            flex-wrap: nowrap;
+        }
+
+        .otp-digit {
+            width: 2.75rem;
+            height: 3rem;
+            border: none;
+            border-radius: 10px;
+            background: #f3f4f6;
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: #111827;
+            text-align: center;
+            transition: background 0.15s ease, box-shadow 0.15s ease;
+            appearance: textfield;
+            -moz-appearance: textfield;
+        }
+
+        .otp-digit::-webkit-outer-spin-button,
+        .otp-digit::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .otp-digit:focus {
+            outline: none;
+            background: #ffffff;
+            box-shadow: 0 0 0 2px #7dd3fc;
+        }
+
+        .otp-digit::placeholder {
+            color: transparent;
+        }
+
+        .verify-otp-btn {
+            width: 100%;
+            padding: 0.85rem 1.25rem;
+            border: none;
+            border-radius: 12px;
+            background: #0ea5e9;
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.35);
+            transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+        }
+
+        .verify-otp-btn:hover {
+            background: #0284c7;
+            box-shadow: 0 10px 24px rgba(14, 165, 233, 0.4);
+        }
+
+        .verify-otp-btn:active {
+            transform: translateY(1px);
+        }
+
+        .verify-otp-btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .verify-resend-wrap {
+            margin-top: 1.25rem;
+        }
+
+        .verify-resend-btn {
+            background: none;
+            border: none;
+            padding: 0;
+            font-size: 0.9rem;
+            color: #4b5563;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .verify-resend-btn:hover {
+            color: #111827;
+        }
+
+        .verify-resend-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #verificationMessage {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            min-height: 1.25em;
+        }
+
+        .verify-back-signin {
+            margin-top: 1.5rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .verify-back-signin a {
+            color: #0ea5e9;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .verify-back-signin a:hover {
+            text-decoration: underline;
+        }
+
+        @media (min-width: 400px) {
+            .otp-digit {
+                width: 3rem;
+                height: 3.25rem;
+                font-size: 1.4rem;
+            }
+            .otp-input-row {
+                gap: 0.65rem;
+            }
+        }
+    </style>
 </head>
-<body class="register-page">
-    <section class="auth-section" style="padding-top:60px;">
+<body class="register-page verify-otp-page">
+    <section class="auth-section">
         <div class="auth-container">
-            <div class="auth-card" id="verifyContainer">
-                <div class="auth-header">
-                    <div class="auth-logo">
-                        <img src="css/nav-logo/logo-mid.png" alt="MathEase Logo" class="auth-logo-img">
-                        <h1>MathEase</h1>
-                    </div>
-                    <h2>Verify your Account</h2>
-                    <p>Please enter the OTP code sent to your email to activate your account.</p>
+            <div class="verify-otp-card" id="verifyContainer">
+                <div class="verify-otp-brand">
+                    <img src="css/nav-logo/logo-mid.png" alt="">
+                    <span>MathEase</span>
                 </div>
 
-                <div class="auth-form">
-                    <div class="verification-instructions">
-                        <div class="instruction-step">
-                            <div class="step-icon">
-                                <i class="fas fa-envelope"></i>
-                            </div>
-                            <div class="step-content">
-                                <h3>Check Your Email</h3>
-                                <p>We've sent a 6-digit OTP code to your email address.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <div class="step-icon">
-                                <i class="fas fa-key"></i>
-                            </div>
-                            <div class="step-content">
-                                <h3>Enter OTP</h3>
-                                <p>Type the OTP code in the field below and click Verify.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="instruction-step">
-                            <div class="step-icon">
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                            <div class="step-content">
-                                <h3>Account Activated</h3>
-                                <p>Once verified, you can sign in to your MathEase account.</p>
-                            </div>
-                        </div>
-                    </div>
+                <h1 class="verify-otp-title">Account Verification</h1>
+                <p class="verify-otp-subtitle">Enter Verify Code Below</p>
 
-                    <div class="form-group">
-                        <label for="verifyEmail" id="emailLabel" style="font-weight:600;display:none;margin-bottom:8px;">Email</label>
-                        <input id="verifyEmail" type="email" placeholder="you@example.com" style="display:none;width:100%;padding:12px;border:1px solid #d1d5db;border-radius:8px;margin-bottom:10px;">
-                        <label for="otpCode" id="otpLabel" style="font-weight:600;display:block;margin-bottom:8px;">Enter OTP</label>
-                        <input id="otpCode" type="text" inputmode="numeric" maxlength="6" placeholder="123456" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:8px;margin-bottom:10px;">
-                        <button class="btn btn-outline" id="resendEmailBtn">Resend OTP</button>
-                        <button class="btn btn-primary" id="checkEmailBtn">Verify OTP</button>
-                    </div>
-                    
-                    <div id="verificationMessage" style="color:#666;margin-bottom:0.5rem;font-size:0.95rem;"></div>
+                <div class="verify-email-block" id="emailBlock" style="display: none;">
+                    <label for="verifyEmail" id="emailLabel">Email</label>
+                    <input id="verifyEmail" type="email" placeholder="you@example.com" autocomplete="email">
                 </div>
 
-                <div class="auth-footer">
-                    <p>Didn't receive the email? Check your spam folder or <a href="#" id="resendLink">resend OTP code</a></p>
-                    <p>Return to <a href="login.html">Sign in</a></p>
+                <div class="otp-input-row" id="otpInputs" role="group" aria-label="One-time verification code">
+                    <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" data-otp-index="0" aria-label="Digit 1 of 6">
+                    <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-otp-index="1" aria-label="Digit 2 of 6">
+                    <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-otp-index="2" aria-label="Digit 3 of 6">
+                    <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-otp-index="3" aria-label="Digit 4 of 6">
+                    <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-otp-index="4" aria-label="Digit 5 of 6">
+                    <input type="text" class="otp-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*" data-otp-index="5" aria-label="Digit 6 of 6">
                 </div>
+
+                <!-- Kept for scripts that expect #otpCode; synced from boxes -->
+                <input type="hidden" id="otpCode" value="">
+
+                <button type="button" class="verify-otp-btn" id="checkEmailBtn">Verify Code</button>
+
+                <div class="verify-resend-wrap">
+                    <button type="button" class="verify-resend-btn" id="resendEmailBtn">Resend Code</button>
+                </div>
+
+                <div id="verificationMessage"></div>
+
+                <p class="verify-back-signin">Return to <a href="login.html" id="teacherSignInFallback">Sign in</a></p>
             </div>
         </div>
     </section>
 
-    <style>
-        .verification-instructions {
-            margin: 2rem 0;
-        }
-        
-        .instruction-step {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 1.5rem;
-            padding: 1rem;
-            background: #f8f9fa;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
-        }
-        
-        .step-icon {
-            margin-right: 1rem;
-            margin-top: 0.25rem;
-        }
-        
-        .step-icon i {
-            font-size: 1.5rem;
-            color: #667eea;
-        }
-        
-        .step-content h3 {
-            margin: 0 0 0.5rem 0;
-            color: #333;
-            font-size: 1.1rem;
-        }
-        
-        .step-content p {
-            margin: 0;
-            color: #666;
-            line-height: 1.4;
-        }
-        
-        .auth-logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1rem;
-        }
-        
-        .auth-logo-img {
-            width: 40px;
-            height: 40px;
-            margin-right: 0.5rem;
-        }
-        
-        .auth-logo h1 {
-            margin: 0;
-            color: #667eea;
-            font-size: 1.5rem;
-        }
-    </style>
-
     <script src="js/verify-signup.js"></script>
+    <script>
+        (function () {
+            var params = new URLSearchParams(window.location.search);
+            var isTeacher = params.get('type') === 'teacher';
+            var signIn = document.getElementById('teacherSignInFallback');
+            if (signIn && isTeacher) signIn.href = 'teacher-login.html';
+        })();
+    </script>
 </body>
 </html>

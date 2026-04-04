@@ -1021,7 +1021,7 @@
                                     
                                     <!-- Actions -->
                                     <div class="p-3">
-                                        <a href="php/smart-logout.php?type=teacher" class="flex items-center px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 group">
+                                        <a href="#" id="logoutLink" class="flex items-center px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 group">
                                             <div class="w-10 h-10 rounded-lg bg-red-100 group-hover:bg-red-200 flex items-center justify-center mr-3 transition-colors">
                                                 <i class="fas fa-sign-out-alt text-red-600 text-base"></i>
                                             </div>
@@ -2049,6 +2049,16 @@
                                     <input type="text" id="lessonTitle" placeholder="e.g., Introduction to Functions" 
                                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                                 </div>
+
+                                <div class="mt-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2" for="pdfLessonClassSelect">
+                                        <i class="fas fa-chalkboard mr-2 text-indigo-600"></i>Upload lesson to class
+                                    </label>
+                                    <select id="pdfLessonClassSelect" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option value="">Loading classes…</option>
+                                    </select>
+                                    <p class="mt-2 text-xs text-gray-600" id="pdfLessonClassHint">The lesson will only appear for students in the class you select.</p>
+                                </div>
                                 
                                 <div class="mt-4">
                                     <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -2976,8 +2986,9 @@
                 console.log('Section classes after show:', targetSection.className);
                 
                 // Load lessons if lesson creation section
-                if (sectionName === 'lesson-creation' && typeof loadMyLessons === 'function') {
-                    loadMyLessons();
+                if (sectionName === 'lesson-creation') {
+                    if (typeof loadMyLessons === 'function') loadMyLessons();
+                    if (typeof populatePdfLessonClassSelect === 'function') populatePdfLessonClassSelect();
                 }
                 // Verify the section is actually visible
                 setTimeout(() => {
@@ -9954,10 +9965,58 @@ let currentQuizResultsSearch = '';
         function updateGenerateButton() {
             const btn = document.getElementById('generateLessonBtn');
             const title = document.getElementById('lessonTitle');
+            const classSel = document.getElementById('pdfLessonClassSelect');
+            const classOk = classSel && classSel.value && classSel.value !== '';
             
             if (btn) {
-                btn.disabled = !selectedFile || !title || !title.value.trim();
+                btn.disabled = !selectedFile || !title || !title.value.trim() || !classOk;
             }
+        }
+
+        async function populatePdfLessonClassSelect() {
+            const sel = document.getElementById('pdfLessonClassSelect');
+            const hint = document.getElementById('pdfLessonClassHint');
+            if (!sel) return;
+            const prev = sel.value;
+            sel.innerHTML = '<option value="">Loading classes…</option>';
+            sel.disabled = true;
+            try {
+                const r = await fetch('php/class-management.php?action=get_teacher_classes', {
+                    credentials: 'include',
+                    cache: 'no-store'
+                });
+                if (r.status === 401) {
+                    sel.innerHTML = '<option value="">Sign in required</option>';
+                    if (hint) hint.textContent = 'Please sign in again to load your classes.';
+                    updateGenerateButton();
+                    return;
+                }
+                const data = await r.json();
+                sel.innerHTML = '<option value="">Select a class</option>';
+                if (data.success && Array.isArray(data.classes) && data.classes.length > 0) {
+                    data.classes.forEach(function(c) {
+                        const o = document.createElement('option');
+                        o.value = String(c.id);
+                        o.textContent = (c.class_name || 'Class') + ' (' + (c.class_code || '') + ')';
+                        sel.appendChild(o);
+                    });
+                    if (data.classes.length === 1) {
+                        sel.value = String(data.classes[0].id);
+                    } else if (prev && Array.from(sel.options).some(function(opt) { return opt.value === prev; })) {
+                        sel.value = prev;
+                    }
+                    if (hint) hint.textContent = 'The lesson will only appear for students in the class you select.';
+                } else {
+                    sel.innerHTML = '<option value="">No classes yet</option>';
+                    if (hint) hint.textContent = 'Create a class under Class Management first, then return here to upload a PDF lesson.';
+                }
+            } catch (e) {
+                console.error('populatePdfLessonClassSelect', e);
+                sel.innerHTML = '<option value="">Could not load classes</option>';
+                if (hint) hint.textContent = 'Refresh the page or check your connection.';
+            }
+            sel.disabled = false;
+            updateGenerateButton();
         }
 
         // Handle form submission
@@ -9990,6 +10049,18 @@ let currentQuizResultsSearch = '';
                 Swal.fire({
                     title: 'Topic Category Required',
                     text: 'Please select a topic category for your lesson.',
+                    icon: 'warning',
+                    confirmButtonText: 'OK'
+                });
+                return;
+            }
+
+            const classSel = document.getElementById('pdfLessonClassSelect');
+            const classId = classSel && classSel.value ? String(classSel.value).trim() : '';
+            if (!classId) {
+                Swal.fire({
+                    title: 'Class Required',
+                    text: 'Select which class this PDF lesson should be uploaded to.',
                     icon: 'warning',
                     confirmButtonText: 'OK'
                 });
@@ -10040,6 +10111,7 @@ let currentQuizResultsSearch = '';
                 formData.append('pdf_file', selectedFile);
                 formData.append('lesson_title', lessonTitle);
                 formData.append('topic_category', topicCategory);
+                formData.append('class_id', classId);
 
                 if (processingMessage) processingMessage.textContent = 'Extracting text from PDF...';
                 if (progressBar) progressBar.style.width = '40%';
@@ -10637,12 +10709,15 @@ let currentQuizResultsSearch = '';
                             const lessonTitle = lesson.title.replace(/'/g, "&#39;").replace(/"/g, "&quot;");
                             const lessonTopic = lesson.topic.replace(/'/g, "&#39;").replace(/"/g, "&quot;");
                             const lessonDate = new Date(lesson.created_at).toLocaleDateString();
+                            const classLabel = lesson.class_name
+                                ? String(lesson.class_name).replace(/'/g, "&#39;").replace(/"/g, "&quot;")
+                                : (lesson.class_id ? ('Class #' + lesson.class_id) : 'All classes');
                             return '<div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">' +
                                 '<div class="flex items-center">' +
                                 '<i class="fas fa-file-pdf text-red-500 text-xl mr-3"></i>' +
                                 '<div>' +
                                 '<p class="font-medium text-gray-900">' + lessonTitle + '</p>' +
-                                '<p class="text-sm text-gray-600">' + lessonTopic + ' • ' + lessonDate + '</p>' +
+                                '<p class="text-sm text-gray-600">' + lessonTopic + ' • ' + classLabel + ' • ' + lessonDate + '</p>' +
                                 '</div>' +
                                 '</div>' +
                                 '<div class="flex space-x-2">' +
@@ -10662,8 +10737,9 @@ let currentQuizResultsSearch = '';
             }
         }
 
-        // Update button state when title changes
+        // Update button state when title / class changes
         document.getElementById('lessonTitle')?.addEventListener('input', updateGenerateButton);
+        document.getElementById('pdfLessonClassSelect')?.addEventListener('change', updateGenerateButton);
 
         async function viewLesson(lessonId) {
             try {
