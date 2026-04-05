@@ -1,9 +1,9 @@
 <?php
 // Database configuration for MathEase
-define('DB_HOST', 'mathtry-db.c9aqi8mg6z1y.ap-southeast-2.rds.amazonaws.com');
+define('DB_HOST', 'mathease-db.crqqmwqm0c6s.ap-southeast-2.rds.amazonaws.com');
 define('DB_USER', 'admin');
-define('DB_PASS', 'mathtry123');
-define('DB_NAME', 'mathease_database');
+define('DB_PASS', 'mathease123');
+define('DB_NAME', 'mathease_database3');
 
 // Create database connection
 try {
@@ -48,7 +48,7 @@ function generate_token() {
  * Install PHPMailer via Composer for best results: composer require phpmailer/phpmailer
  */
 define('MAIL_HOST', getenv('MAIL_HOST') ?: 'smtp.gmail.com');
-define('MAIL_USERNAME', getenv('MAIL_USERNAME') ?: 'matheasenc@gmail.com');
+define('MAIL_USERNAME', getenv('MAIL_USERNAME') ?: 'matheasenc2025@gmail.com');
 define('MAIL_PASSWORD', getenv('MAIL_PASSWORD') ?: 'hoch kppu mvqk eorj');
 define('MAIL_PORT', getenv('MAIL_PORT') ?: 465);
 define('MAIL_FROM', getenv('MAIL_FROM') ?: 'matheasenc@gmail.com');

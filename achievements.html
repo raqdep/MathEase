@@ -987,5 +987,8 @@
         // Also check for profile updates periodically
         setInterval(loadProfilePicture, 5000); // Check every 5 seconds
     </script>
+    <script>
+        fetch('php/student-activity-beacon.php', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ page: 'achievements' }) }).catch(function () {});
+    </script>
 </body>
 </html>

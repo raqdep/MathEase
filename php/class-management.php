@@ -15,6 +15,31 @@ class ClassManagement {
             throw new Exception("Database connection not available");
         }
     }
+
+    /**
+     * Must not run inside an active PDO transaction: MySQL DDL causes an implicit commit
+     * and leaves no transaction, which breaks a subsequent commit()/rollBack().
+     */
+    private function ensureTeacherActivityLogTable(): void {
+        try {
+            $this->pdo->exec("
+                CREATE TABLE IF NOT EXISTS teacher_activity_log (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    teacher_id INT NOT NULL,
+                    action VARCHAR(100) NOT NULL,
+                    details TEXT,
+                    ip_address VARCHAR(45),
+                    user_agent TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    INDEX idx_teacher (teacher_id),
+                    INDEX idx_action (action),
+                    INDEX idx_created (created_at)
+                )
+            ");
+        } catch (Exception $e) {
+            error_log('ensureTeacherActivityLogTable failed: ' . $e->getMessage());
+        }
+    }
     
     // Generate a unique class code
     public function generateClassCode() {
@@ -48,20 +73,7 @@ class ClassManagement {
 
                 // Log teacher activity (class created)
                 try {
-                    $this->pdo->exec("
-                        CREATE TABLE IF NOT EXISTS teacher_activity_log (
-                            id INT AUTO_INCREMENT PRIMARY KEY,
-                            teacher_id INT NOT NULL,
-                            action VARCHAR(100) NOT NULL,
-                            details TEXT,
-                            ip_address VARCHAR(45),
-                            user_agent TEXT,
-                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                            INDEX idx_teacher (teacher_id),
-                            INDEX idx_action (action),
-                            INDEX idx_created (created_at)
-                        )
-                    ");
+                    $this->ensureTeacherActivityLogTable();
 
                     $details = "Created class '{$className}' (Code: {$classCode})";
                     if (!empty($gradeLevel)) $details .= ", Grade {$gradeLevel}";
@@ -326,6 +338,8 @@ class ClassManagement {
                 ];
             }
             
+            $this->ensureTeacherActivityLogTable();
+
             // Start transaction
             $this->pdo->beginTransaction();
             
@@ -365,21 +379,6 @@ class ClassManagement {
 
                 // Log teacher activity for enrollment decision
                 try {
-                    $this->pdo->exec("
-                        CREATE TABLE IF NOT EXISTS teacher_activity_log (
-                            id INT AUTO_INCREMENT PRIMARY KEY,
-                            teacher_id INT NOT NULL,
-                            action VARCHAR(100) NOT NULL,
-                            details TEXT,
-                            ip_address VARCHAR(45),
-                            user_agent TEXT,
-                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                            INDEX idx_teacher (teacher_id),
-                            INDEX idx_action (action),
-                            INDEX idx_created (created_at)
-                        )
-                    ");
-
                     $action = $status === 'approved' ? 'student_enrollment_approved' : 'student_enrollment_rejected';
                     $detail = ($status === 'approved' ? 'Approved' : 'Rejected') .
                         " enrollment for {$enrollment['first_name']} {$enrollment['last_name']} in class '{$enrollment['class_name']}'.";
@@ -409,8 +408,9 @@ class ClassManagement {
                 ];
                 
             } catch (Exception $e) {
-                // Rollback transaction on error
-                $this->pdo->rollBack();
+                if ($this->pdo->inTransaction()) {
+                    $this->pdo->rollBack();
+                }
                 throw $e;
             }
             

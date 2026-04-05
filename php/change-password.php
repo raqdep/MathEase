@@ -99,6 +99,9 @@ try {
     }
     
     error_log("SUCCESS: Password changed and verified in database for user_id: $user_id");
+
+    require_once __DIR__ . '/student-activity-log-helper.php';
+    log_student_activity($pdo, (int) $user_id, 'password_change', 'Nagpalit ng password');
     
     echo json_encode([
         'success' => true,

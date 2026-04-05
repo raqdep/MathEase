@@ -75,6 +75,11 @@ if ($logoutType === 'student' || ($logoutType === 'auto' && $isStudent)) {
         $stmt->execute([$token]);
         setcookie('remember_token', '', time() - 3600, '/');
     }
+
+    if ($userId) {
+        require_once __DIR__ . '/student-activity-log-helper.php';
+        log_student_activity($pdo, (int) $userId, 'logout', 'Nag-log out');
+    }
     
     // Clear student session data
     clear_student_session();

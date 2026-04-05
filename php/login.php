@@ -105,6 +105,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("UPDATE users SET last_login = NOW() WHERE id = ?");
         $stmt->execute([$user['id']]);
         
+        require_once __DIR__ . '/student-activity-log-helper.php';
+        log_student_activity($pdo, (int) $user['id'], 'login', 'Matagumpay na pag-log in');
+
         // Log successful login
         error_log("User logged in: $email (ID: {$user['id']})");
         

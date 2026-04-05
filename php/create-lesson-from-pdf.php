@@ -31,6 +31,52 @@ function log_msg(string $msg): void {
 }
 
 /**
+ * Truncate to at most $maxBytes bytes without splitting a UTF-8 code unit.
+ * Plain substr() can leave invalid UTF-8; json_encode then fails → empty POST → Groq HTTP 400.
+ */
+function truncateUtf8Bytes(string $s, int $maxBytes): string
+{
+    if ($maxBytes <= 0) {
+        return '';
+    }
+    if (strlen($s) <= $maxBytes) {
+        return $s;
+    }
+    if (function_exists('mb_strcut')) {
+        $cut = mb_strcut($s, 0, $maxBytes, 'UTF-8');
+        if ($cut !== false && $cut !== '') {
+            return $cut;
+        }
+    }
+    $s = substr($s, 0, $maxBytes);
+    return preg_replace('/[\x80-\xBF]+$/', '', $s) ?? $s;
+}
+
+/** Strip invalid UTF-8 so the Groq request body is always valid JSON. */
+function utf8SafeForJson(string $s): string
+{
+    if ($s === '') {
+        return '';
+    }
+    if (function_exists('iconv')) {
+        $t = @iconv('UTF-8', 'UTF-8//IGNORE', $s);
+        if ($t !== false) {
+            return $t;
+        }
+    }
+    return $s;
+}
+
+function groqRequestJsonEncodeFlags(): int
+{
+    $f = JSON_UNESCAPED_UNICODE;
+    if (defined('JSON_INVALID_UTF8_SUBSTITUTE')) {
+        $f |= JSON_INVALID_UTF8_SUBSTITUTE;
+    }
+    return $f;
+}
+
+/**
  * Sends a JSON response and halts execution.
  */
 function json_response(array $payload, int $httpCode = 200): void {
@@ -51,6 +97,11 @@ session_start();
 require_once __DIR__ . '/config.php';      // must only define $pdo, no output
 require_once __DIR__ . '/load-env.php';   // loads .env into getenv()
 require_once __DIR__ . '/teacher-lessons-schema.php';
+
+$__matheaseComposer = dirname(__DIR__) . '/vendor/autoload.php';
+if (is_readable($__matheaseComposer)) {
+    require_once $__matheaseComposer;
+}
 
 /* ---------- 2️⃣  Auth ---------- */
 if (
@@ -126,30 +177,58 @@ if ($file['size'] > MAX_PDF_SIZE) {
 /* ---------- 6️⃣  Extract PDF text ---------- */
 $lessonTitle   = trim($_POST['lesson_title'] ?? 'Untitled Lesson');
 $topicCategory = trim($_POST['topic_category'] ?? 'custom');
-$classId       = isset($_POST['class_id']) ? (int)$_POST['class_id'] : 0;
+$teacherId     = (int) $_SESSION['teacher_id'];
 
 ensure_teacher_lessons_schema($pdo);
 
-if ($classId <= 0) {
+/* Resolve target class IDs: all classes, JSON list, or legacy single class_id */
+$classIds = [];
+$assignAll = isset($_POST['assign_all_classes'])
+    && $_POST['assign_all_classes'] !== ''
+    && $_POST['assign_all_classes'] !== '0'
+    && strtolower((string) $_POST['assign_all_classes']) !== 'false';
+
+if ($assignAll) {
+    $classIds = get_teacher_active_class_ids($pdo, $teacherId);
+} elseif (!empty($_POST['class_ids'])) {
+    $raw = $_POST['class_ids'];
+    if (is_string($raw)) {
+        $decoded = json_decode($raw, true);
+        if (is_array($decoded)) {
+            $classIds = array_map('intval', $decoded);
+        }
+    } elseif (is_array($raw)) {
+        $classIds = array_map('intval', $raw);
+    }
+} elseif (isset($_POST['class_id']) && (int) $_POST['class_id'] > 0) {
+    $classIds = [(int) $_POST['class_id']];
+}
+
+$classIds = array_values(array_unique(array_filter($classIds, static function ($v) {
+    return (int) $v > 0;
+})));
+
+if (empty($classIds)) {
+    $msg = $assignAll
+        ? 'You have no active classes. Create a class under Class Management first.'
+        : 'Select at least one class, or choose “All my classes”.';
     json_response([
         'success' => false,
-        'message' => 'Please select which class this lesson is for.',
+        'message' => $msg,
         'error_type' => 'MISSING_CLASS'
     ], 400);
 }
 
-$classCheck = $pdo->prepare("
-    SELECT id FROM classes
-    WHERE id = ? AND teacher_id = ? AND is_active = TRUE
-");
-$classCheck->execute([$classId, (int)$_SESSION['teacher_id']]);
-if (!$classCheck->fetch(PDO::FETCH_ASSOC)) {
+if (!validate_class_ids_for_teacher($pdo, $teacherId, $classIds)) {
     json_response([
         'success' => false,
-        'message' => 'Invalid class or you do not have access to that class.',
+        'message' => 'One or more classes are invalid or not yours.',
         'error_type' => 'INVALID_CLASS'
     ], 403);
 }
+
+sort($classIds);
+$primaryClassId = count($classIds) === 1 ? $classIds[0] : null;
 
 try {
     $pdfText = extractPdfText($file['tmp_name']);
@@ -175,7 +254,7 @@ if (!$isMath) {
 
 /* ---------- 8️⃣  Prepare content for LLM ---------- */
 $pdfForGroq = strlen($pdfText) > MAX_PDF_TEXT_FOR_LLM
-    ? substr($pdfText, 0, MAX_PDF_TEXT_FOR_LLM)
+    ? truncateUtf8Bytes($pdfText, MAX_PDF_TEXT_FOR_LLM)
         . "\n\n[Long PDF truncated before AI — first portion only.]"
     : $pdfText;
 
@@ -208,12 +287,14 @@ if (class_exists('HTMLPurifier')) {
 try {
     $lessonId = storeLesson(
         $pdo,
-        (int)$_SESSION['teacher_id'],
-        $classId,
+        $teacherId,
+        $primaryClassId,
         $lessonTitle,
         $topicCategory,
-        $lessonHtml
+        $lessonHtml,
+        1
     );
+    replace_teacher_lesson_class_assignments($pdo, $lessonId, $classIds);
 } catch (Throwable $e) {
     log_msg('DB insert error: ' . $e->getMessage());
     json_response([
@@ -237,35 +318,184 @@ json_response([
    ================================================================ */
 
 /**
+ * Run Poppler's pdftotext if available (Unix + Windows).
+ *
+ * Windows: Poppler ships `pdftotext.exe`. `where pdftotext` often finds nothing unless PATHEXT
+ * resolves it; we also try `where pdftotext.exe`, optional .env paths, then bare names.
+ *
+ * .env (optional, project root):
+ *   PDFTOTEXT_PATH=C:\path\to\pdftotext.exe
+ *   POPPLER_BIN=C:\path\to\poppler\Library\bin   (folder containing pdftotext.exe)
+ */
+function extractPdfTextViaPdftotext(string $path): ?string
+{
+    if (!function_exists('shell_exec')) {
+        return null;
+    }
+    $disabled = (string) ini_get('disable_functions');
+    if ($disabled !== '' && str_contains($disabled, 'shell_exec')) {
+        return null;
+    }
+
+    $pathArg = escapeshellarg($path);
+    $candidates = [];
+    $isWin = stripos(PHP_OS_FAMILY, 'Windows') === 0 || stripos(PHP_OS, 'WIN') === 0;
+
+    if ($isWin) {
+        $envExe = getenv('PDFTOTEXT_PATH');
+        if (is_string($envExe) && $envExe !== '') {
+            $envExe = trim($envExe, " \t\"'");
+            if (is_file($envExe)) {
+                $candidates[] = $envExe;
+            }
+        }
+        $popplerBin = getenv('POPPLER_BIN');
+        if (is_string($popplerBin) && $popplerBin !== '') {
+            $popplerBin = rtrim(trim($popplerBin, " \t\"'"), '/\\');
+            foreach (['pdftotext.exe', 'pdftotext'] as $name) {
+                $try = $popplerBin . DIRECTORY_SEPARATOR . $name;
+                if (is_file($try)) {
+                    $candidates[] = $try;
+                    break;
+                }
+            }
+        }
+
+        foreach (['pdftotext.exe', 'pdftotext'] as $alias) {
+            $where = shell_exec('where ' . $alias . ' 2>nul');
+            if (is_string($where)) {
+                foreach (preg_split('/\R/', trim($where)) as $line) {
+                    $line = trim($line);
+                    if ($line !== '' && !str_starts_with(strtolower($line), 'info:')) {
+                        $candidates[] = $line;
+                    }
+                }
+            }
+        }
+        $candidates[] = 'pdftotext.exe';
+        $candidates[] = 'pdftotext';
+    } else {
+        $cmdv = trim((string) shell_exec('command -v pdftotext 2>/dev/null'));
+        if ($cmdv !== '') {
+            $candidates[] = $cmdv;
+        }
+        $candidates[] = 'pdftotext';
+    }
+
+    $candidates = array_values(array_unique($candidates));
+    foreach ($candidates as $bin) {
+        if ($isWin) {
+            $bare = ($bin === 'pdftotext' || $bin === 'pdftotext.exe');
+            $binArg = $bare ? $bin : escapeshellarg($bin);
+            $cmd = $binArg . ' ' . $pathArg . ' - 2>nul';
+        } else {
+            $cmd = escapeshellarg($bin) . ' ' . $pathArg . ' - 2>/dev/null';
+        }
+        $out = shell_exec($cmd);
+        if (is_string($out) && strlen(trim($out)) > 80) {
+            return trim($out);
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Pull literal strings from PDF bytes (parenthesis + hex) — works without Poppler/Composer.
+ */
+function extractPdfTextFromRawPdf(string $raw): string
+{
+    $chunks = [];
+
+    // --- PDF literal strings: ( ... ) with \( \) escapes ---
+    $len = strlen($raw);
+    for ($i = 0; $i < $len; $i++) {
+        if ($raw[$i] !== '(') {
+            continue;
+        }
+        $i++;
+        $depth = 1;
+        $buf = '';
+        while ($i < $len && $depth > 0) {
+            $c = $raw[$i];
+            if ($c === '\\' && $i + 1 < $len) {
+                $buf .= $raw[$i + 1];
+                $i += 2;
+                continue;
+            }
+            if ($c === '(') {
+                $depth++;
+                $buf .= $c;
+                $i++;
+                continue;
+            }
+            if ($c === ')') {
+                $depth--;
+                if ($depth === 0) {
+                    $i++;
+                    break;
+                }
+                $buf .= $c;
+                $i++;
+                continue;
+            }
+            $buf .= $c;
+            $i++;
+        }
+        $t = trim($buf);
+        if (strlen($t) >= 2 && preg_match('/[a-zA-Z0-9]/', $t)) {
+            $chunks[] = $t;
+        }
+    }
+
+    // --- Hex strings: <48656C6C6F> ---
+    if (preg_match_all('/<([0-9A-Fa-f\s\r\n]+)>/', $raw, $hexMatches)) {
+        foreach ($hexMatches[1] as $hex) {
+            $hex = preg_replace('/\s+/', '', $hex);
+            if (strlen($hex) < 4 || (strlen($hex) % 2) !== 0) {
+                continue;
+            }
+            $bin = @hex2bin($hex);
+            if ($bin === false) {
+                continue;
+            }
+            $txt = preg_replace('/[^\x09\x0a\x0d\x20-\x7E]/', ' ', $bin);
+            $txt = trim(preg_replace('/\s+/', ' ', $txt));
+            if (strlen($txt) >= 2 && preg_match('/[a-zA-Z0-9]/', $txt)) {
+                $chunks[] = $txt;
+            }
+        }
+    }
+
+    $text = implode("\n", $chunks);
+    $text = preg_replace('/[ \t]+/', ' ', $text);
+    $text = preg_replace('/\n{3,}/', "\n\n", $text);
+    return trim($text);
+}
+
+/**
  * Extract text from a PDF.
  *
  * Tries, in order:
- *   1️⃣  `pdftotext` (system binary – fast, reliable)
- *   2️⃣  `Smalot\PdfParser\Parser` (composer package)
- *   3️⃣  Very basic regex fallback (only for extremely simple PDFs)
+ *   1️⃣  `pdftotext` (Poppler — Unix + Windows if on PATH)
+ *   2️⃣  `Smalot\PdfParser\Parser` (composer: smalot/pdfparser — run `composer install`)
+ *   3️⃣  Pure-PHP scan of literal / hex strings in the file
  *
  * @throws Exception when extraction fails
  */
 function extractPdfText(string $path): string
 {
-    // ---- 1️⃣  pdftotext binary (poppler) ----
-    if (function_exists('shell_exec')) {
-        $which = trim(shell_exec('which pdftotext 2>/dev/null'));
-        if ($which) {
-            $out = shell_exec("pdftotext " . escapeshellarg($path) . " - 2>/dev/null");
-            if ($out && strlen(trim($out)) > 100) {
-                return trim($out);
-            }
-        }
+    $viaPoppler = extractPdfTextViaPdftotext($path);
+    if ($viaPoppler !== null) {
+        return $viaPoppler;
     }
 
-    // ---- 2️⃣  Composer PDF parser ----
-    if (class_exists('\Smalot\PdfParser\Parser')) {
+    if (class_exists('Smalot\\PdfParser\\Parser')) {
         try {
             $parser = new \Smalot\PdfParser\Parser();
-            $pdf    = $parser->parseFile($path);
-            $txt    = $pdf->getText();
-            if ($txt && strlen(trim($txt)) > 100) {
+            $pdf = $parser->parseFile($path);
+            $txt = $pdf->getText();
+            if ($txt !== null && strlen(trim($txt)) > 80) {
                 return trim($txt);
             }
         } catch (Throwable $e) {
@@ -273,22 +503,20 @@ function extractPdfText(string $path): string
         }
     }
 
-    // ---- 3️⃣  Very naive regex fallback ----
     $raw = @file_get_contents($path);
     if ($raw === false) {
         throw new Exception('Unable to read the uploaded PDF file.');
     }
 
-    // Pull out text objects that look like "(some text)"
-    preg_match_all('/$([^)]{3,})$/', $raw, $matches);
-    $candidate = implode(' ', $matches[1] ?? []);
-    $candidate = preg_replace('/[^\x20-\x7E\n\r]/', ' ', $candidate);
-    $candidate = preg_replace('/\s+/', ' ', $candidate);
-    $candidate = trim($candidate);
+    $candidate = extractPdfTextFromRawPdf($raw);
 
-    if (strlen($candidate) < 200) {
-        throw new Exception('Could not extract readable text from the PDF. '
-            . 'Install `pdftotext` or the `smalot/pdfparser` package for reliable extraction.');
+    if (strlen($candidate) < 120) {
+        throw new Exception(
+            'Could not extract enough readable text from this PDF (it may be image-only or encrypted). '
+            . 'Run "composer install" in the MathEase project folder (adds smalot/pdfparser), '
+            . 'or install Poppler for Windows and set PDFTOTEXT_PATH (full path to pdftotext.exe) or POPPLER_BIN '
+            . '(Poppler Library\\bin folder) in .env, or add that folder to your system PATH.'
+        );
     }
 
     return $candidate;
@@ -339,7 +567,7 @@ function generateLessonViaGroq(
     foreach ($attempts as $attempt) {
         $excerpt = $pdfContent;
         if (strlen($excerpt) > $attempt['maxChars']) {
-            $excerpt = substr($excerpt, 0, $attempt['maxChars'])
+            $excerpt = truncateUtf8Bytes($excerpt, $attempt['maxChars'])
                 . "\n\n[Excerpt truncated for API limits — use only the text above.]";
         }
 
@@ -385,14 +613,28 @@ function generateLessonViaGroqOnce(
     int $maxTokens
 ): string {
     $topicMap = [
-        'functions'               => 'Functions – introduction, notation, domain & range',
-        'evaluating-functions'    => 'Evaluating Functions – plugging values into functions',
-        'operations-on-functions' => 'Operations on Functions – addition, subtraction, etc.',
-        'rational-functions'      => 'Rational Functions – ratios of polynomials',
-        'solving-real-life-problems'=> 'Real‑Life Problems – applying functions to everyday scenarios',
-        'custom'                  => 'Custom Topic – general mathematics'
+        'functions'                        => 'Functions – introduction, notation, domain & range, operations',
+        'evaluating-functions'           => 'Evaluating Functions – substitution, types of functions',
+        'operations-on-functions'        => 'Operations on Functions – sum, product, quotient, composition',
+        'solving-real-life-problems'     => 'Solving Real-Life Problems – modeling with functions',
+        'rational-functions'             => 'Rational Functions – graphs, asymptotes, equations',
+        'solving-rational-equations-inequalities' => 'Rational Equations & Inequalities – algebraic and graphical solutions',
+        'representations-of-rational-functions'   => 'Representations of Rational Functions – graphs, intercepts, asymptotes',
+        'domain-range-rational-functions'         => 'Domain & Range of Rational Functions',
+        'one-to-one-functions'           => 'One-to-One Functions – horizontal line test, inverses',
+        'domain-range-inverse-functions' => 'Domain & Range of Inverse Functions',
+        'simple-interest'                => 'Simple Interest – I = Prt, maturity & present value',
+        'compound-interest'              => 'Compound Interest – compounding, future & present value',
+        'simple-and-compound-values'     => 'Interest, Maturity, Future & Present Values',
+        'solving-interest-problems'      => 'Interest Word Problems – simple & compound contexts',
+        'custom'                         => 'Custom Topic – general Grade 11 General Mathematics',
     ];
     $topicDesc = $topicMap[$topic] ?? 'General Mathematics Topic';
+
+    $pdfContent = utf8SafeForJson($pdfContent);
+    $title = utf8SafeForJson($title);
+    $topic = utf8SafeForJson($topic);
+    $topicDesc = utf8SafeForJson($topicDesc);
 
     $prompt = <<<PROMPT
 Turn the PDF excerpt below into one self‑contained HTML lesson fragment for Grade 11 General Mathematics.
@@ -418,11 +660,19 @@ PROMPT;
         'max_tokens'  => $maxTokens
     ];
 
+    $jsonBody = json_encode($payload, groqRequestJsonEncodeFlags());
+    if ($jsonBody === false || $jsonBody === '') {
+        throw new Exception(
+            'Failed to build Groq request JSON: ' . json_last_error_msg()
+            . ' (try another PDF export or re-save the file; some PDFs contain binary junk in extracted text.)'
+        );
+    }
+
     $ch = curl_init($apiUrl);
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_POST           => true,
-        CURLOPT_POSTFIELDS     => json_encode($payload),
+        CURLOPT_POSTFIELDS     => $jsonBody,
         CURLOPT_HTTPHEADER     => [
             'Content-Type: application/json',
             'Authorization: Bearer ' . $apiKey
@@ -466,13 +716,13 @@ PROMPT;
  *
  * @throws PDOException on any DB error
  */
-function storeLesson(PDO $pdo, int $teacherId, int $classId, string $title, string $topic, string $html): int
+function storeLesson(PDO $pdo, int $teacherId, ?int $classId, string $title, string $topic, string $html, int $published = 1): int
 {
     ensure_teacher_lessons_schema($pdo);
 
     $stmt = $pdo->prepare(
-        "INSERT INTO teacher_lessons (teacher_id, class_id, title, topic, html_content)
-         VALUES (:tid, :cid, :title, :topic, :html)"
+        "INSERT INTO teacher_lessons (teacher_id, class_id, title, topic, html_content, published)
+         VALUES (:tid, :cid, :title, :topic, :html, :pub)"
     );
 
     $stmt->execute([
@@ -480,9 +730,10 @@ function storeLesson(PDO $pdo, int $teacherId, int $classId, string $title, stri
         ':cid'   => $classId,
         ':title' => $title,
         ':topic' => $topic,
-        ':html'  => $html
+        ':html'  => $html,
+        ':pub'   => $published ? 1 : 0,
     ]);
 
-    return (int)$pdo->lastInsertId();
+    return (int) $pdo->lastInsertId();
 }
 ?>

@@ -107,7 +107,7 @@
         .rotate-180 {
             transform: rotate(180deg);
         }
-        
+
         /* Profile dropdown animation */
         #profileDropdown {
             animation: slideDown 0.2s ease-out;
@@ -1021,7 +1021,7 @@
                                     
                                     <!-- Actions -->
                                     <div class="p-3">
-                                        <a href="#" id="logoutLink" class="flex items-center px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 group">
+                                        <a href="php/smart-logout.php?type=teacher" id="logoutLink" class="flex items-center px-4 py-3 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 group">
                                             <div class="w-10 h-10 rounded-lg bg-red-100 group-hover:bg-red-200 flex items-center justify-center mr-3 transition-colors">
                                                 <i class="fas fa-sign-out-alt text-red-600 text-base"></i>
                                             </div>
@@ -1921,178 +1921,131 @@
 
                 <!-- Lesson Creation Section -->
                 <div id="lesson-creation-section" class="content-section hidden">
-                    <div class="mb-6">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-900">Create Lesson from PDF</h3>
-                                <p class="text-sm text-gray-600">Upload a PDF file and AI will automatically generate a lesson with the same format as student lessons</p>
-                            </div>
+                    <header class="mb-8">
+                        <h3 class="text-2xl font-bold text-gray-900 tracking-tight">Create lesson from PDF</h3>
+                        <p class="text-sm text-gray-600 mt-2 leading-relaxed">Upload a PDF, set the title and topic, choose classes, then generate. Publish or unpublish anytime under My created lessons.</p>
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            <span class="inline-flex items-center gap-1.5 rounded-full bg-gray-100 text-gray-700 px-3 py-1 text-xs font-medium border border-gray-200/80"><i class="fas fa-file-pdf text-red-500 text-[10px]"></i> PDF · max 10 MB</span>
+                            <span class="inline-flex items-center gap-1.5 rounded-full bg-gray-100 text-gray-700 px-3 py-1 text-xs font-medium border border-gray-200/80"><i class="fas fa-font text-indigo-500 text-[10px]"></i> Readable text (not image-only)</span>
+                            <span class="inline-flex items-center gap-1.5 rounded-full bg-gray-100 text-gray-700 px-3 py-1 text-xs font-medium border border-gray-200/80"><i class="fas fa-clock text-amber-600 text-[10px]"></i> ~30–60 s to generate</span>
                         </div>
-                    </div>
+                    </header>
 
-                    <!-- PDF Upload Card -->
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-                        <div class="mb-6">
-                            <h4 class="text-md font-semibold text-gray-900 mb-2">
-                                <i class="fas fa-file-pdf text-red-500 mr-2"></i>
-                                Upload PDF File
-                            </h4>
-                            <p class="text-sm text-gray-600 mb-4">
-                                Select a PDF file containing your lesson content. The AI will analyze it and create an interactive lesson.
-                            </p>
-                            
-                            <!-- Detailed Explanation Box -->
-                            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-indigo-500 rounded-lg p-5 mb-6">
-                                <div class="flex items-start">
-                                    <div class="flex-shrink-0">
-                                        <i class="fas fa-info-circle text-indigo-600 text-xl mt-1"></i>
-                                    </div>
-                                    <div class="ml-4 flex-1">
-                                        <h5 class="text-sm font-semibold text-gray-900 mb-3">How PDF Upload Works:</h5>
-                                        <div class="space-y-3 text-sm text-gray-700">
-                                            <div class="flex items-start">
-                                                <i class="fas fa-check-circle text-green-500 mr-2 mt-1 flex-shrink-0"></i>
-                                                <div>
-                                                    <strong>PDF Content Extraction:</strong> The system will extract all text content from your uploaded PDF file. This includes all explanations, examples, formulas, problems, and any written content in the PDF.
-                                                </div>
-                                            </div>
-                                            <div class="flex items-start">
-                                                <i class="fas fa-check-circle text-green-500 mr-2 mt-1 flex-shrink-0"></i>
-                                                <div>
-                                                    <strong>AI Analysis:</strong> Our AI will analyze the extracted PDF content and understand the mathematical concepts, topics, examples, and explanations contained in your document.
-                                                </div>
-                                            </div>
-                                            <div class="flex items-start">
-                                                <i class="fas fa-check-circle text-green-500 mr-2 mt-1 flex-shrink-0"></i>
-                                                <div>
-                                                    <strong>Lesson Generation:</strong> The AI will transform your PDF content into a well-structured, interactive HTML lesson formatted like a PowerPoint presentation. It will organize the content into slide-like sections with proper headings, examples, and explanations.
-                                                </div>
-                                            </div>
-                                            <div class="flex items-start">
-                                                <i class="fas fa-check-circle text-green-500 mr-2 mt-1 flex-shrink-0"></i>
-                                                <div>
-                                                    <strong>Content Preservation:</strong> All actual content from your PDF will be preserved - including mathematical formulas, examples, problems, and explanations. The AI will NOT create generic content - it will use ONLY what's in your PDF.
-                                                </div>
-                                            </div>
-                                            <div class="flex items-start">
-                                                <i class="fas fa-check-circle text-green-500 mr-2 mt-1 flex-shrink-0"></i>
-                                                <div>
-                                                    <strong>Formatting:</strong> The generated lesson will be formatted with:
-                                                    <ul class="list-disc list-inside mt-2 ml-2 space-y-1">
-                                                        <li>Slide-like sections (like PowerPoint)</li>
-                                                        <li>Learning objectives</li>
-                                                        <li>Detailed explanations</li>
-                                                        <li>Practice examples</li>
-                                                        <li>Visual styling and icons</li>
-                                                        <li>Professional presentation format</li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- PDF Requirements -->
-                            <div class="bg-yellow-50 border-l-4 border-yellow-500 rounded-lg p-4 mb-6">
-                                <div class="flex items-start">
-                                    <i class="fas fa-exclamation-triangle text-yellow-600 mr-3 mt-1"></i>
-                                    <div class="flex-1">
-                                        <h5 class="text-sm font-semibold text-gray-900 mb-2">PDF Requirements:</h5>
-                                        <ul class="text-sm text-gray-700 space-y-1">
-                                            <li>• PDF must contain readable text (not just images)</li>
-                                            <li>• Maximum file size: 10MB</li>
-                                            <li>• PDF should contain lesson content, examples, or educational material</li>
-                                            <li>• For best results, ensure your PDF has clear text content that can be extracted</li>
-                                            <li>• The PDF content will be used as-is - make sure it's accurate and complete</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <form id="lessonUploadForm" enctype="multipart/form-data">
-                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-indigo-400 transition-colors">
+                    <form id="lessonUploadForm" enctype="multipart/form-data" class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                        <div class="p-6 sm:p-8 space-y-8">
+                            <section>
+                                <h4 class="text-sm font-semibold text-gray-900">Upload</h4>
+                                <p class="text-xs text-gray-500 mt-0.5 mb-4">File the AI will read.</p>
+                                <div class="border-2 border-dashed border-gray-200 rounded-xl p-8 sm:p-9 text-center hover:border-indigo-300 hover:bg-indigo-50/20 transition-all">
                                     <input type="file" id="pdfFileInput" accept=".pdf" class="hidden" onchange="handleFileSelect(event)">
                                     <div id="fileDropZone" class="cursor-pointer" onclick="document.getElementById('pdfFileInput').click()">
-                                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
-                                        <p class="text-gray-600 mb-2">
-                                            <span class="text-indigo-600 font-medium">Click to upload</span> or drag and drop
-                                        </p>
-                                        <p class="text-sm text-gray-500">PDF files only (Max 10MB)</p>
+                                        <div class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600 mb-3">
+                                            <i class="fas fa-cloud-arrow-up text-xl"></i>
+                                        </div>
+                                        <p class="text-gray-800 font-medium text-sm"><span class="text-indigo-600">Choose file</span> or drag here</p>
+                                        <p class="text-xs text-gray-500 mt-1">PDF · up to 10 MB</p>
                                     </div>
-                                    <div id="selectedFileInfo" class="hidden mt-4 p-4 bg-indigo-50 rounded-lg border border-indigo-200">
-                                        <div class="flex items-center justify-between mb-3">
-                                            <div class="flex items-center">
-                                                <i class="fas fa-file-pdf text-red-500 text-2xl mr-3"></i>
-                                                <div>
-                                                    <p class="font-medium text-gray-900" id="fileName"></p>
-                                                    <p class="text-sm text-gray-600" id="fileSize"></p>
+                                    <div id="selectedFileInfo" class="hidden mt-5 text-left p-4 bg-indigo-50/80 rounded-xl border border-indigo-100">
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div class="flex items-center min-w-0">
+                                                <i class="fas fa-file-pdf text-red-500 text-xl mr-3 flex-shrink-0"></i>
+                                                <div class="min-w-0">
+                                                    <p class="font-medium text-gray-900 text-sm truncate" id="fileName"></p>
+                                                    <p class="text-xs text-gray-600" id="fileSize"></p>
                                                 </div>
                                             </div>
-                                            <button type="button" onclick="clearFileSelection()" class="text-red-600 hover:text-red-700">
+                                            <button type="button" onclick="clearFileSelection()" class="flex-shrink-0 p-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors text-sm" aria-label="Remove file">
                                                 <i class="fas fa-times"></i>
                                             </button>
                                         </div>
-                                        <div class="mt-3 pt-3 border-t border-indigo-200">
-                                            <p class="text-xs text-indigo-700 flex items-start">
-                                                <i class="fas fa-lightbulb text-indigo-600 mr-2 mt-0.5"></i>
-                                                <span><strong>Next Steps:</strong> Enter a lesson title, select the topic category that matches your PDF content, then click "Generate Lesson with AI". The system will extract all content from this PDF and create an interactive lesson formatted like a PowerPoint presentation.</span>
-                                            </p>
-                                        </div>
                                     </div>
                                 </div>
-                                
-                                <div class="mt-6">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                                        Lesson Title
-                                    </label>
-                                    <input type="text" id="lessonTitle" placeholder="e.g., Introduction to Functions" 
-                                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                </div>
+                            </section>
 
-                                <div class="mt-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2" for="pdfLessonClassSelect">
-                                        <i class="fas fa-chalkboard mr-2 text-indigo-600"></i>Upload lesson to class
-                                    </label>
-                                    <select id="pdfLessonClassSelect" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                        <option value="">Loading classes…</option>
-                                    </select>
-                                    <p class="mt-2 text-xs text-gray-600" id="pdfLessonClassHint">The lesson will only appear for students in the class you select.</p>
+                            <div class="h-px bg-gray-100" role="presentation"></div>
+
+                            <section class="space-y-5">
+                                <div>
+                                    <h4 class="text-sm font-semibold text-gray-900">Lesson details</h4>
+                                    <p class="text-xs text-gray-500 mt-0.5">Title and topic category for the AI.</p>
                                 </div>
-                                
-                                <div class="mt-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                                        <i class="fas fa-tag mr-2 text-indigo-600"></i>Topic Category
-                                    </label>
-                                    <select id="lessonTopic" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                        <option value="functions">Functions</option>
-                                        <option value="evaluating-functions">Evaluating Functions</option>
-                                        <option value="operations-on-functions">Operations on Functions</option>
-                                        <option value="rational-functions">Rational Functions</option>
-                                        <option value="solving-real-life-problems">Solving Real Life Problems</option>
-                                        <option value="custom">Custom Topic</option>
-                                    </select>
-                                    <p class="mt-2 text-xs text-gray-600 flex items-start">
-                                        <i class="fas fa-info-circle text-blue-500 mr-2 mt-0.5"></i>
-                                        <span><strong>Important:</strong> Select the topic category that matches your PDF content. The AI will generate a lesson focused on this specific topic. Make sure your PDF is about the selected topic category.</span>
-                                    </p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                                    <div>
+                                        <label for="lessonTitle" class="block text-xs font-medium text-gray-600 mb-1.5">Title</label>
+                                        <input type="text" id="lessonTitle" placeholder="e.g., Introduction to Functions" 
+                                               class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 text-sm placeholder:text-gray-400 shadow-sm">
+                                    </div>
+                                    <div>
+                                        <label for="lessonTopic" class="block text-xs font-medium text-gray-600 mb-1.5">Topic category</label>
+                                        <select id="lessonTopic" class="w-full px-3.5 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 text-sm bg-white shadow-sm">
+                                            <optgroup label="Functions &amp; applications">
+                                                <option value="functions">Functions</option>
+                                                <option value="evaluating-functions">Evaluating Functions</option>
+                                                <option value="operations-on-functions">Operations on Functions</option>
+                                                <option value="solving-real-life-problems">Solving Real-Life Problems</option>
+                                            </optgroup>
+                                            <optgroup label="Rational functions">
+                                                <option value="rational-functions">Rational Functions</option>
+                                                <option value="solving-rational-equations-inequalities">Solving Rational Equations &amp; Inequalities</option>
+                                                <option value="representations-of-rational-functions">Representations of Rational Functions</option>
+                                                <option value="domain-range-rational-functions">Domain &amp; Range of Rational Functions</option>
+                                            </optgroup>
+                                            <optgroup label="Inverse functions">
+                                                <option value="one-to-one-functions">One-to-One Functions</option>
+                                                <option value="domain-range-inverse-functions">Domain &amp; Range of Inverse Functions</option>
+                                            </optgroup>
+                                            <optgroup label="Interest &amp; financial math">
+                                                <option value="simple-interest">Simple Interest</option>
+                                                <option value="compound-interest">Compound Interest</option>
+                                                <option value="simple-and-compound-values">Interest, Maturity, Future &amp; Present Values</option>
+                                                <option value="solving-interest-problems">Solving Interest Problems (Simple &amp; Compound)</option>
+                                            </optgroup>
+                                            <optgroup label="Other">
+                                                <option value="custom">Custom topic (general mathematics)</option>
+                                            </optgroup>
+                                        </select>
+                                    </div>
                                 </div>
-                                
-                                <div class="mt-6 flex justify-end space-x-3">
-                                    <button type="button" onclick="clearFileSelection()" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
-                                        Cancel
-                                    </button>
-                                    <button type="submit" id="generateLessonBtn" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                                        <i class="fas fa-magic mr-2"></i>
-                                        Generate Lesson with AI
-                                    </button>
+                                <p class="text-xs text-gray-500 flex items-start gap-2">
+                                    <i class="fas fa-info-circle text-indigo-400 mt-0.5 flex-shrink-0"></i>
+                                    <span>Match the category to your PDF so the lesson stays on-topic.</span>
+                                </p>
+
+                                <div class="rounded-xl border border-gray-200 bg-slate-50/80 p-4 sm:p-5">
+                                    <p class="text-xs font-semibold text-gray-800 mb-3 flex items-center gap-2"><i class="fas fa-users text-indigo-600"></i> Assign to classes</p>
+                                    <div class="space-y-2 mb-3">
+                                        <label class="flex items-center gap-3 cursor-pointer text-sm text-gray-800 py-1.5">
+                                            <input type="radio" name="pdfLessonAssignMode" id="pdfLessonAssignAll" value="all" checked class="text-indigo-600 focus:ring-indigo-500 border-gray-300">
+                                            <span>All my classes</span>
+                                        </label>
+                                        <label class="flex items-center gap-3 cursor-pointer text-sm text-gray-800 py-1.5">
+                                            <input type="radio" name="pdfLessonAssignMode" id="pdfLessonAssignPick" value="pick" class="text-indigo-600 focus:ring-indigo-500 border-gray-300">
+                                            <span>Selected classes only</span>
+                                        </label>
+                                    </div>
+                                    <div id="pdfLessonClassCheckboxWrap" class="hidden space-y-2 max-h-40 overflow-y-auto rounded-lg border border-gray-200 bg-white p-3 text-sm">
+                                        <p class="text-xs text-gray-500">Loading classes…</p>
+                                    </div>
+                                    <p class="mt-3 text-xs text-gray-600" id="pdfLessonClassHint">Students only see published lessons assigned to their class.</p>
                                 </div>
-                            </form>
+                            </section>
                         </div>
-                    </div>
+
+                        <div class="px-6 sm:px-8 py-4 bg-gray-50 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <p class="text-xs text-gray-500 order-2 sm:order-1">Generation usually takes about half a minute.</p>
+                            <div class="flex flex-wrap justify-end gap-2 order-1 sm:order-2">
+                                <button type="button" onclick="clearFileSelection()" class="px-4 py-2.5 border border-gray-300 rounded-xl text-gray-700 text-sm font-medium bg-white hover:bg-gray-50 transition-colors">
+                                    Clear file
+                                </button>
+                                <button type="submit" id="generateLessonBtn" class="px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-semibold shadow-sm hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <i class="fas fa-magic mr-2"></i>Generate lesson
+                                </button>
+                            </div>
+                        </div>
+                    </form>
 
                     <!-- Processing Status -->
-                    <div id="processingStatus" class="hidden bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+                    <div id="processingStatus" class="hidden bg-blue-50 border border-blue-200 rounded-2xl p-6 mb-6 shadow-sm">
                         <div class="flex items-start">
                             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mr-4 flex-shrink-0 mt-1"></div>
                             <div class="flex-1">
@@ -2112,7 +2065,7 @@
                     </div>
 
                     <!-- Generated Lesson Preview -->
-                    <div id="lessonPreview" class="hidden bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden">
+                    <div id="lessonPreview" class="hidden bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden mb-2">
                         <!-- Preview Header -->
                         <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6">
                             <div class="flex items-center justify-between mb-4">
@@ -2221,7 +2174,7 @@
                                         <i class="fas fa-check-circle text-green-600 text-xl mt-1"></i>
                                         <div>
                                             <h6 class="font-semibold text-gray-800 mb-1">Next Steps</h6>
-                                            <p class="text-sm text-gray-700 mb-2">Save the lesson to make it available to students, or download it to edit offline before publishing.</p>
+                                            <p class="text-sm text-gray-700 mb-2">The lesson is saved when generated. Use “My Created Lessons” to unpublish or publish. You can also download HTML to edit offline.</p>
                                             <p class="text-xs text-gray-600">The lesson content comes directly from your PDF - all formulas, examples, and explanations are preserved.</p>
                                         </div>
                                     </div>
@@ -2254,13 +2207,33 @@
                     </div>
 
                     <!-- My Created Lessons -->
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mt-6">
-                        <h4 class="text-md font-semibold text-gray-900 mb-4">
-                            <i class="fas fa-list text-indigo-500 mr-2"></i>
-                            My Created Lessons
-                        </h4>
-                        <div id="myLessonsList" class="space-y-3">
-                            <p class="text-sm text-gray-500 text-center py-4">No lessons created yet. Upload a PDF to get started!</p>
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mt-6">
+                        <div class="px-5 py-4 border-b border-gray-100 bg-slate-50/80">
+                            <div class="flex items-start gap-3">
+                                <span class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600"><i class="fas fa-list"></i></span>
+                                <div>
+                                    <h4 class="text-base font-semibold text-gray-900">My created lessons</h4>
+                                    <p class="text-xs text-gray-500 mt-1 leading-relaxed">Unpublished lessons are hidden from students until you publish them again.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-5 space-y-8">
+                            <div>
+                                <h5 class="text-xs font-bold uppercase tracking-wide text-emerald-700 mb-3 flex items-center gap-2">
+                                    <i class="fas fa-eye text-emerald-600"></i> Published
+                                </h5>
+                                <div id="myLessonsListPublished" class="space-y-3 min-h-[2.5rem]">
+                                    <p class="text-sm text-gray-500 py-2">Loading…</p>
+                                </div>
+                            </div>
+                            <div class="pt-6 border-t border-gray-100">
+                                <h5 class="text-xs font-bold uppercase tracking-wide text-amber-800 mb-3 flex items-center gap-2">
+                                    <i class="fas fa-eye-slash text-amber-600"></i> Unpublished
+                                </h5>
+                                <div id="myLessonsListUnpublished" class="space-y-3 min-h-[2.5rem]">
+                                    <p class="text-sm text-gray-500 py-2">Loading…</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2739,7 +2712,7 @@
             <div class="flex items-center justify-between p-6 border-b border-gray-200">
                 <div>
                     <h3 class="text-xl font-semibold text-gray-900" id="studentDetailsTitle">Student Details</h3>
-                    <p class="text-sm text-gray-600" id="studentDetailsSubtitle">Detailed quiz performance and progress</p>
+                    <p class="text-sm text-gray-600" id="studentDetailsSubtitle">Performance, badges, audit trail, at charts</p>
                 </div>
                 <button onclick="closeStudentDetails()" class="text-gray-400 hover:text-gray-600 transition-colors">
                     <i class="fas fa-times text-xl"></i>
@@ -8401,7 +8374,7 @@ let currentQuizResultsSearch = '';
                     
                     // Update title and subtitle
                     if (title) title.textContent = `${result.student.first_name || ''} ${result.student.last_name || ''}`.trim() || 'Student Details';
-                    if (subtitle) subtitle.textContent = `Email: ${result.student.email || 'N/A'}`;
+                    if (subtitle) subtitle.textContent = `Email: ${result.student.email || 'N/A'} · Performance at audit trail`;
                     
                     displayStudentDetails(result);
                 } else {
@@ -8835,6 +8808,110 @@ let currentQuizResultsSearch = '';
             return `${sec}s`;
         }
 
+        function auditTrailIcon(action) {
+            const m = {
+                login: 'fa-right-to-bracket text-emerald-600',
+                logout: 'fa-right-from-bracket text-slate-600',
+                class_join_request: 'fa-paper-plane text-amber-600',
+                class_join_approved: 'fa-user-check text-emerald-600',
+                class_join_pending: 'fa-hourglass-half text-amber-500',
+                quiz_completed: 'fa-clipboard-check text-indigo-600',
+                quiz_ended: 'fa-clipboard text-slate-600',
+                lesson_progress: 'fa-book-open text-violet-600',
+                flashcards_open: 'fa-layer-group text-fuchsia-600',
+                achievements_open: 'fa-trophy text-yellow-600',
+                profile_edit: 'fa-user-pen text-blue-600',
+                password_change: 'fa-key text-rose-600',
+                lesson_quiz_answer: 'fa-circle-question text-cyan-600',
+                achievement_earned: 'fa-award text-amber-500',
+                last_session: 'fa-clock text-slate-500',
+                teacher_lesson_view: 'fa-chalkboard-user text-teal-600'
+            };
+            return m[action] || 'fa-circle-dot text-slate-400';
+        }
+
+        function formatAuditTrailDateTime(isoOrSql) {
+            try {
+                const d = new Date(isoOrSql);
+                if (Number.isNaN(d.getTime())) return String(isoOrSql || '');
+                return d.toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' });
+            } catch (e) {
+                return String(isoOrSql || '');
+            }
+        }
+
+        function buildStudentAuditTrailHtml(trail) {
+            const list = Array.isArray(trail) ? trail : [];
+            if (list.length === 0) {
+                return `
+                <section class="mb-8 rounded-2xl border border-slate-200 bg-slate-50/80 p-6 shadow-sm">
+                    <div class="flex items-start gap-4">
+                        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-slate-200">
+                            <i class="fas fa-route text-slate-400 text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900">Audit trail ng estudyante</h3>
+                            <p class="mt-1 text-sm text-slate-600 leading-relaxed">Walang naitalang aktibidad pa mula sa log-in, Flashcards, Achievements, at iba pang aksyon. Kapag gumagamit na ang estudyante ng app pagkatapos ng update na ito, lalabas dito ang mga kaganapan (log in/out, klase, quiz, lesson, atbp.).</p>
+                        </div>
+                    </div>
+                </section>`;
+            }
+            const groups = new Map();
+            for (const row of list) {
+                const d = new Date(row.at);
+                const dayKey = Number.isNaN(d.getTime()) ? '—' : d.toLocaleDateString('en-PH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                if (!groups.has(dayKey)) groups.set(dayKey, []);
+                groups.get(dayKey).push(row);
+            }
+            const parts = [];
+            for (const [dayLabel, rows] of groups) {
+                const items = rows.map(r => {
+                    const ic = auditTrailIcon(r.action);
+                    const det = r.details ? `<p class="mt-0.5 text-xs text-slate-500 leading-snug">${String(r.details).replace(/</g, '&lt;')}</p>` : '';
+                    return `
+                        <li class="flex gap-3 py-3 border-b border-slate-100 last:border-0">
+                            <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm ring-1 ring-slate-100">
+                                <i class="fas ${ic} text-sm"></i>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-sm font-semibold text-slate-900">${String(r.label_tl || r.action || '').replace(/</g, '&lt;')}</p>
+                                ${det}
+                            </div>
+                            <div class="shrink-0 text-right">
+                                <span class="text-xs font-medium text-slate-500 whitespace-nowrap">${formatAuditTrailDateTime(r.at)}</span>
+                            </div>
+                        </li>`;
+                }).join('');
+                parts.push(`
+                    <div class="rounded-xl border border-slate-200 bg-white overflow-hidden">
+                        <div class="bg-slate-100/90 px-4 py-2.5 border-b border-slate-200">
+                            <p class="text-xs font-bold uppercase tracking-wide text-slate-600">${dayLabel}</p>
+                        </div>
+                        <ul class="px-4 py-1 list-none">${items}</ul>
+                    </div>`);
+            }
+            return `
+            <section class="mb-8 rounded-2xl border border-indigo-100 bg-gradient-to-br from-white via-slate-50/50 to-indigo-50/30 p-1 shadow-sm ring-1 ring-black/5">
+                <div class="rounded-[0.9rem] bg-white/95 p-5 sm:p-6">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between mb-5">
+                        <div class="flex items-start gap-3">
+                            <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-md">
+                                <i class="fas fa-list-check text-sm"></i>
+                            </span>
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-900">Audit trail ng estudyante</h3>
+                                <p class="text-sm text-slate-600 mt-0.5 max-w-2xl">Tala ng mga pangunahing aksyon: log in/out, klase, lesson, quiz, Flashcards, Achievements, profile, at password. Pinagsama ang datos mula sa log at sa progreso sa sistema.</p>
+                            </div>
+                        </div>
+                        <span class="inline-flex items-center rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-800 ring-1 ring-indigo-100">${list.length} event${list.length === 1 ? '' : 's'}</span>
+                    </div>
+                    <div class="space-y-4 max-h-[min(28rem,50vh)] overflow-y-auto pr-1">
+                        ${parts.join('')}
+                    </div>
+                </div>
+            </section>`;
+        }
+
         function displayStudentDetails(data) {
             const { quiz_attempts, quiz_statistics, lesson_completions, topic_study_time } = data;
             const student = normalizeStudentQuizFields(data.student || {});
@@ -8921,7 +8998,7 @@ let currentQuizResultsSearch = '';
                 </div>
 
                 <!-- Performance Overview -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
                     <div class="bg-blue-50 rounded-lg p-4">
                         <div class="flex items-center justify-between">
                             <div>
@@ -8989,6 +9066,8 @@ let currentQuizResultsSearch = '';
                     <p class="text-sm text-gray-500 mt-1">Complete quizzes and lessons to earn badges!</p>
                 </div>
                 `}
+
+                ${buildStudentAuditTrailHtml(data.audit_trail)}
 
                 <!-- Quiz performance charts -->
                 <div class="mb-6 rounded-2xl border border-indigo-100/90 bg-gradient-to-br from-slate-50 via-white to-indigo-50/50 p-1 shadow-sm ring-1 ring-black/5">
@@ -9965,57 +10044,68 @@ let currentQuizResultsSearch = '';
         function updateGenerateButton() {
             const btn = document.getElementById('generateLessonBtn');
             const title = document.getElementById('lessonTitle');
-            const classSel = document.getElementById('pdfLessonClassSelect');
-            const classOk = classSel && classSel.value && classSel.value !== '';
-            
+            const titleOk = title && title.value.trim();
+            const allMode = document.getElementById('pdfLessonAssignAll') && document.getElementById('pdfLessonAssignAll').checked;
+            const list = window.__pdfLessonClassesList || [];
+            let classOk = false;
+            if (allMode) {
+                classOk = list.length > 0;
+            } else {
+                classOk = document.querySelectorAll('.pdf-lesson-class-cb:checked').length > 0;
+            }
             if (btn) {
-                btn.disabled = !selectedFile || !title || !title.value.trim() || !classOk;
+                btn.disabled = !selectedFile || !titleOk || !classOk;
             }
         }
 
         async function populatePdfLessonClassSelect() {
-            const sel = document.getElementById('pdfLessonClassSelect');
+            const wrap = document.getElementById('pdfLessonClassCheckboxWrap');
             const hint = document.getElementById('pdfLessonClassHint');
-            if (!sel) return;
-            const prev = sel.value;
-            sel.innerHTML = '<option value="">Loading classes…</option>';
-            sel.disabled = true;
+            window.__pdfLessonClassesList = [];
+            if (wrap) {
+                wrap.innerHTML = '<p class="text-xs text-gray-500">Loading classes…</p>';
+            }
             try {
                 const r = await fetch('php/class-management.php?action=get_teacher_classes', {
                     credentials: 'include',
                     cache: 'no-store'
                 });
                 if (r.status === 401) {
-                    sel.innerHTML = '<option value="">Sign in required</option>';
+                    if (wrap) wrap.innerHTML = '<p class="text-xs text-red-600">Sign in required.</p>';
                     if (hint) hint.textContent = 'Please sign in again to load your classes.';
                     updateGenerateButton();
                     return;
                 }
                 const data = await r.json();
-                sel.innerHTML = '<option value="">Select a class</option>';
                 if (data.success && Array.isArray(data.classes) && data.classes.length > 0) {
-                    data.classes.forEach(function(c) {
-                        const o = document.createElement('option');
-                        o.value = String(c.id);
-                        o.textContent = (c.class_name || 'Class') + ' (' + (c.class_code || '') + ')';
-                        sel.appendChild(o);
-                    });
-                    if (data.classes.length === 1) {
-                        sel.value = String(data.classes[0].id);
-                    } else if (prev && Array.from(sel.options).some(function(opt) { return opt.value === prev; })) {
-                        sel.value = prev;
+                    window.__pdfLessonClassesList = data.classes;
+                    if (wrap) {
+                        wrap.innerHTML = data.classes.map(function(c) {
+                            const id = String(c.id);
+                            const name = String(c.class_name || 'Class').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+                            const code = String(c.class_code || '').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+                            return '<label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700 py-1">' +
+                                '<input type="checkbox" class="pdf-lesson-class-cb rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" value="' + id + '">' +
+                                '<span>' + name + ' <span class="text-gray-500">(' + code + ')</span></span></label>';
+                        }).join('');
+                        wrap.querySelectorAll('.pdf-lesson-class-cb').forEach(function(cb) {
+                            cb.addEventListener('change', updateGenerateButton);
+                        });
                     }
-                    if (hint) hint.textContent = 'The lesson will only appear for students in the class you select.';
+                    if (data.classes.length === 1 && wrap) {
+                        var lone = wrap.querySelector('.pdf-lesson-class-cb');
+                        if (lone) lone.checked = true;
+                    }
+                    if (hint) hint.textContent = 'Choose “All my classes” or tick specific classes. Students only see published lessons for their class.';
                 } else {
-                    sel.innerHTML = '<option value="">No classes yet</option>';
+                    if (wrap) wrap.innerHTML = '<p class="text-xs text-amber-700">No classes yet. Create a class under Class Management first.</p>';
                     if (hint) hint.textContent = 'Create a class under Class Management first, then return here to upload a PDF lesson.';
                 }
             } catch (e) {
                 console.error('populatePdfLessonClassSelect', e);
-                sel.innerHTML = '<option value="">Could not load classes</option>';
+                if (wrap) wrap.innerHTML = '<p class="text-xs text-red-600">Could not load classes.</p>';
                 if (hint) hint.textContent = 'Refresh the page or check your connection.';
             }
-            sel.disabled = false;
             updateGenerateButton();
         }
 
@@ -10055,16 +10145,29 @@ let currentQuizResultsSearch = '';
                 return;
             }
 
-            const classSel = document.getElementById('pdfLessonClassSelect');
-            const classId = classSel && classSel.value ? String(classSel.value).trim() : '';
-            if (!classId) {
-                Swal.fire({
-                    title: 'Class Required',
-                    text: 'Select which class this PDF lesson should be uploaded to.',
-                    icon: 'warning',
-                    confirmButtonText: 'OK'
-                });
-                return;
+            const allMode = document.getElementById('pdfLessonAssignAll') && document.getElementById('pdfLessonAssignAll').checked;
+            const classList = window.__pdfLessonClassesList || [];
+            if (allMode) {
+                if (!classList.length) {
+                    Swal.fire({
+                        title: 'No Classes',
+                        text: 'Create a class first before generating a lesson.',
+                        icon: 'warning',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+            } else {
+                var picked = Array.prototype.slice.call(document.querySelectorAll('.pdf-lesson-class-cb:checked')).map(function(cb) { return parseInt(cb.value, 10); }).filter(function(n) { return n > 0; });
+                if (!picked.length) {
+                    Swal.fire({
+                        title: 'Class Required',
+                        text: 'Select at least one class, or choose “All my classes”.',
+                        icon: 'warning',
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
             }
             
             // Get topic category display name
@@ -10111,7 +10214,12 @@ let currentQuizResultsSearch = '';
                 formData.append('pdf_file', selectedFile);
                 formData.append('lesson_title', lessonTitle);
                 formData.append('topic_category', topicCategory);
-                formData.append('class_id', classId);
+                if (allMode) {
+                    formData.append('assign_all_classes', '1');
+                } else {
+                    var pickedIds = Array.prototype.slice.call(document.querySelectorAll('.pdf-lesson-class-cb:checked')).map(function(cb) { return parseInt(cb.value, 10); }).filter(function(n) { return n > 0; });
+                    formData.append('class_ids', JSON.stringify(pickedIds));
+                }
 
                 if (processingMessage) processingMessage.textContent = 'Extracting text from PDF...';
                 if (progressBar) progressBar.style.width = '40%';
@@ -10669,13 +10777,12 @@ let currentQuizResultsSearch = '';
             }
 
             Swal.fire({
-                title: 'Lesson Saved!',
-                text: 'Your lesson has been saved to the database and is available in "My Created Lessons".',
-                icon: 'success',
+                title: 'Already saved',
+                text: 'Lessons are stored when you generate them. Use “My Created Lessons” below to unpublish or publish anytime.',
+                icon: 'info',
                 confirmButtonText: 'OK'
             });
 
-            // Refresh lessons list
             loadMyLessons();
         }
 
@@ -10698,38 +10805,47 @@ let currentQuizResultsSearch = '';
                 }
 
                 const result = await response.json();
-                const lessonsList = document.getElementById('myLessonsList');
+                const pubEl = document.getElementById('myLessonsListPublished');
+                const unEl = document.getElementById('myLessonsListUnpublished');
 
-                if (result.success && result.lessons && lessonsList) {
+                function esc(s) {
+                    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+                }
+
+                function lessonCardHtml(lesson) {
+                    const lessonId = lesson.id;
+                    const lessonTitle = esc(lesson.title);
+                    const lessonTopic = esc(lesson.topic);
+                    const lessonDate = new Date(lesson.created_at).toLocaleDateString();
+                    const classLabel = esc(lesson.assigned_classes_label || lesson.class_name || (lesson.class_id ? ('Class #' + lesson.class_id) : '—'));
+                    const isPub = Number(lesson.published) === 1;
+                    const toggleBtn = isPub
+                        ? '<button type="button" onclick="toggleLessonPublished(' + lessonId + ', false)" class="px-3 py-1 bg-amber-100 text-amber-800 rounded hover:bg-amber-200 transition-colors text-sm"><i class="fas fa-eye-slash mr-1"></i>Unpublish</button>'
+                        : '<button type="button" onclick="toggleLessonPublished(' + lessonId + ', true)" class="px-3 py-1 bg-emerald-100 text-emerald-800 rounded hover:bg-emerald-200 transition-colors text-sm"><i class="fas fa-eye mr-1"></i>Publish</button>';
+                    return '<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">' +
+                        '<div class="flex items-start sm:items-center min-w-0">' +
+                        '<i class="fas fa-file-pdf text-red-500 text-xl mr-3 flex-shrink-0 mt-0.5 sm:mt-0"></i>' +
+                        '<div class="min-w-0">' +
+                        '<p class="font-medium text-gray-900">' + lessonTitle + '</p>' +
+                        '<p class="text-sm text-gray-600 break-words">' + lessonTopic + ' • ' + classLabel + ' • ' + lessonDate + '</p>' +
+                        '</div></div>' +
+                        '<div class="flex flex-wrap gap-2 justify-end">' +
+                        toggleBtn +
+                        '<button type="button" onclick="viewLesson(' + lessonId + ')" class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded hover:bg-indigo-200 transition-colors text-sm"><i class="fas fa-eye mr-1"></i>View</button>' +
+                        '<button type="button" onclick="deleteLesson(' + lessonId + ')" class="px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors text-sm"><i class="fas fa-trash mr-1"></i>Delete</button>' +
+                        '</div></div>';
+                }
+
+                if (result.success && result.lessons && pubEl && unEl) {
                     if (result.lessons.length === 0) {
-                        lessonsList.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">No lessons created yet. Upload a PDF to get started!</p>';
+                        const empty = '<p class="text-sm text-gray-500 py-2">No lessons yet. Upload a PDF above to create one.</p>';
+                        pubEl.innerHTML = empty;
+                        unEl.innerHTML = '<p class="text-sm text-gray-500 py-2">No unpublished lessons.</p>';
                     } else {
-                        lessonsList.innerHTML = result.lessons.map(function(lesson) {
-                            const lessonId = lesson.id;
-                            const lessonTitle = lesson.title.replace(/'/g, "&#39;").replace(/"/g, "&quot;");
-                            const lessonTopic = lesson.topic.replace(/'/g, "&#39;").replace(/"/g, "&quot;");
-                            const lessonDate = new Date(lesson.created_at).toLocaleDateString();
-                            const classLabel = lesson.class_name
-                                ? String(lesson.class_name).replace(/'/g, "&#39;").replace(/"/g, "&quot;")
-                                : (lesson.class_id ? ('Class #' + lesson.class_id) : 'All classes');
-                            return '<div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">' +
-                                '<div class="flex items-center">' +
-                                '<i class="fas fa-file-pdf text-red-500 text-xl mr-3"></i>' +
-                                '<div>' +
-                                '<p class="font-medium text-gray-900">' + lessonTitle + '</p>' +
-                                '<p class="text-sm text-gray-600">' + lessonTopic + ' • ' + classLabel + ' • ' + lessonDate + '</p>' +
-                                '</div>' +
-                                '</div>' +
-                                '<div class="flex space-x-2">' +
-                                '<button onclick="viewLesson(' + lessonId + ')" class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded hover:bg-indigo-200 transition-colors text-sm">' +
-                                '<i class="fas fa-eye mr-1"></i>View' +
-                                '</button>' +
-                                '<button onclick="deleteLesson(' + lessonId + ')" class="px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors text-sm">' +
-                                '<i class="fas fa-trash mr-1"></i>Delete' +
-                                '</button>' +
-                                '</div>' +
-                                '</div>';
-                        }).join('');
+                        const published = result.lessons.filter(function(l) { return Number(l.published) === 1; });
+                        const unpublished = result.lessons.filter(function(l) { return Number(l.published) !== 1; });
+                        pubEl.innerHTML = published.length ? published.map(lessonCardHtml).join('') : '<p class="text-sm text-gray-500 py-2">No published lessons. Publish a lesson below or generate a new one.</p>';
+                        unEl.innerHTML = unpublished.length ? unpublished.map(lessonCardHtml).join('') : '<p class="text-sm text-gray-500 py-2">No unpublished lessons.</p>';
                     }
                 }
             } catch (error) {
@@ -10739,7 +10855,49 @@ let currentQuizResultsSearch = '';
 
         // Update button state when title / class changes
         document.getElementById('lessonTitle')?.addEventListener('input', updateGenerateButton);
-        document.getElementById('pdfLessonClassSelect')?.addEventListener('change', updateGenerateButton);
+        document.querySelectorAll('input[name="pdfLessonAssignMode"]').forEach(function(el) {
+            el.addEventListener('change', function() {
+                var wrap = document.getElementById('pdfLessonClassCheckboxWrap');
+                var pick = document.getElementById('pdfLessonAssignPick');
+                if (wrap && pick) wrap.classList.toggle('hidden', !pick.checked);
+                updateGenerateButton();
+            });
+        });
+
+        async function toggleLessonPublished(lessonId, published) {
+            try {
+                const response = await fetch('php/get-teacher-lessons.php', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        action: 'set_published',
+                        lesson_id: lessonId,
+                        published: !!published
+                    })
+                });
+                const data = await response.json().catch(function() { return {}; });
+                if (!response.ok || !data.success) {
+                    throw new Error(data.message || 'Could not update lesson.');
+                }
+                Swal.fire({
+                    title: published ? 'Published' : 'Unpublished',
+                    text: data.message || 'Updated.',
+                    icon: 'success',
+                    timer: 1800,
+                    showConfirmButton: false
+                });
+                loadMyLessons();
+            } catch (err) {
+                console.error(err);
+                Swal.fire({
+                    title: 'Error',
+                    text: err.message || 'Failed to update lesson.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        }
 
         async function viewLesson(lessonId) {
             try {

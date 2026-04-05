@@ -745,6 +745,9 @@ function getStudentPerformanceDetails() {
         } catch (Exception $e) {
             $topicStudyTime = [];
         }
+
+        require_once __DIR__ . '/student-activity-log-helper.php';
+        $auditTrail = build_student_audit_trail_for_teacher($pdo, (int) $_SESSION['teacher_id'], (int) $studentId, 150);
         
         echo json_encode([
             'success' => true,
@@ -754,6 +757,7 @@ function getStudentPerformanceDetails() {
             'quiz_statistics' => $quizStatistics,
             'lesson_completions' => $lessonCompletions,
             'topic_study_time' => $topicStudyTime,
+            'audit_trail' => $auditTrail,
             'data_source' => 'Independent Performance Tracking System'
         ]);
         
