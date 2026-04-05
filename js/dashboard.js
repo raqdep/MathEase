@@ -547,33 +547,8 @@ class DashboardManager {
             });
         });
 
-        // SweetAlert logout confirm
-        const logoutLink = document.getElementById('logoutLink');
-        if (logoutLink) {
-            logoutLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                const href = logoutLink.getAttribute('href') || 'php/logout.php';
-                if (window.Swal) {
-                    Swal.fire({
-                        title: 'Logout?',
-                        text: 'Are you sure you want to logout?',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#6366f1',
-                        cancelButtonColor: '#6b7280',
-                        confirmButtonText: 'Yes, logout',
-                        cancelButtonText: 'Cancel'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.href = href;
-                        }
-                    });
-                } else {
-                    const ok = confirm('Are you sure you want to logout?');
-                    if (ok) window.location.href = href;
-                }
-            });
-        }
+        // Logout: desktop/mobile use onclick="confirmLogout(event)" + js/logout-confirm.js (smart-logout).
+        // Do not attach a second listener here — href is "#" and would block real logout.
     }
 
     showNotification(message, type = 'info') {

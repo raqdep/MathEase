@@ -24,7 +24,9 @@ class SessionManager {
                    currentPath.includes('topics/') ||
                    currentPath.includes('quizzes.html') ||
                    currentPath.includes('flashcards.html') ||
-                   currentPath.includes('flashcards/')) {
+                   currentPath.includes('flashcards/') ||
+                   currentPath.includes('achievements.html') ||
+                   currentPath.includes('profile.html')) {
             this.currentUserType = 'student';
         }
         

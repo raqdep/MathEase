@@ -11,6 +11,10 @@
         if (event && typeof event.preventDefault === 'function') {
             event.preventDefault();
         }
+        // Avoid duplicate handlers (e.g. dashboard.js) still navigating to href="#".
+        if (event && typeof event.stopImmediatePropagation === 'function') {
+            event.stopImmediatePropagation();
+        }
 
         function go() {
             global.location.href = LOGOUT_URL;
