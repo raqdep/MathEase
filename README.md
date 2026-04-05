@@ -277,6 +277,17 @@ ini_set('display_errors', 1);
 - **JavaScript**: ES6+ features and error handling
 - **PHP**: PSR-12 coding standards
 
+## Contributing
+
+We use the **`main`** branch as the default branch. To work on MathEase locally:
+
+1. Clone the repository: `git clone https://github.com/raqdep/MathEase.git`
+2. Install PHP dependencies: `composer install`
+3. Copy `deploy/.env.example` to `.env` in the project root and set `DB_*` and other variables (never commit real credentials).
+4. Follow the database and XAMPP steps in this README.
+
+Open pull requests against **`main`**. For bugs or feature ideas, open a GitHub issue with steps to reproduce when possible.
+
 ## License
 
 This project is developed for educational purposes at Minuyan National High School. All rights reserved.

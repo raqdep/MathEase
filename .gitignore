@@ -43,5 +43,8 @@ uploads/profiles/*
 uploads/teacher-profiles/*
 !uploads/teacher-profiles/.gitkeep
 
-# Windows duplicate copies (e.g. file (1).html)
-*\(1\)*
+# Windows duplicate copies (e.g. "file (1).html", "file(1).php") — never commit these
+* (1)*
+*(1)*
+**/* (1)*
+**/*(1)*
