@@ -22,8 +22,24 @@ try {
         throw new Exception('New password is required');
     }
 
+    // Same rules as teacher registration (teacher-register.php)
     if (strlen($newPassword) < 8) {
         throw new Exception('Password must be at least 8 characters long');
+    }
+    if (strlen($newPassword) > 30) {
+        throw new Exception('Password must be at most 30 characters');
+    }
+    if (!preg_match('/[a-z]/', $newPassword)) {
+        throw new Exception('Password must contain at least one lowercase letter');
+    }
+    if (!preg_match('/[A-Z]/', $newPassword)) {
+        throw new Exception('Password must contain at least one uppercase letter');
+    }
+    if (!preg_match('/[0-9]/', $newPassword)) {
+        throw new Exception('Password must contain at least one number');
+    }
+    if (!preg_match('/[^a-zA-Z0-9]/', $newPassword)) {
+        throw new Exception('Password must contain at least one special character');
     }
 
     $stmt = $pdo->prepare("

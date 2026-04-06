@@ -65,6 +65,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const forms = document.querySelectorAll('form');
     forms.forEach(form => {
         form.addEventListener('submit', function(e) {
+            if (form.id === 'teacher-reset-password-form') {
+                return;
+            }
             if (!validateForm(this)) {
                 e.preventDefault();
                 showNotification('Please fix the errors in the form.', 'error');

@@ -899,7 +899,7 @@ function ppt_add_header_bar(\PhpOffice\PhpPresentation\Slide $slide, string $fil
 function ppt_resolve_mathease_logo_path(): string
 {
     foreach ([
-        __DIR__ . '/../css/nav-logo/logo-mid.png',
+        __DIR__ . '/../Img/logo/logo-gradient.png',
         __DIR__ . '/../Img/logo/logo-white.png',
     ] as $p) {
         if (is_readable($p)) {

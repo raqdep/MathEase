@@ -434,6 +434,20 @@
                 padding: 1rem !important;
             }
         }
+        .topic-video-section {
+            margin-bottom: 2rem;
+        }
+        .topic-video-section .section-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #4f46e5;
+            margin-bottom: 0.75rem;
+        }
     </style>
 </head>
 <body class="font-poppins bg-gray-50">
@@ -893,6 +907,40 @@
                         </div>
                     </div>
 
+                    <!-- Video: Topic 1 tutorial -->
+                    <div class="topic-video-section">
+                        <div class="section-label">
+                            <i class="fas fa-video"></i> Video
+                        </div>
+                        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                            <div class="text-center mb-6">
+                                <h3 class="text-2xl font-bold text-gray-800 mb-3">
+                                    <i class="fas fa-play-circle text-primary mr-3"></i>Topic 1: Real-world models — video tutorial
+                                </h3>
+                                <p class="text-lg text-gray-600 max-w-3xl mx-auto">
+                                    Watch this overview of modeling real-life situations with functions and piecewise rules.
+                                </p>
+                            </div>
+                            <div class="max-w-4xl mx-auto">
+                                <div class="relative w-full overflow-hidden rounded-lg shadow-lg" style="background: #f3f4f6; padding-top: 56.25%;">
+                                    <iframe
+                                        class="absolute inset-0 w-full h-full"
+                                        src="https://www.youtube.com/embed/JNy2U3AnOTA?rel=0&modestbranding=1"
+                                        title="Real-world function models tutorial"
+                                        frameborder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                        allowfullscreen
+                                    ></iframe>
+                                </div>
+                                <div class="mt-4 bg-blue-50 rounded-lg p-4 border-l-4 border-primary">
+                                    <p class="text-sm text-gray-700">
+                                        <strong>Tip:</strong> Notice how each situation is turned into a rule (function) with a clear input and output.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- References -->
                     <div id="lesson1-reference" class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
                         <h3 class="text-xl font-bold text-gray-800 mb-4">
@@ -910,6 +958,7 @@
                             <div class="bg-white rounded-lg p-4 shadow-sm">
                                 <h4 class="font-semibold text-gray-800 mb-2">Online Resources</h4>
                                 <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• <a href="https://youtu.be/JNy2U3AnOTA" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">YouTube: Real-world function models tutorial</a></li>
                                     <li>• Khan Academy: Functions and Relations</li>
                                     <li>• Purplemath: Function Notation</li>
                                     <li>• Math is Fun: What is a Function?</li>
