@@ -73,12 +73,15 @@
         return 'Inter, ui-sans-serif, system-ui, sans-serif';
     }
 
-    /** Orbit origin: default center, or bottom-left for landing hero */
+    /** Orbit origin: center (default), top-left / upper-left, or bottom-left (data-math-orbits-anchor) */
     function getOrbitCenter(cw, ch, hero) {
         var anchor = '';
         try {
             anchor = (hero.getAttribute('data-math-orbits-anchor') || 'center').trim().toLowerCase().replace(/\s+/g, '-');
         } catch (e) { /* ignore */ }
+        if (anchor === 'top-left' || anchor === 'upper-left') {
+            return { x: cw * 0.2, y: ch * 0.2 };
+        }
         if (anchor === 'bottom-left') {
             return { x: cw * 0.2, y: ch * 0.86 };
         }
