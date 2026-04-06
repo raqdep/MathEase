@@ -112,7 +112,7 @@
             '<div class="mobile-nav-header">' +
             '<div class="flex items-center space-x-3">' +
             '<div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">' +
-            '<img src="css/nav-logo/nav-logo.png" alt="" class="h-6 w-6 object-contain">' +
+            '<img src="Img/logo/logo-white.png" alt="" class="h-6 w-6 object-contain">' +
             '</div>' +
             '<span class="text-xl font-bold text-white">MathEase</span>' +
             '</div></div>' +

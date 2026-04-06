@@ -24,7 +24,7 @@ function navCls(string $key, string $activePage, string $base, string $active): 
             <!-- Logo -->
             <a href="dashboard.php" class="flex items-center gap-2 min-w-0">
                 <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <img src="css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-6 w-6 object-contain">
+                    <img src="Img/logo/logo-white.png" alt="MathEase Logo" class="h-6 w-6 object-contain">
                 </div>
                 <span class="text-xl font-bold text-slate-800 truncate">MathEase</span>
             </a>
@@ -177,7 +177,7 @@ function navCls(string $key, string $activePage, string $base, string $active): 
                 <div class="mobile-nav-header">
                     <div class="mobile-nav-brand">
                         <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-                            <img src="css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-6 w-6 object-contain">
+                            <img src="Img/logo/logo-white.png" alt="MathEase Logo" class="h-6 w-6 object-contain">
                         </div>
                         <span>MathEase</span>
                     </div>

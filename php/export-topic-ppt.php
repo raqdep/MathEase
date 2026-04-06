@@ -900,7 +900,7 @@ function ppt_resolve_mathease_logo_path(): string
 {
     foreach ([
         __DIR__ . '/../css/nav-logo/logo-mid.png',
-        __DIR__ . '/../css/nav-logo/nav-logo.png',
+        __DIR__ . '/../Img/logo/logo-white.png',
     ] as $p) {
         if (is_readable($p)) {
             return $p;
