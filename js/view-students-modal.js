@@ -284,10 +284,14 @@ class ViewStudentsModal {
             const enrolled = student.enrolled_at
                 ? new Date(student.enrolled_at).toLocaleDateString()
                 : '—';
+            const eid = Number(student.enrollment_id);
             const actions = student.enrollment_status === 'pending'
-                ? `<button type="button" onclick="approveStudentEnrollment(${Number(student.enrollment_id)})" class="bg-purple-600 hover:bg-purple-700 text-white px-2 py-1 rounded-md text-xs font-medium mr-1">Approve</button>
-                   <button type="button" onclick="rejectStudentEnrollment(${Number(student.enrollment_id)})" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded-md text-xs font-medium">Reject</button>`
-                : `<span class="text-xs font-semibold text-purple-700 bg-purple-100 px-2 py-1 rounded-full inline-block"><i class="fas fa-check-circle mr-1"></i>Approved</span>`;
+                ? `<button type="button" onclick="approveStudentEnrollment(${eid})" class="bg-purple-600 hover:bg-purple-700 text-white px-2 py-1 rounded-md text-xs font-medium mr-1">Approve</button>
+                   <button type="button" onclick="rejectStudentEnrollment(${eid})" class="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded-md text-xs font-medium">Reject</button>`
+                : student.enrollment_status === 'approved'
+                ? `<span class="text-xs font-semibold text-purple-700 bg-purple-100 px-2 py-1 rounded-full inline-block mr-1"><i class="fas fa-check-circle mr-1"></i>Approved</span>
+                   <button type="button" onclick="removeApprovedStudentFromClass(${eid})" class="border border-red-200 text-red-700 hover:bg-red-50 px-2 py-1 rounded-md text-xs font-medium">Remove from class</button>`
+                : `<span class="text-xs font-semibold text-slate-600 bg-slate-100 px-2 py-1 rounded-full inline-block">${this.escapeHtml(student.enrollment_status || '—')}</span>`;
 
             return `<tr class="hover:bg-purple-50/40">
                 <td class="px-3 py-2.5 text-slate-500">${globalIndex}</td>
@@ -370,6 +374,53 @@ class ViewStudentsModal {
             }
         } else if (mgr.showNotification) {
             mgr.showNotification(result.message || 'Failed to reject enrollment', 'error');
+        }
+    }
+
+    async removeApprovedStudentFromClass(enrollmentId) {
+        const id = Number(enrollmentId);
+        if (!Number.isFinite(id) || id <= 0) {
+            if (window.teacherClassManagement && window.teacherClassManagement.showNotification) {
+                window.teacherClassManagement.showNotification('Invalid enrollment. Refresh the page and try again.', 'error');
+            }
+            return;
+        }
+
+        const doRemove = async () => {
+            const mgr = window.teacherClassManagement;
+            if (!mgr || typeof mgr.removeStudentFromClass !== 'function') {
+                if (mgr && mgr.showNotification) {
+                    mgr.showNotification('Class management is still loading. Please try again in a moment.', 'warning');
+                }
+                return;
+            }
+            const result = await mgr.removeStudentFromClass(id);
+            if (result.success) {
+                this.loadClassStudents(this.currentClassId);
+                if (mgr.showNotification) {
+                    mgr.showNotification(result.message || 'Student removed from class.', 'success');
+                }
+            } else if (mgr.showNotification) {
+                mgr.showNotification(result.message || 'Failed to remove student', 'error');
+            }
+        };
+
+        if (typeof Swal !== 'undefined' && Swal.fire) {
+            const res = await Swal.fire({
+                title: 'Remove from class?',
+                html: '<p class="text-left text-gray-600 text-sm">This removes the student from this class only. <strong>Their lesson and quiz progress stays on their account</strong>—if they join this class again and you approve them, they pick up where they left off.</p>',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Remove from class',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#dc2626',
+                focusCancel: true
+            });
+            if (res.isConfirmed) {
+                await doRemove();
+            }
+        } else if (window.confirm('Remove this student from the class? Their progress will be saved if they rejoin later.')) {
+            await doRemove();
         }
     }
 
@@ -464,6 +515,12 @@ function approveStudentEnrollment(enrollmentId) {
 function rejectStudentEnrollment(enrollmentId) {
     if (window.viewStudentsModal) {
         window.viewStudentsModal.rejectStudentEnrollment(enrollmentId);
+    }
+}
+
+function removeApprovedStudentFromClass(enrollmentId) {
+    if (window.viewStudentsModal) {
+        window.viewStudentsModal.removeApprovedStudentFromClass(enrollmentId);
     }
 }
 

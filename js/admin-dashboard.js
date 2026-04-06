@@ -410,7 +410,8 @@ function teacherAuditActionMeta(action) {
         quiz_closed: { label: 'Quiz closed', icon: 'fa-circle-xmark', color: 'amber', known: true },
         quiz_settings_saved: { label: 'Quiz deadline / settings updated', icon: 'fa-sliders', color: 'indigo', known: true },
         student_enrollment_approved: { label: 'Student enrollment approved', icon: 'fa-user-check', color: 'emerald', known: true },
-        student_enrollment_rejected: { label: 'Student enrollment rejected', icon: 'fa-user-xmark', color: 'red', known: true }
+        student_enrollment_rejected: { label: 'Student enrollment rejected', icon: 'fa-user-xmark', color: 'red', known: true },
+        student_removed_from_class: { label: 'Student removed from class', icon: 'fa-user-minus', color: 'amber', known: true }
     };
     if (map[a]) return map[a];
     return {

@@ -239,6 +239,47 @@ class TeacherClassManagement {
         }
     }
 
+    async removeStudentFromClass(enrollmentId) {
+        try {
+            const formData = new FormData();
+            formData.append('action', 'remove_enrollment');
+            formData.append('enrollment_id', String(enrollmentId));
+
+            const response = await fetch('php/class-management.php', {
+                method: 'POST',
+                body: formData,
+                credentials: 'include'
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                const text = await response.text();
+                console.error('Non-JSON response:', text);
+                throw new Error('Server returned non-JSON response');
+            }
+
+            const result = await response.json();
+
+            if (result.success) {
+                await this.loadPendingEnrollments();
+                await this.loadTeacherClasses();
+                this.updateClassesList();
+                if (window.teacherDashboard && typeof window.teacherDashboard.refreshEnrollmentStatsQuiet === 'function') {
+                    await window.teacherDashboard.refreshEnrollmentStatsQuiet();
+                }
+                return { success: true, message: result.message || '' };
+            }
+            return { success: false, message: result.message || 'Could not remove student' };
+        } catch (error) {
+            console.error('Error removing student from class:', error);
+            return { success: false, message: 'Network error. Please try again.' };
+        }
+    }
+
     async deleteClass(classId, className) {
         try {
             // Show confirmation dialog

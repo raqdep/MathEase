@@ -688,6 +688,81 @@ class ClassManagement {
             ];
         }
     }
+
+    /**
+     * Remove an approved student from a class by deleting their enrollment row.
+     * Does not delete lesson/quiz progress (stored per user account).
+     */
+    public function removeEnrollment($enrollmentId, $teacherId) {
+        try {
+            $enrollmentId = (int) $enrollmentId;
+            $teacherId = (int) $teacherId;
+            if ($enrollmentId <= 0 || $teacherId <= 0) {
+                return ['success' => false, 'message' => 'Invalid parameters'];
+            }
+
+            $checkStmt = $this->pdo->prepare("
+                SELECT ce.id, ce.class_id, ce.student_id, ce.enrollment_status, c.class_name
+                FROM class_enrollments ce
+                INNER JOIN classes c ON ce.class_id = c.id
+                WHERE ce.id = ? AND c.teacher_id = ? AND c.is_active = TRUE
+            ");
+            $checkStmt->execute([$enrollmentId, $teacherId]);
+            $row = $checkStmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$row) {
+                return [
+                    'success' => false,
+                    'message' => 'Enrollment not found or you do not have permission'
+                ];
+            }
+
+            if (strtolower((string) $row['enrollment_status']) !== 'approved') {
+                return [
+                    'success' => false,
+                    'message' => 'Only approved enrollments can be removed. Use Reject for pending requests.'
+                ];
+            }
+
+            $studentStmt = $this->pdo->prepare("SELECT first_name, last_name FROM users WHERE id = ?");
+            $studentStmt->execute([(int) $row['student_id']]);
+            $student = $studentStmt->fetch(PDO::FETCH_ASSOC) ?: ['first_name' => '', 'last_name' => ''];
+
+            $this->pdo->beginTransaction();
+            try {
+                $del = $this->pdo->prepare("DELETE FROM class_enrollments WHERE id = ?");
+                $del->execute([$enrollmentId]);
+
+                createStudentNotification(
+                    $this->pdo,
+                    (int) $row['student_id'],
+                    'removed_from_class',
+                    'Removed from class: ' . $row['class_name'],
+                    "You have been removed from the class '" . $row['class_name'] . "'. Your learning progress is still saved if you rejoin this class later."
+                );
+
+                $this->pdo->commit();
+            } catch (Exception $e) {
+                if ($this->pdo->inTransaction()) {
+                    $this->pdo->rollBack();
+                }
+                throw $e;
+            }
+
+            $detail = "Removed {$student['first_name']} {$student['last_name']} from class '{$row['class_name']}'.";
+            log_teacher_activity($this->pdo, $teacherId, 'student_removed_from_class', $detail);
+
+            return [
+                'success' => true,
+                'message' => 'Student removed from this class. Their progress is unchanged; if they enroll again, it will continue.'
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage()
+            ];
+        }
+    }
 }
 
 // Handle requests
@@ -854,6 +929,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             error_log("Update enrollment - Teacher ID: " . $_SESSION['teacher_id'] . ", Enrollment ID: " . $enrollmentId . ", Status: " . $status);
             
             $result = $classManager->updateEnrollmentStatus($enrollmentId, $status, $_SESSION['teacher_id'], $notes);
+            echo json_encode($result);
+            break;
+
+        case 'remove_enrollment':
+            if (!isset($_SESSION['teacher_id'])) {
+                echo json_encode(['success' => false, 'message' => 'Not authenticated']);
+                exit;
+            }
+
+            $enrollmentId = isset($_POST['enrollment_id']) ? (int) $_POST['enrollment_id'] : 0;
+            if ($enrollmentId <= 0) {
+                echo json_encode(['success' => false, 'message' => 'Enrollment ID is required']);
+                exit;
+            }
+
+            $result = $classManager->removeEnrollment($enrollmentId, (int) $_SESSION['teacher_id']);
             echo json_encode($result);
             break;
             
