@@ -195,6 +195,10 @@
         @media (prefers-reduced-motion: reduce) {
             html { scroll-behavior: auto; }
             .me-hero-in, .me-hero-in-delay { animation: none !important; opacity: 1 !important; transform: none !important; }
+            .hero-floating-formulas .formula {
+                animation: none !important;
+                opacity: 0.45 !important;
+            }
             .me-reveal {
                 opacity: 1 !important;
                 transform: none !important;
@@ -411,14 +415,6 @@
                 max-width: calc(100% - 40px);
             }
             
-            .math-animation {
-                height: 250px;
-            }
-            
-            .formula {
-                font-size: 1.1rem;
-            }
-            
             /* Sections Mobile */
             section {
                 padding: 3rem 1rem !important;
@@ -632,17 +628,6 @@
                 right: 10px;
             }
             
-            /* Math Animation Mobile */
-            .math-animation {
-                height: 200px;
-                padding-bottom: 100px;
-                padding-right: 100px;
-            }
-            
-            .formula {
-                font-size: 0.9rem;
-            }
-            
             /* Cards padding mobile */
             .bg-white\/70,
             .bg-white {
@@ -807,10 +792,6 @@
             .welcome-character {
                 width: 150px !important;
             }
-            
-            .math-animation {
-                height: 180px;
-            }
         }
         
         /* Large screens optimization */
@@ -839,6 +820,47 @@
             z-index: 5;
             pointer-events: none;
         }
+
+        /* Soften visible rectangular matting when video uses a flat purple different from page gradient */
+        .welcome-character-mask {
+            display: inline-block;
+            max-width: 100%;
+            line-height: 0;
+            vertical-align: bottom;
+            border-radius: 2rem;
+            overflow: hidden;
+            position: relative;
+            isolation: isolate;
+            -webkit-mask-image: radial-gradient(
+                ellipse 98% 94% at 50% 48%,
+                #000 0%,
+                #000 52%,
+                rgba(0, 0, 0, 0.7) 76%,
+                transparent 100%
+            );
+            mask-image: radial-gradient(
+                ellipse 98% 94% at 50% 48%,
+                #000 0%,
+                #000 52%,
+                rgba(0, 0, 0, 0.7) 76%,
+                transparent 100%
+            );
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+            -webkit-mask-size: 100% 100%;
+            mask-size: 100% 100%;
+        }
+
+        .welcome-character-mask::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            pointer-events: none;
+            box-shadow:
+                inset 0 0 40px 22px rgba(74, 58, 130, 0.42),
+                inset 0 0 72px 44px rgba(106, 80, 168, 0.28);
+        }
         
         .welcome-character {
             width: 320px;
@@ -854,95 +876,25 @@
             pointer-events: auto;
         }
         
-        /* Ensure formulas don't overlap with video - position formulas away from bottom-right */
-        .math-animation {
-            position: relative;
-            z-index: 1;
-            padding-bottom: 120px;
-            padding-right: 120px;
-        }
-        
-        .math-animation .formula {
-            z-index: 1;
-        }
-        
-        /* Desktop/Laptop: hero layout - video right, formulas left; formulas on top */
+        /* Desktop/Laptop: mascot aligned end of hero column */
         @media (min-width: 769px) {
             .hero-image {
-                display: grid !important;
-                grid-template-columns: 1fr minmax(260px, 340px);
-                align-items: end;
-                gap: 0;
+                display: flex;
+                justify-content: flex-end;
+                align-items: flex-end;
                 min-height: 55vh;
-            }
-            .math-animation {
-                z-index: 10;
-                grid-column: 1;
-                height: 100%;
-                min-height: 360px;
-                padding-bottom: 0 !important;
-                padding-right: 0 !important;
-            }
-            .math-animation .formula {
-                z-index: 10;
             }
             .welcome-character-container {
                 z-index: 2;
                 position: relative !important;
                 right: auto !important;
                 bottom: auto !important;
-                grid-column: 2;
-                justify-self: end;
-                align-self: end;
                 padding-right: 1rem;
                 padding-bottom: 0.5rem;
             }
             .welcome-character {
                 max-width: 320px;
             }
-            /* Floating formulas: left side only, clear positions */
-            .math-animation .formula:nth-child(1) {
-                top: 18% !important;
-                left: 12% !important;
-                right: auto !important;
-                bottom: auto !important;
-            }
-            .math-animation .formula:nth-child(2) {
-                top: 8% !important;
-                left: 32% !important;
-                right: auto !important;
-                bottom: auto !important;
-                transform: translateX(-50%) !important;
-            }
-            .math-animation .formula:nth-child(3) {
-                top: 50% !important;
-                left: 14% !important;
-                right: auto !important;
-                bottom: auto !important;
-            }
-        }
-        
-        /* Adjust formula positions (mobile / base) */
-        .math-animation .formula:nth-child(1) {
-            top: 15% !important;
-            left: 10% !important;
-            right: auto !important;
-            bottom: auto !important;
-        }
-        
-        .math-animation .formula:nth-child(2) {
-            top: 5% !important;
-            left: 50% !important;
-            right: auto !important;
-            bottom: auto !important;
-            transform: translateX(-50%) !important;
-        }
-        
-        .math-animation .formula:nth-child(3) {
-            top: 50% !important;
-            left: 5% !important;
-            right: auto !important;
-            bottom: auto !important;
         }
         
         .welcome-character-container video.welcome-character {
@@ -1149,6 +1101,11 @@
         <div class="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
             <canvas data-math-orbits-canvas class="absolute inset-0 block w-full h-full opacity-[0.88]"></canvas>
         </div>
+        <div class="hero-floating-formulas" aria-hidden="true">
+            <div class="formula">Simple Interest: I = Prt</div>
+            <div class="formula">Slope of a line: m = (y₂−y₁)/(x₂−x₁)</div>
+            <div class="formula">Compound: A = P(1 + r/n)^{nt}</div>
+        </div>
         <div class="hero-container relative z-10">
             <div class="hero-content me-hero-in">
                 <h1 class="hero-title">Master General Mathematics with <span class="highlight">MathEase</span></h1>
@@ -1162,19 +1119,15 @@
                 </div>
             </div>
             <div class="hero-image me-hero-in me-hero-in-delay">
-                <div class="math-animation">
-                    <div class="formula">Simple Interest: I = Prt</div>
-                    <div class="formula">Slope of a line: m = (y₂−y₁)/(x₂−x₁)</div>
-                    <div class="formula">Compound: A = P(1 + r/n)^{nt}</div>
-                </div>
-                <!-- Welcome Character -->
                 <div class="welcome-character-container">
-                    <video src="Img/Character/0226(2).mp4"
-                           class="welcome-character"
-                           id="welcomeCharacter"
-                           autoplay loop muted playsinline
-                           aria-label="Welcome to MathEase">
-                    </video>
+                    <div class="welcome-character-mask">
+                        <video src="Img/Character/0226(2).mp4"
+                               class="welcome-character"
+                               id="welcomeCharacter"
+                               autoplay loop muted playsinline
+                               aria-label="Welcome to MathEase">
+                        </video>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2190,5 +2143,6 @@
 
     <script src="js/main.js"></script>
     <script src="js/dashboard-math-orbits.js"></script>
+    <script src="js/landing-hero-formulas.js"></script>
 </body>
 </html>

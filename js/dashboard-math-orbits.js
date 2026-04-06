@@ -20,22 +20,36 @@
         return { x: x * cos + z * sin, y: y, z: -x * sin + z * cos };
     }
 
+    function shuffleSymbols() {
+        var a = SYMBOLS.slice();
+        var k;
+        for (k = a.length - 1; k > 0; k--) {
+            var j = Math.floor(Math.random() * (k + 1));
+            var t = a[k];
+            a[k] = a[j];
+            a[j] = t;
+        }
+        return a;
+    }
+
     function buildOrbits(numOrbits, scale) {
         var orbits = [];
         var i;
+        var maxUnique = SYMBOLS.length;
         for (i = 1; i <= numOrbits; i++) {
             var radius = (48 + i * 72) * scale;
             var speed = 0.006 + Math.random() * 0.012;
             var tiltSpeedX = 0.0008 + Math.random() * 0.0015;
             var tiltSpeedY = 0.0008 + Math.random() * 0.0015;
-            var symbolCount = 2 + Math.floor(Math.random() * 4);
+            var symbolCount = Math.min(2 + Math.floor(Math.random() * 4), maxUnique);
+            var pool = shuffleSymbols();
             var orbitSymbols = [];
             var j;
             for (j = 0; j < symbolCount; j++) {
-                var sym = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+                var sym = pool[j];
                 var size = Math.round((14 + Math.random() * 22) * Math.max(0.85, scale));
                 var angle = Math.random() * Math.PI * 2;
-                var bubbleOpacity = 0.35 + Math.random() * 0.4;
+                var bubbleOpacity = 0.25 + Math.random() * 0.35;
                 orbitSymbols.push({ sym: sym, size: size, angle: angle, bubbleOpacity: bubbleOpacity });
             }
             orbits.push({
@@ -144,8 +158,8 @@
                 var th = item.size * 0.92;
                 var bubbleR = Math.max(tw, th) * 0.52 + 7;
 
-                var bo = typeof item.bubbleOpacity === 'number' ? item.bubbleOpacity : 0.5;
-                var strokeA = Math.min(0.55, bo * 0.55 + 0.08);
+                var bo = typeof item.bubbleOpacity === 'number' ? item.bubbleOpacity : 0.42;
+                var strokeA = Math.min(0.48, bo * 0.5 + 0.06);
 
                 ctx.beginPath();
                 ctx.arc(px, py, bubbleR, 0, Math.PI * 2);

@@ -189,7 +189,7 @@ a:focus-visible {
 
 /* Hero Section */
 .hero {
-    background: #7259B6;
+    background: linear-gradient(145deg, #4a3a82 0%, #5c4898 22%, #6d52ac 45%, #7a5cb8 68%, #8a6bc9 100%);
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -284,52 +284,38 @@ a:focus-visible {
     transform: translateY(-3px);
 }
 
-/* Math Animation */
+/* Math Animation — hero mascot column */
 .hero-image {
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #7259B6;
+    background-color: transparent;
     border-radius: 24px 0 0 24px;
     min-height: 60vh;
     overflow: hidden;
+    box-sizing: border-box;
 }
 
-.math-animation {
-    position: relative;
-    height: 400px;
-    width: 100%;
-}
-
-.formula {
+/* Full-hero floating formulas (positions set by js/landing-hero-formulas.js) */
+.hero-floating-formulas {
     position: absolute;
-    font-size: 1.5rem;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.hero-floating-formulas .formula {
+    position: absolute;
     color: white;
     font-weight: 600;
     opacity: 0;
     animation: float 6s ease-in-out infinite;
-    z-index: 1;
     pointer-events: none;
-}
-
-.formula:nth-child(1) {
-    top: 15%;
-    left: 10%;
-    animation-delay: 0s;
-}
-
-.formula:nth-child(2) {
-    top: 5%;
-    left: 50%;
-    transform: translateX(-50%);
-    animation-delay: 2s;
-}
-
-.formula:nth-child(3) {
-    top: 50%;
-    left: 5%;
-    animation-delay: 4s;
+    max-width: min(92vw, 26rem);
+    line-height: 1.35;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.35);
 }
 
 @keyframes float {
@@ -814,7 +800,7 @@ a:focus-visible {
         overflow: hidden;
         position: relative;
     }
-    
+
     /* Fix video positioning on mobile - right side, lower position */
     .welcome-character-container {
         position: absolute;
@@ -828,36 +814,9 @@ a:focus-visible {
         max-width: calc(100% - 40px);
         height: auto;
     }
-    
-    .math-animation {
-        height: 250px;
-        padding-bottom: 100px;
-        padding-right: 100px;
-    }
-    
-    .formula {
-        font-size: 1.1rem;
-    }
-    
-    /* Adjust formulas on mobile to avoid video (video is now bottom-left) */
-    .math-animation .formula:nth-child(1) {
-        top: 15% !important;
-        right: 10% !important;
-        left: auto !important;
-    }
-    
-    .math-animation .formula:nth-child(2) {
-        top: 5% !important;
-        left: 50% !important;
-        right: auto !important;
-        transform: translateX(-50%) !important;
-    }
-    
-    .math-animation .formula:nth-child(3) {
-        top: 50% !important;
-        right: 5% !important;
-        left: auto !important;
-        bottom: auto !important;
+
+    .hero-floating-formulas .formula {
+        max-width: min(94vw, 22rem);
     }
     
     .features-grid,
@@ -906,14 +865,6 @@ a:focus-visible {
         min-height: auto;
     }
     
-    .math-animation {
-        height: 200px;
-    }
-    
-    .formula {
-        font-size: 0.9rem;
-    }
-    
     .section-title {
         font-size: 1.75rem;
     }
@@ -933,31 +884,9 @@ a:focus-visible {
         min-height: 250px;
         overflow: hidden;
     }
-    
-    /* Adjust formulas on small mobile to avoid video (video is now bottom-left) */
-    .math-animation {
-        padding-bottom: 80px;
-        padding-left: 80px;
-    }
-    
-    .math-animation .formula:nth-child(1) {
-        top: 15% !important;
-        right: 10% !important;
-        left: auto !important;
-    }
-    
-    .math-animation .formula:nth-child(2) {
-        top: 5% !important;
-        left: 50% !important;
-        right: auto !important;
-        transform: translateX(-50%) !important;
-    }
-    
-    .math-animation .formula:nth-child(3) {
-        top: 50% !important;
-        right: 5% !important;
-        left: auto !important;
-        bottom: auto !important;
+
+    .hero-floating-formulas .formula {
+        max-width: min(96vw, 20rem);
     }
 }
 
