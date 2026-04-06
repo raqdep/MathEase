@@ -4830,14 +4830,18 @@ let currentQuizResultsSearch = '';
                             <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <i class="fas fa-redo text-red-500 text-2xl"></i>
                             </div>
-                            <p class="text-lg text-gray-700 mb-4">Are you sure you want to reset the quiz attempt for:</p>
+                            <p class="text-lg text-gray-700 mb-4">Reset the quiz attempt for:</p>
                             <div class="bg-gray-50 rounded-lg p-4 mb-4">
                                 <div class="text-xl font-bold text-gray-800">${studentName}</div>
                                 <div class="text-sm text-gray-500">${getQuizTitle(quizType)}</div>
                             </div>
-                            <p class="text-sm text-gray-600">This will allow the student to retake the quiz.</p>
+                            <p class="text-sm text-gray-600 mb-2">The student will be able to retake the quiz.</p>
+                            <p class="text-xs text-red-600">Type <strong>RESET</strong> to confirm.</p>
                         </div>
                     `,
+                    input: 'text',
+                    inputPlaceholder: 'Type RESET',
+                    inputAttributes: { autocapitalize: 'off', autocorrect: 'off' },
                     showCancelButton: true,
                     confirmButtonText: 'Yes, Reset Quiz',
                     cancelButtonText: 'Cancel',
@@ -4848,6 +4852,13 @@ let currentQuizResultsSearch = '';
                         popup: 'rounded-2xl',
                         title: 'text-slate-800',
                         content: 'text-slate-600'
+                    },
+                    preConfirm: (value) => {
+                        if (String(value || '').trim() !== 'RESET') {
+                            Swal.showValidationMessage('Please type RESET to continue.');
+                            return false;
+                        }
+                        return true;
                     }
                 });
                 

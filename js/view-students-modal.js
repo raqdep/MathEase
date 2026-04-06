@@ -408,19 +408,37 @@ class ViewStudentsModal {
         if (typeof Swal !== 'undefined' && Swal.fire) {
             const res = await Swal.fire({
                 title: 'Remove from class?',
-                html: '<p class="text-left text-gray-600 text-sm">This removes the student from this class only. <strong>Their lesson and quiz progress stays on their account</strong>—if they join this class again and you approve them, they pick up where they left off.</p>',
+                html: `
+                    <div class="text-left text-gray-600 text-sm space-y-3">
+                        <p>This removes the student from this class only. <strong>Their lesson and quiz progress stays on their account</strong>—if they join this class again and you approve them, they pick up where they left off.</p>
+                        <p class="text-xs text-red-600">Type <strong>REMOVE</strong> to confirm.</p>
+                    </div>
+                `,
                 icon: 'warning',
+                input: 'text',
+                inputPlaceholder: 'Type REMOVE',
+                inputAttributes: { autocapitalize: 'off', autocorrect: 'off' },
                 showCancelButton: true,
                 confirmButtonText: 'Remove from class',
                 cancelButtonText: 'Cancel',
                 confirmButtonColor: '#dc2626',
-                focusCancel: true
+                focusCancel: true,
+                preConfirm: (value) => {
+                    if (String(value || '').trim() !== 'REMOVE') {
+                        Swal.showValidationMessage('Please type REMOVE to continue.');
+                        return false;
+                    }
+                    return true;
+                }
             });
             if (res.isConfirmed) {
                 await doRemove();
             }
-        } else if (window.confirm('Remove this student from the class? Their progress will be saved if they rejoin later.')) {
-            await doRemove();
+        } else {
+            const typed = window.prompt('Type REMOVE to confirm removing this student from the class. Their progress is kept on their account.');
+            if (String(typed || '').trim() === 'REMOVE') {
+                await doRemove();
+            }
         }
     }
 
