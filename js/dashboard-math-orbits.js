@@ -1,5 +1,6 @@
 /**
- * 3D-style floating math symbols on orbital paths — hero background for dashboard.
+ * 3D-style floating math symbols on orbital paths — hero background (dashboard, landing, etc.).
+ * Mount: [data-math-orbits-hero] with nested [data-math-orbits-canvas].
  * Respects prefers-reduced-motion (static frame). Pauses when tab is hidden.
  */
 (function () {
@@ -63,15 +64,36 @@
         if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
-    function drawFrame(ctx, canvas, orbits, center, frozen) {
+    function heroSymbolFont(hero) {
+        try {
+            var f = window.getComputedStyle(hero).fontFamily;
+            if (f && f.trim()) return f;
+        } catch (e) { /* ignore */ }
+        return 'Inter, ui-sans-serif, system-ui, sans-serif';
+    }
+
+    /** Orbit origin: default center, or bottom-left for landing hero */
+    function getOrbitCenter(cw, ch, hero) {
+        var anchor = '';
+        try {
+            anchor = (hero.getAttribute('data-math-orbits-anchor') || 'center').trim().toLowerCase().replace(/\s+/g, '-');
+        } catch (e) { /* ignore */ }
+        if (anchor === 'bottom-left') {
+            return { x: cw * 0.2, y: ch * 0.86 };
+        }
+        return { x: cw * 0.5, y: ch * 0.5 };
+    }
+
+    function drawFrame(ctx, canvas, orbits, center, frozen, symbolFont, hero) {
         var cw = canvas.clientWidth;
         var ch = canvas.clientHeight;
         if (!cw || !ch) return;
 
         ctx.clearRect(0, 0, cw, ch);
 
-        center.x = cw / 2;
-        center.y = ch / 2;
+        var cpos = getOrbitCenter(cw, ch, hero);
+        center.x = cpos.x;
+        center.y = cpos.y;
 
         orbits.forEach(function (orbit) {
             if (!frozen) {
@@ -110,12 +132,24 @@
                 var py = center.y + r.y;
 
                 ctx.save();
-                ctx.font = '600 ' + item.size + 'px Inter, ui-sans-serif, system-ui, sans-serif';
+                ctx.font = '600 ' + item.size + 'px ' + symbolFont;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.shadowColor = 'rgba(99, 102, 241, 0.45)';
-                ctx.shadowBlur = 8;
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.88)';
+                var metrics = ctx.measureText(item.sym);
+                var tw = metrics.width;
+                var th = item.size * 0.92;
+                var bubbleR = Math.max(tw, th) * 0.52 + 7;
+
+                ctx.beginPath();
+                ctx.arc(px, py, bubbleR, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = 'rgba(30, 27, 75, 0.92)';
                 ctx.fillText(item.sym, px, py);
                 ctx.restore();
             });
@@ -123,13 +157,14 @@
     }
 
     function init() {
-        var canvas = document.getElementById('dashboardHeroMathCanvas');
-        var hero = document.getElementById('dashboardHero');
+        var hero = document.querySelector('[data-math-orbits-hero]');
+        var canvas = hero ? hero.querySelector('[data-math-orbits-canvas]') : null;
         if (!canvas || !hero) return;
 
         var ctx = canvas.getContext('2d');
         if (!ctx) return;
 
+        var symbolFont = heroSymbolFont(hero);
         var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         var center = { x: 0, y: 0 };
         var orbits = [];
@@ -151,7 +186,7 @@
                 rafId = null;
                 return;
             }
-            drawFrame(ctx, canvas, orbits, center, false);
+            drawFrame(ctx, canvas, orbits, center, false, symbolFont, hero);
             rafId = requestAnimationFrame(loop);
         }
 
@@ -170,14 +205,15 @@
         }
 
         function onResize() {
+            symbolFont = heroSymbolFont(hero);
             resizeCanvas(canvas, hero);
             syncOrbits();
-            drawFrame(ctx, canvas, orbits, center, reduced);
+            drawFrame(ctx, canvas, orbits, center, reduced, symbolFont, hero);
         }
 
         resizeCanvas(canvas, hero);
         syncOrbits();
-        drawFrame(ctx, canvas, orbits, center, reduced);
+        drawFrame(ctx, canvas, orbits, center, reduced, symbolFont, hero);
 
         if (!reduced) {
             start();
