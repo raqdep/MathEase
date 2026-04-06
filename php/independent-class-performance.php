@@ -39,6 +39,9 @@ try {
         case 'sync_performance_data':
             syncPerformanceDataFromMainSystem();
             break;
+        case 'get_class_lesson_completion':
+            getClassLessonCompletionMap();
+            break;
         case 'debug':
             debugSystem();
             break;
@@ -54,6 +57,89 @@ try {
     echo json_encode(['success' => false, 'message' => 'A system error occurred']);
 }
 
+
+/**
+ * Per-student lesson_completion counts by topic (for teacher quiz overview table).
+ * Keys match teacher-dashboard sumLessonProgress / getStudentPerformanceDetails (topic_slug → field names).
+ */
+function getClassLessonCompletionMap() {
+    global $pdo;
+
+    try {
+        if (!isset($_SESSION['teacher_id'])) {
+            throw new Exception('Not authenticated');
+        }
+
+        $teacherId = (int) $_SESSION['teacher_id'];
+        $classId = isset($_GET['class_id']) ? (int) $_GET['class_id'] : 0;
+        if ($classId <= 0) {
+            echo json_encode(['success' => false, 'message' => 'class_id required']);
+            return;
+        }
+
+        $stmt = $pdo->prepare('SELECT id FROM classes WHERE id = ? AND teacher_id = ? AND is_active = TRUE');
+        $stmt->execute([$classId, $teacherId]);
+        if (!$stmt->fetch()) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'Access denied']);
+            return;
+        }
+
+        try {
+            $chk = $pdo->query("SHOW TABLES LIKE 'lesson_completion'");
+            if ($chk->rowCount() === 0) {
+                echo json_encode(['success' => true, 'by_student' => new stdClass()]);
+                return;
+            }
+        } catch (Exception $e) {
+            echo json_encode(['success' => true, 'by_student' => new stdClass()]);
+            return;
+        }
+
+        $sql = "
+            SELECT ce.student_id, lc.topic_name, COUNT(*) AS completed
+            FROM class_enrollments ce
+            INNER JOIN lesson_completion lc ON lc.user_id = ce.student_id
+            INNER JOIN classes c ON c.id = ce.class_id AND c.teacher_id = ? AND c.is_active = TRUE
+            WHERE ce.class_id = ?
+            GROUP BY ce.student_id, lc.topic_name
+        ";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$teacherId, $classId]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $byStudent = [];
+        foreach ($rows as $row) {
+            $topic = $row['topic_name'] ?? '';
+            if ($topic === '') {
+                continue;
+            }
+            $sid = (int) $row['student_id'];
+            if (!isset($byStudent[$sid])) {
+                $byStudent[$sid] = [];
+            }
+            $field = str_replace('-', '_', $topic) . '_lessons_completed';
+            $byStudent[$sid][$field] = (int) $row['completed'];
+        }
+
+        foreach ($byStudent as $sid => &$fields) {
+            if (!empty($fields['solving_real_life_problems_lessons_completed'])) {
+                $fields['real_life_lessons_completed'] = $fields['solving_real_life_problems_lessons_completed'];
+            }
+            if (!empty($fields['solving_rational_equations_inequalities_lessons_completed'])) {
+                $fields['solving_rational_equations_lessons_completed'] = $fields['solving_rational_equations_inequalities_lessons_completed'];
+            }
+        }
+        unset($fields);
+
+        // Empty PHP array [] would JSON-encode as [] — frontend expects an object map
+        $payload = $byStudent ?: new stdClass();
+        echo json_encode(['success' => true, 'by_student' => $payload]);
+    } catch (Exception $e) {
+        error_log('getClassLessonCompletionMap: ' . $e->getMessage());
+        echo json_encode(['success' => false, 'message' => 'Could not load lesson completion']);
+    }
+}
 
 function debugSystem() {
     global $pdo;

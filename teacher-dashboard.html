@@ -2473,15 +2473,23 @@
                     <!-- Performance Table -->
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                         <div class="px-4 py-3 bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-gray-200">
-                            <div class="flex items-center justify-between">
-                                <p class="text-sm text-gray-700 font-medium">
-                                    <i class="fas fa-chart-line mr-2 text-indigo-600"></i>
-                                    Student Quiz Performance Overview - All Topics
-                                </p>
-                                <p class="text-xs text-gray-600">
-                                    <i class="fas fa-info-circle mr-1"></i>
-                                    Click on any student to view detailed performance
-                                </p>
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-sm text-gray-700 font-medium">
+                                        <i class="fas fa-chart-line mr-2 text-indigo-600"></i>
+                                        Student Quiz Performance Overview - All Topics
+                                    </p>
+                                    <p class="text-xs text-gray-600 mt-1">
+                                        <i class="fas fa-info-circle mr-1"></i>
+                                        Click on any student to view detailed performance
+                                    </p>
+                                </div>
+                                <button type="button" id="exportPerformanceExcelBtn" onclick="exportStudentPerformanceOverviewToExcel()"
+                                    class="shrink-0 inline-flex items-center gap-1 rounded-md border border-emerald-600/35 bg-white px-2 py-1 text-xs font-semibold text-emerald-800 shadow-sm hover:bg-emerald-50 focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
+                                    title="Download full class overview as Excel (.xlsx)">
+                                    <i class="fas fa-file-excel text-emerald-600 text-[11px]"></i>
+                                    Excel
+                                </button>
                             </div>
                         </div>
                         <div class="overflow-x-auto">
@@ -2499,9 +2507,6 @@
                                         </th>
                                         <th rowspan="2" class="px-4 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider bg-green-50 border-r border-gray-200">
                                             Average<br/>Score
-                                        </th>
-                                        <th rowspan="2" class="px-4 py-3 text-center text-xs font-bold text-blue-700 uppercase tracking-wider bg-blue-50 border-r border-gray-200">
-                                            Quiz<br/>Summary
                                         </th>
                                         <th rowspan="2" class="px-4 py-3 text-center text-xs font-bold text-purple-700 uppercase tracking-wider bg-purple-50 border-r border-gray-200">
                                             Lessons<br/>Completed
@@ -2902,7 +2907,7 @@
                 
                 // Force show some content to test
                 if (tableBody) {
-                    tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-green-500"><i class="fas fa-check-circle mr-2"></i>Class Performance section is working! Please select a class.</td></tr>';
+                    tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-green-500"><i class="fas fa-check-circle mr-2"></i>Class Performance section is working! Please select a class.</td></tr>';
                 }
                 
                 // Also force show the class selector
@@ -4030,7 +4035,7 @@
             
             // Show a test message to verify the section is working
                 if (tableBody) {
-                    tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-blue-500"><i class="fas fa-info-circle mr-2"></i>Class Performance section is loading...</td></tr>';
+                    tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-blue-500"><i class="fas fa-info-circle mr-2"></i>Class Performance section is loading...</td></tr>';
                 }
             
             // Populate class selector with real-time data instead of old performance data
@@ -4038,7 +4043,7 @@
             
             // Initialize the table with default message
             if (tableBody) {
-                tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-gray-500">Please select a class to view student quiz scores</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-gray-500">Please select a class to view student quiz scores</td></tr>';
                 console.log('Table initialized with default message');
             } else {
                 console.error('Table body not found!');
@@ -6715,7 +6720,7 @@ let currentQuizResultsSearch = '';
                     // Initialize the table with "Please select a class" message
                     const tableBody = document.getElementById('performanceTableBody');
                     if (tableBody) {
-                        tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-gray-500">Please select a class to view student quiz scores</td></tr>';
+                        tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-gray-500">Please select a class to view student quiz scores</td></tr>';
                         console.log('Table updated with default message');
                     } else {
                         console.error('Table body not found in loadClassPerformanceData');
@@ -6748,7 +6753,7 @@ let currentQuizResultsSearch = '';
                                 populateClassSelector(fallbackResult.classes);
                                 const tableBody = document.getElementById('performanceTableBody');
                                 if (tableBody) {
-                                    tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-yellow-500"><i class="fas fa-info-circle mr-2"></i>Using fallback system - please run database migration for full features</td></tr>';
+                                    tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-yellow-500"><i class="fas fa-info-circle mr-2"></i>Using fallback system - please run database migration for full features</td></tr>';
                                 }
                                 updateLastUpdatedTime();
                                 return;
@@ -6767,7 +6772,7 @@ let currentQuizResultsSearch = '';
                 if (tableBody) {
                     tableBody.innerHTML = `
                         <tr>
-                            <td colspan="16" class="px-4 py-8 text-center text-orange-500">
+                            <td colspan="15" class="px-4 py-8 text-center text-orange-500">
                                 <i class="fas fa-exclamation-triangle mr-2"></i>
                                 Class Performance system is being set up. Please run the database migration first.
                                 <br><br>
@@ -6870,7 +6875,7 @@ let currentQuizResultsSearch = '';
             const selectedClassId = classSelector.value;
             if (!selectedClassId) {
                 resetClassPerformanceSearchUI();
-                tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-gray-500">Please select a class to view student quiz scores</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-gray-500">Please select a class to view student quiz scores</td></tr>';
                 // Hide summary and class info when no class is selected
                 const summaryDiv = document.getElementById('classPerformanceSummary');
                 if (summaryDiv) {
@@ -6887,13 +6892,13 @@ let currentQuizResultsSearch = '';
             if (!availableClasses.includes(selectedClassId)) {
                 console.error('Security violation: Invalid class ID selected');
                 resetClassPerformanceSearchUI();
-                tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-red-500">Error: Invalid class selection</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-red-500">Error: Invalid class selection</td></tr>';
                 return;
             }
 
             try {
                 // Show loading state
-                tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-gray-500">Loading...</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-gray-500">Loading...</td></tr>';
 
                 // Use the same data source as quiz management - get quiz results for ALL quiz types
                 const quizTypes = [
@@ -6957,7 +6962,29 @@ let currentQuizResultsSearch = '';
                 }
 
                 // Process the quiz results to create student performance data, including all enrolled students
-                const studentPerformanceData = processQuizResultsToPerformanceDataWithAllStudents(allQuizResults, allEnrolledStudents, classInfo);
+                let studentPerformanceData = processQuizResultsToPerformanceDataWithAllStudents(allQuizResults, allEnrolledStudents, classInfo);
+
+                try {
+                    const lessonRes = await fetch(
+                        `php/independent-class-performance.php?action=get_class_lesson_completion&class_id=${encodeURIComponent(selectedClassId)}`,
+                        { credentials: 'include' }
+                    );
+                    if (lessonRes.ok) {
+                        const lessonJson = await lessonRes.json();
+                        if (lessonJson.success && lessonJson.by_student && typeof lessonJson.by_student === 'object' && !Array.isArray(lessonJson.by_student)) {
+                            const map = lessonJson.by_student;
+                            studentPerformanceData.forEach((s) => {
+                                const sid = s.student_id;
+                                const patch = map[sid] || map[String(sid)];
+                                if (patch && typeof patch === 'object') {
+                                    Object.assign(s, patch);
+                                }
+                            });
+                        }
+                    }
+                } catch (lessonErr) {
+                    console.warn('Lesson completion merge failed:', lessonErr);
+                }
                 
                 if (studentPerformanceData.length > 0) {
                     console.log('Processed performance data:', studentPerformanceData);
@@ -6976,7 +7003,7 @@ let currentQuizResultsSearch = '';
                 } else {
                     console.log('No students found for class:', selectedClassId);
                     resetClassPerformanceSearchUI();
-                    tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-gray-500">No students found in this class</td></tr>';
+                    tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-gray-500">No students found in this class</td></tr>';
                     if (selectedClassInfo) {
                         selectedClassInfo.classList.add('hidden');
                     }
@@ -6984,7 +7011,7 @@ let currentQuizResultsSearch = '';
 
             } catch (error) {
                 console.error('Error loading class performance:', error);
-                tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-red-500">Failed to load data</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-red-500">Failed to load data</td></tr>';
             }
         }
 
@@ -7708,7 +7735,7 @@ let currentQuizResultsSearch = '';
             const pagedStudents = allStudents.slice(startIndex, startIndex + perPage);
 
             if (totalStudents === 0) {
-                tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-gray-500">No students in this class</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-gray-500">No students in this class</td></tr>';
                 if (typeof renderPerformancePagination === 'function') {
                     renderPerformancePagination(0, 1, 1, perPage);
                 }
@@ -7817,11 +7844,10 @@ let currentQuizResultsSearch = '';
                         ? 'bg-emerald-100 text-emerald-800 border border-emerald-200 font-bold px-3 py-1 rounded-full inline-flex items-center justify-center min-w-[78px]'
                         : 'bg-gray-100 text-gray-700 border border-gray-200 font-semibold px-3 py-1 rounded-full inline-flex items-center justify-center min-w-[78px]';
                 
-                const passedQuizzes = pairs.filter((p) => p.st && p.st !== 'NOT_ATTEMPTED' && p.score >= 70).length;
-                const totalQuizzesTaken = topicStats.quizzesAttempted;
-                
-                // Calculate total lessons completed (aligned with lesson_completion topic slugs → PHP field names)
-                const totalLessonsCompleted = sumLessonProgress(student).completedLessons;
+                // Lessons: counts from lesson_completion (merged via get_class_lesson_completion)
+                const lessonProg = sumLessonProgress(student);
+                const totalLessonsCompleted = lessonProg.completedLessons;
+                const totalLessonsTracked = lessonProg.totalLessons;
                 
                 // Get badges count from fetched data
                 const badgesCount = badgesData[student.student_id] || 0;
@@ -7865,16 +7891,13 @@ let currentQuizResultsSearch = '';
                     <td class="px-4 py-3 text-sm text-center border-r border-gray-200">
                         <span class="${avgClass}">${hasTakenQuizzes ? avgScore.toFixed(1) : '-'}%</span>
                     </td>
-                    <td class="px-4 py-3 text-sm text-center border-r border-gray-200">
-                        <div class="flex flex-col items-center">
-                            <span class="font-semibold text-blue-700">${totalQuizzesTaken > 0 ? `${passedQuizzes}/${totalQuizzesTaken}` : '-'}</span>
-                            <span class="text-xs text-blue-600 mt-1">${passedQuizzes > 0 ? 'Passed' : totalQuizzesTaken > 0 ? 'Failed' : 'None'}</span>
-                        </div>
-                    </td>
                     <td class="px-4 py-3 text-sm text-center bg-purple-50 border-r border-gray-200">
-                        <div class="flex items-center justify-center space-x-1">
-                            <i class="fas fa-book-open text-purple-600"></i>
-                            <span class="font-semibold text-purple-700">${totalLessonsCompleted}</span>
+                        <div class="flex flex-col items-center justify-center gap-0.5">
+                            <div class="flex items-center justify-center space-x-1">
+                                <i class="fas fa-book-open text-purple-600"></i>
+                                <span class="font-semibold text-purple-700">${totalLessonsCompleted}</span>
+                            </div>
+                            <span class="text-xs text-purple-600/90">${totalLessonsTracked > 0 ? `${totalLessonsCompleted} / ${totalLessonsTracked} lessons` : '—'}</span>
                         </div>
                     </td>
                     <td class="px-4 py-3 text-sm text-center bg-yellow-50">
@@ -7890,6 +7913,157 @@ let currentQuizResultsSearch = '';
             tableBody.innerHTML = tableHTML;
         }
         
+        let _xlsxScriptPromise = null;
+        function ensureXlsxLibraryLoaded() {
+            if (typeof XLSX !== 'undefined' && XLSX.utils) return Promise.resolve();
+            if (_xlsxScriptPromise) return _xlsxScriptPromise;
+            _xlsxScriptPromise = new Promise(function (resolve, reject) {
+                var s = document.createElement('script');
+                s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+                s.async = true;
+                s.onload = function () { resolve(); };
+                s.onerror = function () { reject(new Error('Failed to load xlsx library')); };
+                document.head.appendChild(s);
+            });
+            return _xlsxScriptPromise;
+        }
+
+        function getPerformanceExportClassName() {
+            var sel = document.getElementById('classSelector');
+            if (sel && sel.value && sel.selectedIndex >= 0) {
+                var t = (sel.options[sel.selectedIndex].text || '').trim();
+                if (t && t !== 'Select Class') return t;
+            }
+            var el = document.getElementById('selectedClassName');
+            return (el && el.textContent && el.textContent.trim()) || 'Class';
+        }
+
+        function getPerformanceExportTeacherName() {
+            var el = document.getElementById('headerTeacherName');
+            var n = (el && el.textContent && el.textContent.trim()) || '';
+            return n && n !== 'Loading...' ? n : 'Teacher';
+        }
+
+        async function exportStudentPerformanceOverviewToExcel() {
+            var students = (allStudentsData && allStudentsData.length) ? allStudentsData : currentPerformanceStudents;
+            if (!students || !students.length) {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({ icon: 'warning', title: 'No data to export', text: 'Select a class and wait for the table to load.' });
+                } else {
+                    alert('Select a class and load performance data first.');
+                }
+                return;
+            }
+
+            var btn = document.getElementById('exportPerformanceExcelBtn');
+            if (btn) {
+                btn.disabled = true;
+                btn.setAttribute('aria-busy', 'true');
+            }
+
+            try {
+                await ensureXlsxLibraryLoaded();
+            } catch (e) {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({ icon: 'error', title: 'Export failed', text: 'Could not load the Excel export library. Check your connection.' });
+                } else {
+                    alert('Could not load Excel library.');
+                }
+                if (btn) {
+                    btn.disabled = false;
+                    btn.removeAttribute('aria-busy');
+                }
+                return;
+            }
+
+            var className = getPerformanceExportClassName();
+            var teacherName = getPerformanceExportTeacherName();
+            var exportedAt = new Date();
+            var exportedAtStr = exportedAt.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+
+            var ids = students.map(function (s) { return s.student_id; });
+            var badgesMap = {};
+            try {
+                badgesMap = await fetchBadgesForStudents(ids);
+            } catch (e) {
+                console.warn('Badge fetch for export:', e);
+            }
+
+            var headers = [
+                'No.',
+                'Student Name',
+                'Functions (%)',
+                'Evaluating (%)',
+                'Operations (%)',
+                'Real-Life (%)',
+                'Rational (%)',
+                'Solving (%)',
+                'Representations (%)',
+                'Domain/Range Rational (%)',
+                'D/R Inverse (%)',
+                'One-to-One (%)',
+                'Average Score (%)',
+                'Lessons Completed',
+                'Lessons Total (tracked)',
+                'Badges Earned'
+            ];
+
+            var rows = [];
+            rows.push(['Class', className]);
+            rows.push(['Teacher', teacherName]);
+            rows.push(['Exported at', exportedAtStr]);
+            rows.push(['Students exported', String(students.length)]);
+            rows.push([]);
+
+            rows.push(headers);
+
+            students.forEach(function (student, index) {
+                var topicStats = getStudentTopicQuizStats(student);
+                var pairs = topicStats.pairs || [];
+                function scoreCell(p) {
+                    if (!p || !p.st || p.st === 'NOT_ATTEMPTED') return '';
+                    return Math.round(p.score * 10) / 10;
+                }
+                var lp = sumLessonProgress(student);
+                var sid = student.student_id;
+                var badgeN = badgesMap[sid];
+                if (badgeN === undefined || badgeN === null) badgeN = badgesMap[String(sid)];
+                if (badgeN === undefined || badgeN === null) badgeN = 0;
+
+                rows.push([
+                    index + 1,
+                    String(student.student_name || '').trim(),
+                    scoreCell(pairs[0]),
+                    scoreCell(pairs[1]),
+                    scoreCell(pairs[2]),
+                    scoreCell(pairs[3]),
+                    scoreCell(pairs[4]),
+                    scoreCell(pairs[5]),
+                    scoreCell(pairs[6]),
+                    scoreCell(pairs[7]),
+                    scoreCell(pairs[8]),
+                    scoreCell(pairs[9]),
+                    topicStats.hasAttemptedAny ? Math.round(topicStats.avgPercent * 10) / 10 : '',
+                    lp.completedLessons,
+                    lp.totalLessons,
+                    badgeN
+                ]);
+            });
+
+            var ws = XLSX.utils.aoa_to_sheet(rows);
+            var wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Overview');
+
+            var safeClass = String(className).replace(/[^\w\-\s]+/g, '_').replace(/\s+/g, '_').slice(0, 48);
+            var fname = 'MathEase_Quiz_Overview_' + safeClass + '_' + exportedAt.toISOString().slice(0, 10) + '.xlsx';
+            XLSX.writeFile(wb, fname);
+
+            if (btn) {
+                btn.disabled = false;
+                btn.removeAttribute('aria-busy');
+            }
+        }
+
         // Fetch badges count for students
         async function fetchBadgesForStudents(studentIds) {
             const badgesMap = {};
@@ -7968,7 +8142,7 @@ let currentQuizResultsSearch = '';
             if (!tableBody) return;
 
             if (students.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-gray-500">No students in this class</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-gray-500">No students in this class</td></tr>';
                 return;
             }
 
@@ -8501,7 +8675,7 @@ let currentQuizResultsSearch = '';
             // Show loading state
             const tableBody = document.getElementById('performanceTableBody');
             if (tableBody) {
-                tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-blue-500"><i class="fas fa-spinner fa-spin mr-2"></i>Syncing performance data...</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-blue-500"><i class="fas fa-spinner fa-spin mr-2"></i>Syncing performance data...</td></tr>';
             }
             
             // Show confirmation dialog
@@ -8513,7 +8687,7 @@ let currentQuizResultsSearch = '';
             if (!confirmSync) {
                 // Restore previous state
                 if (tableBody) {
-                    tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-gray-500">Please select a class to view student quiz scores</td></tr>';
+                    tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-gray-500">Please select a class to view student quiz scores</td></tr>';
                 }
                 return;
             }
@@ -8533,7 +8707,7 @@ let currentQuizResultsSearch = '';
                     if (tableBody) {
                         tableBody.innerHTML = `
                             <tr>
-                                <td colspan="16" class="px-4 py-8 text-center text-green-600">
+                                <td colspan="15" class="px-4 py-8 text-center text-green-600">
                                     <i class="fas fa-check-circle mr-2"></i>
                                     ${result.message}
                                     <br><br>
@@ -8561,7 +8735,7 @@ let currentQuizResultsSearch = '';
                     if (tableBody) {
                         tableBody.innerHTML = `
                             <tr>
-                                <td colspan="16" class="px-4 py-8 text-center text-red-500">
+                                <td colspan="15" class="px-4 py-8 text-center text-red-500">
                                     <i class="fas fa-exclamation-triangle mr-2"></i>
                                     Sync failed: ${result.message}
                                     <br><br>
@@ -8582,7 +8756,7 @@ let currentQuizResultsSearch = '';
                 if (tableBody) {
                     tableBody.innerHTML = `
                         <tr>
-                            <td colspan="16" class="px-4 py-8 text-center text-red-500">
+                            <td colspan="15" class="px-4 py-8 text-center text-red-500">
                                 <i class="fas fa-exclamation-triangle mr-2"></i>
                                 Sync failed: ${error.message}
                                 <br><br>
@@ -8602,7 +8776,7 @@ let currentQuizResultsSearch = '';
             // Show loading state
             const tableBody = document.getElementById('performanceTableBody');
             if (tableBody) {
-                tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Refreshing data...</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="15" class="px-4 py-8 text-center text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Refreshing data...</td></tr>';
             }
             
             // Refresh the class selector with real-time data
