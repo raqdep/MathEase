@@ -6,7 +6,7 @@
 (function () {
     'use strict';
 
-    var SYMBOLS = ['+', '−', '×', '÷', '√', '∑', '∫', 'π', '^', '∞', '%', 'θ', 'Δ'];
+    var SYMBOLS = ['+', '−', '×', '÷', '√', 'π'];
 
     function rotateX(x, y, z, angle) {
         var cos = Math.cos(angle);
