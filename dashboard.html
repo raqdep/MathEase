@@ -103,7 +103,7 @@
                 <!-- Logo -->
                 <div class="dashboard-nav-brand flex items-center gap-2 min-w-0 flex-1">
                     <div class="dashboard-nav-logo-icon w-10 h-10 flex-shrink-0 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-xl flex items-center justify-center">
-                        <img src="css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-6 w-6 object-contain">
+                        <img src="Img/logo/logo-white.png" alt="MathEase Logo" class="h-6 w-6 object-contain">
                     </div>
                     <span class="text-xl font-bold text-slate-800 truncate">MathEase</span>
                 </div>
@@ -122,7 +122,7 @@
                 <div class="hidden md:flex items-center space-x-4">
                     <!-- Notifications -->
                     <div class="relative group">
-                        <button onclick="toggleNotifications()" id="notificationButton" class="relative p-2 text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition-all duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center">
+                        <button type="button" onclick="toggleNotifications()" id="notificationButton" class="relative p-2 text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition-all duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center">
                             <i class="fas fa-bell text-lg"></i>
                             <span id="notificationBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
                         </button>
@@ -147,7 +147,7 @@
                     
                     <!-- Profile Dropdown -->
                     <div class="relative group" id="profileDropdownContainer">
-                        <button onclick="toggleProfileDropdown()" class="profile-button flex items-center space-x-2 text-slate-700 hover:text-slate-900 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-50 transition-all duration-200 min-h-[44px]">
+                        <button type="button" onclick="toggleProfileDropdown()" class="profile-button flex items-center space-x-2 text-slate-700 hover:text-slate-900 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-50 transition-all duration-200 min-h-[44px]">
                             <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0" id="profileIconContainer">
                                 <img id="profileIconImage" src="" alt="Profile" class="w-full h-full object-cover hidden">
                                 <i class="fas fa-user text-white text-xs" id="profileIconPlaceholder"></i>
@@ -169,7 +169,7 @@
                     </div>
                 </div>
                 
-                <!-- Mobile menu button - Hamburger -->
+                <!-- Mobile menu (drawer: js/student-mobile-nav-shared.js — same as Quizzes) -->
                 <div class="dashboard-nav-hamburger md:hidden flex-shrink-0">
                     <button type="button" id="mobileMenuButton" class="hamburger p-2 rounded-lg transition-all duration-200" aria-label="Toggle menu">
                         <span class="bar"></span>
@@ -180,78 +180,6 @@
             </div>
         </div>
     </nav>
-    
-    <!-- Mobile Menu Backdrop -->
-    <div id="mobileMenuBackdrop" class="mobile-menu-backdrop md:hidden"></div>
-    
-    <!-- Mobile Navigation Sidebar -->
-    <div id="mobileMenu" class="mobile-nav-menu md:hidden">
-        <div class="mobile-nav-header">
-            <div class="flex items-center space-x-3 mb-6">
-                <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                    <img src="css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-6 w-6">
-                </div>
-                <span class="text-xl font-bold text-white">MathEase</span>
-            </div>
-        </div>
-        
-        <!-- Profile Section in Sidebar -->
-        <div class="mobile-nav-profile">
-            <div class="flex items-center space-x-3 px-4 py-3">
-                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0 border-2 border-white/30" id="mobileProfileIconContainer">
-                    <img id="mobileProfileIconImage" src="" alt="Profile" class="w-full h-full object-cover hidden">
-                    <i class="fas fa-user text-white text-base" id="mobileProfileIconPlaceholder"></i>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <div class="text-white font-semibold text-sm truncate" id="mobileUserName">Student</div>
-                    <div class="text-white/70 text-xs truncate" id="mobileUserEmail">Loading...</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="mobile-nav-content">
-            <a href="dashboard.html" class="mobile-nav-item active" data-mobile-nav>
-                <i class="fas fa-home"></i>
-                <span class="mobile-nav-label">Dashboard</span>
-            </a>
-            <a href="#learning-path" id="topicsNavLinkMobile" class="mobile-nav-item" data-mobile-nav>
-                <i class="fas fa-book"></i>
-                <span class="mobile-nav-label">Topics</span>
-            </a>
-            <a href="quizzes.html" id="quizzesNavLinkMobile" class="mobile-nav-item" data-mobile-nav>
-                <i class="fas fa-question-circle"></i>
-                <span class="mobile-nav-label">Quizzes</span>
-            </a>
-            <a href="flashcards.html" id="flashcardsNavLinkMobile" class="mobile-nav-item" data-mobile-nav>
-                <i class="fas fa-book-open"></i>
-                <span class="mobile-nav-label">Flashcards</span>
-            </a>
-            <a href="achievements.html" id="achievementsNavLinkMobile" class="mobile-nav-item" data-mobile-nav>
-                <i class="fas fa-medal"></i>
-                <span class="mobile-nav-label">Achievements</span>
-            </a>
-            <a href="dashboard.html#progress" id="progressNavLinkMobile" class="mobile-nav-item" data-mobile-nav>
-                <i class="fas fa-chart-line"></i>
-                <span class="mobile-nav-label">Progress</span>
-            </a>
-            <div class="mobile-nav-divider"></div>
-            <div class="mobile-nav-footer">
-                <a href="#" class="mobile-nav-item" id="mobileNotificationLink" data-mobile-nav data-mobile-nav-action="notifications">
-                    <i class="fas fa-bell"></i>
-                    <span class="mobile-nav-label">Notifications</span>
-                    <span id="mobileNotificationBadge" class="mobile-nav-badge hidden">0</span>
-                </a>
-                <a href="profile.html" class="mobile-nav-item" data-mobile-nav>
-                    <i class="fas fa-user-circle"></i>
-                    <span class="mobile-nav-label">Profile</span>
-                </a>
-                <a href="#" class="mobile-nav-item mobile-nav-item-danger" data-mobile-nav data-mobile-nav-action="logout">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span class="mobile-nav-label">Logout</span>
-                </a>
-            </div>
-        </div>
-    </div>
 
     <!-- Teacher Lesson Management Section (Hidden by default) -->
     <div id="teacherLessonManagement" class="bg-white border-b border-gray-200 hidden">
