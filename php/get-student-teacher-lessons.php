@@ -58,16 +58,26 @@ try {
 
     ensure_teacher_lessons_schema($pdo);
 
-    // Lessons for this class only, plus legacy rows with no class (backward compatibility)
+    // Published lessons assigned to this class (junction table), or legacy single-class rows
     $stmt = $pdo->prepare("
-        SELECT id, title, topic, created_at, updated_at
-        FROM teacher_lessons
-        WHERE teacher_id = ?
-          AND (class_id IS NULL OR class_id = ?)
-        ORDER BY created_at DESC
+        SELECT tl.id, tl.title, tl.topic, tl.created_at, tl.updated_at
+        FROM teacher_lessons tl
+        WHERE tl.teacher_id = ?
+          AND tl.published = 1
+          AND (
+            EXISTS (
+                SELECT 1 FROM teacher_lesson_classes tlc
+                WHERE tlc.lesson_id = tl.id AND tlc.class_id = ?
+            )
+            OR (
+                NOT EXISTS (SELECT 1 FROM teacher_lesson_classes x WHERE x.lesson_id = tl.id)
+                AND (tl.class_id IS NULL OR tl.class_id = ?)
+            )
+          )
+        ORDER BY tl.created_at DESC
     ");
 
-    $stmt->execute([$teacher_id, $class_id]);
+    $stmt->execute([$teacher_id, $class_id, $class_id]);
     $lessons = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     error_log("Found " . count($lessons) . " teacher lessons for teacher_id: " . $teacher_id);

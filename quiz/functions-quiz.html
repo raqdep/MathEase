@@ -3252,6 +3252,7 @@
 
         // Fullscreen exit tracking (separate from tab switches)
         let fullscreenExitCount = 0;
+        let lastQuizFullscreenExitAt = 0;
         const maxFullscreenExitsBeforeCheat = 3;
         let intentionalFullscreenExit = false;
         let hasEnteredQuizFullscreen = false;
@@ -3455,6 +3456,7 @@
                 
                 // Reset fullscreen counters (new quiz session)
                 fullscreenExitCount = 0;
+                lastQuizFullscreenExitAt = 0;
                 intentionalFullscreenExit = false;
                 hasEnteredQuizFullscreen = false;
 
@@ -4017,7 +4019,60 @@
             }
         }
 
-        // Handle fullscreen change — warn on exit; 3 exits = cheating (score 0)
+        // Fullscreen exit (e.g. Escape): debounced count, try re-enter; if blocked, warn + button to re-enter.
+        function tryReenterQuizFullscreen() {
+            return requestFullscreen(document.documentElement);
+        }
+
+        function showFullscreenExitPrompt(remaining, exitCount) {
+            const warnPart = remaining === 0
+                ? '<p class="text-red-600 font-semibold mb-2">This was your last warning before a score of 0.</p>'
+                : `<p class="text-slate-600 mb-2"><strong>${remaining}</strong> more exit${remaining === 1 ? '' : 's'} will mark this quiz as cheating (score 0).</p>`;
+            Swal.fire({
+                title: 'Fullscreen exit detected',
+                html: `
+                    <div class="text-center text-slate-600 text-lg leading-relaxed">
+                        <div class="w-24 h-24 mx-auto mb-4 flex items-center justify-center">
+                            <img src="../Img/Character/warning_example-removebg-preview.png"
+                                 alt="Warning"
+                                 class="w-full h-full object-contain warning-character"
+                                 style="filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));">
+                        </div>
+                        <p class="mb-3">You left fullscreen during the quiz (<strong>${exitCount}</strong> of <strong>${maxFullscreenExitsBeforeCheat}</strong> recorded).</p>
+                        ${warnPart}
+                        <p class="text-sm text-slate-500">Tap <strong>Return to fullscreen</strong> to continue. Avoid pressing Escape during the quiz.</p>
+                    </div>`,
+                icon: false,
+                confirmButtonText: 'Return to fullscreen',
+                confirmButtonColor: '#f59e0b',
+                background: '#ffffff',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    title: 'text-slate-800',
+                    content: 'text-slate-600'
+                },
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            }).then((r) => {
+                if (r.isConfirmed && isQuizActive) {
+                    tryReenterQuizFullscreen().catch(() => {
+                        Swal.fire({
+                            title: 'Fullscreen blocked',
+                            text: 'Click Try again to enter fullscreen, or allow fullscreen when your browser asks.',
+                            icon: 'info',
+                            confirmButtonText: 'Try again',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        }).then((r2) => {
+                            if (r2.isConfirmed && isQuizActive) {
+                                tryReenterQuizFullscreen().catch(() => {});
+                            }
+                        });
+                    });
+                }
+            });
+        }
+
         function handleFullscreenChange() {
             if (!isQuizActive || intentionalFullscreenExit) return;
             if (isFullscreen()) {
@@ -4025,6 +4080,10 @@
                 return;
             }
             if (!hasEnteredQuizFullscreen) return;
+
+            const now = Date.now();
+            if (now - lastQuizFullscreenExitAt < 400) return;
+            lastQuizFullscreenExitAt = now;
 
             fullscreenExitCount++;
             console.log(`⚠️ Fullscreen exited during quiz (${fullscreenExitCount}/${maxFullscreenExitsBeforeCheat})`);
@@ -4035,12 +4094,17 @@
             }
 
             const remaining = maxFullscreenExitsBeforeCheat - fullscreenExitCount;
-            showCheatingWarning(
-                'Fullscreen Required',
-                `You left fullscreen mode (<strong>${fullscreenExitCount}</strong> of <strong>${maxFullscreenExitsBeforeCheat}</strong> allowed). ` +
-                `${remaining === 0 ? 'This was your last warning.' : `<strong>${remaining}</strong> more exit${remaining === 1 ? '' : 's'} will mark the quiz as cheating with a score of 0.`} ` +
-                `Please return to fullscreen using the browser control or refresh and start again if needed.`
-            );
+
+            queueMicrotask(() => {
+                if (!isQuizActive) return;
+                tryReenterQuizFullscreen().then(() => {
+                    if (!isQuizActive) return;
+                    showFullscreenExitPrompt(remaining, fullscreenExitCount);
+                }).catch(() => {
+                    if (!isQuizActive) return;
+                    showFullscreenExitPrompt(remaining, fullscreenExitCount);
+                });
+            });
         }
         
         // Stop timer

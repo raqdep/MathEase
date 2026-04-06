@@ -10,30 +10,22 @@ try {
     $existingBadges = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     if (count($existingBadges) === 0) {
-        // Create the badges
+        // Align with achievements.html + badge-management.php (MCQ quiz only; no legacy Solver/Master tiers).
         $badges = [
             [
-                'name' => 'Real-Life Problems Solver',
-                'description' => 'Score 50% or higher on the Solving Real-Life Problems quiz',
+                'name' => 'Real-Life Problems Expert',
+                'description' => 'Score 60% or higher on the Solving Real-Life Problems quiz',
                 'icon_url' => 'fas fa-globe',
                 'criteria_type' => 'score',
-                'criteria_value' => 50,
-                'is_active' => 1
-            ],
-            [
-                'name' => 'Real-Life Problems Master',
-                'description' => 'Master real-life problem solving with 80%+ score',
-                'icon_url' => 'fas fa-target',
-                'criteria_type' => 'score',
-                'criteria_value' => 80,
+                'criteria_value' => 60,
                 'is_active' => 1
             ],
             [
                 'name' => 'Real-Life Problems Champion',
-                'description' => 'Excel in real-life problem solving with 90%+ score',
+                'description' => 'Perfect score on the Solving Real-Life Problems quiz',
                 'icon_url' => 'fas fa-trophy',
                 'criteria_type' => 'score',
-                'criteria_value' => 90,
+                'criteria_value' => 100,
                 'is_active' => 1
             ]
         ];

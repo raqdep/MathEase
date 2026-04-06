@@ -8,7 +8,6 @@ header('Cache-Control: no-store, no-cache, must-revalidate');
 try {
     require_once __DIR__ . '/config.php';
     require_once __DIR__ . '/maintenance-helper.php';
-    require_once __DIR__ . '/maintenance-notify-users.php';
 
     $payload = getMaintenancePayload($pdo);
     $scheduledStart = $payload['scheduled_start_at'] ?? null;
@@ -21,22 +20,6 @@ try {
         $upcoming = true;
     }
 
-    if ($startTs !== false) {
-        $startNoticeSent = !empty($payload['start_notice_sent_at']);
-        $sendEmailOnStart = !empty($payload['send_email_on_start']);
-
-        if ($active && !$startNoticeSent && $sendEmailOnStart) {
-            $emailResult = sendMaintenanceAnnouncementEmails($pdo, 'start', $payload);
-            if ((int) ($emailResult['sent'] ?? 0) > 0) {
-                $pdo->prepare('UPDATE system_maintenance SET start_notice_sent_at = NOW() WHERE id = 1')->execute();
-            }
-            $payload = getMaintenancePayload($pdo);
-        }
-    }
-
-    $scheduledStart = $payload['scheduled_start_at'] ?? null;
-    $scheduledEnd = $payload['scheduled_end_at'] ?? null;
-
     echo json_encode([
         'success' => true,
         'maintenance' => $payload['maintenance'],
@@ -46,7 +29,7 @@ try {
         'estimated_end_at' => $payload['estimated_end_at'],
         'scheduled_start_at' => $scheduledStart,
         'scheduled_end_at' => $scheduledEnd,
-        'send_email_on_start' => !empty($payload['send_email_on_start']),
+        'send_email_on_start' => false,
         'started_at' => $payload['started_at'],
     ]);
 } catch (Throwable $e) {

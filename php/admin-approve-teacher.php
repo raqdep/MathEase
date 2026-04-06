@@ -34,6 +34,28 @@ if (!$teacherId) {
     exit;
 }
 
+/**
+ * DDL must run outside an active PDO transaction — MySQL commits implicitly and a later commit() fails with
+ * "There is no active transaction".
+ */
+function ensure_teacher_activity_log_table(PDO $pdo): void
+{
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS teacher_activity_log (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            teacher_id INT NOT NULL,
+            action VARCHAR(100) NOT NULL,
+            details TEXT,
+            ip_address VARCHAR(45),
+            user_agent TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_teacher (teacher_id),
+            INDEX idx_action (action),
+            INDEX idx_created (created_at)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    ");
+}
+
 try {
     // Check if approval_status column exists, if not use status column
     $stmt = $pdo->prepare("SHOW COLUMNS FROM teachers LIKE 'approval_status'");
@@ -41,6 +63,8 @@ try {
     $hasApprovalStatus = $stmt->rowCount() > 0;
     
     $statusColumn = $hasApprovalStatus ? 'approval_status' : 'status';
+
+    ensure_teacher_activity_log_table($pdo);
     
     $pdo->beginTransaction();
     
@@ -82,23 +106,7 @@ try {
         $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
     ]);
     
-    // Log teacher activity
     try {
-        $pdo->exec("
-            CREATE TABLE IF NOT EXISTS teacher_activity_log (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                teacher_id INT NOT NULL,
-                action VARCHAR(100) NOT NULL,
-                details TEXT,
-                ip_address VARCHAR(45),
-                user_agent TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_teacher (teacher_id),
-                INDEX idx_action (action),
-                INDEX idx_created (created_at)
-            )
-        ");
-        
         $stmt = $pdo->prepare("
             INSERT INTO teacher_activity_log (teacher_id, action, details, ip_address, user_agent)
             VALUES (?, 'account_approved', 'Account approved by admin', ?, ?)
@@ -111,11 +119,12 @@ try {
     } catch (Exception $e) {
         error_log("Failed to log teacher activity: " . $e->getMessage());
     }
-    
-    // Send approval email to teacher
-    // Include Gmail verification function for email sending
+
+    $pdo->commit();
+
+    // Send approval email after DB commit (avoid long transactions; email must not run mid-transaction)
     require_once __DIR__ . '/../gmail-fixed-test.php';
-    
+
     $email_subject = "Your MathEase Teacher Account Has Been Approved";
     $email_body = "
     <!DOCTYPE html>
@@ -152,21 +161,21 @@ try {
         </div>
     </body>
     </html>";
-    
-    // Use Gmail SMTP for sending approval email
-    $email_sent = send_gmail_verification_fixed($teacher['email'], $email_subject, $email_body);
-    
-    // If Gmail fails, save to file as backup
-    if (!$email_sent) {
-        $file_result = save_email_to_file($teacher['email'], $email_subject, $email_body);
-        error_log("Gmail SMTP failed for teacher approval email to {$teacher['email']}, saved to file: " . ($file_result ? 'Yes' : 'No'));
-        // Still consider it successful if saved to file
-        $email_sent = $file_result;
-    } else {
-        error_log("Teacher approval email sent successfully via Gmail to: {$teacher['email']}");
+
+    $email_sent = false;
+    try {
+        $email_sent = send_gmail_verification_fixed($teacher['email'], $email_subject, $email_body);
+        if (!$email_sent) {
+            $file_result = save_email_to_file($teacher['email'], $email_subject, $email_body);
+            error_log("Gmail SMTP failed for teacher approval email to {$teacher['email']}, saved to file: " . ($file_result ? 'Yes' : 'No'));
+            $email_sent = $file_result;
+        } else {
+            error_log("Teacher approval email sent successfully via Gmail to: {$teacher['email']}");
+        }
+    } catch (Throwable $mailErr) {
+        error_log("Teacher approval email error: " . $mailErr->getMessage());
+        $email_sent = false;
     }
-    
-    $pdo->commit();
     
     // Clear any output before sending JSON
     ob_clean();

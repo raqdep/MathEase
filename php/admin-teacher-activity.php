@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'config.php';
+require_once __DIR__ . '/teacher-activity-log-helper.php';
 
 header('Content-Type: application/json');
 
@@ -18,22 +19,8 @@ try {
         exit;
     }
     
-    // Ensure teacher_activity_log table exists
-    $pdo->exec("
-        CREATE TABLE IF NOT EXISTS teacher_activity_log (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            teacher_id INT NOT NULL,
-            action VARCHAR(100) NOT NULL,
-            details TEXT,
-            ip_address VARCHAR(45),
-            user_agent TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_teacher (teacher_id),
-            INDEX idx_action (action),
-            INDEX idx_created (created_at)
-        )
-    ");
-    
+    ensure_teacher_activity_log_table($pdo);
+
     // Get teacher activity
     $stmt = $pdo->prepare("
         SELECT 
@@ -50,7 +37,7 @@ try {
         JOIN teachers t ON tal.teacher_id = t.id
         WHERE tal.teacher_id = ?
         ORDER BY tal.created_at DESC
-        LIMIT 100
+        LIMIT 200
     ");
     $stmt->execute([$teacherId]);
     $activities = $stmt->fetchAll(PDO::FETCH_ASSOC);

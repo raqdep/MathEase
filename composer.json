@@ -3,7 +3,8 @@
     "description": "MathEase — PPT export uses phpoffice/phppresentation",
     "require": {
         "php": ">=8.0",
-        "phpoffice/phppresentation": "^1.0"
+        "phpoffice/phppresentation": "^1.0",
+        "smalot/pdfparser": "^2.0"
     },
     "config": {
         "sort-packages": true

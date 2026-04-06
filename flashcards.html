@@ -226,7 +226,6 @@
                     <a href="quizzes.html" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Quizzes</a>
                     <a href="flashcards.html" class="bg-indigo-50 text-indigo-600 font-medium px-4 py-2 rounded-lg text-sm transition-all duration-200">Flashcards</a>
                     <a href="achievements.html" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Achievements</a>
-                    <a href="dashboard.html#progress" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Progress</a>
                 </div>
 
                 <!-- Desktop user menu -->
@@ -244,14 +243,14 @@
                                         <h3 class="text-sm font-semibold text-slate-800">Notifications</h3>
                                         <span id="dropdownNotificationCount" class="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded-full font-medium">0</span>
                                     </div>
-                                    <button type="button" onclick="markAllNotificationsAsRead()" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">Mark all read</button>
+                                    <button type="button" onclick="markAllNotificationsAsRead(event)" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">Mark all read</button>
                                 </div>
                             </div>
                             <div id="notificationsList" class="max-h-64 overflow-y-auto">
                                 <div class="px-4 py-4 text-sm text-slate-500">Loading...</div>
                             </div>
                             <div class="px-4 py-2 border-t border-slate-200/60">
-                                <a href="#" onclick="showAllNotifications(); return false;" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">View all notifications</a>
+                                <a href="#" onclick="showAllNotifications(event); return false;" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">View all notifications</a>
                             </div>
                         </div>
                     </div>
@@ -288,7 +287,6 @@
                         <option value="quizzes.html">Quizzes</option>
                         <option value="flashcards.html" selected>Flashcards</option>
                         <option value="achievements.html">Achievements</option>
-                        <option value="dashboard.html#progress">Progress</option>
                     </select>
                 </div>
             </div>
@@ -306,7 +304,7 @@
                     </div>
                     <div>
                         <h2 class="text-2xl font-bold text-slate-800 mb-1">Join a class to unlock Flashcards</h2>
-                        <p class="text-slate-600">Your teacher controls topic access. Join a class to generate flashcards for lessons.</p>
+                        <p class="text-slate-600">Your teacher controls lesson access. Join a class to generate flashcards.</p>
                     </div>
                 </div>
                 <button onclick="openJoinClassModal()" class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl">
@@ -326,12 +324,12 @@
                     <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
                         Flashcards Generator
                     </h1>
-                    <p class="text-slate-600 mb-6">Pick a topic and a lesson. The AI will generate 10 study flashcards with explanations.</p>
+                    <p class="text-slate-600 mb-6">Pick a lesson, then the topic within it. The AI will generate 10 study flashcards with explanations.</p>
 
                     <div class="space-y-4">
                         <div>
                             <label for="flashcardTopic" class="block text-sm font-semibold text-slate-700 mb-2">
-                                Topic
+                                Lesson
                             </label>
                             <select id="flashcardTopic" class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
                             </select>
@@ -339,7 +337,7 @@
 
                         <div>
                             <label for="flashcardLesson" class="block text-sm font-semibold text-slate-700 mb-2">
-                                Lesson
+                                Topic
                             </label>
                             <select id="flashcardLesson" class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white">
                             </select>
@@ -362,7 +360,7 @@
                                 <i class="fas fa-lock mt-0.5"></i>
                                 <div>
                                     <div class="font-semibold mb-1">Locked by teacher</div>
-                                    <div id="flashcardLockHintText">This topic is currently locked.</div>
+                                    <div id="flashcardLockHintText">This lesson is currently locked.</div>
                                 </div>
                             </div>
                         </div>
@@ -371,13 +369,10 @@
 
                 <div class="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/40 p-6 mt-8">
                     <h2 class="text-lg font-bold text-slate-800 mb-2">Study Controls</h2>
-                    <p class="text-slate-600 text-sm mb-4">Flip cards, then mark them as learned for quick review.</p>
+                    <p class="text-slate-600 text-sm mb-4">Flip cards and use Prev/Next to move through the deck. Shuffle to mix the order.</p>
                     <div class="flex flex-col space-y-3">
                         <button id="shuffleCardsBtn" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-sm font-semibold transition-colors">
                             <i class="fas fa-random mr-2"></i>Shuffle
-                        </button>
-                        <button id="resetLearnedBtn" class="bg-red-50 hover:bg-red-100 text-red-700 px-4 py-2 rounded-xl text-sm font-semibold transition-colors">
-                            <i class="fas fa-rotate-right mr-2"></i>Reset Learned
                         </button>
                     </div>
                 </div>
@@ -390,38 +385,12 @@
                             <h2 class="text-2xl font-bold text-slate-800 mb-1" id="flashcardsHeaderTitle">Your Flashcards</h2>
                             <p class="text-slate-600 text-sm" id="flashcardsHeaderSubtitle">Generate flashcards to start studying.</p>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <div class="text-sm font-semibold text-slate-700">
-                                Learned: <span id="learnedCount">0</span>/10
-                            </div>
-                        </div>
                     </div>
 
-                    <div class="mb-4">
-                        <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
-                            <span>Progress</span>
-                            <span id="learnedProgressText">0/10</span>
-                        </div>
-                        <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden border border-slate-200">
-                            <div id="learnedProgressBar"
-                                 class="h-3 w-0 rounded-full bg-gradient-to-r from-emerald-500 to-indigo-600 transition-all duration-500 shadow-sm">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col sm:flex-row gap-3 mb-5">
-                        <div class="flex-1">
-                            <div class="text-xs text-slate-500 mb-1">Study Mode</div>
-                            <div class="text-sm font-semibold text-slate-700" id="studyModeLabel">
-                                One card at a time
-                            </div>
-                        </div>
-                        <div class="sm:w-56">
-                            <button id="saveFlashcardsBtn"
-                                    class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-3 rounded-xl font-bold text-sm transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-                                    disabled>
-                                <i class="fas fa-save mr-2"></i>Save to Database
-                            </button>
+                    <div class="mb-5">
+                        <div class="text-xs text-slate-500 mb-1">Study Mode</div>
+                        <div class="text-sm font-semibold text-slate-700" id="studyModeLabel">
+                            One card at a time
                         </div>
                     </div>
 
@@ -550,6 +519,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadProfilePicture();
         });
+    </script>
+    <script>
+        fetch('php/student-activity-beacon.php', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ page: 'flashcards' }) }).catch(function () {});
     </script>
 </body>
 </html>

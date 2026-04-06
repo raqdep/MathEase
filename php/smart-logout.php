@@ -75,6 +75,11 @@ if ($logoutType === 'student' || ($logoutType === 'auto' && $isStudent)) {
         $stmt->execute([$token]);
         setcookie('remember_token', '', time() - 3600, '/');
     }
+
+    if ($userId) {
+        require_once __DIR__ . '/student-activity-log-helper.php';
+        log_student_activity($pdo, (int) $userId, 'logout', 'Signed out');
+    }
     
     // Clear student session data
     clear_student_session();
@@ -99,36 +104,9 @@ if ($logoutType === 'student' || ($logoutType === 'auto' && $isStudent)) {
     $teacherId = $_SESSION['teacher_id'] ?? null;
     $teacherEmail = $_SESSION['teacher_email'] ?? null;
 
-    // Log teacher activity (logout)
     if ($teacherId) {
-        try {
-            $pdo->exec("
-                CREATE TABLE IF NOT EXISTS teacher_activity_log (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    teacher_id INT NOT NULL,
-                    action VARCHAR(100) NOT NULL,
-                    details TEXT,
-                    ip_address VARCHAR(45),
-                    user_agent TEXT,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    INDEX idx_teacher (teacher_id),
-                    INDEX idx_action (action),
-                    INDEX idx_created (created_at)
-                )
-            ");
-
-            $stmt = $pdo->prepare("
-                INSERT INTO teacher_activity_log (teacher_id, action, details, ip_address, user_agent)
-                VALUES (?, 'logout', 'Teacher logged out (smart logout)', ?, ?)
-            ");
-            $stmt->execute([
-                $teacherId,
-                $_SERVER['REMOTE_ADDR'] ?? 'unknown',
-                $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
-            ]);
-        } catch (Exception $e) {
-            error_log('Failed to log teacher logout activity (smart logout): ' . $e->getMessage());
-        }
+        require_once __DIR__ . '/teacher-activity-log-helper.php';
+        log_teacher_activity($pdo, (int) $teacherId, 'logout', 'Teacher signed out.');
     }
     
     // Clear teacher remember me token

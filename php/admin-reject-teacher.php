@@ -77,7 +77,9 @@ try {
     ]);
     
 } catch (Exception $e) {
-    $pdo->rollBack();
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
     error_log("Admin reject teacher error: " . $e->getMessage());
     echo json_encode(['success' => false, 'message' => 'Failed to reject teacher']);
 }

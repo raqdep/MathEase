@@ -8,6 +8,7 @@ session_start();
 require_once 'config.php';
 require_once __DIR__ . '/topics-canonical.php';
 require_once __DIR__ . '/student-notification-helper.php';
+require_once __DIR__ . '/teacher-activity-log-helper.php';
 
 // Set content type to JSON
 header('Content-Type: application/json');
@@ -179,7 +180,19 @@ function toggleTopicLock() {
     } catch (Throwable $e) {
         error_log('topic-management notify students failed: ' . $e->getMessage());
     }
-    
+
+    $tid = (int) ($_SESSION['teacher_id'] ?? 0);
+    if ($tid > 0) {
+        $action = $newLockStatus ? 'topic_closed' : 'topic_opened';
+        $verb = $newLockStatus ? 'Closed' : 'Opened';
+        log_teacher_activity(
+            $pdo,
+            $tid,
+            $action,
+            "{$verb} topic \"{$topicName}\" for class \"{$className}\" (class ID {$classId})."
+        );
+    }
+
     echo json_encode([
         'success' => true,
         'message' => $newLockStatus ? 'Topic locked successfully' : 'Topic unlocked successfully',

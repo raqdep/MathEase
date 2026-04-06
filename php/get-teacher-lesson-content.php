@@ -61,7 +61,7 @@ try {
     
     // Get lesson content
     $stmt = $pdo->prepare("
-        SELECT id, title, topic, html_content, created_at, class_id
+        SELECT id, title, topic, html_content, created_at, class_id, published
         FROM teacher_lessons
         WHERE id = ? AND teacher_id = ?
     ");
@@ -75,11 +75,31 @@ try {
         exit;
     }
 
-    $lessonClassId = isset($lesson['class_id']) ? (int)$lesson['class_id'] : 0;
-    if ($lessonClassId > 0 && $lessonClassId !== (int)$class_id) {
+    if (empty($lesson['published'])) {
         http_response_code(403);
-        echo json_encode(['success' => false, 'message' => 'This lesson is not available for your class.']);
+        echo json_encode(['success' => false, 'message' => 'This lesson is not published yet.']);
         exit;
+    }
+
+    $hasJunction = $pdo->prepare('SELECT 1 FROM teacher_lesson_classes WHERE lesson_id = ? LIMIT 1');
+    $hasJunction->execute([(int) $lesson_id]);
+    $usesJunction = (bool) $hasJunction->fetchColumn();
+
+    if ($usesJunction) {
+        $chk = $pdo->prepare('SELECT 1 FROM teacher_lesson_classes WHERE lesson_id = ? AND class_id = ? LIMIT 1');
+        $chk->execute([(int) $lesson_id, (int) $class_id]);
+        if (!$chk->fetchColumn()) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'This lesson is not available for your class.']);
+            exit;
+        }
+    } else {
+        $lessonClassId = isset($lesson['class_id']) ? (int) $lesson['class_id'] : 0;
+        if ($lessonClassId > 0 && $lessonClassId !== (int) $class_id) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'This lesson is not available for your class.']);
+            exit;
+        }
     }
     
     echo json_encode([

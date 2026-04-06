@@ -12,118 +12,124 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+
+        .ach-page-bg {
+            background:
+                radial-gradient(1100px 580px at 8% -8%, rgba(168, 85, 247, 0.14), transparent 52%),
+                radial-gradient(900px 520px at 96% 4%, rgba(192, 38, 211, 0.1), transparent 48%),
+                radial-gradient(700px 400px at 50% 100%, rgba(139, 92, 246, 0.08), transparent 55%),
+                linear-gradient(180deg, #faf5ff 0%, #f3e8ff 38%, #ede9fe 72%, #f5f3ff 100%);
+        }
+
+        .ach-mesh {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239333ea' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
         
         .badge-card {
-            transition: all 0.3s ease;
-            transform: scale(1);
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
         }
         
         .badge-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
+            box-shadow: 0 24px 48px -12px rgba(88, 28, 135, 0.1), 0 0 0 1px rgba(147, 51, 234, 0.1);
         }
         
         .badge-card.earned {
-            animation: glow 2s ease-in-out infinite alternate;
+            box-shadow: 0 0 0 1px rgba(147, 51, 234, 0.15), 0 16px 40px -16px rgba(126, 34, 206, 0.28);
         }
         
         .badge-card.locked {
-            filter: grayscale(100%);
-            opacity: 0.6;
+            filter: grayscale(0.85);
+            opacity: 0.72;
         }
-        
-        @keyframes glow {
-            from {
-                box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-            }
-            to {
-                box-shadow: 0 0 30px rgba(59, 130, 246, 0.6);
-            }
-        }
-        
-        .progress-ring {
-            transform: rotate(-90deg);
-        }
-        
-        .progress-ring-circle {
-            stroke-dasharray: 283;
-            stroke-dashoffset: 283;
-            transition: stroke-dashoffset 0.5s ease-in-out;
+
+        .badge-card.locked:hover {
+            opacity: 0.85;
         }
         
         .achievement-badge {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(145deg, #7c3aed 0%, #9333ea 45%, #a855f7 100%);
             color: white;
             border-radius: 50%;
-            width: 80px;
-            height: 80px;
+            width: 88px;
+            height: 88px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2rem;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), 0 10px 28px rgba(126, 34, 206, 0.4);
         }
         
         .badge-earned {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            animation: pulse 2s infinite;
+            background: linear-gradient(145deg, #c026d3 0%, #a21caf 40%, #7e22ce 100%);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 10px 28px rgba(162, 28, 175, 0.38);
         }
         
         .badge-locked {
-            background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%);
-            color: #6b7280;
-        }
-        
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.1);
-            }
+            background: linear-gradient(145deg, #e2e8f0 0%, #cbd5e1 100%);
+            color: #64748b;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 4px 14px rgba(15, 23, 42, 0.08);
         }
         
         .category-tab {
-            transition: all 0.3s ease;
+            transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+            border: 1px solid rgb(226 232 240 / 0.95);
+            background: rgba(255, 255, 255, 0.92);
+            color: rgb(71 85 105);
+        }
+
+        .category-tab:hover:not(.active) {
+            background: rgb(255 255 255);
+            border-color: rgb(216 180 254);
+            color: rgb(59 7 100);
         }
         
         .category-tab.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #9333ea 0%, #7c3aed 50%, #6b21a8 100%);
             color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            border-color: transparent;
+            box-shadow: 0 10px 28px -6px rgba(126, 34, 206, 0.55);
         }
         
-        .stats-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .stat-tile {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgb(233 213 255 / 0.95);
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 20px -4px rgba(88, 28, 135, 0.08);
+        }
+
+        .stat-tile--accent {
+            background: linear-gradient(135deg, #a855f7 0%, #9333ea 45%, #7e22ce 100%);
+            border: none;
             color: white;
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 12px 32px -8px rgba(126, 34, 206, 0.5);
         }
         
         .floating-badge {
-            animation: float 3s ease-in-out infinite;
+            animation: float 4s ease-in-out infinite;
         }
         
         @keyframes float {
-            0%, 100% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        .achievement-badge--sm {
+            width: 72px;
+            height: 72px;
+            font-size: 1.5rem;
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen">
+<body class="ach-page-bg ach-mesh min-h-screen text-slate-800 antialiased">
     <!-- Navigation -->
     <nav class="bg-white/80 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <!-- Logo -->
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-xl flex items-center justify-center">
+                    <div class="w-10 h-10 bg-gradient-to-br from-purple-600 to-violet-600 rounded-xl flex items-center justify-center shadow-md shadow-purple-500/25">
                         <img src="css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-6 w-6">
                     </div>
                     <span class="text-xl font-bold text-slate-800">MathEase</span>
@@ -135,7 +141,7 @@
                     <a href="dashboard.html#learning-path" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Topics</a>
                     <a href="quizzes.html" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Quizzes</a>
                     <a href="flashcards.html" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Flashcards</a>
-                    <a href="achievements.html" class="bg-indigo-50 text-indigo-600 font-medium px-4 py-2 rounded-lg text-sm transition-all duration-200">Achievements</a>
+                    <a href="achievements.html" class="bg-purple-100 text-purple-800 font-medium px-4 py-2 rounded-lg text-sm transition-all duration-200 ring-1 ring-purple-200/80">Achievements</a>
                     <a href="dashboard.html#progress" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Progress</a>
                 </div>
                 
@@ -152,23 +158,23 @@
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center space-x-2">
                                         <h3 class="text-sm font-semibold text-slate-800">Notifications</h3>
-                                        <span id="dropdownNotificationCount" class="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded-full font-medium">0</span>
+                                        <span id="dropdownNotificationCount" class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full font-medium">0</span>
                                     </div>
-                                    <button type="button" onclick="markAllNotificationsAsRead()" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">Mark all read</button>
+                                    <button type="button" onclick="markAllNotificationsAsRead(event)" class="text-xs text-purple-600 hover:text-purple-800 font-medium">Mark all read</button>
                                 </div>
                             </div>
                             <div id="notificationsList" class="max-h-64 overflow-y-auto">
                                 <!-- Notifications will be loaded here -->
                             </div>
                             <div class="px-4 py-2 border-t border-slate-200/60">
-                                <a href="#" onclick="showAllNotifications(); return false;" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">View all notifications</a>
+                                <a href="#" onclick="showAllNotifications(event); return false;" class="text-xs text-purple-600 hover:text-purple-800 font-medium">View all notifications</a>
                             </div>
                         </div>
                     </div>
                     
                     <div class="relative group" id="profileDropdownContainer">
                         <button onclick="toggleProfileDropdown()" class="flex items-center space-x-2 text-slate-700 hover:text-slate-900 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-50 transition-all duration-200">
-                            <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-full flex items-center justify-center overflow-hidden" id="profileIconContainer">
+                            <div class="w-8 h-8 bg-gradient-to-br from-purple-600 to-violet-600 rounded-full flex items-center justify-center overflow-hidden" id="profileIconContainer">
                                 <img id="profileIconImage" src="" alt="Profile" class="w-full h-full object-cover hidden">
                                 <i class="fas fa-user text-white text-xs" id="profileIconPlaceholder"></i>
                             </div>
@@ -177,7 +183,7 @@
                         </button>
                         <div id="profileDropdown" class="absolute right-0 mt-2 w-56 bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-slate-200/60 py-2 z-50 hidden">
                             <a href="profile.html" class="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors">
-                                <i class="fas fa-user-circle mr-3 text-indigo-500"></i>
+                                <i class="fas fa-user-circle mr-3 text-purple-600"></i>
                                 Profile
                             </a>
                             <div class="border-t border-slate-200 my-1"></div>
@@ -200,73 +206,103 @@
     </nav>
 
     <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Header -->
-        <div class="text-center mb-12">
-            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full mb-6 floating-badge">
-                <i class="fas fa-trophy text-3xl text-white"></i>
-            </div>
-            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Your Achievements</h1>
-            <p class="text-xl text-gray-600 mb-6">Celebrate your learning journey with badges and milestones!</p>
-            
-            <!-- Stats Overview -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div class="stats-card">
-                    <div class="text-center">
-                        <div class="text-3xl font-bold mb-2" id="totalBadges">0</div>
-                        <div class="text-sm opacity-90">Total Badges</div>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
+        <!-- Hero -->
+        <header class="mb-10 lg:mb-14">
+            <div class="flex flex-col lg:flex-row lg:items-stretch lg:justify-between gap-10 lg:gap-12">
+                <div class="flex flex-col items-center text-center lg:items-start lg:text-left lg:max-w-xl">
+                    <div class="inline-flex items-center justify-center w-[4.5rem] h-[4.5rem] rounded-2xl bg-gradient-to-br from-violet-500 via-purple-600 to-fuchsia-700 shadow-lg shadow-purple-600/35 mb-6 floating-badge ring-4 ring-purple-100/90">
+                        <i class="fas fa-trophy text-3xl text-white drop-shadow-sm"></i>
+                    </div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.2em] text-purple-700 mb-3">Your progress</p>
+                    <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mb-4 leading-tight">Achievements</h1>
+                    <p class="text-lg text-slate-600 leading-relaxed max-w-md">Track every quiz badge you have unlocked. Earn more by scoring well on quizzes across MathEase.</p>
+                </div>
+
+                <div class="w-full lg:w-auto lg:min-w-[min(100%,28rem)] flex flex-col gap-4">
+                    <div class="grid grid-cols-3 gap-3 sm:gap-4">
+                        <div class="stat-tile px-3 py-5 sm:px-4 sm:py-6 text-center">
+                            <div class="text-2xl sm:text-3xl font-extrabold text-slate-900 tabular-nums" id="totalBadges">0</div>
+                            <div class="text-[10px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wide mt-1">Total</div>
+                        </div>
+                        <div class="stat-tile stat-tile--accent px-3 py-5 sm:px-4 sm:py-6 text-center">
+                            <div class="text-2xl sm:text-3xl font-extrabold tabular-nums" id="earnedBadges">0</div>
+                            <div class="text-[10px] sm:text-xs font-semibold text-white/90 uppercase tracking-wide mt-1">Earned</div>
+                        </div>
+                        <div class="stat-tile px-3 py-5 sm:px-4 sm:py-6 text-center">
+                            <div class="text-2xl sm:text-3xl font-extrabold text-purple-700 tabular-nums" id="progressPercent">0%</div>
+                            <div class="text-[10px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wide mt-1">Done</div>
+                        </div>
+                    </div>
+                    <div class="stat-tile px-5 py-4 sm:px-6 sm:py-5">
+                        <div class="flex items-center justify-between text-sm mb-2">
+                            <span class="font-medium text-slate-700">Collection progress</span>
+                            <span class="text-slate-500 tabular-nums" id="progressLabel">0 of 0</span>
+                        </div>
+                        <div class="h-2.5 rounded-full bg-purple-100/90 overflow-hidden ring-1 ring-purple-200/60">
+                            <div id="progressBarFill" class="h-full rounded-full bg-gradient-to-r from-fuchsia-500 via-purple-600 to-violet-700 transition-all duration-700 ease-out shadow-sm shadow-purple-500/30" style="width: 0%"></div>
+                        </div>
                     </div>
                 </div>
-                <div class="stats-card">
-                    <div class="text-center">
-                        <div class="text-3xl font-bold mb-2" id="earnedBadges">0</div>
-                        <div class="text-sm opacity-90">Earned Badges</div>
-                    </div>
-                </div>
             </div>
-        </div>
+        </header>
 
         <!-- Category Tabs -->
-        <div class="flex flex-wrap justify-center gap-4 mb-8">
-            <button class="category-tab active px-6 py-3 rounded-full bg-white shadow-md" data-category="all">
-                <i class="fas fa-star mr-2"></i>All Quiz Badges
-            </button>
-            <button class="category-tab px-6 py-3 rounded-full bg-white shadow-md" data-category="quiz">
-                <i class="fas fa-question-circle mr-2"></i>Quiz Achievements
-            </button>
+        <div class="flex justify-center mb-10">
+            <div class="inline-flex flex-wrap justify-center gap-2 p-1.5 rounded-2xl bg-white/75 backdrop-blur-md border border-purple-200/60 shadow-sm shadow-purple-200/30">
+                <button type="button" class="category-tab active px-5 py-2.5 rounded-xl text-sm font-semibold shadow-none" data-category="all">
+                    <i class="fas fa-layer-group mr-2 opacity-90"></i>All badges
+                </button>
+                <button type="button" class="category-tab px-5 py-2.5 rounded-xl text-sm font-semibold shadow-none" data-category="quiz">
+                    <i class="fas fa-puzzle-piece mr-2 opacity-90"></i>Quiz only
+                </button>
+            </div>
         </div>
 
         <!-- Badges Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="badgesGrid">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 lg:gap-6" id="badgesGrid">
             <!-- Badges will be populated by JavaScript -->
         </div>
 
         <!-- Recent Achievements -->
-        <div class="mt-16">
-            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Recent Achievements</h2>
-            <div class="bg-white rounded-2xl shadow-lg p-8">
-                <div class="space-y-4" id="recentAchievements">
+        <section class="mt-20 lg:mt-24" aria-labelledby="recent-heading">
+            <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
+                <div>
+                    <h2 id="recent-heading" class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Recent unlocks</h2>
+                    <p class="text-slate-600 mt-1 text-sm sm:text-base">Newest badges appear here first.</p>
+                </div>
+                <a href="quizzes.html" class="inline-flex items-center justify-center text-sm font-semibold text-purple-700 hover:text-purple-900 transition-colors">
+                    Take a quiz <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                </a>
+            </div>
+            <div class="rounded-3xl border border-purple-200/50 bg-white/85 backdrop-blur-md shadow-xl shadow-purple-200/35 overflow-hidden">
+                <div class="divide-y divide-slate-100" id="recentAchievements">
                     <!-- Recent achievements will be populated by JavaScript -->
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 
     <!-- Badge Detail Modal -->
-    <div id="badgeModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-md w-full p-8 text-center">
-            <div class="mb-6">
-                <div id="modalBadgeIcon" class="achievement-badge mx-auto mb-4"></div>
-                <h3 id="modalBadgeTitle" class="text-2xl font-bold text-gray-800 mb-2"></h3>
-                <p id="modalBadgeDescription" class="text-gray-600"></p>
+    <div id="badgeModal" class="fixed inset-0 z-[100] hidden overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="modalBadgeTitle">
+        <div class="absolute inset-0 bg-slate-900/45 backdrop-blur-sm" onclick="closeBadgeModal()" role="presentation"></div>
+        <div class="relative z-10 flex min-h-full items-center justify-center p-4 sm:p-6 pointer-events-none">
+        <div class="w-full max-w-md bg-white rounded-3xl shadow-2xl shadow-slate-900/20 border border-slate-100/90 overflow-hidden pointer-events-auto">
+            <div class="px-8 pt-10 pb-6 text-center bg-gradient-to-b from-purple-50/90 via-violet-50/40 to-white">
+                <div id="modalBadgeIcon" class="achievement-badge mx-auto mb-5 ring-4 ring-white shadow-lg"></div>
+                <h3 id="modalBadgeTitle" class="text-2xl font-extrabold text-slate-900 mb-2 tracking-tight"></h3>
+                <p id="modalBadgeDescription" class="text-slate-600 text-sm leading-relaxed"></p>
             </div>
-            <div class="mb-6">
-                <div class="text-sm text-gray-500 mb-2">Earned on:</div>
-                <div id="modalBadgeDate" class="font-semibold text-gray-800"></div>
+            <div class="px-8 py-5 border-t border-slate-100 bg-slate-50/50">
+                <div class="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1">Earned on</div>
+                <div id="modalBadgeDate" class="font-semibold text-slate-900"></div>
             </div>
-            <button onclick="closeBadgeModal()" class="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition-colors">
-                Close
-            </button>
+            <div class="p-6 pt-0">
+                <button type="button" onclick="closeBadgeModal()" class="w-full py-3.5 rounded-xl font-semibold text-white bg-gradient-to-r from-purple-600 via-violet-600 to-fuchsia-600 hover:from-purple-500 hover:via-violet-500 hover:to-fuchsia-500 shadow-md shadow-purple-600/30 transition-all">
+                    Close
+                </button>
+            </div>
+        </div>
         </div>
     </div>
 
@@ -276,21 +312,21 @@
         <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.03"%3E%3Ccircle cx="30" cy="30" r="1.5"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-60"></div>
         
         <!-- Gradient Overlay -->
-        <div class="absolute inset-0 bg-gradient-to-t from-indigo-900/20 via-transparent to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-purple-950/35 via-transparent to-transparent"></div>
         
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
                 <!-- Brand Section -->
                 <div class="md:col-span-1">
                     <div class="flex items-center space-x-3 mb-6">
-                        <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <div class="w-12 h-12 bg-gradient-to-br from-purple-600 to-violet-700 rounded-xl flex items-center justify-center shadow-lg shadow-purple-900/40">
                             <img src="css/nav-logo/nav-logo.png" alt="MathEase Logo" class="h-7 w-7">
                         </div>
-                        <h3 class="text-2xl font-bold bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent">MathEase</h3>
+                        <h3 class="text-2xl font-bold bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">MathEase</h3>
                     </div>
                     <p class="text-slate-400 text-sm leading-relaxed mb-6">Empowering Grade 11 STEM students to master General Mathematics through interactive learning and personalized progress tracking.</p>
                     <div class="flex items-center space-x-2 text-slate-400 text-xs">
-                        <i class="fas fa-graduation-cap text-indigo-400"></i>
+                        <i class="fas fa-graduation-cap text-purple-400"></i>
                         <span>Norzagaray College</span>
                     </div>
                 </div>
@@ -298,23 +334,23 @@
                 <!-- Quick Links -->
                 <div>
                     <h3 class="text-lg font-semibold mb-6 text-white flex items-center">
-                        <i class="fas fa-link text-indigo-400 mr-2 text-sm"></i>
+                        <i class="fas fa-link text-purple-400 mr-2 text-sm"></i>
                         Quick Links
                     </h3>
                     <ul class="space-y-3">
-                        <li><a href="index.html" class="text-slate-400 hover:text-indigo-400 text-sm transition-all hover:translate-x-1 inline-flex items-center group">
+                        <li><a href="index.html" class="text-slate-400 hover:text-purple-400 text-sm transition-all hover:translate-x-1 inline-flex items-center group">
                             <i class="fas fa-chevron-right text-xs mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></i>
                             Home
                         </a></li>
-                        <li><a href="#learning-path" id="topicsNavLinkMobile" class="text-slate-400 hover:text-indigo-400 text-sm transition-all hover:translate-x-1 inline-flex items-center group">
+                        <li><a href="#learning-path" id="topicsNavLinkMobile" class="text-slate-400 hover:text-purple-400 text-sm transition-all hover:translate-x-1 inline-flex items-center group">
                             <i class="fas fa-chevron-right text-xs mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></i>
                             Topics
                         </a></li>
-                        <li><a href="quizzes.html" id="quizzesNavLinkMobile" class="text-slate-400 hover:text-indigo-400 text-sm transition-all hover:translate-x-1 inline-flex items-center group">
+                        <li><a href="quizzes.html" id="quizzesNavLinkMobile" class="text-slate-400 hover:text-purple-400 text-sm transition-all hover:translate-x-1 inline-flex items-center group">
                             <i class="fas fa-chevron-right text-xs mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></i>
                             Quizzes
                         </a></li>
-                        <li><a href="achievements.html" class="text-slate-400 hover:text-indigo-400 text-sm transition-all hover:translate-x-1 inline-flex items-center group">
+                        <li><a href="achievements.html" class="text-slate-400 hover:text-purple-400 text-sm transition-all hover:translate-x-1 inline-flex items-center group">
                             <i class="fas fa-chevron-right text-xs mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></i>
                             Achievements
                         </a></li>
@@ -324,17 +360,17 @@
                 <!-- Contact -->
                 <div>
                     <h3 class="text-lg font-semibold mb-6 text-white flex items-center">
-                        <i class="fas fa-envelope text-indigo-400 mr-2 text-sm"></i>
+                        <i class="fas fa-envelope text-purple-400 mr-2 text-sm"></i>
                         Contact Us
                     </h3>
                     <div class="space-y-4">
                         <div class="flex items-start space-x-3">
-                            <i class="fas fa-map-marker-alt text-indigo-400 mt-1 text-sm"></i>
+                            <i class="fas fa-map-marker-alt text-purple-400 mt-1 text-sm"></i>
                             <p class="text-slate-400 text-sm">Norzagaray College<br>Norzagaray, Bulacan</p>
                         </div>
                         <div class="flex items-center space-x-3">
-                            <i class="fas fa-envelope text-indigo-400 text-sm"></i>
-                            <a href="mailto:matheasenc@gmail.com" class="text-slate-400 hover:text-indigo-400 text-sm transition-colors">matheasenc@gmail.com</a>
+                            <i class="fas fa-envelope text-purple-400 text-sm"></i>
+                            <a href="mailto:matheasenc@gmail.com" class="text-slate-400 hover:text-purple-400 text-sm transition-colors">matheasenc@gmail.com</a>
                         </div>
                     </div>
                 </div>
@@ -344,7 +380,7 @@
             <div class="border-t border-slate-700/50 pt-8 mt-8">
                 <div class="text-center">
                     <p class="text-slate-400 text-sm mb-2">&copy; 2025 <span class="text-white font-semibold">MathEase</span>. All rights reserved.</p>
-                    <p class="text-slate-500 text-xs">Developed with <i class="fas fa-heart text-red-500 animate-pulse"></i> by Computer Science Students from <span class="text-indigo-400 font-medium">Norzagaray College</span></p>
+                    <p class="text-slate-500 text-xs">Developed with <i class="fas fa-heart text-red-500 animate-pulse"></i> by Computer Science Students from <span class="text-purple-400 font-medium">Norzagaray College</span></p>
                 </div>
             </div>
         </div>
@@ -483,7 +519,7 @@
                 {
                     id: 'real_life_problems_champion',
                     title: 'Real-Life Problems Champion',
-                    description: 'Score 100% on the Solving Real-Life Problems quiz',
+                    description: 'Perfect score on the Solving Real-Life Problems quiz',
                     icon: '🏆',
                     category: 'quiz',
                     requirement: 'real_life_problems_100',
@@ -616,22 +652,11 @@
                 });
             });
             
-            // Update the badges array with real data
+            // Update the badges array with real data (exact title match only — fuzzy match caused wrong links,
+            // e.g. "Functions Expert" matching "Evaluating Functions Expert".)
             allBadges.forEach(badge => {
-                // Try exact match first
                 const normalizedTitle = badge.title.trim().toLowerCase();
-                let realBadgeData = earnedBadgesMap.get(normalizedTitle);
-                
-                // If no exact match, try flexible matching
-                if (!realBadgeData) {
-                    for (const [dbName, dbData] of earnedBadgesMap.entries()) {
-                        // Check if badge title contains database name or vice versa
-                        if (normalizedTitle.includes(dbName) || dbName.includes(normalizedTitle)) {
-                            realBadgeData = dbData;
-                            break;
-                        }
-                    }
-                }
+                const realBadgeData = earnedBadgesMap.get(normalizedTitle);
                 
                 if (realBadgeData) {
                     badge.earned = realBadgeData.earned;
@@ -721,36 +746,48 @@
             return `<span class="${sizeClass}">${iconValue}</span>`;
         }
 
+        function getRarityAccentClass(rarity) {
+            const map = {
+                legendary: 'bg-gradient-to-r from-fuchsia-400 via-purple-600 to-violet-900',
+                epic: 'bg-gradient-to-r from-violet-500 to-fuchsia-600',
+                rare: 'bg-gradient-to-r from-purple-500 to-violet-600',
+                common: 'bg-gradient-to-r from-purple-200 to-violet-300'
+            };
+            return map[rarity] || map.common;
+        }
+
         function createBadgeCard(badge) {
             const cardClass = badge.earned ? 'badge-card earned' : 'badge-card locked';
             const badgeClass = badge.earned ? 'badge-earned' : 'badge-locked';
             const rarityColor = getRarityColor(badge.rarity);
-            
+            const accent = getRarityAccentClass(badge.rarity);
+
             return `
-                <div class="${cardClass} bg-white rounded-2xl shadow-lg p-6 cursor-pointer" onclick="showBadgeDetail('${badge.id}')">
-                    <div class="text-center">
+                <article class="${cardClass} relative rounded-3xl border border-purple-100/90 bg-white/92 backdrop-blur-sm overflow-hidden cursor-pointer shadow-sm" onclick="showBadgeDetail('${badge.id}')">
+                    <div class="h-1.5 w-full ${accent}"></div>
+                    <div class="p-6 text-center pt-5">
                         <div class="achievement-badge ${badgeClass} mx-auto mb-4">
                             ${renderBadgeIconHtml(badge.icon, 'text-3xl')}
                         </div>
-                        <h3 class="text-lg font-bold text-gray-800 mb-2">${badge.title}</h3>
-                        <p class="text-sm text-gray-600 mb-3">${badge.description}</p>
-                        <div class="flex items-center justify-center space-x-2">
-                            <span class="px-2 py-1 rounded-full text-xs font-semibold ${rarityColor}">${badge.rarity.toUpperCase()}</span>
-                            ${badge.earned ? '<span class="text-green-500 text-sm"><i class="fas fa-check-circle"></i> Earned</span>' : '<span class="text-gray-400 text-sm"><i class="fas fa-lock"></i> Locked</span>'}
+                        <h3 class="text-base font-bold text-slate-900 mb-2 leading-snug line-clamp-2">${badge.title}</h3>
+                        <p class="text-sm text-slate-600 mb-4 line-clamp-3 leading-relaxed min-h-[3.75rem]">${badge.description}</p>
+                        <div class="flex flex-wrap items-center justify-center gap-2">
+                            <span class="px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-bold tracking-wide ${rarityColor}">${badge.rarity.toUpperCase()}</span>
+                            ${badge.earned ? '<span class="text-emerald-600 text-xs font-semibold inline-flex items-center gap-1"><i class="fas fa-check-circle"></i> Earned</span>' : '<span class="text-slate-400 text-xs font-medium inline-flex items-center gap-1"><i class="fas fa-lock"></i> Locked</span>'}
                         </div>
-                        ${badge.earned ? `<div class="mt-3 text-xs text-gray-500">Earned: ${formatDate(badge.earnedDate)}</div>` : ''}
+                        ${badge.earned ? `<div class="mt-4 text-xs text-slate-500 font-medium tabular-nums">${formatDate(badge.earnedDate)}</div>` : ''}
                     </div>
-                </div>
+                </article>
             `;
         }
 
         // Get rarity color
         function getRarityColor(rarity) {
             const colors = {
-                'common': 'bg-gray-100 text-gray-800',
-                'rare': 'bg-blue-100 text-blue-800',
-                'epic': 'bg-purple-100 text-purple-800',
-                'legendary': 'bg-yellow-100 text-yellow-800'
+                common: 'bg-violet-50 text-violet-900 ring-1 ring-violet-200/90',
+                rare: 'bg-purple-100 text-purple-900 ring-1 ring-purple-200/90',
+                epic: 'bg-fuchsia-100 text-fuchsia-950 ring-1 ring-fuchsia-200/80',
+                legendary: 'bg-purple-200 text-purple-950 ring-1 ring-purple-300/90'
             };
             return colors[rarity] || colors.common;
         }
@@ -787,9 +824,17 @@
         function updateStats() {
             const totalBadges = allBadges.length;
             const earnedBadges = allBadges.filter(b => b.earned).length;
+            const pct = totalBadges > 0 ? Math.round((earnedBadges / totalBadges) * 100) : 0;
 
             document.getElementById('totalBadges').textContent = totalBadges;
             document.getElementById('earnedBadges').textContent = earnedBadges;
+
+            const pctEl = document.getElementById('progressPercent');
+            const lblEl = document.getElementById('progressLabel');
+            const barEl = document.getElementById('progressBarFill');
+            if (pctEl) pctEl.textContent = pct + '%';
+            if (lblEl) lblEl.textContent = earnedBadges + ' of ' + totalBadges;
+            if (barEl) barEl.style.width = pct + '%';
         }
 
         // Load recent achievements
@@ -802,23 +847,36 @@
             const container = document.getElementById('recentAchievements');
             
             if (recentBadges.length === 0) {
-                container.innerHTML = '<p class="text-center text-gray-500">No achievements yet. Start learning to earn your first badge!</p>';
+                container.innerHTML = `
+                    <div class="text-center py-14 px-6">
+                        <div class="w-16 h-16 mx-auto rounded-2xl bg-purple-50 flex items-center justify-center mb-4 ring-1 ring-purple-100">
+                            <i class="fas fa-medal text-2xl text-purple-500"></i>
+                        </div>
+                        <p class="font-semibold text-slate-800">No badges yet</p>
+                        <p class="text-sm text-slate-500 mt-1 max-w-sm mx-auto">Finish a quiz with a strong score to unlock your first achievement.</p>
+                        <a href="quizzes.html" class="inline-flex items-center mt-6 px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-purple-600 via-violet-600 to-fuchsia-600 hover:from-purple-500 hover:via-violet-500 hover:to-fuchsia-500 shadow-md shadow-purple-600/25 transition-all">
+                            Browse quizzes
+                        </a>
+                    </div>`;
                 return;
             }
 
             container.innerHTML = recentBadges.map(badge => `
-                <div class="flex items-center space-x-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
-                    <div class="achievement-badge badge-earned">
-                        ${renderBadgeIconHtml(badge.icon, 'text-2xl')}
+                <div class="flex flex-col sm:flex-row sm:items-center gap-4 p-5 sm:px-6 sm:py-5 hover:bg-slate-50/90 transition-colors">
+                    <div class="flex items-start sm:items-center gap-4 flex-1 min-w-0">
+                        <div class="achievement-badge achievement-badge--sm badge-earned shrink-0">
+                            ${renderBadgeIconHtml(badge.icon, 'text-2xl')}
+                        </div>
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-slate-900 leading-snug">${badge.title}</h4>
+                            <p class="text-sm text-slate-600 mt-1 line-clamp-2 leading-relaxed">${badge.description}</p>
+                            <p class="text-xs text-slate-500 mt-2 inline-flex items-center gap-1.5">
+                                <i class="far fa-calendar-alt opacity-70"></i>
+                                <span class="tabular-nums">${formatDate(badge.earnedDate)}</span>
+                            </p>
+                        </div>
                     </div>
-                    <div class="flex-1">
-                        <h4 class="font-semibold text-gray-800">${badge.title}</h4>
-                        <p class="text-sm text-gray-600">${badge.description}</p>
-                        <p class="text-xs text-gray-500">Earned on ${formatDate(badge.earnedDate)}</p>
-                    </div>
-                    <div class="text-right">
-                        <span class="px-2 py-1 rounded-full text-xs font-semibold ${getRarityColor(badge.rarity)}">${badge.rarity.toUpperCase()}</span>
-                    </div>
+                    <span class="self-start sm:self-center shrink-0 px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold ${getRarityColor(badge.rarity)}">${badge.rarity.toUpperCase()}</span>
                 </div>
             `).join('');
         }
@@ -874,13 +932,6 @@
         });
 
         // Notifications are handled globally by `js/student-notifications.js` (loaded via shared nav).
-
-        // Close modal when clicking outside
-        document.getElementById('badgeModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeBadgeModal();
-            }
-        });
 
         // Logout: js/logout-confirm.js (confirmLogout)
 
@@ -950,7 +1001,7 @@
                                     }
                                     // Remove gradient background when image is shown
                                     if (profileIconContainer) {
-                                        profileIconContainer.classList.remove('bg-gradient-to-br', 'from-indigo-500', 'to-violet-600');
+                                        profileIconContainer.classList.remove('bg-gradient-to-br', 'from-purple-600', 'to-violet-600');
                                         profileIconContainer.classList.add('bg-slate-200');
                                     }
                                 } else {
@@ -963,7 +1014,7 @@
                                     }
                                     // Add gradient background when no image
                                     if (profileIconContainer) {
-                                        profileIconContainer.classList.add('bg-gradient-to-br', 'from-indigo-500', 'to-violet-600');
+                                        profileIconContainer.classList.add('bg-gradient-to-br', 'from-purple-600', 'to-violet-600');
                                         profileIconContainer.classList.remove('bg-slate-200');
                                     }
                                 }
@@ -986,6 +1037,9 @@
 
         // Also check for profile updates periodically
         setInterval(loadProfilePicture, 5000); // Check every 5 seconds
+    </script>
+    <script>
+        fetch('php/student-activity-beacon.php', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ page: 'achievements' }) }).catch(function () {});
     </script>
 </body>
 </html>

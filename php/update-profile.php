@@ -46,6 +46,9 @@ try {
 
     $_SESSION['user_name'] = trim($firstName . ' ' . $lastName);
 
+    require_once __DIR__ . '/student-activity-log-helper.php';
+    log_student_activity($pdo, $userId, 'profile_edit', 'Updated profile name');
+
     $fetchStmt = $pdo->prepare("SELECT id, first_name, last_name, email, student_id, grade_level, strand, last_login, COALESCE(profile_picture, '') as profile_picture FROM users WHERE id = ?");
     $fetchStmt->execute([$userId]);
     $user = $fetchStmt->fetch(PDO::FETCH_ASSOC);

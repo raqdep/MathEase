@@ -9,7 +9,6 @@ header('Content-Type: application/json; charset=utf-8');
 
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/maintenance-helper.php';
-require_once __DIR__ . '/maintenance-notify-users.php';
 
 if (!function_exists('adminMaintenanceJson')) {
     function adminMaintenanceJson(array $payload, int $statusCode = 200): void
@@ -95,7 +94,6 @@ try {
         $scheduledEnd = $input['scheduled_end_at'] ?? null;
         $estimatedEnd = $input['estimated_end_at'] ?? null;
         $advanceNoticeMinutes = (int) ($input['advance_notice_minutes'] ?? 30);
-        $sendEmail = !empty($input['send_email']);
         if ($advanceNoticeMinutes < 1) {
             $advanceNoticeMinutes = 1;
         }
@@ -154,7 +152,7 @@ try {
                 advance_notice_minutes = ?,
                 advance_notice_sent_at = NULL,
                 start_notice_sent_at = NULL,
-                send_email_on_start = ?,
+                send_email_on_start = 0,
                 started_at = CASE WHEN ? = 1 THEN NOW() ELSE NULL END,
                 ended_at = NULL,
                 updated_by_admin_id = ?
@@ -168,19 +166,9 @@ try {
             $endSql,
             $etaSql,
             $advanceNoticeMinutes,
-            $sendEmail ? 1 : 0,
             $initialActive,
             $_SESSION['admin_id'],
         ]);
-
-        $payload = getMaintenancePayload($pdo);
-        $emailResult = ['sent' => 0, 'failed' => 0, 'errors' => []];
-        if ($sendEmail && $startsNow) {
-            $emailResult = sendMaintenanceAnnouncementEmails($pdo, 'start', $payload);
-            if ((int) ($emailResult['sent'] ?? 0) > 0) {
-                $pdo->prepare('UPDATE system_maintenance SET start_notice_sent_at = NOW() WHERE id = 1')->execute();
-            }
-        }
 
         adminMaintenanceJson([
             'success' => true,
@@ -188,7 +176,6 @@ try {
                 ? 'Maintenance mode is ON. Students and teachers cannot log in.'
                 : 'Maintenance schedule saved. Login will be blocked automatically at the start time.',
             'data' => getMaintenancePayload($pdo),
-            'email' => $emailResult,
         ]);
     }
 
@@ -243,8 +230,6 @@ try {
             adminMaintenanceJson(['success' => false, 'message' => 'End date and time must be on or after the start date and time.'], 400);
         }
 
-        $sendEmailOnStart = !empty($input['send_email_on_start']) ? 1 : 0;
-
         $stmt = $pdo->prepare('
             UPDATE system_maintenance SET
                 title = ?,
@@ -253,7 +238,7 @@ try {
                 scheduled_end_at = ?,
                 estimated_end_at = ?,
                 advance_notice_minutes = ?,
-                send_email_on_start = ?,
+                send_email_on_start = 0,
                 updated_by_admin_id = ?
             WHERE id = 1
         ');
@@ -264,7 +249,6 @@ try {
             $endSql,
             $etaSql,
             $advanceNoticeMinutes,
-            $sendEmailOnStart,
             $_SESSION['admin_id'],
         ]);
 
@@ -276,7 +260,6 @@ try {
     }
 
     if ($action === 'end') {
-        $sendEmail = !empty($input['send_email']);
         $title = trim((string) ($input['title'] ?? ''));
         $publicMessage = trim((string) ($input['public_message'] ?? ''));
         $estimatedEnd = $input['estimated_end_at'] ?? null;
@@ -287,7 +270,6 @@ try {
             $etaSql = $dt ?: null;
         }
 
-        // Always persist latest form values before sending completion emails.
         $payloadBefore = getMaintenancePayload($pdo);
         if ($etaSql !== null) {
             $refStart = $payloadBefore['scheduled_start_at'] ?? $payloadBefore['started_at'] ?? null;
@@ -318,24 +300,10 @@ try {
         ');
         $stmt->execute([$finalTitle, $finalMessage, $finalEta, $_SESSION['admin_id']]);
 
-        $payload = getMaintenancePayload($pdo);
-        $emailResult = ['sent' => 0, 'failed' => 0, 'errors' => []];
-        if ($sendEmail) {
-            $merge = array_merge($payloadBefore, [
-                'title' => $finalTitle,
-                'public_message' => $finalMessage,
-                'message' => $finalMessage,
-                'estimated_end_at' => $finalEta,
-                'ended_at' => date('Y-m-d H:i:s'),
-            ]);
-            $emailResult = sendMaintenanceAnnouncementEmails($pdo, 'end', $merge);
-        }
-
         adminMaintenanceJson([
             'success' => true,
             'message' => 'Maintenance mode is OFF. Users can log in again.',
             'data' => getMaintenancePayload($pdo),
-            'email' => $emailResult,
         ]);
     }
 

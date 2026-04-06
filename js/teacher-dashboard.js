@@ -338,32 +338,40 @@ class TeacherDashboardManager {
             });
         });
 
-        // SweetAlert logout confirm (anchor must use id="logoutLink" and href="#")
-        const logoutLink = document.getElementById('logoutLink');
-        const teacherLogoutUrl = 'php/smart-logout.php?type=teacher';
-        if (logoutLink) {
-            logoutLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (window.Swal) {
-                    Swal.fire({
-                        title: 'Logout?',
-                        text: 'Are you sure you want to logout?',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#f59e0b',
-                        cancelButtonColor: '#6b7280',
-                        confirmButtonText: 'Yes, logout',
-                        cancelButtonText: 'Cancel',
-                        focusCancel: true
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.href = teacherLogoutUrl;
-                        }
-                    });
-                } else if (confirm('Are you sure you want to logout?')) {
-                    window.location.href = teacherLogoutUrl;
-                }
-            });
+        // Logout: use capture phase so we run before document-level "close dropdown" handlers
+        // and still catch clicks on child elements (icons/text inside the link).
+        if (!window.__matheaseTeacherLogoutCaptureAttached) {
+            window.__matheaseTeacherLogoutCaptureAttached = true;
+            const teacherLogoutUrl = 'php/smart-logout.php?type=teacher';
+            document.addEventListener(
+                'click',
+                (e) => {
+                    const logoutEl = e.target && e.target.closest && e.target.closest('#logoutLink');
+                    if (!logoutEl) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (window.Swal) {
+                        Swal.fire({
+                            title: 'Logout?',
+                            text: 'Are you sure you want to logout?',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#f59e0b',
+                            cancelButtonColor: '#6b7280',
+                            confirmButtonText: 'Yes, logout',
+                            cancelButtonText: 'Cancel',
+                            focusCancel: true
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = teacherLogoutUrl;
+                            }
+                        });
+                    } else if (confirm('Are you sure you want to logout?')) {
+                        window.location.href = teacherLogoutUrl;
+                    }
+                },
+                true
+            );
         }
     }
 

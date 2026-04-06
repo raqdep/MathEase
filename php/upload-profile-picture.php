@@ -145,6 +145,9 @@ try {
     }
     
     error_log("SUCCESS: Profile picture saved to database for user_id: $user_id, filename: $filename");
+
+    require_once __DIR__ . '/student-activity-log-helper.php';
+    log_student_activity($pdo, (int) $user_id, 'profile_edit', 'Uploaded or changed profile picture');
     
     $normalizedPath = normalizeStudentProfilePicture($filename);
 

@@ -277,6 +277,7 @@ async function viewTeacherDetails(teacherId) {
             currentTeacherId = teacherId;
             displayTeacherDetails(data.teacher);
             document.getElementById('teacher-details-modal').classList.remove('hidden');
+            viewTeacherActivity(teacherId);
         }
     } catch (error) {
         console.error('Error loading teacher details:', error);
@@ -319,9 +320,9 @@ function displayTeacherDetails(teacher) {
             </div>
 
             <div class="flex gap-2">
-                <button type="button" onclick="viewTeacherActivity(${teacher.id})" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-slate-900 rounded-lg hover:bg-slate-950 transition-colors">
-                    <i class="fas fa-history mr-2"></i>
-                    View activity
+                <button type="button" onclick="viewTeacherActivity(${teacher.id})" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors" title="Reload audit trail from server">
+                    <i class="fas fa-rotate mr-2"></i>
+                    Refresh audit trail
                 </button>
             </div>
         </div>
@@ -361,186 +362,344 @@ function displayTeacherDetails(teacher) {
                 </dl>
             </div>
         </div>
-        <div id="teacher-activity-section" class="hidden mt-6">
-            <div class="flex items-center gap-2 mb-4">
-                <i class="fas fa-history text-slate-700"></i>
-                <h4 class="text-sm font-semibold text-slate-900">Activity log</h4>
+        <div id="teacher-activity-section" class="mt-8 pt-6 border-t border-slate-200">
+            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+                <div class="flex items-start gap-3">
+                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-indigo-700 border border-indigo-200/80">
+                        <i class="fas fa-clipboard-list"></i>
+                    </span>
+                    <div>
+                        <h4 class="text-base font-bold text-slate-900">Audit trail</h4>
+                        <p class="text-xs text-slate-500 mt-0.5 max-w-xl">Chronological record: sign-in/out, class and enrollment actions, lessons (create, publish, view), topic access, quiz settings, and admin events.</p>
+                    </div>
+                </div>
             </div>
             <div id="teacher-activity-content" class="space-y-2">
-                <div class="text-center py-6 text-slate-500 border border-dashed border-slate-200 rounded-xl bg-slate-50">
-                    <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
-                    <p>Loading activity...</p>
+                <div class="text-center py-8 text-slate-500 border border-dashed border-slate-200 rounded-xl bg-slate-50/80">
+                    <i class="fas fa-spinner fa-spin text-2xl mb-2 text-indigo-500"></i>
+                    <p class="text-sm font-medium">Loading audit trail…</p>
                 </div>
             </div>
         </div>
     `;
 }
 
+/** Last payload from admin-teacher-activity.php for filter re-renders */
+let __teacherAuditCache = null;
+let __teacherAuditFilter = 'all';
+
+function teacherAuditActionMeta(action) {
+    const a = String(action || '').toLowerCase();
+    const map = {
+        login: { label: 'Signed in', icon: 'fa-right-to-bracket', color: 'indigo', known: true },
+        logout: { label: 'Signed out', icon: 'fa-right-from-bracket', color: 'slate', known: true },
+        email_verified: { label: 'Email verified', icon: 'fa-envelope-circle-check', color: 'emerald', known: true },
+        account_approved: { label: 'Account approved (admin)', icon: 'fa-user-check', color: 'emerald', known: true },
+        account_archived: { label: 'Account archived (admin)', icon: 'fa-box-archive', color: 'red', known: true },
+        account_restored: { label: 'Account restored (admin)', icon: 'fa-rotate-left', color: 'emerald', known: true },
+        class_created: { label: 'Class created', icon: 'fa-chalkboard', color: 'violet', known: true },
+        class_removed: { label: 'Class removed', icon: 'fa-chalkboard-user-slash', color: 'red', known: true },
+        lesson_created: { label: 'Lesson created', icon: 'fa-file-lines', color: 'violet', known: true },
+        lesson_viewed: { label: 'Lesson opened (editor)', icon: 'fa-eye', color: 'indigo', known: true },
+        lesson_published: { label: 'Lesson published', icon: 'fa-upload', color: 'emerald', known: true },
+        lesson_unpublished: { label: 'Lesson unpublished', icon: 'fa-eye-slash', color: 'amber', known: true },
+        lesson_deleted: { label: 'Lesson deleted', icon: 'fa-trash-can', color: 'red', known: true },
+        topic_opened: { label: 'Topic opened for class', icon: 'fa-unlock', color: 'emerald', known: true },
+        topic_closed: { label: 'Topic closed for class', icon: 'fa-lock', color: 'amber', known: true },
+        quiz_opened: { label: 'Quiz opened', icon: 'fa-circle-play', color: 'emerald', known: true },
+        quiz_closed: { label: 'Quiz closed', icon: 'fa-circle-xmark', color: 'amber', known: true },
+        quiz_settings_saved: { label: 'Quiz deadline / settings updated', icon: 'fa-sliders', color: 'indigo', known: true },
+        student_enrollment_approved: { label: 'Student enrollment approved', icon: 'fa-user-check', color: 'emerald', known: true },
+        student_enrollment_rejected: { label: 'Student enrollment rejected', icon: 'fa-user-xmark', color: 'red', known: true }
+    };
+    if (map[a]) return map[a];
+    return {
+        label: a ? a.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()) : 'Activity',
+        icon: 'fa-circle',
+        color: 'slate',
+        known: false
+    };
+}
+
+function teacherAuditCategory(action) {
+    const a = String(action || '').toLowerCase();
+    if (['login', 'logout', 'email_verified'].includes(a)) return 'access';
+    if (a.startsWith('account_')) return 'admin';
+    if (a.startsWith('class_') || a.includes('enrollment')) return 'classes';
+    if (a.startsWith('lesson_') || a.startsWith('topic_')) return 'lessons';
+    if (a.startsWith('quiz_')) return 'quizzes';
+    return 'other';
+}
+
+function teacherAuditColorClasses(c) {
+    switch (c) {
+        case 'emerald':
+            return { badge: 'bg-emerald-50 border-emerald-100 text-emerald-700', icon: 'bg-emerald-50 border-emerald-100 text-emerald-700' };
+        case 'violet':
+            return { badge: 'bg-violet-50 border-violet-100 text-violet-700', icon: 'bg-violet-50 border-violet-100 text-violet-700' };
+        case 'red':
+            return { badge: 'bg-red-50 border-red-100 text-red-700', icon: 'bg-red-50 border-red-100 text-red-700' };
+        case 'indigo':
+            return { badge: 'bg-indigo-50 border-indigo-100 text-indigo-700', icon: 'bg-indigo-50 border-indigo-100 text-indigo-700' };
+        case 'amber':
+            return { badge: 'bg-amber-50 border-amber-100 text-amber-800', icon: 'bg-amber-50 border-amber-100 text-amber-800' };
+        default:
+            return { badge: 'bg-slate-50 border-slate-200 text-slate-700', icon: 'bg-slate-50 border-slate-200 text-slate-700' };
+    }
+}
+
+function teacherAuditStripColor(meta) {
+    if (meta.color === 'emerald') return 'bg-emerald-500';
+    if (meta.color === 'red') return 'bg-red-500';
+    if (meta.color === 'violet') return 'bg-violet-500';
+    if (meta.color === 'amber') return 'bg-amber-500';
+    if (meta.color === 'indigo') return 'bg-indigo-500';
+    return 'bg-slate-400';
+}
+
+function formatTeacherAuditDayLabel(isoOrSql) {
+    const d = new Date(isoOrSql);
+    if (Number.isNaN(d.getTime())) return 'Date unknown';
+    const today = new Date();
+    const yest = new Date(today);
+    yest.setDate(yest.getDate() - 1);
+    const sameDay = (x, y) =>
+        x.getFullYear() === y.getFullYear() && x.getMonth() === y.getMonth() && x.getDate() === y.getDate();
+    if (sameDay(d, today)) return 'Today';
+    if (sameDay(d, yest)) return 'Yesterday';
+    return d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function setTeacherAuditFilter(filter) {
+    __teacherAuditFilter = filter;
+    if (__teacherAuditCache) {
+        renderTeacherAuditTrail(__teacherAuditCache);
+    }
+}
+
 async function viewTeacherActivity(teacherId) {
-    const activitySection = document.getElementById('teacher-activity-section');
     const activityContent = document.getElementById('teacher-activity-content');
-    
-    if (!activitySection || !activityContent) {
+
+    if (!activityContent) {
         Swal.fire('Error', 'Activity section not found', 'error');
         return;
     }
-    
-    activitySection.classList.remove('hidden');
+
     activityContent.innerHTML = `
-        <div class="text-center py-4 text-gray-500">
-            <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
-            <p>Loading activity...</p>
+        <div class="text-center py-8 text-slate-500 border border-dashed border-slate-200 rounded-xl bg-slate-50/80">
+            <i class="fas fa-spinner fa-spin text-2xl mb-2 text-indigo-500"></i>
+            <p class="text-sm font-medium">Loading audit trail…</p>
         </div>
     `;
-    
+
     try {
         const response = await fetch(`php/admin-teacher-activity.php?teacher_id=${teacherId}`, {
             method: 'GET',
             credentials: 'same-origin',
             cache: 'no-store'
         });
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
-            displayTeacherActivity(data);
+            __teacherAuditCache = data;
+            __teacherAuditFilter = 'all';
+            renderTeacherAuditTrail(data);
         } else {
             throw new Error(data.message || 'Failed to load activity');
         }
     } catch (error) {
         console.error('Error loading teacher activity:', error);
         activityContent.innerHTML = `
-            <div class="text-center py-4 text-red-500">
+            <div class="text-center py-8 text-red-600 border border-red-100 rounded-xl bg-red-50/80">
                 <i class="fas fa-exclamation-circle text-2xl mb-2"></i>
-                <p>Failed to load activity: ${error.message}</p>
+                <p class="text-sm font-medium">Could not load audit trail</p>
+                <p class="text-xs mt-1 text-red-700/90">${escapeHtml(error.message)}</p>
             </div>
         `;
     }
 }
 
 function displayTeacherActivity(data) {
+    __teacherAuditCache = data;
+    renderTeacherAuditTrail(data);
+}
+
+function renderTeacherAuditTrail(data) {
     const activityContent = document.getElementById('teacher-activity-content');
-    
-    if (!data.activities || data.activities.length === 0) {
+    if (!activityContent) return;
+
+    const filter = __teacherAuditFilter || 'all';
+    const allActivities = Array.isArray(data.activities) ? data.activities : [];
+
+    const filterPills = [
+        { id: 'all', label: 'All events' },
+        { id: 'access', label: 'Sign-in & email' },
+        { id: 'admin', label: 'Admin / account' },
+        { id: 'classes', label: 'Classes & enrollments' },
+        { id: 'lessons', label: 'Lessons & topics' },
+        { id: 'quizzes', label: 'Quizzes' },
+        { id: 'other', label: 'Other' }
+    ];
+
+    const matchesFilter = (activity) => {
+        if (filter === 'all') return true;
+        return teacherAuditCategory(activity.action) === filter;
+    };
+
+    const activities = allActivities.filter(matchesFilter);
+
+    if (!allActivities.length) {
         activityContent.innerHTML = `
-            <div class="text-center py-10 text-slate-500 border border-dashed border-slate-200 rounded-xl bg-slate-50">
-                <i class="fas fa-history text-3xl mb-3 text-slate-400"></i>
-                <p class="font-semibold text-slate-700">No activity yet</p>
-                <p class="text-sm mt-1">This teacher has no recorded events.</p>
+            <div class="text-center py-12 text-slate-500 border border-dashed border-slate-200 rounded-xl bg-slate-50">
+                <i class="fas fa-clipboard-list text-3xl mb-3 text-slate-400"></i>
+                <p class="font-semibold text-slate-800">No audit events yet</p>
+                <p class="text-sm mt-1 max-w-sm mx-auto">When this teacher uses the portal (login, classes, lessons, quizzes), events will appear here.</p>
             </div>
         `;
         return;
     }
-    
-    const actionMeta = (action) => {
-        const a = String(action || '').toLowerCase();
-        const map = {
-            login: { label: 'Logins', icon: 'fa-right-to-bracket', color: 'indigo' },
-            logout: { label: 'Logouts', icon: 'fa-right-from-bracket', color: 'slate' },
-            email_verified: { label: 'Email verified', icon: 'fa-envelope-circle-check', color: 'emerald' },
-            account_approved: { label: 'Account approved', icon: 'fa-user-check', color: 'emerald' },
-            class_created: { label: 'Classes created', icon: 'fa-chalkboard', color: 'violet' },
-            lesson_created: { label: 'Lessons created', icon: 'fa-book', color: 'violet' },
-            student_enrollment_approved: { label: 'Students approved', icon: 'fa-user-check', color: 'emerald' },
-            student_enrollment_rejected: { label: 'Students rejected', icon: 'fa-user-xmark', color: 'red' }
-        };
-        return map[a] || { label: a ? a.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Activity', icon: 'fa-circle', color: 'slate' };
-    };
 
-    const colorClasses = (c) => {
-        switch (c) {
-            case 'emerald':
-                return { badge: 'bg-emerald-50 border-emerald-100 text-emerald-700', icon: 'bg-emerald-50 border-emerald-100 text-emerald-700' };
-            case 'violet':
-                return { badge: 'bg-violet-50 border-violet-100 text-violet-700', icon: 'bg-violet-50 border-violet-100 text-violet-700' };
-            case 'red':
-                return { badge: 'bg-red-50 border-red-100 text-red-700', icon: 'bg-red-50 border-red-100 text-red-700' };
-            case 'indigo':
-                return { badge: 'bg-indigo-50 border-indigo-100 text-indigo-700', icon: 'bg-indigo-50 border-indigo-100 text-indigo-700' };
-            default:
-                return { badge: 'bg-slate-50 border-slate-200 text-slate-700', icon: 'bg-slate-50 border-slate-200 text-slate-700' };
-        }
-    };
+    const statsSorted = [...(data.statistics || [])].sort((a, b) => (b.count || 0) - (a.count || 0));
 
     let html = `
-        <div class="mb-4 border border-slate-200 rounded-xl bg-slate-50 p-4">
-            <div class="flex items-center gap-2 mb-3">
-                <i class="fas fa-chart-bar text-indigo-600"></i>
-                <h5 class="text-sm font-semibold text-slate-900">Activity statistics</h5>
-            </div>
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                <div class="bg-white border border-slate-200 rounded-xl p-3">
-                    <div class="flex items-start justify-between gap-2">
-                        <div>
-                            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Total</p>
-                            <p class="text-2xl font-bold text-slate-900 mt-1">${data.total_activities || 0}</p>
-                        </div>
-                        <span class="h-9 w-9 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-center text-slate-700">
-                            <i class="fas fa-list"></i>
-                        </span>
-                    </div>
-                </div>
-    `;
-    
-    if (data.statistics && data.statistics.length > 0) {
-        const top = [...data.statistics]
-            .sort((a, b) => (b.count || 0) - (a.count || 0))
-            .slice(0, 3);
+        <div class="mb-5 flex flex-wrap gap-2" role="tablist" aria-label="Filter audit trail">
+            ${filterPills
+                .map(
+                    (p) => `
+                <button type="button" role="tab" aria-selected="${filter === p.id ? 'true' : 'false'}"
+                    onclick="setTeacherAuditFilter('${p.id}')"
+                    class="px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
+                        filter === p.id
+                            ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                            : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:text-indigo-800'
+                    }">
+                    ${escapeHtml(p.label)}
+                </button>
+            `
+                )
+                .join('')}
+        </div>
+        <p class="text-xs text-slate-500 mb-4">${filter === 'all' ? `Showing all <strong>${allActivities.length}</strong> events.` : `Showing <strong>${activities.length}</strong> of <strong>${allActivities.length}</strong> events (filtered).`} Summary below uses the full history.</p>
 
-        top.forEach(stat => {
-            const meta = actionMeta(stat.action);
-            const cls = colorClasses(meta.color);
-            html += `
-                <div class="bg-white border border-slate-200 rounded-xl p-3">
-                    <div class="flex items-start justify-between gap-2">
-                        <div class="min-w-0">
-                            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide truncate">${escapeHtml(meta.label)}</p>
-                            <p class="text-2xl font-bold text-slate-900 mt-1">${stat.count}</p>
-                        </div>
-                        <span class="h-9 w-9 rounded-xl border ${cls.badge} flex items-center justify-center flex-shrink-0">
-                            <i class="fas ${meta.icon}"></i>
-                        </span>
-                    </div>
+        <div class="mb-5 rounded-xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-indigo-50/50 p-4 shadow-sm">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-sm">
+                    <i class="fas fa-chart-pie text-sm"></i>
+                </span>
+                <div>
+                    <h5 class="text-sm font-bold text-slate-900">Summary by event type</h5>
+                    <p class="text-xs text-slate-500">Counts for every recorded action type</p>
                 </div>
-            `;
-        });
-    }
-    
-    html += `
+            </div>
+            <div class="flex flex-wrap items-center gap-2 mb-3">
+                <span class="inline-flex items-center rounded-lg bg-slate-900 text-white text-xs font-bold px-3 py-2">
+                    <i class="fas fa-layer-group mr-2 opacity-90"></i>
+                    Total ${data.total_activities ?? allActivities.length}
+                </span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 max-h-48 overflow-y-auto overscroll-contain pr-1">
+                ${statsSorted
+                    .map((stat) => {
+                        const meta = teacherAuditActionMeta(stat.action);
+                        const cls = teacherAuditColorClasses(meta.color);
+                        return `
+                        <div class="bg-white border border-slate-200 rounded-lg p-2.5 min-w-0">
+                            <div class="flex items-start justify-between gap-1">
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wide leading-tight line-clamp-2">${escapeHtml(meta.label)}</p>
+                                    <p class="text-lg font-bold text-slate-900 mt-0.5">${stat.count}</p>
+                                </div>
+                                <span class="h-7 w-7 rounded-md border ${cls.badge} flex items-center justify-center flex-shrink-0">
+                                    <i class="fas ${meta.icon} text-[10px]"></i>
+                                </span>
+                            </div>
+                        </div>`;
+                    })
+                    .join('')}
             </div>
         </div>
-        <div class="space-y-2">
     `;
-    
-    data.activities.forEach(activity => {
-        const meta = actionMeta(activity.action);
-        const cls = colorClasses(meta.color);
-        
+
+    if (!activities.length) {
         html += `
-            <div class="flex items-start gap-3 p-4 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
-                <div class="flex-shrink-0">
-                    <div class="h-10 w-10 rounded-xl border ${cls.icon} flex items-center justify-center">
-                        <i class="fas ${meta.icon}"></i>
+            <div class="text-center py-10 text-slate-600 border border-dashed border-amber-200 rounded-xl bg-amber-50/50">
+                <i class="fas fa-filter text-2xl mb-2 text-amber-600"></i>
+                <p class="font-semibold text-slate-800">No events in this category</p>
+                <p class="text-sm mt-1">Choose another filter or <button type="button" class="text-indigo-600 font-semibold underline" onclick="setTeacherAuditFilter('all')">show all events</button>.</p>
+            </div>
+        `;
+        activityContent.innerHTML = html;
+        return;
+    }
+
+    const byDay = new Map();
+    for (const activity of activities) {
+        const dayKey = formatTeacherAuditDayLabel(activity.created_at);
+        if (!byDay.has(dayKey)) byDay.set(dayKey, []);
+        byDay.get(dayKey).push(activity);
+    }
+
+    for (const [, rows] of byDay) {
+        rows.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    }
+
+    html += `<div class="space-y-8">`;
+
+    for (const [dayLabel, rows] of byDay) {
+        html += `
+            <div>
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-700 whitespace-nowrap">${escapeHtml(dayLabel)}</span>
+                    <div class="h-px flex-1 bg-gradient-to-r from-indigo-200 to-transparent"></div>
+                    <span class="text-[10px] font-medium text-slate-400">${rows.length} event${rows.length === 1 ? '' : 's'}</span>
+                </div>
+                <div class="space-y-2 pl-0 sm:pl-1">
+        `;
+
+        for (const activity of rows) {
+            const meta = teacherAuditActionMeta(activity.action);
+            const cls = teacherAuditColorClasses(meta.color);
+            const strip = teacherAuditStripColor(meta);
+            const showTechnical = !meta.known;
+
+            html += `
+            <div class="flex items-start gap-3 p-3.5 sm:p-4 bg-white border border-slate-200 rounded-xl hover:border-indigo-200 hover:shadow-sm transition-all relative overflow-hidden">
+                <div class="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl ${strip}"></div>
+                <div class="flex-shrink-0 pl-2">
+                    <div class="h-10 w-10 rounded-xl border ${cls.icon} flex items-center justify-center shadow-sm">
+                        <i class="fas ${meta.icon} text-sm"></i>
                     </div>
                 </div>
                 <div class="flex-1 min-w-0">
-                    <div class="flex items-start justify-between gap-3">
-                        <p class="text-sm font-semibold text-slate-900">${escapeHtml(meta.label)}</p>
-                        <span class="text-xs text-slate-500 whitespace-nowrap">${escapeHtml(formatDate(activity.created_at))}</span>
+                    <div class="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-x-3">
+                        <div class="min-w-0">
+                            <p class="text-sm font-semibold text-slate-900">${escapeHtml(meta.label)}</p>
+                            ${
+                                showTechnical
+                                    ? `<p class="text-[10px] font-mono text-slate-400 mt-0.5">${escapeHtml(String(activity.action || ''))}</p>`
+                                    : `<p class="text-[10px] text-slate-400 mt-0.5"><span class="inline-flex items-center rounded px-1.5 py-0.5 bg-slate-100 text-slate-600 font-medium">${escapeHtml(teacherAuditCategory(activity.action))}</span></p>`
+                            }
+                        </div>
+                        <time class="text-xs text-slate-500 whitespace-nowrap tabular-nums sm:text-right" datetime="${escapeHtml(String(activity.created_at || ''))}">${escapeHtml(formatDate(activity.created_at))}</time>
                     </div>
-                    ${activity.details ? `<p class="text-sm text-slate-600 mt-1">${escapeHtml(String(activity.details))}</p>` : ''}
-                    <div class="flex items-center mt-2 text-xs text-slate-500 gap-3">
+                    ${activity.details ? `<p class="text-sm text-slate-600 mt-2 leading-relaxed">${escapeHtml(String(activity.details))}</p>` : ''}
+                    <div class="flex flex-wrap items-center mt-2 text-[11px] text-slate-500 gap-x-3 gap-y-1">
                         ${activity.ip_address ? `<span class="inline-flex items-center"><i class="fas fa-network-wired mr-1 text-slate-400"></i>${escapeHtml(String(activity.ip_address))}</span>` : ''}
                     </div>
                 </div>
             </div>
         `;
-    });
-    
+        }
+
+        html += `</div></div>`;
+    }
+
     html += `</div>`;
-    
     activityContent.innerHTML = html;
 }
+
+window.setTeacherAuditFilter = setTeacherAuditFilter;
 
 function closeTeacherDetailsModal() {
     document.getElementById('teacher-details-modal').classList.add('hidden');
@@ -2022,24 +2181,24 @@ function applyMaintenanceForm(d) {
     const label = document.getElementById('maintenance-status-label');
     const dot = document.getElementById('maintenance-status-dot');
     const badge = document.getElementById('maintenance-status-badge');
-    const emailStartEl = document.getElementById('maintenance-email-start');
     if (titleEl) titleEl.value = d.title || '';
     if (msgEl) msgEl.value = d.public_message || '';
     if (startEl) startEl.value = d.scheduled_start_at ? isoToDatetimeLocal(d.scheduled_start_at) : '';
     if (endEl) endEl.value = (d.scheduled_end_at || d.estimated_end_at) ? isoToDatetimeLocal(d.scheduled_end_at || d.estimated_end_at) : '';
     if (label && dot && badge) {
+        const badgeBase = 'inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium';
         if (d.is_active) {
             label.textContent = 'Maintenance ON — students/teachers cannot log in';
             dot.className = 'w-2 h-2 rounded-full bg-amber-500 mr-2 animate-pulse';
-            badge.className = 'mb-6 inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-amber-50 text-amber-900 border border-amber-200';
+            badge.className = `${badgeBase} bg-amber-50 text-amber-900 border border-amber-200`;
         } else if (d.is_upcoming) {
             label.textContent = 'Maintenance scheduled — login block starts at the configured time';
-            dot.className = 'w-2 h-2 rounded-full bg-indigo-500 mr-2';
-            badge.className = 'mb-6 inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-indigo-50 text-indigo-700 border border-indigo-200';
+            dot.className = 'w-2 h-2 rounded-full bg-violet-500 mr-2';
+            badge.className = `${badgeBase} bg-violet-50 text-violet-800 border border-violet-200`;
         } else {
             label.textContent = 'Normal — logins allowed';
             dot.className = 'w-2 h-2 rounded-full bg-emerald-500 mr-2';
-            badge.className = 'mb-6 inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200';
+            badge.className = `${badgeBase} bg-emerald-50 text-emerald-800 border border-emerald-200`;
         }
     }
     syncMaintenanceScheduleUi(d);
@@ -2057,10 +2216,13 @@ function syncMaintenanceScheduleUi(d) {
             notice.classList.add('hidden');
         }
     }
-    const block = !!(d && (d.cannot_schedule_new != null ? d.cannot_schedule_new : (d.is_active || d.is_upcoming)));
+    const cannotNew = !!(d && (d.cannot_schedule_new != null ? d.cannot_schedule_new : (d.is_active || d.is_upcoming)));
     if (startBtn) {
-        startBtn.disabled = block;
-        startBtn.title = block ? 'Maintenance is currently active. You cannot schedule another.' : '';
+        // Allow scheduling only when no window is active or upcoming; save/end stay available when blocked.
+        startBtn.disabled = cannotNew;
+        startBtn.title = cannotNew
+            ? 'A maintenance window is already active or scheduled. End it or wait for it to pass before starting a new one.'
+            : '';
     }
 }
 
@@ -2071,37 +2233,6 @@ function isoToDatetimeLocal(s) {
     if (isNaN(d.getTime())) return '';
     const pad = n => String(n).padStart(2, '0');
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
-
-function showEmailResult(email) {
-    const el = document.getElementById('maintenance-email-result');
-    if (!el) return;
-    if (!email || (email.sent == null && email.failed == null)) {
-        el.textContent = '';
-        return;
-    }
-    const total = Number(email.total_recipients || (Number(email.sent || 0) + Number(email.failed || 0)));
-    const durationMs = Number(email.duration_ms || 0);
-    const durationText = durationMs > 0 ? ` in ${(durationMs / 1000).toFixed(1)}s` : '';
-    el.textContent = `Last email run: sent ${email.sent}, failed ${email.failed}, total ${total}${durationText}`;
-}
-
-function clearMaintenanceComposeFields() {
-    const titleEl = document.getElementById('maintenance-title');
-    const msgEl = document.getElementById('maintenance-message');
-    const startEl = document.getElementById('maintenance-start-at');
-    const endEl = document.getElementById('maintenance-end-at');
-    if (titleEl) titleEl.value = '';
-    if (msgEl) msgEl.value = '';
-    if (startEl) startEl.value = '';
-    if (endEl) endEl.value = '';
-}
-
-function didEmailSendSuccessfully(email) {
-    if (!email || typeof email !== 'object') return false;
-    const sent = Number(email.sent || 0);
-    const failed = Number(email.failed || 0);
-    return sent > 0 && failed === 0;
 }
 
 /** datetime-local values (YYYY-MM-DDTHH:mm). Returns true if end is strictly before start. */
@@ -2122,8 +2253,8 @@ function setMaintenanceActionBusy(isBusy, message) {
         if (!btn) return;
         btn.disabled = !!isBusy;
     });
-    if (resultEl && message) {
-        resultEl.textContent = message;
+    if (resultEl) {
+        resultEl.textContent = isBusy && message ? message : '';
     }
 }
 
@@ -2133,7 +2264,6 @@ async function startSystemMaintenance() {
     const scheduled_start_at = document.getElementById('maintenance-start-at')?.value || '';
     const scheduled_end_at = document.getElementById('maintenance-end-at')?.value || '';
     const estimated_end_at = scheduled_end_at || '';
-    const send_email = document.getElementById('maintenance-email-start')?.checked;
     if (!scheduled_start_at) {
         Swal.fire('Required', 'Start date is required', 'warning');
         return;
@@ -2147,11 +2277,11 @@ async function startSystemMaintenance() {
         return;
     }
     const confirm = await Swal.fire({
-        title: 'Save maintenance schedule?',
-        text: 'Logins for students and teachers will be blocked automatically at the start time.',
+        title: 'Save maintenance?',
+        text: 'If the start time is in the future, student and teacher logins stay open until then. If the start time is now or in the past, maintenance begins immediately.',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Yes, start',
+        confirmButtonText: 'Yes, save',
         confirmButtonColor: '#d97706'
     });
     if (!confirm.isConfirmed) return;
@@ -2167,8 +2297,7 @@ async function startSystemMaintenance() {
                 public_message,
                 scheduled_start_at,
                 scheduled_end_at,
-                estimated_end_at,
-                send_email
+                estimated_end_at
             })
         });
         const raw = await res.text();
@@ -2176,15 +2305,15 @@ async function startSystemMaintenance() {
         try {
             data = JSON.parse(raw);
         } catch (parseErr) {
-            throw new Error('Server returned non-JSON response. Please check PHP logs and SMTP credentials.');
+            throw new Error('Server returned non-JSON response. Check PHP error logs.');
         }
         if (data.success) {
-            Swal.fire({ icon: 'success', title: 'Maintenance started', text: data.message || '' });
+            const d = data.data || {};
+            let successTitle = 'Saved';
+            if (d.is_upcoming) successTitle = 'Maintenance scheduled';
+            else if (d.maintenance || d.is_active) successTitle = 'Maintenance active';
+            Swal.fire({ icon: 'success', title: successTitle, text: data.message || '' });
             applyMaintenanceForm(data.data);
-            showEmailResult(data.email);
-            if (didEmailSendSuccessfully(data.email)) {
-                clearMaintenanceComposeFields();
-            }
         } else {
             Swal.fire('Error', data.message || 'Failed', 'error');
         }
@@ -2225,8 +2354,7 @@ async function saveMaintenanceDraft() {
                 public_message,
                 scheduled_start_at,
                 scheduled_end_at,
-                estimated_end_at,
-                send_email_on_start: !!document.getElementById('maintenance-email-start')?.checked
+                estimated_end_at
             })
         });
         const raw = await res.text();
@@ -2250,7 +2378,6 @@ async function saveMaintenanceDraft() {
 }
 
 async function endSystemMaintenance() {
-    const send_email = document.getElementById('maintenance-email-end')?.checked;
     const title = document.getElementById('maintenance-title')?.value?.trim() || '';
     const public_message = document.getElementById('maintenance-message')?.value?.trim() || '';
     const estimated_end_at = document.getElementById('maintenance-end-at')?.value || '';
@@ -2269,29 +2396,23 @@ async function endSystemMaintenance() {
     });
     if (!confirm.isConfirmed) return;
     try {
-        setMaintenanceActionBusy(true, send_email
-            ? 'Ending maintenance and sending completion emails... please wait.'
-            : 'Ending maintenance...');
+        setMaintenanceActionBusy(true, 'Ending maintenance...');
         const res = await fetch('php/admin-maintenance.php', {
             method: 'POST',
             credentials: 'same-origin',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'end', send_email, title, public_message, estimated_end_at })
+            body: JSON.stringify({ action: 'end', title, public_message, estimated_end_at })
         });
         const raw = await res.text();
         let data;
         try {
             data = JSON.parse(raw);
         } catch (parseErr) {
-            throw new Error('Server returned non-JSON response. Please check PHP logs and SMTP credentials.');
+            throw new Error('Server returned non-JSON response. Check PHP error logs.');
         }
         if (data.success) {
             Swal.fire({ icon: 'success', title: 'Maintenance ended', text: data.message || '' });
             applyMaintenanceForm(data.data);
-            showEmailResult(data.email);
-            if (didEmailSendSuccessfully(data.email)) {
-                clearMaintenanceComposeFields();
-            }
         } else {
             Swal.fire('Error', data.message || 'Failed', 'error');
         }

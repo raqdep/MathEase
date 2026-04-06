@@ -377,35 +377,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("UPDATE teachers SET last_login = NOW() WHERE id = ?");
         $stmt->execute([$teacher['id']]);
         
-        // Log teacher activity
-        try {
-            $pdo->exec("
-                CREATE TABLE IF NOT EXISTS teacher_activity_log (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    teacher_id INT NOT NULL,
-                    action VARCHAR(100) NOT NULL,
-                    details TEXT,
-                    ip_address VARCHAR(45),
-                    user_agent TEXT,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    INDEX idx_teacher (teacher_id),
-                    INDEX idx_action (action),
-                    INDEX idx_created (created_at)
-                )
-            ");
-            
-            $stmt = $pdo->prepare("
-                INSERT INTO teacher_activity_log (teacher_id, action, details, ip_address, user_agent)
-                VALUES (?, 'login', 'Teacher logged in successfully', ?, ?)
-            ");
-            $stmt->execute([
-                $teacher['id'],
-                $_SERVER['REMOTE_ADDR'] ?? 'unknown',
-                $_SERVER['HTTP_USER_AGENT'] ?? 'unknown'
-            ]);
-        } catch (Exception $e) {
-            error_log("Failed to log teacher activity: " . $e->getMessage());
-        }
+        require_once __DIR__ . '/teacher-activity-log-helper.php';
+        log_teacher_activity($pdo, (int) $teacher['id'], 'login', 'Teacher signed in successfully.');
         
         // Log successful login
         error_log("Teacher logged in: $email (ID: {$teacher['id']})");

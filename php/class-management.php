@@ -2,6 +2,7 @@
 session_start();
 require_once 'config.php';
 require_once 'student-notification-helper.php';
+require_once __DIR__ . '/teacher-activity-log-helper.php';
 
 header('Content-Type: application/json');
 
@@ -15,7 +16,7 @@ class ClassManagement {
             throw new Exception("Database connection not available");
         }
     }
-    
+
     // Generate a unique class code
     public function generateClassCode() {
         $code = '';
@@ -46,38 +47,14 @@ class ClassManagement {
             if ($stmt->execute([$teacherId, $className, $classCode, $description, $subject, $gradeLevel, $strand, $maxStudents])) {
                 $classId = $this->pdo->lastInsertId();
 
-                // Log teacher activity (class created)
-                try {
-                    $this->pdo->exec("
-                        CREATE TABLE IF NOT EXISTS teacher_activity_log (
-                            id INT AUTO_INCREMENT PRIMARY KEY,
-                            teacher_id INT NOT NULL,
-                            action VARCHAR(100) NOT NULL,
-                            details TEXT,
-                            ip_address VARCHAR(45),
-                            user_agent TEXT,
-                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                            INDEX idx_teacher (teacher_id),
-                            INDEX idx_action (action),
-                            INDEX idx_created (created_at)
-                        )
-                    ");
-
-                    $details = "Created class '{$className}' (Code: {$classCode})";
-                    if (!empty($gradeLevel)) $details .= ", Grade {$gradeLevel}";
-                    if (!empty($strand)) $details .= ", Strand {$strand}";
-
-                    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-                    $ua = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
-
-                    $logStmt = $this->pdo->prepare("
-                        INSERT INTO teacher_activity_log (teacher_id, action, details, ip_address, user_agent)
-                        VALUES (?, 'class_created', ?, ?, ?)
-                    ");
-                    $logStmt->execute([$teacherId, $details, $ip, $ua]);
-                } catch (Exception $e) {
-                    error_log('Failed to log teacher class creation activity: ' . $e->getMessage());
+                $details = "Created class '{$className}' (Code: {$classCode})";
+                if (!empty($gradeLevel)) {
+                    $details .= ", Grade {$gradeLevel}";
                 }
+                if (!empty($strand)) {
+                    $details .= ", Strand {$strand}";
+                }
+                log_teacher_activity($this->pdo, (int) $teacherId, 'class_created', $details);
 
                 return [
                     'success' => true,
@@ -325,7 +302,7 @@ class ClassManagement {
                     'student_name' => $enrollment['first_name'] . ' ' . $enrollment['last_name']
                 ];
             }
-            
+
             // Start transaction
             $this->pdo->beginTransaction();
             
@@ -363,44 +340,16 @@ class ClassManagement {
                     $notificationMessage
                 );
 
-                // Log teacher activity for enrollment decision
-                try {
-                    $this->pdo->exec("
-                        CREATE TABLE IF NOT EXISTS teacher_activity_log (
-                            id INT AUTO_INCREMENT PRIMARY KEY,
-                            teacher_id INT NOT NULL,
-                            action VARCHAR(100) NOT NULL,
-                            details TEXT,
-                            ip_address VARCHAR(45),
-                            user_agent TEXT,
-                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                            INDEX idx_teacher (teacher_id),
-                            INDEX idx_action (action),
-                            INDEX idx_created (created_at)
-                        )
-                    ");
-
-                    $action = $status === 'approved' ? 'student_enrollment_approved' : 'student_enrollment_rejected';
-                    $detail = ($status === 'approved' ? 'Approved' : 'Rejected') .
-                        " enrollment for {$enrollment['first_name']} {$enrollment['last_name']} in class '{$enrollment['class_name']}'.";
-                    if ($status !== 'approved' && !empty($notes)) {
-                        $detail .= " Notes: " . $notes;
-                    }
-
-                    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-                    $ua = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
-
-                    $logStmt = $this->pdo->prepare("
-                        INSERT INTO teacher_activity_log (teacher_id, action, details, ip_address, user_agent)
-                        VALUES (?, ?, ?, ?, ?)
-                    ");
-                    $logStmt->execute([$teacherId, $action, $detail, $ip, $ua]);
-                } catch (Exception $e) {
-                    error_log('Failed to log teacher enrollment activity: ' . $e->getMessage());
-                }
-                
                 // Commit transaction
                 $this->pdo->commit();
+
+                $enrollAction = $status === 'approved' ? 'student_enrollment_approved' : 'student_enrollment_rejected';
+                $enrollDetail = ($status === 'approved' ? 'Approved' : 'Rejected') .
+                    " enrollment for {$enrollment['first_name']} {$enrollment['last_name']} in class '{$enrollment['class_name']}'.";
+                if ($status !== 'approved' && !empty($notes)) {
+                    $enrollDetail .= ' Notes: ' . $notes;
+                }
+                log_teacher_activity($this->pdo, (int) $teacherId, $enrollAction, $enrollDetail);
                 
                 return [
                     'success' => true,
@@ -409,8 +358,9 @@ class ClassManagement {
                 ];
                 
             } catch (Exception $e) {
-                // Rollback transaction on error
-                $this->pdo->rollBack();
+                if ($this->pdo->inTransaction()) {
+                    $this->pdo->rollBack();
+                }
                 throw $e;
             }
             
@@ -597,7 +547,14 @@ class ClassManagement {
                 
                 // Commit transaction
                 $this->pdo->commit();
-                
+
+                log_teacher_activity(
+                    $this->pdo,
+                    (int) $teacherId,
+                    'class_removed',
+                    'Removed class "' . ($class['class_name'] ?? 'Unknown') . '" (ID ' . (int) $classId . '). Notified ' . count($enrolledStudents) . ' student(s).'
+                );
+
                 return [
                     'success' => true,
                     'message' => 'Class deleted successfully. ' . count($enrolledStudents) . ' students have been notified.',
@@ -606,7 +563,9 @@ class ClassManagement {
                 
             } catch (Exception $e) {
                 // Rollback transaction on error
-                $this->pdo->rollBack();
+                if ($this->pdo->inTransaction()) {
+                    $this->pdo->rollBack();
+                }
                 throw $e;
             }
             

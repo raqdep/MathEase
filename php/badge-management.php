@@ -89,19 +89,29 @@ function checkAndAwardBadges() {
         if ($existingBadge->fetch()) {
             continue; // Student already has this badge
         }
+
+        // Retired Real-Life tiers (Solver/Master) used criteria_type=score and were wrongly awarded on any high-scoring quiz.
+        // Current app only awards Real-Life Problems Expert + Champion on the real-life-problems quiz (see achievements.html).
+        $realLifeBadgesAllowed = ['Real-Life Problems Champion', 'Real-Life Problems Expert'];
+        if (stripos($badge['name'], 'Real-Life Problems') === 0 && !in_array($badge['name'], $realLifeBadgesAllowed, true)) {
+            continue;
+        }
         
         // Check badge criteria - but skip general score check for quiz-specific badges
         $isQuizSpecificBadge = in_array($badge['name'], [
             'Functions Master', 'Functions Expert', 'Functions Achiever',
             'Evaluating Functions Champion', 'Evaluating Functions Expert',
             'Operations on Functions Champion', 'Operations on Functions Expert',
-            'Real-Life Problems Champion', 'Real-Life Problems Expert'
-        ]);
+            'Real-Life Problems Champion', 'Real-Life Problems Expert',
+        ], true);
+        
+        // Only these use raw quiz percentage vs criteria_value (avoids accidental awards from legacy DB rows).
+        $globalPercentageScoreBadges = ['Quiz Master'];
         
         if (!$isQuizSpecificBadge) {
             switch ($badge['criteria_type']) {
                 case 'score':
-                    if ($percentage >= $badge['criteria_value']) {
+                    if (in_array($badge['name'], $globalPercentageScoreBadges, true) && $percentage >= (float) $badge['criteria_value']) {
                         $shouldAward = true;
                     }
                     break;

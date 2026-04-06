@@ -54,14 +54,14 @@ function navCls(string $key, string $activePage, string $base, string $active): 
                                     <h3 class="text-sm font-semibold text-slate-800">Notifications</h3>
                                     <span id="dropdownNotificationCount" class="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded-full font-medium">0</span>
                                 </div>
-                                <button onclick="markAllNotificationsAsRead()" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">Mark all read</button>
+                                <button type="button" onclick="markAllNotificationsAsRead(event)" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">Mark all read</button>
                             </div>
                         </div>
                         <div id="notificationsList" class="max-h-64 overflow-y-auto">
                             <div class="px-4 py-4 text-sm text-slate-500">Loading...</div>
                         </div>
                         <div class="px-4 py-2 border-t border-slate-200/60">
-                            <a href="#" onclick="showAllNotifications(); return false;" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">View all notifications</a>
+                            <a href="#" onclick="showAllNotifications(event); return false;" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">View all notifications</a>
                         </div>
                     </div>
                 </div>

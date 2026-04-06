@@ -25,6 +25,7 @@
 session_start();
 require_once 'config.php';
 require_once __DIR__ . '/student-notification-helper.php';
+require_once __DIR__ . '/teacher-activity-log-helper.php';
 
 // Prevent caching - always get fresh data from database
 header('Content-Type: application/json');
@@ -1258,6 +1259,18 @@ class QuizManager {
             } catch (Throwable $e) {
                 error_log('saveQuizSettings notify students failed: ' . $e->getMessage());
             }
+
+            $tid2 = (int) ($_SESSION['teacher_id'] ?? 0);
+            if ($tid2 > 0) {
+                $quizLabel2 = ucwords(str_replace(['-', '_'], ' ', (string)$quizType));
+                $scope2 = $classId == 0 ? 'all classes' : "class ID {$classId}";
+                log_teacher_activity(
+                    $this->pdo,
+                    $tid2,
+                    'quiz_settings_saved',
+                    "Updated quiz settings for \"{$quizLabel2}\" ({$scope2}): deadline {$deadlineLocal}, time limit {$timeLimit} min."
+                );
+            }
             
             return [
                 'success' => true,
@@ -2033,6 +2046,19 @@ class QuizManager {
                 }
             } catch (Throwable $e) {
                 error_log('toggleQuizStatus notify students failed: ' . $e->getMessage());
+            }
+
+            $tid = (int) ($_SESSION['teacher_id'] ?? 0);
+            if ($tid > 0) {
+                $opened = ((string)$isOpen === '1' || $isOpen === 1 || $isOpen === true);
+                $quizLabel = ucwords(str_replace(['-', '_'], ' ', (string)$quizType));
+                $scope = $classId == 0 ? 'all classes' : "class ID {$classId}";
+                log_teacher_activity(
+                    $this->pdo,
+                    $tid,
+                    $opened ? 'quiz_opened' : 'quiz_closed',
+                    ($opened ? 'Opened' : 'Closed') . " quiz \"{$quizLabel}\" ({$scope})."
+                );
             }
             
             return [
