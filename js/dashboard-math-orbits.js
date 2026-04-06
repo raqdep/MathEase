@@ -35,7 +35,8 @@
                 var sym = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
                 var size = Math.round((14 + Math.random() * 22) * Math.max(0.85, scale));
                 var angle = Math.random() * Math.PI * 2;
-                orbitSymbols.push({ sym: sym, size: size, angle: angle });
+                var bubbleOpacity = 0.35 + Math.random() * 0.4;
+                orbitSymbols.push({ sym: sym, size: size, angle: angle, bubbleOpacity: bubbleOpacity });
             }
             orbits.push({
                 radius: radius,
@@ -140,11 +141,14 @@
                 var th = item.size * 0.92;
                 var bubbleR = Math.max(tw, th) * 0.52 + 7;
 
+                var bo = typeof item.bubbleOpacity === 'number' ? item.bubbleOpacity : 0.5;
+                var strokeA = Math.min(0.55, bo * 0.55 + 0.08);
+
                 ctx.beginPath();
                 ctx.arc(px, py, bubbleR, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.fillStyle = 'rgba(255, 255, 255, ' + bo + ')';
                 ctx.fill();
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.strokeStyle = 'rgba(255, 255, 255, ' + strokeA + ')';
                 ctx.lineWidth = 1;
                 ctx.stroke();
 
