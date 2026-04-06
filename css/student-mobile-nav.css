@@ -1,0 +1,291 @@
+/**
+ * Shared student mobile nav: hamburger, backdrop, drawer (dashboard + quizzes + flashcards + profile + achievements).
+ */
+
+/* Hamburger */
+.hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    z-index: 1001;
+    transition: all 0.3s ease;
+    border-radius: 0.5rem;
+}
+
+.hamburger .bar {
+    width: 25px;
+    height: 3px;
+    background-color: #475569;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+    transform-origin: center;
+}
+
+.hamburger:hover .bar {
+    background-color: #1e293b;
+}
+
+.hamburger.active .bar:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+    background-color: #ffffff;
+}
+
+.hamburger.active .bar:nth-child(2) {
+    opacity: 0;
+    transform: translateX(-20px);
+}
+
+.hamburger.active .bar:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+    background-color: #ffffff;
+}
+
+/* Backdrop */
+.mobile-menu-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.45);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 998;
+    pointer-events: none;
+    backdrop-filter: blur(3px);
+}
+
+.mobile-menu-backdrop.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+}
+
+/* Drawer */
+.mobile-nav-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: min(300px, 88vw);
+    height: 100vh;
+    height: 100dvh;
+    max-height: -webkit-fill-available;
+    background: linear-gradient(180deg, #4f46e5 0%, #6366f1 45%, #7c3aed 100%);
+    box-shadow: -8px 0 32px rgba(15, 23, 42, 0.35);
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.mobile-nav-menu.active {
+    right: 0;
+}
+
+.mobile-nav-header {
+    flex-shrink: 0;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.mobile-nav-header .flex {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.mobile-nav-header .w-10.h-10 {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+.mobile-nav-header .w-10.h-10 img {
+    width: 1.25rem;
+    height: 1.25rem;
+    object-fit: contain;
+}
+
+.mobile-nav-header span {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mobile-nav-profile {
+    flex-shrink: 0;
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.mobile-nav-profile .flex {
+    padding: 0 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+#mobileProfileIconContainer {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    min-height: 48px;
+    flex-shrink: 0;
+}
+
+#mobileProfileIconImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#mobileProfileIconPlaceholder {
+    font-size: 1.25rem;
+}
+
+.mobile-nav-profile .flex-1 {
+    min-width: 0;
+}
+
+#mobileUserName {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.125rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#mobileUserEmail {
+    font-size: 0.8125rem;
+    color: rgba(255, 255, 255, 0.78);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mobile-nav-content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding: 0.75rem 0 1rem;
+}
+
+.mobile-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1.25rem;
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    transition: background 0.2s ease, border-color 0.2s ease, padding 0.2s ease;
+    border-left: 3px solid transparent;
+    min-height: 48px;
+    box-sizing: border-box;
+}
+
+.mobile-nav-item i {
+    width: 1.35rem;
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 1.05rem;
+    opacity: 0.95;
+}
+
+.mobile-nav-label {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mobile-nav-badge {
+    flex-shrink: 0;
+    margin-left: auto;
+    min-width: 1.25rem;
+    height: 1.25rem;
+    padding: 0 0.35rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #ef4444;
+    color: #fff;
+    border-radius: 9999px;
+}
+
+.mobile-nav-badge.hidden {
+    display: none !important;
+}
+
+.mobile-nav-item:hover,
+.mobile-nav-item.active {
+    background: rgba(255, 255, 255, 0.15);
+    border-left-color: #fff;
+    padding-left: 1.5rem;
+}
+
+.mobile-nav-item-danger {
+    color: #fecaca;
+}
+
+.mobile-nav-item-danger:hover {
+    background: rgba(254, 202, 202, 0.2);
+    border-left-color: #fecaca;
+}
+
+.mobile-nav-footer {
+    flex-shrink: 0;
+    padding-top: 0.25rem;
+}
+
+.mobile-nav-footer .mobile-nav-item {
+    margin: 0;
+}
+
+.mobile-nav-divider {
+    flex-shrink: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.2);
+    margin: 0.5rem 1.25rem;
+}
+
+body.menu-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .mobile-menu-backdrop,
+    .mobile-nav-menu {
+        display: none !important;
+    }
+
+    .mobile-menu-backdrop.active,
+    .mobile-nav-menu.active {
+        display: none !important;
+    }
+}

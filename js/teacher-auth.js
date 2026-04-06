@@ -429,12 +429,16 @@ async function handleTeacherLogin(e) {
             }, 500);
         } else {
             if (data.error_type === 'maintenance') {
-                Swal.fire({
-                    icon: 'info',
-                    title: 'System update',
-                    text: data.message || 'MathEase is temporarily unavailable.',
-                    confirmButtonColor: '#6366f1'
-                });
+                if (typeof window.mathEaseMaintenanceLoginAlert === 'function') {
+                    window.mathEaseMaintenanceLoginAlert(data);
+                } else {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'System maintenance',
+                        text: data.message || 'MathEase is temporarily unavailable.',
+                        confirmButtonColor: '#6366f1'
+                    });
+                }
                 return;
             }
             if (data.error_type === 'email_not_verified') {

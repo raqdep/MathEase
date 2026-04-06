@@ -40,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'message' => $msg,
                 'error_type' => 'maintenance',
                 'field' => 'email',
+                'maintenance' => maintenanceLoginJsonFragment($p),
             ]);
             exit;
         }

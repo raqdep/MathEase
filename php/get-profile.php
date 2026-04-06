@@ -165,6 +165,7 @@ try {
                     quiz_type,
                     score,
                     total_questions,
+                    correct_answers,
                     completed_at
                 FROM quiz_attempts
                 WHERE student_id = ?
@@ -173,6 +174,18 @@ try {
             ");
             $stmt->execute([$user_id]);
             $quizzes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            // Functions quiz: legacy attempts stored as 11 items — show equivalent out of 15 (same % as correct/11)
+            foreach ($quizzes as &$q) {
+                if (($q['quiz_type'] ?? '') === 'functions' && (int)($q['total_questions'] ?? 0) === 11) {
+                    $ca = isset($q['correct_answers']) && $q['correct_answers'] !== null && $q['correct_answers'] !== ''
+                        ? (int)$q['correct_answers']
+                        : min((int)($q['score'] ?? 0), 11);
+                    $correct = max(0, min(11, $ca));
+                    $q['score'] = (int)min(15, max(0, (int)round($correct * 15 / 11)));
+                    $q['total_questions'] = 15;
+                }
+            }
+            unset($q);
             error_log("Retrieved " . count($quizzes) . " quiz attempts from database for user_id: $user_id");
         }
     } catch (PDOException $e) {

@@ -2372,31 +2372,36 @@
                                         </div>
                                         <div>
                                             <h4 class="text-lg font-bold text-gray-900">Class Snapshot</h4>
-                                            <p class="text-sm text-gray-600">Quick stats to see improvement potential</p>
+                                            <p class="text-sm text-gray-600">Key numbers for approved students in this class</p>
                                         </div>
                                     </div>
                                     <span class="text-xs px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100 flex-shrink-0">
-                                        stats
+                                        at a glance
                                     </span>
                                 </div>
                             </div>
-                            <div class="p-7">
-                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="classSnapshotCards">
-                                    <div class="p-4 rounded-lg bg-gray-50 border border-gray-200">
-                                        <p class="text-xs text-gray-600">Students</p>
-                                        <p class="text-2xl font-bold text-gray-900" id="snapStudents">-</p>
-                                    </div>
-                                    <div class="p-4 rounded-lg bg-gray-50 border border-gray-200">
-                                        <p class="text-xs text-gray-600">Avg Score</p>
-                                        <p class="text-2xl font-bold text-indigo-700" id="snapAvg">-</p>
-                                    </div>
-                                    <div class="p-4 rounded-lg bg-gray-50 border border-gray-200">
-                                        <p class="text-xs text-gray-600">Passed ≥70%</p>
-                                        <p class="text-2xl font-bold text-emerald-700" id="snapPassed">-</p>
-                                    </div>
-                                    <div class="p-4 rounded-lg bg-gray-50 border border-gray-200">
-                                        <p class="text-xs text-gray-600">Needs Help &lt;60%</p>
-                                        <p class="text-2xl font-bold text-rose-700" id="snapNeedsHelp">-</p>
+                            <div class="p-6 md:p-7 space-y-6">
+                                <div>
+                                    <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+                                        <span class="h-px flex-1 max-w-[3rem] bg-gray-300"></span>
+                                        Class overview
+                                    </p>
+                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
+                                        <div class="rounded-xl border border-slate-200/80 bg-gradient-to-br from-white to-slate-50 p-4 shadow-sm">
+                                            <p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Active students</p>
+                                            <p class="mt-1 text-3xl font-bold text-slate-900 tabular-nums" id="snapStudents">-</p>
+                                            <p class="mt-1.5 text-xs text-slate-600 leading-snug" id="snapStudentsSub">Approved in this class</p>
+                                        </div>
+                                        <div class="rounded-xl border border-indigo-100 bg-gradient-to-br from-indigo-50/80 to-white p-4 shadow-sm">
+                                            <p class="text-[11px] font-semibold uppercase tracking-wide text-indigo-600">Class average</p>
+                                            <p class="mt-1 text-3xl font-bold text-indigo-700 tabular-nums" id="snapAvg">-</p>
+                                            <p class="mt-1.5 text-xs text-indigo-700/90 leading-snug" id="snapAvgSub">Mean of each student’s quiz average</p>
+                                        </div>
+                                        <div class="rounded-xl border border-cyan-100 bg-gradient-to-br from-cyan-50/70 to-white p-4 shadow-sm">
+                                            <p class="text-[11px] font-semibold uppercase tracking-wide text-cyan-700">Quiz engagement</p>
+                                            <p class="mt-1 text-3xl font-bold text-cyan-800 tabular-nums" id="snapEngaged">-</p>
+                                            <p class="mt-1.5 text-xs text-cyan-800/90 leading-snug" id="snapEngagedSub">Started at least one topic quiz</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -2435,7 +2440,7 @@
                                     <input 
                                         type="text" 
                                         id="studentSearchInput" 
-                                        placeholder="Search by student name or number..." 
+                                        placeholder="Search name, email, or student number…" 
                                         class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                                         oninput="filterStudentPerformance()"
                                     >
@@ -6833,6 +6838,15 @@ let currentQuizResultsSearch = '';
             }
         }
 
+        function resetClassPerformanceSearchUI() {
+            const searchInput = document.getElementById('studentSearchInput');
+            const filterSelect = document.getElementById('performanceFilterSelect');
+            const searchResultsInfo = document.getElementById('searchResultsInfo');
+            if (searchInput) searchInput.value = '';
+            if (filterSelect) filterSelect.value = 'all';
+            if (searchResultsInfo) searchResultsInfo.classList.add('hidden');
+        }
+
         async function loadClassPerformance() {
             const classSelector = document.getElementById('classSelector');
             const tableBody = document.getElementById('performanceTableBody');
@@ -6842,6 +6856,7 @@ let currentQuizResultsSearch = '';
             
             const selectedClassId = classSelector.value;
             if (!selectedClassId) {
+                resetClassPerformanceSearchUI();
                 tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-gray-500">Please select a class to view student quiz scores</td></tr>';
                 // Hide summary and class info when no class is selected
                 const summaryDiv = document.getElementById('classPerformanceSummary');
@@ -6858,6 +6873,7 @@ let currentQuizResultsSearch = '';
             const availableClasses = Array.from(classSelector.options).map(option => option.value).filter(value => value !== '');
             if (!availableClasses.includes(selectedClassId)) {
                 console.error('Security violation: Invalid class ID selected');
+                resetClassPerformanceSearchUI();
                 tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-red-500">Error: Invalid class selection</td></tr>';
                 return;
             }
@@ -6941,8 +6957,12 @@ let currentQuizResultsSearch = '';
 
                     // Render analytics (charts + top/weak lists)
                     renderClassPerformanceAnalytics(studentPerformanceData, allQuizResults);
+
+                    // Clear search/filter so the table always matches what is shown (avoids stale query from another class)
+                    resetClassPerformanceSearchUI();
                 } else {
                     console.log('No students found for class:', selectedClassId);
+                    resetClassPerformanceSearchUI();
                     tableBody.innerHTML = '<tr><td colspan="16" class="px-4 py-8 text-center text-gray-500">No students found in this class</td></tr>';
                     if (selectedClassInfo) {
                         selectedClassInfo.classList.add('hidden');
@@ -7030,105 +7050,45 @@ let currentQuizResultsSearch = '';
 
         function renderClassPerformanceAnalytics(students, allQuizResults) {
             try {
-                // Snapshot cards
                 const snapStudents = document.getElementById('snapStudents');
+                const snapStudentsSub = document.getElementById('snapStudentsSub');
                 const snapAvg = document.getElementById('snapAvg');
-                const snapPassed = document.getElementById('snapPassed');
-                const snapNeedsHelp = document.getElementById('snapNeedsHelp');
+                const snapAvgSub = document.getElementById('snapAvgSub');
+                const snapEngaged = document.getElementById('snapEngaged');
+                const snapEngagedSub = document.getElementById('snapEngagedSub');
 
-                // Focus analytics on actively enrolled/approved students
-                const activeStudents = (students || []).filter(s => !s.enrollment_status || s.enrollment_status === 'approved');
+                // Focus analytics on approved enrollments only
+                const activeStudents = (students || []).filter(s => s.enrollment_status === 'approved');
 
                 const averages = activeStudents.map(s => {
-                    const scores = [
-                        s.functions_quiz_best_score || 0,
-                        s.evaluating_functions_quiz_best_score || 0,
-                        s.operations_on_functions_quiz_best_score || 0,
-                        s.real_life_problems_quiz_best_score || 0,
-                        s.rational_functions_quiz_best_score || 0,
-                        s.solving_rational_equations_quiz_best_score || 0,
-                        s.representations_of_rational_functions_quiz_best_score || 0,
-                        s.domain_range_rational_functions_quiz_best_score || 0,
-                        s.domain_range_inverse_functions_quiz_best_score || 0,
-                        s.one_to_one_functions_quiz_best_score || 0
-                    ];
-                    // Only count quizzes that have been taken (score > 0)
-                    const takenQuizzes = scores.filter(score => score > 0);
-                    const avg = takenQuizzes.length > 0 
-                        ? takenQuizzes.reduce((a, b) => a + b, 0) / takenQuizzes.length 
-                        : 0;
-                    return { student: s, avg, quizzesTaken: takenQuizzes.length };
+                    const { quizzesAttempted, avgPercent } = getStudentTopicQuizStats(s);
+                    return { student: s, avg: avgPercent, quizzesTaken: quizzesAttempted };
                 });
 
-                // Calculate class average only from students who have taken at least one quiz
-                const studentsWithQuizzes = averages.filter(x => x.quizzesTaken > 0 && x.avg > 0);
+                // Class average: students with ≥1 topic quiz attempt (includes 0% averages)
+                const studentsWithQuizzes = averages.filter(x => x.quizzesTaken > 0);
                 const avgClass = studentsWithQuizzes.length > 0 
                     ? (studentsWithQuizzes.reduce((sum, x) => sum + x.avg, 0) / studentsWithQuizzes.length) 
                     : 0;
-                const passedCount = averages.filter(x => x.quizzesTaken > 0 && x.avg >= 70).length;
-                
-                // Improved analysis: Categorize students who need help
-                // Critical: Score < 50% OR no quizzes taken but enrolled
-                // Needs Support: Score 50-59% OR low lesson completion
-                // At Risk: Score 60-69% with declining trend
-                const criticalStudents = averages.filter(x => {
-                    const hasLowScore = x.avg > 0 && x.avg < 50;
-                    const noQuizzesButEnrolled = x.avg === 0 && x.student.enrollment_status === 'approved';
-                    return hasLowScore || noQuizzesButEnrolled;
-                });
-                
-                const needsSupportStudents = averages.filter(x => {
-                    const scoreRange = x.avg >= 50 && x.avg < 60;
-                    const lowLessons = (x.student.functions_lessons_completed || 0) + 
-                                     (x.student.evaluating_functions_lessons_completed || 0) +
-                                     (x.student.operations_lessons_completed || 0) < 3 && x.avg > 0;
-                    return scoreRange || lowLessons;
-                });
-                
-                const atRiskStudents = averages.filter(x => {
-                    return x.avg >= 60 && x.avg < 70 && x.quizzesTaken >= 2;
-                });
-                
-                // Merge and de-duplicate students who need help (prioritize more critical category)
-                const helpMap = new Map();
-                
-                criticalStudents.forEach(x => {
-                    const key = x.student.student_id || x.student.id;
-                    if (!key) return;
-                    helpMap.set(key, { ...x, priority: 1, category: 'Critical' });
-                });
-                
-                needsSupportStudents.forEach(x => {
-                    const key = x.student.student_id || x.student.id;
-                    if (!key) return;
-                    const existing = helpMap.get(key);
-                    if (!existing || existing.priority > 2) {
-                        helpMap.set(key, { ...x, priority: 2, category: 'Needs Support' });
-                    }
-                });
-                
-                atRiskStudents.forEach(x => {
-                    const key = x.student.student_id || x.student.id;
-                    if (!key) return;
-                    const existing = helpMap.get(key);
-                    if (!existing || existing.priority > 3) {
-                        helpMap.set(key, { ...x, priority: 3, category: 'At Risk' });
-                    }
-                });
-                
-                const allNeedingHelp = Array.from(helpMap.values()).sort((a, b) => {
-                    // Sort by priority (critical first), then by avg ascending, then by quizzesTaken ascending
-                    if (a.priority !== b.priority) return a.priority - b.priority;
-                    if (a.avg !== b.avg) return a.avg - b.avg;
-                    return a.quizzesTaken - b.quizzesTaken;
-                }).slice(0, 10);
-                
-                const needsHelpCount = allNeedingHelp.length;
+                const engagedCount = averages.filter(x => x.quizzesTaken > 0).length;
+                const notStartedCount = Math.max(0, activeStudents.length - engagedCount);
 
                 if (snapStudents) snapStudents.textContent = String(activeStudents.length);
-                if (snapAvg) snapAvg.textContent = `${avgClass.toFixed(1)}%`;
-                if (snapPassed) snapPassed.textContent = String(passedCount);
-                if (snapNeedsHelp) snapNeedsHelp.textContent = String(needsHelpCount);
+                if (snapStudentsSub) snapStudentsSub.textContent = activeStudents.length ? 'Approved enrollments' : 'No approved students';
+
+                if (snapAvg) snapAvg.textContent = studentsWithQuizzes.length ? `${avgClass.toFixed(1)}%` : '—';
+                if (snapAvgSub) {
+                    snapAvgSub.textContent = studentsWithQuizzes.length
+                        ? `${studentsWithQuizzes.length} student${studentsWithQuizzes.length === 1 ? '' : 's'} with ≥1 quiz`
+                        : 'Nobody has taken a quiz yet';
+                }
+
+                if (snapEngaged) snapEngaged.textContent = activeStudents.length ? `${engagedCount}/${activeStudents.length}` : '—';
+                if (snapEngagedSub) {
+                    if (!activeStudents.length) snapEngagedSub.textContent = '—';
+                    else if (notStartedCount === 0) snapEngagedSub.textContent = 'Everyone has started at least one quiz';
+                    else snapEngagedSub.textContent = `${notStartedCount} still need to start (${engagedCount} of ${activeStudents.length} engaged)`;
+                }
 
                 // Unified leaderboard table (all students) with pagination
                 classLeaderboardRows = [...averages]
@@ -7422,13 +7382,57 @@ let currentQuizResultsSearch = '';
             }
         }
 
+        /** User ids from JSON/DB may be number or string — Map keys must match. */
+        function normalizePerformanceStudentId(id) {
+            if (id === null || id === undefined || id === '') return null;
+            const s = String(id).trim();
+            if (!s) return null;
+            const n = Number(s);
+            return Number.isFinite(n) && String(n) === s ? n : s;
+        }
+
+        /**
+         * Topic quiz columns use NOT_ATTEMPTED vs PASSED/FAILED so 0% still counts as an attempt
+         * (unlike filtering with score > 0).
+         */
+        function getStudentTopicQuizStats(student) {
+            if (!student) {
+                return {
+                    quizzesAttempted: 0,
+                    avgPercent: 0,
+                    hasAttemptedAny: false,
+                    pairs: []
+                };
+            }
+            const pairs = [
+                { score: Number(student.functions_quiz_best_score) || 0, st: student.functions_quiz_status },
+                { score: Number(student.evaluating_functions_quiz_best_score) || 0, st: student.evaluating_functions_quiz_status },
+                { score: Number(student.operations_on_functions_quiz_best_score) || 0, st: student.operations_on_functions_quiz_status },
+                { score: Number(student.real_life_problems_quiz_best_score) || 0, st: student.real_life_problems_quiz_status },
+                { score: Number(student.rational_functions_quiz_best_score) || 0, st: student.rational_functions_quiz_status },
+                { score: Number(student.solving_rational_equations_quiz_best_score) || 0, st: student.solving_rational_equations_quiz_status },
+                { score: Number(student.representations_of_rational_functions_quiz_best_score) || 0, st: student.representations_of_rational_functions_quiz_status },
+                { score: Number(student.domain_range_rational_functions_quiz_best_score) || 0, st: student.domain_range_rational_functions_quiz_status },
+                { score: Number(student.domain_range_inverse_functions_quiz_best_score) || 0, st: student.domain_range_inverse_functions_quiz_status },
+                { score: Number(student.one_to_one_functions_quiz_best_score) || 0, st: student.one_to_one_functions_quiz_status }
+            ];
+            const attempted = pairs.filter((p) => p.st && p.st !== 'NOT_ATTEMPTED');
+            const quizzesAttempted = attempted.length;
+            const avgPercent = quizzesAttempted > 0
+                ? attempted.reduce((sum, p) => sum + p.score, 0) / quizzesAttempted
+                : 0;
+            return { quizzesAttempted, avgPercent, hasAttemptedAny: quizzesAttempted > 0, pairs };
+        }
+
         // Process quiz results from quiz management to create performance data, including all enrolled students
         function processQuizResultsToPerformanceDataWithAllStudents(allQuizResults, allEnrolledStudents, classInfo) {
             const studentMap = new Map();
             
             // First, add all enrolled students to the map with default values
             allEnrolledStudents.forEach(enrolledStudent => {
-                studentMap.set(enrolledStudent.student_id, {
+                const sid = normalizePerformanceStudentId(enrolledStudent.student_id);
+                if (sid === null) return;
+                studentMap.set(sid, {
                     student_id: enrolledStudent.student_id,
                     student_name: `${enrolledStudent.first_name} ${enrolledStudent.last_name}`,
                     student_number: enrolledStudent.student_number,
@@ -7461,65 +7465,71 @@ let currentQuizResultsSearch = '';
             });
             
             // Then, process quiz results and update existing students
+            const QUIZ_SLOT_COUNT = 10;
+
             Object.keys(allQuizResults).forEach(quizType => {
                 const results = allQuizResults[quizType];
-                
+                if (!Array.isArray(results)) return;
+
                 results.forEach(result => {
-                    const studentId = result.student_id;
-                    
-                    // Only update if student exists in enrolled students
-                    if (studentMap.has(studentId)) {
-                        const student = studentMap.get(studentId);
-                        const percentage = result.percentage;
-                        
-                        // Update quiz-specific data based on quiz type
-                        switch (quizType) {
-                            case 'functions':
-                                student.functions_quiz_best_score = Math.max(student.functions_quiz_best_score, percentage);
-                                student.functions_quiz_status = percentage >= 70 ? 'PASSED' : 'FAILED';
-                                break;
-                            case 'evaluating-functions':
-                                student.evaluating_functions_quiz_best_score = Math.max(student.evaluating_functions_quiz_best_score, percentage);
-                                student.evaluating_functions_quiz_status = percentage >= 70 ? 'PASSED' : 'FAILED';
-                                break;
-                            case 'operations-on-functions':
-                                student.operations_on_functions_quiz_best_score = Math.max(student.operations_on_functions_quiz_best_score, percentage);
-                                student.operations_on_functions_quiz_status = percentage >= 70 ? 'PASSED' : 'FAILED';
-                                break;
-                            case 'real-life-problems':
-                                student.real_life_problems_quiz_best_score = Math.max(student.real_life_problems_quiz_best_score, percentage);
-                                student.real_life_problems_quiz_status = percentage >= 70 ? 'PASSED' : 'FAILED';
-                                break;
-                            case 'rational-functions':
-                                student.rational_functions_quiz_best_score = Math.max(student.rational_functions_quiz_best_score, percentage);
-                                student.rational_functions_quiz_status = percentage >= 70 ? 'PASSED' : 'FAILED';
-                                break;
-                            case 'solving-rational-equations-inequalities':
-                                student.solving_rational_equations_quiz_best_score = Math.max(student.solving_rational_equations_quiz_best_score, percentage);
-                                student.solving_rational_equations_quiz_status = percentage >= 70 ? 'PASSED' : 'FAILED';
-                                break;
-                            case 'representations-of-rational-functions':
-                                student.representations_of_rational_functions_quiz_best_score = Math.max(student.representations_of_rational_functions_quiz_best_score, percentage);
-                                student.representations_of_rational_functions_quiz_status = percentage >= 70 ? 'PASSED' : 'FAILED';
-                                break;
-                            case 'domain-range-rational-functions':
-                                student.domain_range_rational_functions_quiz_best_score = Math.max(student.domain_range_rational_functions_quiz_best_score, percentage);
-                                student.domain_range_rational_functions_quiz_status = percentage >= 70 ? 'PASSED' : 'FAILED';
-                                break;
-                            case 'domain-range-inverse-functions':
-                                student.domain_range_inverse_functions_quiz_best_score = Math.max(student.domain_range_inverse_functions_quiz_best_score, percentage);
-                                student.domain_range_inverse_functions_quiz_status = percentage >= 70 ? 'PASSED' : 'FAILED';
-                                break;
-                            case 'one-to-one-functions':
-                                student.one_to_one_functions_quiz_best_score = Math.max(student.one_to_one_functions_quiz_best_score, percentage);
-                                student.one_to_one_functions_quiz_status = percentage >= 70 ? 'PASSED' : 'FAILED';
-                                break;
-                        }
+                    const studentId = normalizePerformanceStudentId(result.student_id);
+                    if (studentId === null || !studentMap.has(studentId)) return;
+
+                    const rawPct = parseFloat(result.percentage);
+                    if (!Number.isFinite(rawPct)) return;
+                    const percentage = Math.min(100, Math.max(0, rawPct));
+
+                    const attemptStatus = (result.attempt_status || result.status || '').toString().toLowerCase();
+                    const isCheatingRow = attemptStatus === 'cheating' || (result.cheating_reason != null && String(result.cheating_reason).trim() !== '');
+                    // Use only legitimate attempts for "best score" / pass — cheating rows must not overwrite a valid pass
+                    if (isCheatingRow) return;
+
+                    const student = studentMap.get(studentId);
+
+                    const applyQuiz = (bestKey, statusKey) => {
+                        const prev = student[bestKey] || 0;
+                        student[bestKey] = Math.max(prev, percentage);
+                        student[statusKey] = percentage >= 70 ? 'PASSED' : 'FAILED';
+                    };
+
+                    switch (quizType) {
+                        case 'functions':
+                            applyQuiz('functions_quiz_best_score', 'functions_quiz_status');
+                            break;
+                        case 'evaluating-functions':
+                            applyQuiz('evaluating_functions_quiz_best_score', 'evaluating_functions_quiz_status');
+                            break;
+                        case 'operations-on-functions':
+                            applyQuiz('operations_on_functions_quiz_best_score', 'operations_on_functions_quiz_status');
+                            break;
+                        case 'real-life-problems':
+                            applyQuiz('real_life_problems_quiz_best_score', 'real_life_problems_quiz_status');
+                            break;
+                        case 'rational-functions':
+                            applyQuiz('rational_functions_quiz_best_score', 'rational_functions_quiz_status');
+                            break;
+                        case 'solving-rational-equations-inequalities':
+                            applyQuiz('solving_rational_equations_quiz_best_score', 'solving_rational_equations_quiz_status');
+                            break;
+                        case 'representations-of-rational-functions':
+                            applyQuiz('representations_of_rational_functions_quiz_best_score', 'representations_of_rational_functions_quiz_status');
+                            break;
+                        case 'domain-range-rational-functions':
+                            applyQuiz('domain_range_rational_functions_quiz_best_score', 'domain_range_rational_functions_quiz_status');
+                            break;
+                        case 'domain-range-inverse-functions':
+                            applyQuiz('domain_range_inverse_functions_quiz_best_score', 'domain_range_inverse_functions_quiz_status');
+                            break;
+                        case 'one-to-one-functions':
+                            applyQuiz('one_to_one_functions_quiz_best_score', 'one_to_one_functions_quiz_status');
+                            break;
+                        default:
+                            break;
                     }
                 });
             });
             
-            // Calculate overall performance status for each student
+            // Overall label from pass count across all 10 quiz slots (not raw average)
             studentMap.forEach(student => {
                 const passedQuizzes = 
                     (student.functions_quiz_status === 'PASSED' ? 1 : 0) +
@@ -7532,14 +7542,16 @@ let currentQuizResultsSearch = '';
                     (student.domain_range_rational_functions_quiz_status === 'PASSED' ? 1 : 0) +
                     (student.domain_range_inverse_functions_quiz_status === 'PASSED' ? 1 : 0) +
                     (student.one_to_one_functions_quiz_status === 'PASSED' ? 1 : 0);
-                
-                if (passedQuizzes >= 8) {
+
+                const { hasAttemptedAny } = getStudentTopicQuizStats(student);
+
+                if (passedQuizzes >= Math.ceil(QUIZ_SLOT_COUNT * 0.8)) {
                     student.overall_performance_status = 'EXCELLENT';
-                } else if (passedQuizzes >= 6) {
+                } else if (passedQuizzes >= Math.ceil(QUIZ_SLOT_COUNT * 0.6)) {
                     student.overall_performance_status = 'GOOD';
-                } else if (passedQuizzes >= 4) {
+                } else if (passedQuizzes >= Math.ceil(QUIZ_SLOT_COUNT * 0.4)) {
                     student.overall_performance_status = 'AVERAGE';
-                } else if (passedQuizzes >= 1) {
+                } else if (passedQuizzes >= 1 || hasAttemptedAny) {
                     student.overall_performance_status = 'NEEDS_IMPROVEMENT';
                 } else {
                     student.overall_performance_status = 'POOR';
@@ -7610,7 +7622,11 @@ let currentQuizResultsSearch = '';
                     student.overall_performance_status = 'GOOD';
                 } else if (passedQuizzes === 1) {
                     student.overall_performance_status = 'AVERAGE';
-                } else if (student.functions_quiz_best_score > 0 || student.evaluating_functions_quiz_best_score > 0 || student.operations_on_functions_quiz_best_score > 0) {
+                } else if (
+                    student.functions_quiz_status === 'FAILED' ||
+                    student.evaluating_functions_quiz_status === 'FAILED' ||
+                    student.operations_on_functions_quiz_status === 'FAILED'
+                ) {
                     student.overall_performance_status = 'NEEDS_IMPROVEMENT';
                 } else {
                     student.overall_performance_status = 'POOR';
@@ -7634,33 +7650,16 @@ let currentQuizResultsSearch = '';
             
             // Calculate statistics from student data
             const totalStudents = studentData.length;
-            const approvedStudents = studentData.filter(s => !s.enrollment_status || s.enrollment_status === 'approved').length;
+            const approvedStudents = studentData.filter(s => s.enrollment_status === 'approved').length;
             
             // Calculate average score
             let totalScore = 0;
             let studentsWithScores = 0;
             
             studentData.forEach(student => {
-                // Calculate average only from quizzes that have been taken (score > 0)
-                const quizScores = [
-                    student.functions_quiz_best_score || 0,
-                    student.evaluating_functions_quiz_best_score || 0,
-                    student.operations_on_functions_quiz_best_score || 0,
-                    student.real_life_problems_quiz_best_score || 0,
-                    student.rational_functions_quiz_best_score || 0,
-                    student.solving_rational_equations_quiz_best_score || 0,
-                    student.representations_of_rational_functions_quiz_best_score || 0,
-                    student.domain_range_rational_functions_quiz_best_score || 0,
-                    student.domain_range_inverse_functions_quiz_best_score || 0,
-                    student.one_to_one_functions_quiz_best_score || 0
-                ];
-                
-                // Filter out zeros (quizzes not taken)
-                const takenQuizzes = quizScores.filter(score => score > 0);
-                
-                if (takenQuizzes.length > 0) {
-                    const studentAvg = takenQuizzes.reduce((sum, score) => sum + score, 0) / takenQuizzes.length;
-                    totalScore += studentAvg;
+                const { quizzesAttempted, avgPercent } = getStudentTopicQuizStats(student);
+                if (quizzesAttempted > 0) {
+                    totalScore += avgPercent;
                     studentsWithScores++;
                 }
             });
@@ -7713,25 +7712,13 @@ let currentQuizResultsSearch = '';
             
             let tableHTML = '';
             pagedStudents.forEach((student, index) => {
-                // Get all quiz scores
-                const functionsScore = student.functions_quiz_best_score || 0;
-                const evaluatingScore = student.evaluating_functions_quiz_best_score || 0;
-                const operationsScore = student.operations_on_functions_quiz_best_score || 0;
-                const realLifeScore = student.real_life_problems_quiz_best_score || 0;
-                const rationalScore = student.rational_functions_quiz_best_score || 0;
-                const solvingScore = student.solving_rational_equations_quiz_best_score || 0;
-                const representationsScore = student.representations_of_rational_functions_quiz_best_score || 0;
-                const domainRangeScore = student.domain_range_rational_functions_quiz_best_score || 0;
-                const domainInverseScore = student.domain_range_inverse_functions_quiz_best_score || 0;
-                const oneToOneScore = student.one_to_one_functions_quiz_best_score || 0;
+                const topicStats = getStudentTopicQuizStats(student);
+                const hasTakenQuizzes = topicStats.hasAttemptedAny;
+                const avgScore = topicStats.avgPercent;
+                const pairs = topicStats.pairs;
                 
                 // Get performance status
                 const performanceStatus = student.overall_performance_status || 'NEEDS_IMPROVEMENT';
-                
-                // Check if student has taken any quizzes
-                const hasTakenQuizzes = functionsScore > 0 || evaluatingScore > 0 || operationsScore > 0 || 
-                                       realLifeScore > 0 || rationalScore > 0 || solvingScore > 0 ||
-                                       representationsScore > 0 || domainRangeScore > 0 || domainInverseScore > 0 || oneToOneScore > 0;
                 
                 // Overall status styling
                 let overallStatusClass = 'bg-gray-100 text-gray-600';
@@ -7775,24 +7762,6 @@ let currentQuizResultsSearch = '';
                     }
                 }
 
-                // Calculate average score only from quizzes that have been taken
-                const quizScores = [
-                    functionsScore,
-                    evaluatingScore,
-                    operationsScore,
-                    realLifeScore,
-                    rationalScore,
-                    solvingScore,
-                    representationsScore,
-                    domainRangeScore,
-                    domainInverseScore,
-                    oneToOneScore
-                ];
-                const takenQuizzes = quizScores.filter(score => score > 0);
-                const avgScore = takenQuizzes.length > 0 
-                    ? takenQuizzes.reduce((sum, score) => sum + score, 0) / takenQuizzes.length 
-                    : 0;
-                
                 // Parse student name into last name and first name
                 const nameParts = student.student_name.split(' ');
                 const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : '';
@@ -7805,37 +7774,38 @@ let currentQuizResultsSearch = '';
                     ? 'bg-yellow-50 hover:bg-yellow-100'
                     : `${stripeClass} hover:bg-gray-100`;
                 
-                // Color coding function for quiz scores (pill-style for clean table scanning)
-                const getScoreClass = (score) => {
+                const getScoreClass = (score, status) => {
+                    const attempted = status && status !== 'NOT_ATTEMPTED';
+                    if (!attempted) {
+                        return 'bg-gray-50 text-gray-500 border border-gray-100 font-semibold px-2 py-1 rounded-full inline-flex items-center justify-center w-14';
+                    }
                     if (score >= 70) {
                         return 'bg-green-50 text-green-700 border border-green-100 font-semibold px-2 py-1 rounded-full inline-flex items-center justify-center w-14';
                     }
-                    if (score > 0) {
-                        return 'bg-red-50 text-red-700 border border-red-100 font-semibold px-2 py-1 rounded-full inline-flex items-center justify-center w-14';
-                    }
-                    return 'bg-gray-50 text-gray-500 border border-gray-100 font-semibold px-2 py-1 rounded-full inline-flex items-center justify-center w-14';
+                    return 'bg-red-50 text-red-700 border border-red-100 font-semibold px-2 py-1 rounded-full inline-flex items-center justify-center w-14';
                 };
+                const topicCell = (p) => ({
+                    text: (p.st && p.st !== 'NOT_ATTEMPTED') ? p.score.toFixed(1) : '-',
+                    cls: getScoreClass(p.score, p.st)
+                });
+                const c0 = topicCell(pairs[0]);
+                const c1 = topicCell(pairs[1]);
+                const c2 = topicCell(pairs[2]);
+                const c3 = topicCell(pairs[3]);
+                const c4 = topicCell(pairs[4]);
+                const c5 = topicCell(pairs[5]);
+                const c6 = topicCell(pairs[6]);
+                const c7 = topicCell(pairs[7]);
+                const c8 = topicCell(pairs[8]);
+                const c9 = topicCell(pairs[9]);
+                const avgClass = !hasTakenQuizzes
+                    ? 'bg-gray-50 text-gray-500 border border-gray-100 font-semibold px-3 py-1 rounded-full inline-flex items-center justify-center min-w-[78px]'
+                    : avgScore >= 70
+                        ? 'bg-emerald-100 text-emerald-800 border border-emerald-200 font-bold px-3 py-1 rounded-full inline-flex items-center justify-center min-w-[78px]'
+                        : 'bg-gray-100 text-gray-700 border border-gray-200 font-semibold px-3 py-1 rounded-full inline-flex items-center justify-center min-w-[78px]';
                 
-                // Get classes for each quiz
-                const functionsClass = getScoreClass(functionsScore);
-                const evaluatingClass = getScoreClass(evaluatingScore);
-                const operationsClass = getScoreClass(operationsScore);
-                const realLifeClass = getScoreClass(realLifeScore);
-                const rationalClass = getScoreClass(rationalScore);
-                const solvingClass = getScoreClass(solvingScore);
-                const representationsClass = getScoreClass(representationsScore);
-                const domainRangeClass = getScoreClass(domainRangeScore);
-                const domainInverseClass = getScoreClass(domainInverseScore);
-                const oneToOneClass = getScoreClass(oneToOneScore);
-                const avgClass = avgScore >= 70
-                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-200 font-bold px-3 py-1 rounded-full inline-flex items-center justify-center min-w-[78px]'
-                    : (avgScore > 0
-                        ? 'bg-gray-100 text-gray-700 border border-gray-200 font-semibold px-3 py-1 rounded-full inline-flex items-center justify-center min-w-[78px]'
-                        : 'bg-gray-50 text-gray-500 border border-gray-100 font-semibold px-3 py-1 rounded-full inline-flex items-center justify-center min-w-[78px]');
-                
-                // Calculate quiz summary (passed/total)
-                const passedQuizzes = quizScores.filter(score => score >= 70).length;
-                const totalQuizzesTaken = takenQuizzes.length;
+                const passedQuizzes = pairs.filter((p) => p.st && p.st !== 'NOT_ATTEMPTED' && p.score >= 70).length;
+                const totalQuizzesTaken = topicStats.quizzesAttempted;
                 
                 // Calculate total lessons completed (aligned with lesson_completion topic slugs → PHP field names)
                 const totalLessonsCompleted = sumLessonProgress(student).completedLessons;
@@ -7850,37 +7820,37 @@ let currentQuizResultsSearch = '';
                         <div class="font-medium">${firstName} ${lastName}</div>
                     </td>
                     <td class="px-3 py-3 text-sm text-center border-r border-gray-200">
-                        <span class="${functionsClass}">${functionsScore > 0 ? functionsScore.toFixed(1) : '-'}</span>
+                        <span class="${c0.cls}">${c0.text}</span>
                     </td>
                     <td class="px-3 py-3 text-sm text-center border-r border-gray-200">
-                        <span class="${evaluatingClass}">${evaluatingScore > 0 ? evaluatingScore.toFixed(1) : '-'}</span>
+                        <span class="${c1.cls}">${c1.text}</span>
                     </td>
                     <td class="px-3 py-3 text-sm text-center border-r border-gray-200">
-                        <span class="${operationsClass}">${operationsScore > 0 ? operationsScore.toFixed(1) : '-'}</span>
+                        <span class="${c2.cls}">${c2.text}</span>
                     </td>
                     <td class="px-3 py-3 text-sm text-center border-r border-gray-200">
-                        <span class="${realLifeClass}">${realLifeScore > 0 ? realLifeScore.toFixed(1) : '-'}</span>
+                        <span class="${c3.cls}">${c3.text}</span>
                     </td>
                     <td class="px-3 py-3 text-sm text-center border-r border-gray-200">
-                        <span class="${rationalClass}">${rationalScore > 0 ? rationalScore.toFixed(1) : '-'}</span>
+                        <span class="${c4.cls}">${c4.text}</span>
                     </td>
                     <td class="px-3 py-3 text-sm text-center border-r border-gray-200">
-                        <span class="${solvingClass}">${solvingScore > 0 ? solvingScore.toFixed(1) : '-'}</span>
+                        <span class="${c5.cls}">${c5.text}</span>
                     </td>
                     <td class="px-3 py-3 text-sm text-center border-r border-gray-200">
-                        <span class="${representationsClass}">${representationsScore > 0 ? representationsScore.toFixed(1) : '-'}</span>
+                        <span class="${c6.cls}">${c6.text}</span>
                     </td>
                     <td class="px-3 py-3 text-sm text-center border-r border-gray-200">
-                        <span class="${domainRangeClass}">${domainRangeScore > 0 ? domainRangeScore.toFixed(1) : '-'}</span>
+                        <span class="${c7.cls}">${c7.text}</span>
                     </td>
                     <td class="px-3 py-3 text-sm text-center border-r border-gray-200">
-                        <span class="${domainInverseClass}">${domainInverseScore > 0 ? domainInverseScore.toFixed(1) : '-'}</span>
+                        <span class="${c8.cls}">${c8.text}</span>
                     </td>
                     <td class="px-3 py-3 text-sm text-center border-r border-gray-300">
-                        <span class="${oneToOneClass}">${oneToOneScore > 0 ? oneToOneScore.toFixed(1) : '-'}</span>
+                        <span class="${c9.cls}">${c9.text}</span>
                     </td>
                     <td class="px-4 py-3 text-sm text-center border-r border-gray-200">
-                        <span class="${avgClass}">${avgScore > 0 ? avgScore.toFixed(1) : '-'}%</span>
+                        <span class="${avgClass}">${hasTakenQuizzes ? avgScore.toFixed(1) : '-'}%</span>
                     </td>
                     <td class="px-4 py-3 text-sm text-center border-r border-gray-200">
                         <div class="flex flex-col items-center">
@@ -8923,34 +8893,14 @@ let currentQuizResultsSearch = '';
             
             const { totalLessons, completedLessons, progressPercentage } = sumLessonProgress(student);
             
-            const numQuizScore = (v) => {
-                const n = parseFloat(v);
-                return Number.isFinite(n) ? n : 0;
-            };
-            // Calculate quiz average from actual quiz scores (only count quizzes taken)
-            const quizScores = [
-                numQuizScore(student.functions_quiz_best_score),
-                numQuizScore(student.evaluating_functions_quiz_best_score),
-                numQuizScore(student.operations_on_functions_quiz_best_score),
-                numQuizScore(student.real_life_problems_quiz_best_score),
-                numQuizScore(student.rational_functions_quiz_best_score),
-                numQuizScore(student.solving_rational_equations_quiz_best_score || student.solving_rational_equations_inequalities_quiz_best_score),
-                numQuizScore(student.representations_of_rational_functions_quiz_best_score),
-                numQuizScore(student.domain_range_rational_functions_quiz_best_score),
-                numQuizScore(student.domain_range_inverse_functions_quiz_best_score),
-                numQuizScore(student.one_to_one_functions_quiz_best_score)
-            ];
-            const takenQuizzes = quizScores.filter(score => score > 0);
-            const rawQuizAvg = takenQuizzes.length > 0
-                ? takenQuizzes.reduce((sum, score) => sum + score, 0) / takenQuizzes.length
-                : 0;
-            const quizAverage = Number.isFinite(rawQuizAvg) ? rawQuizAvg : 0;
+            const { quizzesAttempted: topicQuizzesAttempted, avgPercent: topicQuizAvg } = getStudentTopicQuizStats(student);
+            const quizAverage = topicQuizzesAttempted > 0 ? topicQuizAvg : 0;
             
-            const headerMetricScore = takenQuizzes.length > 0 ? Math.round(quizAverage) : progressPercentage;
-            const headerMetricLabel = takenQuizzes.length > 0 ? 'Quiz average' : 'Lesson progress';
+            const headerMetricScore = topicQuizzesAttempted > 0 ? Math.round(quizAverage) : progressPercentage;
+            const headerMetricLabel = topicQuizzesAttempted > 0 ? 'Quiz average' : 'Lesson progress';
             
             // Determine performance level from quiz average when available, else lesson progress
-            const profileScore = takenQuizzes.length > 0 ? quizAverage : progressPercentage;
+            const profileScore = topicQuizzesAttempted > 0 ? quizAverage : progressPercentage;
             let performanceLevel = 'Beginner';
             let performanceColor = 'from-gray-400 to-gray-500';
             
@@ -9770,7 +9720,7 @@ let currentQuizResultsSearch = '';
                     <div class="space-y-2">
                         <div class="flex justify-between">
                             <span class="text-sm text-gray-600">Best Score:</span>
-                            <span class="font-medium">${score > 0 ? safeFormatNumber(score, 1) + '%' : 'N/A'}</span>
+                            <span class="font-medium">${status !== 'NOT_ATTEMPTED' ? safeFormatNumber(score, 1) + '%' : 'N/A'}</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-sm text-gray-600">Attempts:</span>
@@ -9923,45 +9873,31 @@ let currentQuizResultsSearch = '';
             
             if (searchTerm) {
                 filteredStudents = filteredStudents.filter(student => {
-                    const studentName = student.student_name?.toLowerCase() || '';
-                    return studentName.includes(searchTerm);
+                    const name = (student.student_name || '').toLowerCase();
+                    const email = (student.email || '').toLowerCase();
+                    const num = String(student.student_number || '').toLowerCase();
+                    return name.includes(searchTerm) || email.includes(searchTerm) || num.includes(searchTerm);
                 });
             }
             
             if (filterValue !== 'all') {
                 filteredStudents = filteredStudents.filter(student => {
-                    const scores = [
-                        student.functions_quiz_best_score || 0,
-                        student.evaluating_functions_quiz_best_score || 0,
-                        student.operations_on_functions_quiz_best_score || 0,
-                        student.real_life_problems_quiz_best_score || 0,
-                        student.rational_functions_quiz_best_score || 0,
-                        student.solving_rational_equations_quiz_best_score || 0,
-                        student.representations_of_rational_functions_quiz_best_score || 0,
-                        student.domain_range_rational_functions_quiz_best_score || 0,
-                        student.domain_range_inverse_functions_quiz_best_score || 0,
-                        student.one_to_one_functions_quiz_best_score || 0
-                    ];
-                    // Calculate average only from quizzes that have been taken
-                    const takenQuizzesFilter = scores.filter(score => score > 0);
-                    const avgScore = takenQuizzesFilter.length > 0 
-                        ? takenQuizzesFilter.reduce((a, b) => a + b, 0) / takenQuizzesFilter.length 
-                        : 0;
-                    const hasTakenQuizzes = takenQuizzesFilter.length > 0;
+                    const { quizzesAttempted, avgPercent, hasAttemptedAny } = getStudentTopicQuizStats(student);
+                    const avgScore = avgPercent;
                     
                     switch (filterValue) {
                         case 'excellent':
-                            return avgScore >= 90 && avgScore <= 100;
+                            return hasAttemptedAny && avgScore >= 90 && avgScore <= 100;
                         case 'verygood':
-                            return avgScore >= 80 && avgScore < 90;
+                            return hasAttemptedAny && avgScore >= 80 && avgScore < 90;
                         case 'good':
-                            return avgScore >= 70 && avgScore < 80;
+                            return hasAttemptedAny && avgScore >= 70 && avgScore < 80;
                         case 'fair':
-                            return avgScore >= 60 && avgScore < 70;
+                            return hasAttemptedAny && avgScore >= 60 && avgScore < 70;
                         case 'needs-help':
-                            return avgScore < 60 && avgScore > 0;
+                            return hasAttemptedAny && avgScore < 60;
                         case 'not-attempted':
-                            return !hasTakenQuizzes;
+                            return quizzesAttempted === 0;
                         default:
                             return true;
                     }
@@ -9985,14 +9921,7 @@ let currentQuizResultsSearch = '';
         }
 
         function clearStudentSearch() {
-            const searchInput = document.getElementById('studentSearchInput');
-            const filterSelect = document.getElementById('performanceFilterSelect');
-            const searchResultsInfo = document.getElementById('searchResultsInfo');
-            
-            if (searchInput) searchInput.value = '';
-            if (filterSelect) filterSelect.value = 'all';
-            if (searchResultsInfo) searchResultsInfo.classList.add('hidden');
-            
+            resetClassPerformanceSearchUI();
             displayFilteredStudents(allStudentsData);
         }
 

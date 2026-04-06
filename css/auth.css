@@ -1192,6 +1192,38 @@ body.register-page {
     font-weight: 700;
 }
 
+.maintenance-popup__sectionLabel {
+    margin-top: 14px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #64748b;
+}
+
+.maintenance-popup__header + .maintenance-popup__sectionLabel {
+    margin-top: 6px;
+}
+
+.maintenance-popup__meta {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: #f1f5f9;
+    border-radius: 10px;
+    font-size: 0.84rem;
+    color: #475569;
+    line-height: 1.45;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.maintenance-popup__meta i {
+    color: #6366f1;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
 .maintenance-popup__message {
     margin-top: 12px;
     color: #334155;

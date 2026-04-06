@@ -184,3 +184,22 @@ if (!function_exists('getMaintenancePayload')) {
         ];
     }
 }
+
+if (!function_exists('maintenanceLoginJsonFragment')) {
+    /**
+     * Fields for student/teacher login JSON when sign-in is blocked by maintenance.
+     */
+    function maintenanceLoginJsonFragment(array $p): array
+    {
+        $msg = (string) ($p['public_message'] ?? $p['message'] ?? '');
+        return [
+            'title' => (string) ($p['title'] ?? ''),
+            'public_message' => $msg,
+            'scheduled_start_at' => $p['scheduled_start_at'] ?? null,
+            'scheduled_end_at' => $p['scheduled_end_at'] ?? null,
+            'estimated_end_at' => $p['estimated_end_at'] ?? null,
+            'started_at' => $p['started_at'] ?? null,
+            'advance_notice_minutes' => (int) ($p['advance_notice_minutes'] ?? 30),
+        ];
+    }
+}

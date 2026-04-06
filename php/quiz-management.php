@@ -75,6 +75,36 @@ class QuizManager {
             throw new Exception("Database connection not available");
         }
     }
+
+    /**
+     * Legacy Functions quiz rows used total_questions = 11. The quiz now has 15 items.
+     * For API/UI only: show scaled correct count out of 15; percentage stays (correct/11)*100.
+     */
+    private function scaleFunctionsQuizLegacyRowForDisplay(array &$row) {
+        $tq = (int)($row['total_questions'] ?? 0);
+        if ($tq !== 11) {
+            return;
+        }
+        $correct = isset($row['correct_answers']) && $row['correct_answers'] !== null && $row['correct_answers'] !== ''
+            ? (int)$row['correct_answers']
+            : min((int)($row['score'] ?? 0), $tq);
+        if ($correct < 0) {
+            $correct = 0;
+        }
+        if ($correct > 11) {
+            $correct = 11;
+        }
+        $scaled = (int)round($correct * 15 / 11);
+        if ($scaled > 15) {
+            $scaled = 15;
+        }
+        if ($scaled < 0) {
+            $scaled = 0;
+        }
+        $row['score'] = $scaled;
+        $row['total_questions'] = 15;
+        $row['percentage'] = round(($correct / 11) * 100, 1);
+    }
     
     // Check for existing quiz attempt
     public function checkExistingAttempt($studentId, $quizType) {
@@ -1009,6 +1039,11 @@ class QuizManager {
                 $teacherId = $this->getCurrentUserTeacherId($currentUserId);
             }
             
+            // Functions quiz: rank by % correct (handles mixed 11- and 15-question attempts); others by raw score
+            $fnLeaderboardOrder = ($quizType === 'functions')
+                ? 'COALESCE(qa.correct_answers, LEAST(qa.score, qa.total_questions)) / NULLIF(qa.total_questions, 0) DESC, qa.completion_time ASC'
+                : 'qa.score DESC, qa.completion_time ASC';
+
             // Build the query with proper class filtering
             $sql = "
                 SELECT 
@@ -1029,7 +1064,7 @@ class QuizManager {
                     CASE WHEN u.id = ? THEN 1 ELSE 0 END as is_current_user,
                     ROW_NUMBER() OVER (
                         PARTITION BY qa.quiz_type, c.id 
-                        ORDER BY qa.score DESC, qa.completion_time ASC
+                        ORDER BY " . $fnLeaderboardOrder . "
                     ) as rank_position
                 FROM quiz_attempts qa
                 JOIN users u ON qa.student_id = u.id
@@ -1069,19 +1104,20 @@ class QuizManager {
                 $params[] = $currentUserId;
             }
             
-            $sql .= " ORDER BY qa.score DESC, qa.completion_time ASC LIMIT " . $limit;
+            $sql .= " ORDER BY " . $fnLeaderboardOrder . " LIMIT " . $limit;
             
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute($params);
             $leaderboard = $stmt->fetchAll();
             
-            // For 'functions' quiz: display score as questions correct (11/11), not points (15/11)
+            // For 'functions' quiz: use correct_answers (not points); scale legacy 11-question rows to /15 for display
             foreach ($leaderboard as $index => $entry) {
                 $leaderboard[$index]['rank_position'] = $index + 1;
                 if ($quizType === 'functions' && (int)$entry['total_questions'] > 0) {
                     $correct = isset($entry['correct_answers']) ? (int)$entry['correct_answers'] : min((int)$entry['score'], (int)$entry['total_questions']);
                     $leaderboard[$index]['score'] = $correct;
-                    $leaderboard[$index]['percentage'] = round(($correct / $entry['total_questions']) * 100, 1);
+                    $leaderboard[$index]['percentage'] = round(($correct / (int)$entry['total_questions']) * 100, 1);
+                    $this->scaleFunctionsQuizLegacyRowForDisplay($leaderboard[$index]);
                 }
             }
             
@@ -1163,16 +1199,18 @@ class QuizManager {
             $stmt->execute($params);
             $history = $stmt->fetchAll();
             
-            // Calculate percentage for each attempt; for 'functions' quiz show questions correct (e.g. 11/11) not points (15/11)
+            // For 'functions' quiz use correct count; scale legacy 11-item attempts to display as /15
             foreach ($history as &$attempt) {
                 if (isset($attempt['quiz_type']) && $attempt['quiz_type'] === 'functions') {
                     $correct = isset($attempt['correct_answers']) ? (int)$attempt['correct_answers'] : min((int)$attempt['score'], (int)$attempt['total_questions']);
                     $attempt['score'] = $correct;
                     $attempt['percentage'] = round(($correct / (int)$attempt['total_questions']) * 100, 1);
+                    $this->scaleFunctionsQuizLegacyRowForDisplay($attempt);
                 } else {
                     $attempt['percentage'] = round(($attempt['score'] / $attempt['total_questions']) * 100, 1);
                 }
             }
+            unset($attempt);
             
             return [
                 'success' => true,
@@ -1409,18 +1447,21 @@ class QuizManager {
             $params[] = $classId;
         }
         
-        $sql .= " ORDER BY qa.score DESC, qa.completion_time ASC";
+        $sql .= ($quizType === 'functions')
+            ? " ORDER BY (COALESCE(qa.correct_answers, LEAST(qa.score, qa.total_questions)) / NULLIF(qa.total_questions, 0)) DESC, qa.completion_time ASC"
+            : " ORDER BY qa.score DESC, qa.completion_time ASC";
         
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
         $results = $stmt->fetchAll();
         
-        // For 'functions' quiz: show score as questions correct (11/11), not points (15/11)
+        // For 'functions' quiz: correct count; scale legacy 11-question rows to /15 for display
         if ($quizType === 'functions') {
             foreach ($results as &$entry) {
                 $correct = isset($entry['correct_answers']) ? (int)$entry['correct_answers'] : min((int)$entry['score'], (int)$entry['total_questions']);
                 $entry['score'] = $correct;
                 $entry['percentage'] = round(($correct / (int)$entry['total_questions']) * 100, 1);
+                $this->scaleFunctionsQuizLegacyRowForDisplay($entry);
             }
             unset($entry);
         }

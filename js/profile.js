@@ -166,6 +166,9 @@ function applyNavProfile(user, bustCache = false) {
             profileIconContainer.classList.remove('bg-slate-200');
         }
     }
+    if (typeof window.syncStudentMobileNavProfile === 'function') {
+        window.syncStudentMobileNavProfile();
+    }
 }
 
 // Display badges
@@ -175,20 +178,20 @@ function displayBadges(badges) {
     if (!badges || badges.length === 0) {
         container.innerHTML = `
             <div class="col-span-full text-center py-8">
-                <i class="fas fa-trophy text-6xl text-gray-300 mb-4"></i>
-                <p class="text-gray-500 text-lg">No badges earned yet</p>
-                <p class="text-gray-400 text-sm mt-2">Complete lessons and quizzes to earn badges!</p>
+                <i class="fas fa-trophy text-5xl text-slate-300 mb-3"></i>
+                <p class="text-slate-600 text-base font-medium">No badges earned yet</p>
+                <p class="text-slate-500 text-sm mt-2">Complete lessons and quizzes to earn badges.</p>
             </div>
         `;
         return;
     }
     
     container.innerHTML = badges.map(badge => `
-        <div class="badge-card bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-4 border-2 border-yellow-200 text-center">
+        <div class="badge-card bg-gradient-to-br from-indigo-50 to-violet-50 rounded-xl p-4 border border-indigo-100 text-center shadow-sm">
             <div class="text-4xl mb-2">${badge.icon_url || '🏆'}</div>
-            <h3 class="font-bold text-gray-800 text-sm mb-1">${badge.name || 'Badge'}</h3>
-            <p class="text-xs text-gray-600">${badge.description || ''}</p>
-            <p class="text-xs text-gray-400 mt-2">Earned: ${formatDate(badge.earned_at)}</p>
+            <h3 class="font-bold text-slate-800 text-sm mb-1">${badge.name || 'Badge'}</h3>
+            <p class="text-xs text-slate-600">${badge.description || ''}</p>
+            <p class="text-xs text-slate-500 mt-2">Earned: ${formatDate(badge.earned_at)}</p>
         </div>
     `).join('');
 }
@@ -200,28 +203,28 @@ function displayLessons(lessons) {
     if (!lessons || lessons.length === 0) {
         container.innerHTML = `
             <div class="text-center py-8">
-                <i class="fas fa-book-open text-6xl text-gray-300 mb-4"></i>
-                <p class="text-gray-500 text-lg">No topics completed yet</p>
-                <a href="dashboard.php#learning-path" class="text-primary hover:underline mt-2 inline-block">Go to learning path</a>
+                <i class="fas fa-book-open text-5xl text-slate-300 mb-3"></i>
+                <p class="text-slate-600 text-base font-medium">No topics completed yet</p>
+                <a href="dashboard.html#learning-path" class="text-indigo-600 hover:text-violet-700 font-medium hover:underline mt-2 inline-block text-sm">Go to learning path</a>
             </div>
         `;
         return;
     }
     
     container.innerHTML = lessons.map(lesson => `
-        <div class="flex items-center justify-between p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
-            <div class="flex items-center space-x-4">
-                <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
-                    <i class="fas fa-check text-white"></i>
+        <div class="flex items-center justify-between gap-3 p-3.5 sm:p-4 bg-indigo-50/70 rounded-xl border border-indigo-100/80">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-11 h-11 shrink-0 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-full flex items-center justify-center shadow-sm">
+                    <i class="fas fa-check text-white text-sm"></i>
                 </div>
-                <div>
-                    <h3 class="font-semibold text-gray-800">${lesson.topic_name || 'Lesson'}</h3>
-                    <p class="text-sm text-gray-600">Topic ${lesson.lesson_number || ''}</p>
+                <div class="min-w-0">
+                    <h3 class="font-semibold text-slate-800 text-sm sm:text-base">${lesson.topic_name || 'Lesson'}</h3>
+                    <p class="text-xs sm:text-sm text-slate-600">Topic ${lesson.lesson_number || ''}</p>
                 </div>
             </div>
-            <div class="text-right">
-                <p class="text-sm text-gray-500">Completed</p>
-                <p class="text-xs text-gray-400">${formatDate(lesson.completed_at)}</p>
+            <div class="text-right shrink-0">
+                <p class="text-xs font-medium text-indigo-700">Done</p>
+                <p class="text-xs text-slate-500">${formatDate(lesson.completed_at)}</p>
             </div>
         </div>
     `).join('');
@@ -237,23 +240,23 @@ function isTopicLessonQuiz(quizType) {
 function renderQuizCards(quizzes) {
     return quizzes.map((quiz) => {
         const percentage = quiz.total_questions > 0 ? Math.round((quiz.score / quiz.total_questions) * 100) : 0;
-        const colorClass = percentage >= 80 ? 'text-green-600' : percentage >= 60 ? 'text-yellow-600' : 'text-red-600';
-        const bgClass = percentage >= 80 ? 'bg-green-50 border-green-500' : percentage >= 60 ? 'bg-yellow-50 border-yellow-500' : 'bg-red-50 border-red-500';
+        const colorClass = percentage >= 80 ? 'text-indigo-700' : percentage >= 60 ? 'text-violet-700' : 'text-rose-600';
+        const bgClass = percentage >= 80 ? 'bg-indigo-50/80 border-indigo-200' : percentage >= 60 ? 'bg-violet-50/80 border-violet-200' : 'bg-rose-50/80 border-rose-200';
 
         return `
-            <div class="flex items-center justify-between p-4 ${bgClass} rounded-lg border-l-4">
-                <div class="flex items-center space-x-4 min-w-0">
-                    <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-clipboard-check text-white"></i>
+            <div class="flex items-center justify-between gap-3 p-3.5 sm:p-4 ${bgClass} rounded-xl border">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-11 h-11 shrink-0 bg-gradient-to-br from-indigo-500 to-violet-600 rounded-full flex items-center justify-center shadow-sm">
+                        <i class="fas fa-clipboard-check text-white text-sm"></i>
                     </div>
                     <div class="min-w-0">
-                        <h3 class="font-semibold text-gray-800 break-words">${formatQuizType(quiz.quiz_type)}</h3>
-                        <p class="text-sm text-gray-600">${quiz.score}/${quiz.total_questions} correct</p>
+                        <h3 class="font-semibold text-slate-800 text-sm sm:text-base break-words">${formatQuizType(quiz.quiz_type)}</h3>
+                        <p class="text-xs sm:text-sm text-slate-600">${quiz.score}/${quiz.total_questions} correct</p>
                     </div>
                 </div>
-                <div class="text-right flex-shrink-0 ml-2">
-                    <p class="font-bold ${colorClass}">${percentage}%</p>
-                    <p class="text-xs text-gray-400">${formatDate(quiz.completed_at)}</p>
+                <div class="text-right shrink-0 ml-2">
+                    <p class="font-bold tabular-nums ${colorClass}">${percentage}%</p>
+                    <p class="text-xs text-slate-500">${formatDate(quiz.completed_at)}</p>
                 </div>
             </div>
         `;
@@ -272,9 +275,9 @@ function displayQuizzesSplit(quizzes) {
         if (topicQuizzes.length === 0) {
             topicEl.innerHTML = `
                 <div class="text-center py-8">
-                    <i class="fas fa-layer-group text-6xl text-gray-300 mb-4"></i>
-                    <p class="text-gray-500 text-lg">No topic quizzes yet</p>
-                    <a href="dashboard.php#learning-path" class="text-primary hover:underline mt-2 inline-block">Open a topic</a>
+                    <i class="fas fa-layer-group text-5xl text-slate-300 mb-3"></i>
+                    <p class="text-slate-600 text-base font-medium">No topic quizzes yet</p>
+                    <a href="dashboard.html#learning-path" class="text-indigo-600 hover:text-violet-700 font-medium hover:underline mt-2 inline-block text-sm">Open a topic</a>
                 </div>
             `;
         } else {
@@ -286,9 +289,9 @@ function displayQuizzesSplit(quizzes) {
         if (standaloneQuizzes.length === 0) {
             standaloneEl.innerHTML = `
                 <div class="text-center py-8">
-                    <i class="fas fa-clipboard-check text-6xl text-gray-300 mb-4"></i>
-                    <p class="text-gray-500 text-lg">No course quizzes yet</p>
-                    <a href="quizzes.php" class="text-primary hover:underline mt-2 inline-block">Take a quiz</a>
+                    <i class="fas fa-clipboard-check text-5xl text-slate-300 mb-3"></i>
+                    <p class="text-slate-600 text-base font-medium">No course quizzes yet</p>
+                    <a href="quizzes.html" class="text-indigo-600 hover:text-violet-700 font-medium hover:underline mt-2 inline-block text-sm">Take a quiz</a>
                 </div>
             `;
         } else {
@@ -313,28 +316,32 @@ function displayStatistics(data) {
     if (topicCountEl) topicCountEl.textContent = topicQuizzes.length;
     if (standaloneCountEl) standaloneCountEl.textContent = standaloneQuizzes.length;
 
+    const averageScoreEl = document.getElementById('averageScore');
+    const lastLoginEl = document.getElementById('lastLogin');
+    const totalStudyTimeEl = document.getElementById('totalStudyTime');
+
     const totalCorrect = quizzes.reduce((sum, q) => sum + (q.score || 0), 0);
-    if (quizzes.length > 0) {
-        const totalQuestions = quizzes.reduce((sum, q) => sum + (q.total_questions || 0), 0);
-        const averagePercentage = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
-        document.getElementById('averageScore').textContent = averagePercentage + '%';
-    } else {
-        document.getElementById('averageScore').textContent = '0%';
+    if (averageScoreEl) {
+        if (quizzes.length > 0) {
+            const totalQuestions = quizzes.reduce((sum, q) => sum + (q.total_questions || 0), 0);
+            const averagePercentage = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+            averageScoreEl.textContent = averagePercentage + '%';
+        } else {
+            averageScoreEl.textContent = '0%';
+        }
     }
-    
-    // Display last login
-    if (data.user && data.user.last_login) {
-        document.getElementById('lastLogin').textContent = formatDate(data.user.last_login);
+
+    if (lastLoginEl && data.user && data.user.last_login) {
+        lastLoginEl.textContent = formatDate(data.user.last_login);
     }
-    
-    // Display total study time (if available)
-    if (data.study_time) {
+
+    if (totalStudyTimeEl && data.study_time) {
         const hours = Math.floor(data.study_time / 3600);
         const minutes = Math.floor((data.study_time % 3600) / 60);
         if (hours > 0) {
-            document.getElementById('totalStudyTime').textContent = `${hours}h ${minutes}m`;
+            totalStudyTimeEl.textContent = `${hours}h ${minutes}m`;
         } else {
-            document.getElementById('totalStudyTime').textContent = `${minutes}m`;
+            totalStudyTimeEl.textContent = `${minutes}m`;
         }
     }
 }

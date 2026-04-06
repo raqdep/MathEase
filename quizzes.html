@@ -6,6 +6,7 @@
     <title>Quizzes - MathEase</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="css/student-mobile-nav.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
@@ -107,7 +108,7 @@
                 <!-- Desktop Navigation -->
                 <div class="hidden md:flex items-center space-x-1">
                     <a href="dashboard.html" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Dashboard</a>
-                    <a href="#learning-path" id="topicsNavLink" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Topics</a>
+                    <a href="dashboard.html#learning-path" id="topicsNavLink" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Topics</a>
                     <a href="quizzes.html" id="quizzesNavLink" class="bg-indigo-50 text-indigo-600 font-medium px-4 py-2 rounded-lg text-sm transition-all duration-200">Quizzes</a>
                     <a href="flashcards.html" id="flashcardsNavLink" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Flashcards</a>
                     <a href="achievements.html" id="achievementsNavLink" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200">Achievements</a>
@@ -165,10 +166,12 @@
                     </div>
                 </div>
                 
-                <!-- Mobile menu button -->
-                <div class="md:hidden flex-shrink-0">
-                    <button type="button" id="mobileMenuButton" class="text-slate-600 hover:text-slate-800 hover:bg-slate-50 p-2 rounded-lg transition-all duration-200 min-h-[44px] min-w-[44px]">
-                        <i class="fas fa-bars text-lg"></i>
+                <!-- Mobile menu (drawer: js/student-mobile-nav-shared.js) -->
+                <div class="dashboard-nav-hamburger md:hidden flex-shrink-0">
+                    <button type="button" id="mobileMenuButton" class="hamburger p-2 rounded-lg transition-all duration-200" aria-label="Toggle menu">
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                        <span class="bar"></span>
                     </button>
                 </div>
             </div>
@@ -1603,6 +1606,8 @@
 
         // Update quiz card for completed quiz (deadline not passed)
         function updateCompletedQuizCard(card, attempt) {
+            const quizType = card.getAttribute('data-quiz-type');
+            const disp = normalizeFunctionsQuizScoreDisplay(quizType, attempt);
             // Remove onclick to prevent navigation
             card.removeAttribute('onclick');
             card.style.cursor = 'default';
@@ -1634,7 +1639,7 @@
             // Add score information
             const scoreInfo = document.createElement('div');
             scoreInfo.className = 'mt-2 text-sm text-blue-600 font-medium';
-            scoreInfo.innerHTML = `<i class="fas fa-trophy mr-1"></i>Score: ${attempt.score}/${attempt.total_questions} (${attempt.percentage}%)`;
+            scoreInfo.innerHTML = `<i class="fas fa-trophy mr-1"></i>Score: ${disp.score}/${disp.total_questions} (${disp.percentage}%)`;
             
             // Insert score info before the existing info
             const existingInfo = card.querySelector('.flex.items-center.space-x-6');
@@ -1643,7 +1648,6 @@
             }
 
             // Add Leader Board and Result buttons
-            const quizType = card.getAttribute('data-quiz-type');
             const buttonContainer = card.querySelector('.quiz-actions, .flex.flex-col.items-stretch.sm\\:items-end');
             if (buttonContainer) {
                 buttonContainer.classList.add('quiz-actions');
@@ -1677,7 +1681,7 @@
                 e.stopPropagation();
                 Swal.fire({
                     title: 'Quiz Already Completed',
-                    text: `You have already completed this quiz with a score of ${attempt.score}/${attempt.total_questions} (${attempt.percentage}%). You can view your results any time using the Result button.`,
+                    text: `You have already completed this quiz with a score of ${disp.score}/${disp.total_questions} (${disp.percentage}%). You can view your results any time using the Result button.`,
                     icon: 'info',
                     confirmButtonText: 'OK',
                     confirmButtonColor: '#6366f1',
@@ -1695,6 +1699,7 @@
         function updateCompletedQuizCardForReview(card, attempt) {
             // Restore onclick functionality for review access
             const quizType = card.getAttribute('data-quiz-type');
+            const disp = normalizeFunctionsQuizScoreDisplay(quizType, attempt);
             const quizUrls = {
                 'functions': 'quiz/functions-quiz.html',
                 'evaluating-functions': 'quiz/evaluating-functions-quiz.html',
@@ -1741,7 +1746,7 @@
             // Add review information
             const reviewInfo = document.createElement('div');
             reviewInfo.className = 'mt-2 text-sm text-orange-600 font-medium';
-            reviewInfo.innerHTML = `<i class="fas fa-eye mr-1"></i>Review Mode: Score ${attempt.score}/${attempt.total_questions} (${attempt.percentage}%)`;
+            reviewInfo.innerHTML = `<i class="fas fa-eye mr-1"></i>Review Mode: Score ${disp.score}/${disp.total_questions} (${disp.percentage}%)`;
             
             // Insert review info before the existing info
             const existingInfo = card.querySelector('.flex.items-center.space-x-6');
@@ -1785,8 +1790,8 @@
                             </div>
                             <p class="text-lg text-gray-700 mb-4">Quiz deadline has passed. You can now review your answers!</p>
                             <div class="bg-orange-50 rounded-lg p-4 mb-4">
-                                <div class="text-2xl font-bold text-orange-600">${attempt.score}/${attempt.total_questions}</div>
-                                <div class="text-sm text-orange-500">Your Score: ${attempt.percentage}%</div>
+                                <div class="text-2xl font-bold text-orange-600">${disp.score}/${disp.total_questions}</div>
+                                <div class="text-sm text-orange-500">Your Score: ${disp.percentage}%</div>
                                 <div class="text-xs text-gray-500 mt-1">Completed on ${attempt.quiz_date}</div>
                             </div>
                             <p class="text-sm text-gray-600">In review mode, you can see your answers and the correct solutions.</p>
@@ -2973,6 +2978,24 @@
         setInterval(loadProfilePicture, 5000); // Check every 5 seconds
 
         // Quiz Leaderboard and Results Functions
+        /**
+         * Functions quiz legacy DB rows use total_questions = 11; quiz now has 15 items.
+         * Mirror php scale: show round(correct*15/11)/15; percentage stays (correct/11)*100.
+         */
+        function normalizeFunctionsQuizScoreDisplay(quizType, row) {
+            if (!row || quizType !== 'functions') return row;
+            const tq = parseInt(row.total_questions, 10);
+            if (tq !== 11) return row;
+            let correct = row.correct_answers != null && row.correct_answers !== ''
+                ? parseInt(row.correct_answers, 10)
+                : Math.min(parseInt(row.score, 10) || 0, 11);
+            if (!Number.isFinite(correct)) correct = 0;
+            correct = Math.max(0, Math.min(11, correct));
+            const scaled = Math.min(15, Math.max(0, Math.round(correct * 15 / 11)));
+            const pct = Math.round((correct / 11) * 1000) / 10;
+            return Object.assign({}, row, { score: scaled, total_questions: 15, percentage: pct });
+        }
+
         async function showQuizLeaderboard(quizType) {
             const modal = document.getElementById('quizLeaderboardModal');
             const title = document.getElementById('leaderboardModalTitle');
@@ -3021,7 +3044,7 @@
                 const result = await response.json();
                 
                 if (result.success && result.leaderboard) {
-                    displayLeaderboardInModal(result.leaderboard, content);
+                    displayLeaderboardInModal(result.leaderboard, content, quizType);
                 } else {
                     content.innerHTML = `
                         <div class="text-center py-16">
@@ -3042,8 +3065,11 @@
             }
         }
 
-        function displayLeaderboardInModal(leaderboardData, container) {
-            if (leaderboardData.length === 0) {
+        function displayLeaderboardInModal(leaderboardData, container, quizType) {
+            const rows = Array.isArray(leaderboardData)
+                ? leaderboardData.map((s) => normalizeFunctionsQuizScoreDisplay(quizType, s))
+                : leaderboardData;
+            if (rows.length === 0) {
                 container.innerHTML = `
                     <div class="text-center py-16">
                         <i class="fas fa-trophy text-6xl text-gray-300 mb-4"></i>
@@ -3065,8 +3091,8 @@
                 return value;
             };
 
-            const cheatingStudents = leaderboardData.filter(s => normalizeCheatingReason(s.cheating_reason) !== null);
-            const regularStudents = leaderboardData.filter(s => normalizeCheatingReason(s.cheating_reason) === null);
+            const cheatingStudents = rows.filter(s => normalizeCheatingReason(s.cheating_reason) !== null);
+            const regularStudents = rows.filter(s => normalizeCheatingReason(s.cheating_reason) === null);
 
             // Ensure stable ordering for the podium (top 3 by rank).
             regularStudents.sort((a, b) => {
@@ -3081,7 +3107,7 @@
             });
             
             // Calculate stats
-            const totalParticipants = leaderboardData.length;
+            const totalParticipants = rows.length;
             const averageScore = regularStudents.length > 0 
                 ? Math.round(regularStudents.reduce((sum, s) => sum + parseFloat(s.percentage || 0), 0) / regularStudents.length) 
                 : 0;
@@ -3397,8 +3423,9 @@
                         const answersResult = await answersResponse.json();
                         
                         if (answersResult.success && answersResult.answers) {
+                            const displayAttempt = normalizeFunctionsQuizScoreDisplay(quizType, Object.assign({}, candidateAttempt));
                             // Load quiz data to get correct answers (full review only when deadline passed + quiz closed)
-                            await loadQuizDataAndDisplayResults(quizType, answersResult.answers, candidateAttempt, content, reviewPolicy);
+                            await loadQuizDataAndDisplayResults(quizType, answersResult.answers, displayAttempt, content, reviewPolicy);
                         } else {
                             content.innerHTML = `
                                 <div class="text-center py-16">

@@ -26,9 +26,11 @@ try {
         'upcoming' => $upcoming,
         'title' => $payload['title'],
         'message' => $payload['message'],
+        'public_message' => $payload['public_message'] ?? $payload['message'],
         'estimated_end_at' => $payload['estimated_end_at'],
         'scheduled_start_at' => $scheduledStart,
         'scheduled_end_at' => $scheduledEnd,
+        'advance_notice_minutes' => (int) ($payload['advance_notice_minutes'] ?? 30),
         'send_email_on_start' => false,
         'started_at' => $payload['started_at'],
     ]);
