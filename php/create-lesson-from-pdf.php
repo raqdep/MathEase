@@ -98,6 +98,7 @@ require_once __DIR__ . '/config.php';      // must only define $pdo, no output
 require_once __DIR__ . '/load-env.php';   // loads .env into getenv()
 require_once __DIR__ . '/teacher-lessons-schema.php';
 require_once __DIR__ . '/teacher-activity-log-helper.php';
+require_once __DIR__ . '/teacher-lesson-html-template.php';
 
 $__matheaseComposer = dirname(__DIR__) . '/vendor/autoload.php';
 if (is_readable($__matheaseComposer)) {
@@ -648,6 +649,8 @@ function generateLessonViaGroqOnce(
     $topic = utf8SafeForJson($topic);
     $topicDesc = utf8SafeForJson($topicDesc);
 
+    $templateInstructions = get_teacher_lesson_html_template_instructions($title);
+
     $prompt = <<<PROMPT
 You are a professional mathematics educator.
 
@@ -656,15 +659,15 @@ Your task is to generate a COMPLETE and DETAILED lesson for Grade 11 General Mat
 Topic: {$topicDesc}
 
 Requirements:
-- Write at least 2000-2500 words
-- Focus ONLY on lesson content (no UI, no formatting instructions)
-- Use clear explanations
+- Write at least 2000-2500 words of teaching content (headings, lists, and HTML structure add length beyond the word count—prioritize completeness).
+- Format the lesson as HTML using the OUTPUT FORMAT below so it matches MathEase built-in topic lessons (same card layout, icons, and Tailwind styling).
+- Use clear explanations.
 - Include:
   1. Introduction
   2. Concept explanation
   3. Step-by-step examples
-  4. Practice problems (with answers)
-  5. Activities (with answers)
+  4. Practice problems (with solutions and answers)
+  5. Activities (with solutions and answers)
   6. Summary
 
 Rules:
@@ -673,6 +676,8 @@ Rules:
 - Do NOT skip steps
 - Continue writing until the lesson is complete
 - Ensure each section is fully explained
+
+{$templateInstructions}
 
 Use the text below (extracted from the teacher’s PDF) as the primary source: align definitions, examples, and scope with it. Where the excerpt is brief, you may add standard Grade 11 General Mathematics content consistent with the topic above.
 
@@ -688,7 +693,7 @@ PROMPT;
     $payload = [
         'model'       => $model,
         'messages'    => [
-            ['role' => 'system',  'content' => 'You are a professional mathematics educator for Grade 11 General Mathematics. Output complete lesson prose only—no HTML, no UI or layout instructions, no meta-commentary. Ground the lesson in the PDF source when provided.'],
+            ['role' => 'system',  'content' => 'You are a professional mathematics educator for Grade 11 General Mathematics. Output a single HTML fragment following the user’s OUTPUT FORMAT: Tailwind CSS + Font Awesome, same visual patterns as built-in MathEase lessons. No markdown fences. No <html> or <body> wrappers. Ground the lesson in the PDF source when provided.'],
             ['role' => 'user',    'content' => $prompt]
         ],
         'temperature' => 0.6,
@@ -748,7 +753,9 @@ PROMPT;
         log_msg('Groq lesson: finish_reason=length (model hit max_tokens—lesson may be cut off).');
     }
 
-    return trim($content);
+    $content = trim($content);
+
+    return finalize_teacher_lesson_html($content, $title);
 }
 
 /**
