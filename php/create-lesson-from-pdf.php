@@ -568,10 +568,11 @@ function generateLessonViaGroq(
         throw new Exception('cURL extension is not enabled on the server.');
     }
 
+    // Larger excerpt + max_tokens first (fuller lessons). Smaller attempts retry on Groq 413/TPM limits.
     $attempts = [
-        ['label' => 'standard', 'maxChars' => 2200, 'max_tokens' => 2600],
-        ['label' => 'compact', 'maxChars' => 1400, 'max_tokens' => 2200],
-        ['label' => 'minimal', 'maxChars' => 800, 'max_tokens' => 1800],
+        ['label' => 'standard', 'maxChars' => 7200, 'max_tokens' => 4096],
+        ['label' => 'compact', 'maxChars' => 4000, 'max_tokens' => 3072],
+        ['label' => 'minimal', 'maxChars' => 2200, 'max_tokens' => 2400],
     ];
 
     $lastException = null;
@@ -648,23 +649,45 @@ function generateLessonViaGroqOnce(
     $topicDesc = utf8SafeForJson($topicDesc);
 
     $prompt = <<<PROMPT
-Turn the PDF excerpt below into one self‑contained HTML lesson fragment for Grade 11 General Mathematics.
+You are a professional mathematics educator.
 
-Rules: Use only information from the excerpt; do not invent facts. Output **HTML fragment only** (no `<html>`, `<head>`, or `<body>`). Start with `<div class="lesson">`. Use `<section>`, `<h2>`, `<h3>`, `<p>`, lists. Put math in `<code class="math">` or `<pre>`. Include worked examples from the excerpt if present; end with a brief summary and self‑check questions when the source supports it.
+Your task is to generate a COMPLETE and DETAILED lesson for Grade 11 General Mathematics.
 
---- PDF excerpt ---
+Topic: {$topicDesc}
+
+Requirements:
+- Write at least 1500–2000 words
+- Focus ONLY on lesson content (no UI, no formatting instructions)
+- Use clear explanations
+- Include:
+  1. Introduction
+  2. Concept explanation
+  3. Step-by-step examples
+  4. Practice problems (with answers)
+  5. Summary
+
+Rules:
+- Be detailed and educational
+- Do NOT shorten explanations
+- Do NOT skip steps
+- Continue writing until the lesson is complete
+- If response is too long, continue in the next message
+
+Use the text below (extracted from the teacher’s PDF) as the primary source: align definitions, examples, and scope with it. Where the excerpt is brief, you may add standard Grade 11 General Mathematics content consistent with the topic above.
+
+--- PDF source ---
 {$pdfContent}
 ---
 
-Metadata: title "{$title}"; topic "{$topic}" ({$topicDesc}).
+Reference: lesson title "{$title}"; topic code "{$topic}".
 
-Generate the HTML now.
+Start now.
 PROMPT;
 
     $payload = [
         'model'       => $model,
         'messages'    => [
-            ['role' => 'system',  'content' => 'You write concise Grade 11 math lessons as HTML fragments only.'],
+            ['role' => 'system',  'content' => 'You are a professional mathematics educator for Grade 11 General Mathematics. Output complete lesson prose only—no HTML, no UI or layout instructions, no meta-commentary. Ground the lesson in the PDF source when provided.'],
             ['role' => 'user',    'content' => $prompt]
         ],
         'temperature' => 0.6,
@@ -717,6 +740,11 @@ PROMPT;
     $content = $data['choices'][0]['message']['content'] ?? '';
     if (trim($content) === '') {
         throw new Exception('Groq returned empty lesson content.');
+    }
+
+    $finishReason = $data['choices'][0]['finish_reason'] ?? '';
+    if ($finishReason === 'length') {
+        log_msg('Groq lesson: finish_reason=length (model hit max_tokens—lesson may be cut off).');
     }
 
     return trim($content);
