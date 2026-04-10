@@ -570,9 +570,9 @@ function generateLessonViaGroq(
 
     // Larger excerpt + max_tokens first (fuller lessons). Smaller attempts retry on Groq 413/TPM limits.
     $attempts = [
-        ['label' => 'standard', 'maxChars' => 7200, 'max_tokens' => 4096],
-        ['label' => 'compact', 'maxChars' => 4000, 'max_tokens' => 3072],
-        ['label' => 'minimal', 'maxChars' => 2200, 'max_tokens' => 2400],
+        ['label' => 'standard', 'maxChars' => 7200, 'max_tokens' => 6144],
+        ['label' => 'compact', 'maxChars' => 4000, 'max_tokens' => 4096],
+        ['label' => 'minimal', 'maxChars' => 2200, 'max_tokens' => 3072],
     ];
 
     $lastException = null;
@@ -656,7 +656,7 @@ Your task is to generate a COMPLETE and DETAILED lesson for Grade 11 General Mat
 Topic: {$topicDesc}
 
 Requirements:
-- Write at least 1500–2000 words
+- Write at least 2000-2500 words
 - Focus ONLY on lesson content (no UI, no formatting instructions)
 - Use clear explanations
 - Include:
@@ -664,14 +664,15 @@ Requirements:
   2. Concept explanation
   3. Step-by-step examples
   4. Practice problems (with answers)
-  5. Summary
+  5. Activities (with answers)
+  6. Summary
 
 Rules:
 - Be detailed and educational
 - Do NOT shorten explanations
 - Do NOT skip steps
 - Continue writing until the lesson is complete
-- If response is too long, continue in the next message
+- Ensure each section is fully explained
 
 Use the text below (extracted from the teacher’s PDF) as the primary source: align definitions, examples, and scope with it. Where the excerpt is brief, you may add standard Grade 11 General Mathematics content consistent with the topic above.
 
