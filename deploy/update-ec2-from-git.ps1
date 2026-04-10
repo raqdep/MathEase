@@ -19,6 +19,7 @@ if (-not (Test-Path -LiteralPath $KeyPath)) {
     Write-Error "PEM not found: $KeyPath"
 }
 
-# Run git/composer as www-data; reload Apache as ubuntu (passwordless sudo on typical EC2 AMI).
-$bashRemote = "sudo -u www-data bash -lc 'cd $WebRoot && git fetch origin && git checkout main && git pull origin main && composer install --no-dev --no-interaction --optimize-autoloader'; sudo systemctl reload apache2"
+# Git must run with sufficient rights to update .git/objects (often root via sudo; www-data may fail).
+# Composer still runs as www-data so vendor/ ownership matches the web server.
+$bashRemote = "sudo bash -lc 'cd $WebRoot && git fetch origin && git checkout main && git pull origin main' && sudo -u www-data bash -lc 'cd $WebRoot && composer install --no-dev --no-interaction --optimize-autoloader' && sudo systemctl reload apache2"
 ssh -i $KeyPath -o StrictHostKeyChecking=accept-new $UserHost $bashRemote
