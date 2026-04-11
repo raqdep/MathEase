@@ -650,82 +650,70 @@ function generateLessonViaGroqOnce(
     $topicDesc = utf8SafeForJson($topicDesc);
 
     $prompt = <<<PROMPT
-You are a professional mathematics educator writing a Grade 11 learning module.
+You are a professional mathematics educator.
+
+Your task is to generate a COMPLETE and DETAILED lesson for Grade 11 General Mathematics.
 
 Topic: {$topicDesc}
 
-Your task is to generate a COMPLETE, DEEP, and CRITICAL lesson.
+Requirements:
+- Write at least 2000-2500 words of teaching content (headings, lists, and HTML structure add length beyond the word count—prioritize completeness).
+- Format the lesson as HTML using the OUTPUT FORMAT below so it matches MathEase built-in topic lessons (same card layout, icons, and Tailwind styling).
+- Use clear explanations.
+- Include:
+  1. Introduction
+  2. Concept explanation
+  3. Step-by-step examples
+  4. Practice problems (with solutions and answers)
+  5. Activities (with solutions and answers)
+  6. Summary
 
-IMPORTANT:
-The output will be used EXACTLY as the content of a PDF.
-Do NOT include any extra text outside the required sections.
-Do NOT include introductions like "Here is your lesson".
-Do NOT include formatting instructions.
-
----
-
-CONTENT REQUIREMENTS (FOLLOW EXACTLY IN ORDER):
-
-1. Introduction
-- Provide a clear and engaging overview of the topic
-- Include real-life context or applications
-- At least 2–3 paragraphs
-
-2. Concept Explanation
-- Explain all key concepts in depth
-- Include definitions, explanations, and reasoning
-- Explain WHY formulas work, not just HOW
-- Break down ideas step-by-step
-- At least 3–5 paragraphs
-
-3. Worked Examples
-- Provide at least 3–5 examples
-- Each example must include:
-  - Problem
-  - Solution (step-by-step)
-  - Final Answer
-  - Explanation of each step
-
-4. Practice Problems (with answers)
-- Provide at least 8–10 problems
-- Vary difficulty (easy to challenging)
-- Include final answers only (no solutions)
-
-5. Summary
-- Summarize key concepts clearly
-- Reinforce important ideas
-- At least 1–2 paragraphs
-
----
-
-INSTRUCTIONS:
-- Write like a full academic learning module (DepEd style)
-- Use clear and simple language for beginners
-- Provide reasoning and logical explanations
-- Use real-life applications where appropriate
-- Anticipate student misunderstandings and clarify them
-
----
-
-STRICT RULES:
+Rules:
+- Be detailed and educational
 - Do NOT shorten explanations
 - Do NOT skip steps
-- Do NOT give shallow answers
-- Do NOT add extra sections
-- Do NOT include anything outside the required structure
+- Continue writing until the lesson is complete
+- Ensure each section is fully explained
+
+Depth Requirement: Each concept must be explained in at least 2–3 paragraphs before moving to the next idea.
 
 ---
 
-OUTPUT RULES:
-- Only output the lesson content
-- Follow the exact section order
-- Ensure all sections are complete before ending
+OUTPUT FORMAT (required HTML — no markdown fences, no text before the first tag):
+- Output valid HTML only. Start directly with the opening <div> below (no “Here is your lesson”, no meta commentary).
+- Root structure (one section, six cards in this exact order):
 
-SAVING FORMAT (MathEase / PDF — does not add extra lesson sections):
-- Use minimal semantic HTML only: <h2> for each of the five section titles above (in order), <h3>/<h4> for subparts if needed, <p> for paragraphs, <ol>/<ul>/<li> for lists, <strong> for emphasis, <code> or <pre> for formulas when needed.
-- Do NOT use CSS utility classes, Tailwind, Font Awesome, or decorative wrappers. Do NOT use markdown code fences. Do not output any text before the first <h2> (Introduction).
+<div class="lesson-content">
+  <section class="lesson-section active">
+    <!-- Card 1: Introduction — use icon e.g. fa-book-open -->
+    <!-- Card 2: Concept explanation — e.g. fa-lightbulb -->
+    <!-- Card 3: Step-by-step examples — e.g. fa-list-ol -->
+    <!-- Card 4: Practice problems (every item: problem + full solution + final answer) — e.g. fa-pencil-alt -->
+    <!-- Card 5: Activities (every item: activity + full solution + final answer) — e.g. fa-tasks -->
+    <!-- Card 6: Summary — e.g. fa-check-circle -->
+  </section>
+</div>
 
-Use the text below (extracted from the teacher’s PDF) as the primary source: align definitions, examples, and scope with it. Where the excerpt is brief, you may add standard Grade 11 General Mathematics content consistent with the topic above.
+- For EACH of the six parts, use this card pattern (vary the Font Awesome icon per card; keep indigo/purple styling consistent with MathEase):
+
+<div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+  <div class="flex items-start gap-4 mb-6">
+    <div class="w-14 h-14 shrink-0 bg-indigo-600 text-white rounded-full flex items-center justify-center">
+      <i class="fas fa-ICON_NAME text-xl"></i>
+    </div>
+    <h2 class="text-2xl font-bold text-gray-800">Exact section title</h2>
+  </div>
+  <div class="text-gray-700 leading-relaxed space-y-4">
+    <!-- paragraphs, lists, inner boxes -->
+  </div>
+</div>
+
+- Use Tailwind utility classes throughout (text-gray-700, space-y-4, rounded-lg, shadow-lg, border, etc.). For worked examples or key ideas you may nest boxes such as:
+  <div class="bg-white rounded-lg p-6 shadow-lg border-l-4 border-indigo-500">...</div>
+- Use <p>, <ul>, <ol>, <li>, <strong>; use <code> or <pre> for expressions when helpful.
+- Do not duplicate the lesson hero title inside the cards unless it fits naturally in the Introduction.
+
+Use the text below (extracted from the teacher’s PDF) as the primary source: align definitions, examples, and scope with it. Where the excerpt is brief, add standard Grade 11 General Mathematics content consistent with the topic above.
 
 --- PDF source ---
 {$pdfContent}
@@ -737,7 +725,7 @@ PROMPT;
     $payload = [
         'model'       => $model,
         'messages'    => [
-            ['role' => 'system',  'content' => 'You are a professional mathematics educator for Grade 11 General Mathematics (DepEd-aligned). Output only the five lesson sections as specified: no assistant preamble (“Here is…”), no closing chit-chat, no meta or formatting instructions in the body. Use minimal semantic HTML as instructed. Ground the module in the PDF source when provided.'],
+            ['role' => 'system',  'content' => 'You are a professional mathematics educator for Grade 11 General Mathematics (DepEd-aligned). Output only the lesson as HTML: six sections in order (Introduction; Concept explanation; Step-by-step examples; Practice problems with full solutions; Activities with full solutions; Summary). Use Tailwind CSS classes and Font Awesome (fas) icons as described in the user message so cards match MathEase lesson styling. No assistant preamble (“Here is…”), no closing chit-chat, no markdown code fences. Ground the lesson in the PDF source when provided.'],
             ['role' => 'user',    'content' => $prompt]
         ],
         'temperature' => 0.6,
