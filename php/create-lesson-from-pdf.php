@@ -649,8 +649,6 @@ function generateLessonViaGroqOnce(
     $topic = utf8SafeForJson($topic);
     $topicDesc = utf8SafeForJson($topicDesc);
 
-    $templateInstructions = get_teacher_lesson_html_template_instructions($title);
-
     $prompt = <<<PROMPT
 You are a professional mathematics educator writing a Grade 11 learning module.
 
@@ -658,41 +656,74 @@ Topic: {$topicDesc}
 
 Your task is to generate a COMPLETE, DEEP, and CRITICAL lesson.
 
-Instructions:
-- Write like a full academic learning module
-- Explain concepts deeply, not just definitions
-- Provide reasoning behind formulas
-- Show step-by-step logic in all examples
+IMPORTANT:
+The output will be used EXACTLY as the content of a PDF.
+Do NOT include any extra text outside the required sections.
+Do NOT include introductions like "Here is your lesson".
+Do NOT include formatting instructions.
+
+---
+
+CONTENT REQUIREMENTS (FOLLOW EXACTLY IN ORDER):
+
+1. Introduction
+- Provide a clear and engaging overview of the topic
+- Include real-life context or applications
+- At least 2–3 paragraphs
+
+2. Concept Explanation
+- Explain all key concepts in depth
+- Include definitions, explanations, and reasoning
+- Explain WHY formulas work, not just HOW
+- Break down ideas step-by-step
+- At least 3–5 paragraphs
+
+3. Worked Examples
+- Provide at least 3–5 examples
+- Each example must include:
+  - Problem
+  - Solution (step-by-step)
+  - Final Answer
+  - Explanation of each step
+
+4. Practice Problems (with answers)
+- Provide at least 8–10 problems
+- Vary difficulty (easy to challenging)
+- Include final answers only (no solutions)
+
+5. Summary
+- Summarize key concepts clearly
+- Reinforce important ideas
+- At least 1–2 paragraphs
+
+---
+
+INSTRUCTIONS:
+- Write like a full academic learning module (DepEd style)
+- Use clear and simple language for beginners
+- Provide reasoning and logical explanations
 - Use real-life applications where appropriate
 - Anticipate student misunderstandings and clarify them
 
-Content Requirements:
-- Introduction (detailed and engaging)
-- Concept Explanation (deep and comprehensive)
-- Worked Examples (step-by-step with explanations)
-- Practice Problems (varied difficulty with answers)
-- Summary (reinforces key ideas)
+---
 
-Strict Rules:
+STRICT RULES:
 - Do NOT shorten explanations
 - Do NOT skip steps
 - Do NOT give shallow answers
-- Expand explanations fully
-- Ensure clarity for beginner learners
+- Do NOT add extra sections
+- Do NOT include anything outside the required structure
 
-Depth Requirement:
-Each concept must be explained in at least 2–3 paragraphs before moving to the next idea.
+---
 
-- Explain WHY each formula works, not just HOW
-- Break down each step logically
-- Avoid surface-level explanations
-- Teach as if the student has no prior knowledge
+OUTPUT RULES:
+- Only output the lesson content
+- Follow the exact section order
+- Ensure all sections are complete before ending
 
-Presentation:
-- Format the entire module as HTML using the OUTPUT FORMAT below so it matches MathEase built-in topic lessons (Tailwind CSS, icons, card layout).
-- Write thoroughly; prioritize depth and completeness over brevity.
-
-{$templateInstructions}
+SAVING FORMAT (MathEase / PDF — does not add extra lesson sections):
+- Use minimal semantic HTML only: <h2> for each of the five section titles above (in order), <h3>/<h4> for subparts if needed, <p> for paragraphs, <ol>/<ul>/<li> for lists, <strong> for emphasis, <code> or <pre> for formulas when needed.
+- Do NOT use CSS utility classes, Tailwind, Font Awesome, or decorative wrappers. Do NOT use markdown code fences. Do not output any text before the first <h2> (Introduction).
 
 Use the text below (extracted from the teacher’s PDF) as the primary source: align definitions, examples, and scope with it. Where the excerpt is brief, you may add standard Grade 11 General Mathematics content consistent with the topic above.
 
@@ -701,14 +732,12 @@ Use the text below (extracted from the teacher’s PDF) as the primary source: a
 ---
 
 Reference: lesson title "{$title}"; topic code "{$topic}".
-
-Start now.
 PROMPT;
 
     $payload = [
         'model'       => $model,
         'messages'    => [
-            ['role' => 'system',  'content' => 'You are a professional mathematics educator for Grade 11 General Mathematics. Write deep, critical learning modules (not shallow summaries). Output a single HTML fragment following the user’s OUTPUT FORMAT: Tailwind CSS + Font Awesome, same visual patterns as built-in MathEase lessons. No markdown fences. No <html> or <body> wrappers. Ground the module in the PDF source when provided.'],
+            ['role' => 'system',  'content' => 'You are a professional mathematics educator for Grade 11 General Mathematics (DepEd-aligned). Output only the five lesson sections as specified: no assistant preamble (“Here is…”), no closing chit-chat, no meta or formatting instructions in the body. Use minimal semantic HTML as instructed. Ground the module in the PDF source when provided.'],
             ['role' => 'user',    'content' => $prompt]
         ],
         'temperature' => 0.6,
