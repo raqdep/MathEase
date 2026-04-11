@@ -36,7 +36,7 @@ Outer wrapper (always use this structure):
         </div>
       </div>
 
-      <!-- For each major part (Introduction, Concept explanation, Step-by-step examples, Practice problems, Activities, Summary), use clear subheadings: -->
+      <!-- For each major part (Introduction, Concept explanation, Worked examples, Practice problems, Summary), use clear subheadings: -->
       <!-- h3 pattern: -->
       <h3 class="text-2xl font-bold text-gray-800 mb-4">
         <i class="fas fa-lightbulb text-amber-500 mr-2"></i>Section title here
@@ -92,10 +92,10 @@ Outer wrapper (always use this structure):
         </div>
       </div>
 
-      <!-- Practice / Activities: group each item in a light card -->
+      <!-- Practice problems (varied difficulty): group each item in a light card -->
       <div class="bg-white rounded-lg p-6 shadow-lg mb-8">
         <h4 class="text-xl font-semibold text-gray-800 mb-4">
-          <i class="fas fa-pencil-alt text-purple-500 mr-2"></i>Practice problems or Activities
+          <i class="fas fa-pencil-alt text-purple-500 mr-2"></i>Practice problems
         </h4>
         <ol class="list-decimal list-inside space-y-6 text-gray-700">
           <li>

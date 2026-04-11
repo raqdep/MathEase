@@ -652,30 +652,45 @@ function generateLessonViaGroqOnce(
     $templateInstructions = get_teacher_lesson_html_template_instructions($title);
 
     $prompt = <<<PROMPT
-You are a professional mathematics educator.
-
-Your task is to generate a COMPLETE and DETAILED lesson for Grade 11 General Mathematics.
+You are a professional mathematics educator writing a Grade 11 learning module.
 
 Topic: {$topicDesc}
 
-Requirements:
-- Write at least 2000-2500 words of teaching content (headings, lists, and HTML structure add length beyond the word count—prioritize completeness).
-- Format the lesson as HTML using the OUTPUT FORMAT below so it matches MathEase built-in topic lessons (same card layout, icons, and Tailwind styling).
-- Use clear explanations.
-- Include:
-  1. Introduction
-  2. Concept explanation
-  3. Step-by-step examples
-  4. Practice problems (with solutions and answers)
-  5. Activities (with solutions and answers)
-  6. Summary
+Your task is to generate a COMPLETE, DEEP, and CRITICAL lesson.
 
-Rules:
-- Be detailed and educational
+Instructions:
+- Write like a full academic learning module
+- Explain concepts deeply, not just definitions
+- Provide reasoning behind formulas
+- Show step-by-step logic in all examples
+- Use real-life applications where appropriate
+- Anticipate student misunderstandings and clarify them
+
+Content Requirements:
+- Introduction (detailed and engaging)
+- Concept Explanation (deep and comprehensive)
+- Worked Examples (step-by-step with explanations)
+- Practice Problems (varied difficulty with answers)
+- Summary (reinforces key ideas)
+
+Strict Rules:
 - Do NOT shorten explanations
 - Do NOT skip steps
-- Continue writing until the lesson is complete
-- Ensure each section is fully explained
+- Do NOT give shallow answers
+- Expand explanations fully
+- Ensure clarity for beginner learners
+
+Depth Requirement:
+Each concept must be explained in at least 2–3 paragraphs before moving to the next idea.
+
+- Explain WHY each formula works, not just HOW
+- Break down each step logically
+- Avoid surface-level explanations
+- Teach as if the student has no prior knowledge
+
+Presentation:
+- Format the entire module as HTML using the OUTPUT FORMAT below so it matches MathEase built-in topic lessons (Tailwind CSS, icons, card layout).
+- Write thoroughly; prioritize depth and completeness over brevity.
 
 {$templateInstructions}
 
@@ -693,7 +708,7 @@ PROMPT;
     $payload = [
         'model'       => $model,
         'messages'    => [
-            ['role' => 'system',  'content' => 'You are a professional mathematics educator for Grade 11 General Mathematics. Output a single HTML fragment following the user’s OUTPUT FORMAT: Tailwind CSS + Font Awesome, same visual patterns as built-in MathEase lessons. No markdown fences. No <html> or <body> wrappers. Ground the lesson in the PDF source when provided.'],
+            ['role' => 'system',  'content' => 'You are a professional mathematics educator for Grade 11 General Mathematics. Write deep, critical learning modules (not shallow summaries). Output a single HTML fragment following the user’s OUTPUT FORMAT: Tailwind CSS + Font Awesome, same visual patterns as built-in MathEase lessons. No markdown fences. No <html> or <body> wrappers. Ground the module in the PDF source when provided.'],
             ['role' => 'user',    'content' => $prompt]
         ],
         'temperature' => 0.6,
