@@ -77,6 +77,83 @@ function groqRequestJsonEncodeFlags(): int
 }
 
 /**
+ * POST JSON to the Groq API. Prefers cURL; falls back to PHP streams if cURL is missing
+ * (requires allow_url_fopen for HTTPS).
+ *
+ * @return array{http_code:int, body:string, transport_error:string}
+ */
+function groqLessonApiPost(string $apiUrl, string $jsonBody, string $apiKey, int $timeoutSec): array
+{
+    if (function_exists('curl_init')) {
+        $ch = curl_init($apiUrl);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST           => true,
+            CURLOPT_POSTFIELDS     => $jsonBody,
+            CURLOPT_HTTPHEADER     => [
+                'Content-Type: application/json',
+                'Authorization: Bearer ' . $apiKey,
+            ],
+            CURLOPT_TIMEOUT        => $timeoutSec,
+            CURLOPT_CONNECTTIMEOUT => 10,
+        ]);
+        $body = curl_exec($ch);
+        $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($ch);
+        curl_close($ch);
+
+        return [
+            'http_code' => $httpCode,
+            'body'      => is_string($body) ? $body : '',
+            'transport_error' => $curlError !== '' ? $curlError : '',
+        ];
+    }
+
+    if (!filter_var($apiUrl, FILTER_VALIDATE_URL) || !ini_get('allow_url_fopen')) {
+        return [
+            'http_code' => 0,
+            'body'      => '',
+            'transport_error' => 'cURL extension is not enabled. Enable php-curl, or set allow_url_fopen=On in php.ini for HTTPS stream fallback.',
+        ];
+    }
+
+    $ctx = stream_context_create([
+        'http' => [
+            'method'  => 'POST',
+            'header'  => "Content-Type: application/json\r\n"
+                . 'Authorization: Bearer ' . $apiKey . "\r\n"
+                . "Connection: close\r\n",
+            'content' => $jsonBody,
+            'timeout' => $timeoutSec,
+            'ignore_errors' => true,
+        ],
+        'ssl' => [
+            'verify_peer'      => true,
+            'verify_peer_name' => true,
+        ],
+    ]);
+
+    // Populates $http_response_header when using http(s) wrapper (do not pre-assign).
+    $body = @file_get_contents($apiUrl, false, $ctx);
+    $httpCode = 0;
+    if (isset($http_response_header) && is_array($http_response_header) && isset($http_response_header[0])
+        && preg_match('#HTTP/\S+\s+(\d{3})#', $http_response_header[0], $m)) {
+        $httpCode = (int) $m[1];
+    }
+    $err = '';
+    if ($body === false) {
+        $last = error_get_last();
+        $err = ($last['message'] ?? '') !== '' ? (string) $last['message'] : 'HTTPS request failed (check openssl / firewall).';
+    }
+
+    return [
+        'http_code' => $httpCode,
+        'body'      => is_string($body) ? $body : '',
+        'transport_error' => $err,
+    ];
+}
+
+/**
  * Sends a JSON response and halts execution.
  */
 function json_response(array $payload, int $httpCode = 200): void {
@@ -565,8 +642,10 @@ function generateLessonViaGroq(
     string $model,
     string $apiUrl
 ): string {
-    if (!function_exists('curl_init')) {
-        throw new Exception('cURL extension is not enabled on the server.');
+    if (!function_exists('curl_init') && !ini_get('allow_url_fopen')) {
+        throw new Exception(
+            'Groq calls need cURL (enable php-curl) or allow_url_fopen=On in php.ini for HTTPS fallback.'
+        );
     }
 
     // Larger excerpt + max_tokens first (fuller lessons). Smaller attempts retry on Groq 413/TPM limits.
@@ -740,27 +819,12 @@ PROMPT;
         );
     }
 
-    $ch = curl_init($apiUrl);
-    curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_POST           => true,
-        CURLOPT_POSTFIELDS     => $jsonBody,
-        CURLOPT_HTTPHEADER     => [
-            'Content-Type: application/json',
-            'Authorization: Bearer ' . $apiKey
-        ],
-        CURLOPT_TIMEOUT        => GROQ_LESSON_TIMEOUT_SEC,
-        CURLOPT_CONNECTTIMEOUT => 10
-    ]);
-
-    $rawResponse = curl_exec($ch);
-    $httpCode    = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $curlError   = curl_error($ch);
-    curl_close($ch);
-
-    if ($curlError) {
-        throw new Exception('Network error while calling Groq: ' . $curlError);
+    $res = groqLessonApiPost($apiUrl, $jsonBody, $apiKey, GROQ_LESSON_TIMEOUT_SEC);
+    if ($res['transport_error'] !== '') {
+        throw new Exception('Network error while calling Groq: ' . $res['transport_error']);
     }
+    $rawResponse = $res['body'];
+    $httpCode    = $res['http_code'];
     if ($httpCode !== 200) {
         $msg = "Groq returned HTTP {$httpCode}";
         $decoded = json_decode((string) $rawResponse, true);
