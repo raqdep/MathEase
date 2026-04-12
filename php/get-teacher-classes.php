@@ -1,24 +1,37 @@
 <?php
-session_start();
-require_once 'config.php';
 
-// Set content type to JSON
-header('Content-Type: application/json');
+declare(strict_types=1);
 
-// Check if user is logged in as teacher
+if (!ob_get_level()) {
+    ob_start();
+}
+ini_set('display_errors', '0');
+
+require_once __DIR__ . '/config.php';
+
+header('Content-Type: application/json; charset=utf-8');
+header('Cache-Control: no-store');
+
 if (!isset($_SESSION['teacher_id'])) {
+    if (ob_get_length()) {
+        ob_clean();
+    }
     http_response_code(401);
     echo json_encode([
         'success' => false,
         'error_code' => 'TEACHER_AUTH_REQUIRED',
         'message' => 'Teacher authentication required',
-        'redirect' => 'teacher-login.html'
-    ]);
+        'redirect' => 'teacher-login.html',
+    ], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
+$jsonFlags = JSON_UNESCAPED_UNICODE;
+if (defined('JSON_INVALID_UTF8_SUBSTITUTE')) {
+    $jsonFlags |= JSON_INVALID_UTF8_SUBSTITUTE;
+}
+
 try {
-    // Get teacher's classes with student count
     $stmt = $pdo->prepare("
         SELECT 
             c.id,
@@ -36,16 +49,26 @@ try {
     ");
     $stmt->execute([$_SESSION['teacher_id']]);
     $classes = $stmt->fetchAll();
-    
-    echo json_encode([
+
+    $out = json_encode([
         'success' => true,
-        'classes' => $classes
-    ]);
-    
-} catch (Exception $e) {
+        'classes' => $classes,
+    ], $jsonFlags);
+    if ($out === false) {
+        throw new RuntimeException('json_encode failed');
+    }
+    if (ob_get_length()) {
+        ob_clean();
+    }
+    echo $out;
+} catch (Throwable $e) {
+    error_log('[get-teacher-classes] ' . $e->getMessage());
+    if (ob_get_length()) {
+        ob_clean();
+    }
+    http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => 'Error loading classes: ' . $e->getMessage()
-    ]);
+        'message' => 'Error loading classes.',
+    ], $jsonFlags);
 }
-?>

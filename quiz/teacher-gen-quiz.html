@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Quiz - MathEase</title>
+    <link rel="icon" type="image/png" href="../Img/logo/logo-gradient.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="teacher-gen-quiz.css">
+</head>
+<body class="font-inter min-h-screen">
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="../dashboard.html" class="flex items-center space-x-2">
+                    <img src="../Img/logo/logo-white.png" alt="MathEase" class="h-8 w-8">
+                    <span class="text-xl font-bold text-indigo-600">MathEase</span>
+                </a>
+                <div class="flex items-center space-x-4">
+                    <span id="userName" class="font-medium text-gray-700">Student</span>
+                    <a href="../php/logout.php" class="text-sm text-red-600 hover:text-red-800">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="gradient-bg text-white py-10">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <div class="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-5 py-2 mb-4">
+                <i class="fas fa-wand-magic-sparkles mr-2"></i>
+                <span id="badgeQuizLabel" class="font-semibold">Teacher quiz</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold" id="quizTitle">Loading…</h1>
+        </div>
+    </header>
+
+    <div id="progressTimerHeader" class="hidden bg-white shadow-lg border-b-2 border-purple-200 sticky top-16 z-40">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+                <span class="text-sm text-gray-600">Progress</span>
+                <span class="text-xl font-bold text-gray-800" id="progressText">0/0</span>
+            </div>
+            <div class="circular-timer hidden sm:block">
+                <svg width="60" height="60" viewBox="0 0 60 60">
+                    <circle class="timer-bg" cx="30" cy="30" r="26" stroke-width="4"></circle>
+                    <circle class="timer-progress" cx="30" cy="30" r="26" stroke-width="4" stroke-dasharray="163.36" stroke-dashoffset="0"></circle>
+                </svg>
+                <div class="timer-text" id="quizTimer">00:00</div>
+            </div>
+            <div class="circular-timer sm:hidden" style="width:48px;height:48px;">
+                <svg width="48" height="48" viewBox="0 0 60 60">
+                    <circle class="timer-bg" cx="30" cy="30" r="26" stroke-width="4"></circle>
+                    <circle class="timer-progress" cx="30" cy="30" r="26" stroke-width="4"></circle>
+                </svg>
+                <div class="timer-text text-xs" id="quizTimerMobile" style="font-size:0.65rem;">00:00</div>
+            </div>
+        </div>
+        <div class="max-w-4xl mx-auto px-4 pb-3">
+            <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="progressBar" style="width:0%"></div></div>
+        </div>
+    </div>
+
+    <div id="tipsContainer" class="max-w-5xl mx-auto px-4 py-8">
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Quiz guidelines &amp; integrity</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl p-5 border border-red-100">
+                    <h3 class="font-semibold text-red-800 mb-2"><i class="fas fa-shield-alt mr-2"></i>Anti-cheating</h3>
+                    <ul class="text-sm text-gray-700 space-y-2">
+                        <li>After the <strong>3rd tab switch</strong>, you may be flagged for academic integrity.</li>
+                        <li>After <strong>3 fullscreen exits</strong>, you may be flagged (stay in fullscreen when possible).</li>
+                        <li>Flagged attempts may receive a <strong>score of 0</strong>.</li>
+                    </ul>
+                </div>
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-100">
+                    <h3 class="font-semibold text-indigo-800 mb-2"><i class="fas fa-list-check mr-2"></i>Tips</h3>
+                    <ul class="text-sm text-gray-700 space-y-2">
+                        <li>Read each item carefully. Some questions are typed answers.</li>
+                        <li>Review all answers before submitting.</li>
+                        <li>Leaderboard shows classmates in your course (same as other quizzes).</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center mt-8">
+                <button type="button" onclick="startQuizFlow()" id="startQuizBtn" class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-10 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition">
+                    <i class="fas fa-play mr-2"></i> Start Quiz
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <main class="max-w-5xl mx-auto px-4 pb-12">
+        <div id="quizContainer" class="hidden"></div>
+
+        <div id="resultsContainer" class="hidden">
+            <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                <div class="text-center mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800">Quiz Results</h2>
+                    <p class="text-gray-600 mt-2">Saved to your class leaderboard (same system as module quizzes).</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-indigo-50 rounded-xl p-4 text-center">
+                        <p class="text-xs text-gray-500 uppercase">Score</p>
+                        <p class="text-2xl font-bold text-indigo-700" id="totalScore">0/0</p>
+                    </div>
+                    <div class="bg-emerald-50 rounded-xl p-4 text-center">
+                        <p class="text-xs text-gray-500 uppercase">Grade</p>
+                        <p class="text-2xl font-bold text-emerald-700" id="overallGrade">0%</p>
+                        <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                            <div id="gradeProgress" class="bg-emerald-500 h-2 rounded-full" style="width:0%"></div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 rounded-xl p-4 text-center">
+                        <p class="text-xs text-gray-500 uppercase">Time</p>
+                        <p class="text-2xl font-bold text-slate-700" id="completionTime">0:00</p>
+                    </div>
+                </div>
+                <div id="reviewDetail" class="space-y-3 text-left max-h-[480px] overflow-y-auto border border-gray-100 rounded-xl p-4 bg-gray-50"></div>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+                    <button type="button" onclick="showLeaderboard()" class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-8 py-3 rounded-xl font-semibold">
+                        <i class="fas fa-trophy mr-2"></i> View Leaderboard
+                    </button>
+                    <button type="button" onclick="goToDashboard()" class="bg-gradient-to-r from-gray-500 to-gray-600 text-white px-8 py-3 rounded-xl font-semibold">
+                        <i class="fas fa-home mr-2"></i> Dashboard
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="leaderboardContainer" class="hidden">
+            <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Class Leaderboard</h2>
+                    <p class="text-gray-600 text-sm">Same class scope as Functions Quiz and other module quizzes</p>
+                </div>
+                <div class="grid grid-cols-3 gap-2 mb-8 text-center">
+                    <div class="bg-blue-50 rounded-lg p-4">
+                        <div class="text-2xl font-bold text-blue-600" id="totalParticipants">0</div>
+                        <div class="text-xs text-gray-600">Participants</div>
+                    </div>
+                    <div class="bg-green-50 rounded-lg p-4">
+                        <div class="text-2xl font-bold text-green-600" id="averageScore">0%</div>
+                        <div class="text-xs text-gray-600">Avg score</div>
+                    </div>
+                    <div class="bg-purple-50 rounded-lg p-4">
+                        <div class="text-2xl font-bold text-purple-600" id="fastestTime">—</div>
+                        <div class="text-xs text-gray-600">Stats</div>
+                    </div>
+                </div>
+                <div class="flex justify-center gap-4 mb-6" id="podiumContainer"></div>
+                <div class="bg-gray-50 rounded-b-xl overflow-hidden border border-gray-200" id="detailedLeaderboard"></div>
+                <div class="text-center mt-6">
+                    <button type="button" onclick="hideLeaderboard()" class="text-indigo-600 font-medium">Back to results</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="teacher-gen-quiz.js"></script>
+</body>
+</html>

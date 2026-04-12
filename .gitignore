@@ -40,6 +40,8 @@ config_backup.php
 # Profile uploads (keep directory structure but ignore uploaded files)
 uploads/profiles/*
 !uploads/profiles/.gitkeep
+uploads/quiz-generator/*
+!uploads/quiz-generator/.gitkeep
 uploads/teacher-profiles/*
 !uploads/teacher-profiles/.gitkeep
 

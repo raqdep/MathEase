@@ -8,6 +8,7 @@
  * 
  * SEPARATION MECHANISM:
  * - /quiz folder quizzes: Use quiz_type like 'functions', 'evaluating-functions', 'operations-on-functions'
+ * - Teacher-generated PDF quizzes: quiz_type 'teacher_gen_{id}' (see teacher-gen-quiz.html + quiz-generator)
  * - Topic quizzes: Use quiz_type like 'functions_topic_1', 'solving_real_life_problems_lesson_1'
  * - Topic quiz types contain '_topic_' or '_lesson_' patterns
  * - ALL queries in this file EXCLUDE topic quiz types using:
@@ -274,6 +275,9 @@ class QuizManager {
                 // Normalize question key to numeric question number and determine type
                 $questionType = 'multiple_choice';
                 $questionNumber = null;
+                if ($questionKey === 'tg_order') {
+                    continue;
+                }
                 if ($questionKey === 'ps-answer') {
                     $questionType = 'problem_solving';
                     $questionNumber = 11; // Convert to numeric for database
@@ -467,6 +471,7 @@ class QuizManager {
             $correctAnswers = 0;
             $incorrectAnswers = 0;
             $totalQuestions = 0;
+            $tgDetailHtml = null;
             
             // Handle different quiz types
             if ($quizType === 'evaluating-functions') {
@@ -676,6 +681,76 @@ class QuizManager {
                     }
                 }
                 
+            } else if (preg_match('/^teacher_gen_(\d+)$/', $quizType, $tgMatch)) {
+                require_once __DIR__ . '/quiz-generator/Grader.php';
+                $genId = (int) $tgMatch[1];
+                $orderRaw = $answers['tg_order'] ?? null;
+                unset($answers['tg_order']);
+                $order = null;
+                if (is_string($orderRaw)) {
+                    $order = json_decode($orderRaw, true);
+                } elseif (is_array($orderRaw)) {
+                    $order = $orderRaw;
+                }
+                $qStmt = $this->pdo->prepare("SELECT questions_json, status FROM teacher_generated_quizzes WHERE id = ? LIMIT 1");
+                $qStmt->execute([$genId]);
+                $genRow = $qStmt->fetch(PDO::FETCH_ASSOC);
+                if (!$genRow || ($genRow['status'] ?? '') !== 'published') {
+                    throw new Exception('This teacher quiz is not available.');
+                }
+                $bank = json_decode($genRow['questions_json'] ?? '{}', true);
+                $questions = is_array($bank['questions'] ?? null) ? $bank['questions'] : [];
+                $n = count($questions);
+                if ($n < 1 || $n > 30) {
+                    throw new Exception('Invalid quiz configuration.');
+                }
+                if (!is_array($order) || count($order) !== $n) {
+                    throw new Exception('Invalid answer order payload.');
+                }
+                $seen = [];
+                foreach ($order as $oi => $idx) {
+                    $idx = (int) $idx;
+                    if ($idx < 0 || $idx >= $n || isset($seen[$idx])) {
+                        throw new Exception('Invalid question order.');
+                    }
+                    $seen[$idx] = true;
+                }
+                $totalQuestions = $n;
+                $detailParts = [];
+                for ($slot = 1; $slot <= $n; $slot++) {
+                    $studentAnswer = isset($answers['q' . $slot]) ? (string) $answers['q' . $slot] : '';
+                    $orig = (int) $order[$slot - 1];
+                    $q = $questions[$orig] ?? null;
+                    if (!$q) {
+                        continue;
+                    }
+                    $g = QuizGen_Grader::grade($q, $studentAnswer);
+                    $isCorrect = $g['ok'];
+                    if ($isCorrect) {
+                        $score++;
+                        $correctAnswers++;
+                    } else {
+                        $incorrectAnswers++;
+                    }
+                    $qt = $q['type'] ?? 'identification';
+                    if (!in_array($qt, ['multiple_choice', 'identification', 'problem_solving'], true)) {
+                        $qt = 'identification';
+                    }
+                    $corrShow = (string) ($q['answer'] ?? '');
+                    $this->storeAnswer($attemptId, $slot, $qt, $studentAnswer, $corrShow, $isCorrect, $isCorrect ? 1 : 0);
+                    $safeQ = htmlspecialchars((string) ($q['question'] ?? ''), ENT_QUOTES, 'UTF-8');
+                    $safeY = htmlspecialchars($studentAnswer, ENT_QUOTES, 'UTF-8');
+                    $safeC = htmlspecialchars($corrShow, ENT_QUOTES, 'UTF-8');
+                    $fb = htmlspecialchars((string) ($g['feedback'] ?? ''), ENT_QUOTES, 'UTF-8');
+                    $cls = $isCorrect ? 'bg-green-50 border-l-4 border-green-500' : 'bg-red-50 border-l-4 border-red-500';
+                    $detailParts[] = '<div class="' . $cls . ' p-4 rounded-lg mb-3"><h4 class="font-semibold text-gray-800">Question ' . $slot . ($isCorrect ? ' ✓' : ' ✗') . '</h4>'
+                        . '<p class="text-sm text-gray-700 mt-1">' . $safeQ . '</p>'
+                        . '<p class="text-sm mt-2">Your answer: <strong>' . $safeY . '</strong></p>'
+                        . (!$isCorrect ? '<p class="text-sm text-gray-600">Expected: <strong>' . $safeC . '</strong></p>' : '')
+                        . '<p class="text-sm mt-1 text-gray-600">' . $fb . '</p></div>';
+                }
+                $tgDetailHtml = implode('', $detailParts);
+                
             } else {
                 // Unknown quiz type - log error and use default functions quiz logic
                 error_log("Unknown quiz type: $quizType, using default functions quiz logic");
@@ -749,7 +824,11 @@ class QuizManager {
             $this->notifyTeachersQuizSubmitted((int) $attempt['student_id'], (string) $quizType);
 
             // Generate detailed results
-            $detailedResults = $this->generateDetailedResults($answers, $score, $correctAnswers, $incorrectAnswers, $quizType);
+            if ($tgDetailHtml !== null) {
+                $detailedResults = $tgDetailHtml;
+            } else {
+                $detailedResults = $this->generateDetailedResults($answers, $score, $correctAnswers, $incorrectAnswers, $quizType);
+            }
             
             $totalPoints = $totalQuestions;
             

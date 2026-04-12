@@ -1733,6 +1733,8 @@
                             <!-- Metrics will be inserted here -->
                         </div>
                     </div>
+
+                    <div id="aiQuickLessonLinks" class="hidden bg-indigo-50 rounded-xl p-4 border border-indigo-200"></div>
                     
                     <!-- Strengths & Weaknesses Visualization -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -2567,6 +2569,7 @@
                     totalQuestions: totalQuestions,
                     totalPoints: totalPoints,
                     percentage: percentage,
+                    mcPercentage: totalQuestions > 0 ? Math.round((result.correct_answers / totalQuestions) * 1000) / 10 : 0,
                     correct: result.correct_answers,
                     incorrect: result.incorrect_answers,
                     timeTaken: getFormattedTime(),
@@ -3028,6 +3031,8 @@
             if (!quizResultsForAI) {
                 document.getElementById('aiError').classList.remove('hidden');
                 document.getElementById('aiLoading').classList.add('hidden');
+                document.getElementById('aiContent').classList.add('hidden');
+                document.getElementById('aiErrorMessage').textContent = 'Quiz results not available. Please submit the quiz first.';
                 return;
             }
             
@@ -3048,76 +3053,219 @@
                 document.getElementById('aiLoading').classList.add('hidden');
                 
                 if (data.success && data.analysis) {
-                    displayAIAnalysis(data.analysis);
                     document.getElementById('aiContent').classList.remove('hidden');
+                    
+                    if (data.metrics) {
+                        displayAIMetrics(data.metrics);
+                    }
+                    
+                    var quickLinks = document.getElementById('aiQuickLessonLinks');
+                    if (quickLinks) {
+                        quickLinks.innerHTML = '';
+                        quickLinks.classList.add('hidden');
+                        if (data.structured && data.structured.weaknesses && data.structured.weaknesses.length) {
+                            var hdr = document.createElement('p');
+                            hdr.className = 'text-sm font-semibold text-indigo-800 mb-2';
+                            hdr.textContent = 'Suggested lessons (click to open)';
+                            quickLinks.appendChild(hdr);
+                            data.structured.weaknesses.forEach(function (w) {
+                                if (!w.lesson_url) return;
+                                var a = document.createElement('a');
+                                a.href = w.lesson_url;
+                                a.className = 'inline-flex items-center gap-2 mr-2 mb-2 px-3 py-2 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-800 text-sm font-medium hover:bg-indigo-100 transition';
+                                a.textContent = (w.lesson_label_fil || w.lesson_label_en || 'Open lesson') + ' →';
+                                quickLinks.appendChild(a);
+                            });
+                            quickLinks.classList.remove('hidden');
+                        }
+                    }
+                    
+                    extractAndDisplayStrengthsWeaknesses(data.analysis);
+                    
+                    const analysisDiv = document.getElementById('aiAnalysis');
+                    let cleanAnalysis = data.analysis
+                        .replace(/\r\n/g, '\n')
+                        .replace(/\r/g, '\n')
+                        .replace(/Meet with me:.*?(?=\n|$)/gi, '')
+                        .replace(/Schedule a follow-up.*?(?=\n|$)/gi, '')
+                        .replace(/Schedule.*?session.*?(?=\n|$)/gi, '')
+                        .replace(/follow-up session.*?(?=\n|$)/gi, '')
+                        .replace(/^#{1,6}\s+/gm, '')
+                        .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-gray-800">$1</strong>')
+                        .replace(/\*(.*?)\*/g, '<em class="italic text-gray-600">$1</em>')
+                        .replace(/```[\s\S]*?```/g, '')
+                        .replace(/`([^`]+)`/g, '<code class="bg-gray-100 px-2 py-1 rounded text-sm font-mono text-purple-600">$1</code>')
+                        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, function (_, label, href) {
+                            href = String(href).replace(/"/g, '&quot;');
+                            var ext = /^https?:\/\//i.test(href);
+                            return '<a href="' + href + '" class="text-indigo-600 underline font-medium hover:text-indigo-800"' +
+                                (ext ? ' target="_blank" rel="noopener noreferrer"' : '') + '>' + label + '</a>';
+                        })
+                        .replace(/\*{3,}/g, '')
+                        .replace(/([^\n]+)\n:\s*/g, '$1: ')
+                        .replace(/^(.+)\n\1(\n|$)/gm, '$1\n')
+                        .replace(/\n{3,}/g, '\n\n')
+                        .trim();
+                    
+                    let formattedAnalysis = cleanAnalysis
+                        .replace(/MOTIVATION\n/gi, '</div><div class="mb-8 pb-6 border-b border-gray-200 last:border-b-0"><div class="flex items-start mb-4"><div class="flex-shrink-0 w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mr-4 mt-1"><i class="fas fa-heart text-indigo-600 text-sm"></i></div><div class="flex-1"><h3 class="text-lg font-semibold text-gray-900 mb-2">Motivation</h3></div></div><div class="ml-14 text-gray-700 leading-relaxed">')
+                        .replace(/STRENGTHS\n/gi, '</div><div class="mb-8 pb-6 border-b border-gray-200 last:border-b-0"><div class="flex items-start mb-4"><div class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-4 mt-1"><i class="fas fa-check-circle text-green-600 text-sm"></i></div><div class="flex-1"><h3 class="text-lg font-semibold text-gray-900 mb-2">Your Strengths</h3></div></div><div class="ml-14 text-gray-700 leading-relaxed">')
+                        .replace(/AREAS FOR IMPROVEMENT\n/gi, '</div><div class="mb-8 pb-6 border-b border-gray-200 last:border-b-0"><div class="flex items-start mb-4"><div class="flex-shrink-0 w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-4 mt-1"><i class="fas fa-exclamation-triangle text-red-600 text-sm"></i></div><div class="flex-1"><h3 class="text-lg font-semibold text-gray-900 mb-2">Areas to Improve</h3></div></div><div class="ml-14 text-gray-700 leading-relaxed">')
+                        .replace(/RECOMMENDATIONS\n/gi, '</div><div class="mb-10 pb-8 border-b border-gray-200 last:border-b-0"><div class="bg-gradient-to-r from-blue-50 via-indigo-50 to-blue-50 rounded-xl p-6 border-l-4 border-blue-500 shadow-md mb-6"><div class="flex items-center mb-4"><div class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mr-4 shadow-lg"><i class="fas fa-lightbulb text-white text-xl"></i></div><div class="flex-1"><h3 class="text-xl font-bold text-gray-900 mb-1">Recommendations</h3><p class="text-sm text-gray-600">Actionable steps to enhance your performance</p></div></div><div class="space-y-4">')
+                        .replace(/NEXT STEPS\n/gi, '</div></div><div class="mb-10 pb-8 border-b border-gray-200 last:border-b-0"><div class="bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 rounded-xl p-6 border-l-4 border-amber-500 shadow-md mb-6"><div class="flex items-center mb-4"><div class="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center mr-4 shadow-lg"><i class="fas fa-arrow-right text-white text-xl"></i></div><div class="flex-1"><h3 class="text-xl font-bold text-gray-900 mb-1">Next Steps</h3><p class="text-sm text-gray-600">Your roadmap to continued improvement</p></div></div><div class="space-y-4">')
+                        .replace(/PERFORMANCE ANALYSIS\n/gi, '</div><div class="mb-8 pb-6 border-b border-gray-200 last:border-b-0"><div class="flex items-start mb-4"><div class="flex-shrink-0 w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mr-4 mt-1"><i class="fas fa-chart-line text-indigo-600 text-sm"></i></div><div class="flex-1"><h3 class="text-lg font-semibold text-gray-900 mb-2">Performance Analysis</h3></div></div><div class="ml-14 text-gray-700 leading-relaxed">')
+                        .replace(/^[-•]\s+(.*)$/gm, '<div class="flex items-start p-4 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all"><div class="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-4 mt-0.5"><i class="fas fa-check-circle text-blue-600 text-xs"></i></div><span class="text-gray-800 flex-1 font-medium leading-relaxed">$1</span></div>')
+                        .replace(/^\s*(\d+)\.\s+(.*)$/gm, '<div class="flex items-start p-4 bg-white rounded-lg border border-gray-200 hover:border-amber-300 hover:shadow-sm transition-all"><div class="flex-shrink-0 w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center mr-4 mt-0.5 font-bold text-amber-700 text-sm">$1</div><span class="text-gray-800 flex-1 font-medium leading-relaxed">$2</span></div>')
+                        .replace(/\n\n/g, '</div><div class="mt-5 text-gray-700 leading-relaxed">')
+                        .replace(/\n/g, '<br>');
+                    
+                    formattedAnalysis = '<div class="space-y-0">' + formattedAnalysis + '</div></div>';
+                    analysisDiv.innerHTML = formattedAnalysis;
+                } else if (data.code === 'AI_UNAVAILABLE') {
+                    document.getElementById('aiContent').classList.remove('hidden');
+                    document.getElementById('aiError').classList.add('hidden');
+                    if (quizResultsForAI) {
+                        displayAIMetrics({
+                            percentage: quizResultsForAI.percentage,
+                            mcPercentage: quizResultsForAI.mcPercentage,
+                            mcCorrect: quizResultsForAI.mcCorrect,
+                            mcIncorrect: quizResultsForAI.mcIncorrect
+                        });
+                    }
+                    var ql = document.getElementById('aiQuickLessonLinks');
+                    if (ql) {
+                        ql.innerHTML = '';
+                        ql.classList.add('hidden');
+                    }
+                    document.getElementById('aiAnalysis').innerHTML = `
+                        <div class="bg-amber-50 border border-amber-200 rounded-xl p-5 text-amber-900">
+                            <h3 class="font-semibold mb-2"><i class="fas fa-info-circle mr-2"></i>AI Assistant Unavailable</h3>
+                            <p class="text-sm">${data.message || 'AI analysis is temporarily unavailable right now.'}</p>
+                            <p class="text-sm mt-2">Your score and performance metrics are still shown above.</p>
+                        </div>
+                    `;
                 } else {
                     document.getElementById('aiError').classList.remove('hidden');
+                    document.getElementById('aiErrorMessage').textContent = data.message || 'Failed to load AI analysis.';
                 }
             } catch (error) {
                 console.error('Error loading AI analysis:', error);
                 document.getElementById('aiLoading').classList.add('hidden');
                 document.getElementById('aiError').classList.remove('hidden');
+                document.getElementById('aiErrorMessage').textContent = error.message || 'An error occurred while loading AI analysis.';
             }
         }
         
-        // Display AI analysis
-        function displayAIAnalysis(analysis) {
-            const aiContent = document.getElementById('aiContent');
-            if (!aiContent) return;
-            
-            // Convert markdown to HTML
-            let formattedAnalysis = analysis.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            formattedAnalysis = formattedAnalysis.replace(/\*(.*?)\*/g, '<em>$1</em>');
-            formattedAnalysis = formattedAnalysis.replace(/\n\n/g, '</p><p>');
-            formattedAnalysis = '<p>' + formattedAnalysis + '</p>';
-            
-            // Extract and display metrics
-            displayAIMetrics(quizResultsForAI);
-            
-            // Extract and display strengths/weaknesses
-            extractAndDisplayStrengthsWeaknesses(formattedAnalysis);
-            
-            aiContent.innerHTML = formattedAnalysis;
-        }
-        
-        // Display AI metrics
-        function displayAIMetrics(results) {
-            const metricsContainer = document.getElementById('aiMetrics');
-            if (!metricsContainer) return;
-            const totalPoints = results.totalPoints || results.total_points || TOTAL_MCQ;
-            
-            metricsContainer.innerHTML = `
-                <div class="grid grid-cols-2 gap-4 mb-6">
-                    <div class="bg-blue-50 p-4 rounded-lg">
-                        <div class="text-sm text-blue-600 font-semibold">Score</div>
-                        <div class="text-2xl font-bold text-blue-900">${results.score}/${totalPoints}</div>
+        // Display AI metrics (server metrics from quiz-ai-assistant.php)
+        function displayAIMetrics(metrics) {
+            const metricsDiv = document.getElementById('aiMetrics');
+            if (!metricsDiv || !metrics) return;
+
+            const mcPercentage = metrics.mcPercentage != null ? metrics.mcPercentage : (quizResultsForAI && quizResultsForAI.percentage != null ? quizResultsForAI.percentage : 0);
+            const mcCorrect = metrics.mcCorrect != null ? metrics.mcCorrect : (quizResultsForAI ? quizResultsForAI.mcCorrect : 0);
+
+            let mcColorClass, mcStatus;
+            if (mcPercentage >= 80) {
+                mcColorClass = 'from-blue-500 to-indigo-600';
+                mcStatus = 'Strong in Multiple Choice questions';
+            } else if (mcPercentage >= 60) {
+                mcColorClass = 'from-yellow-500 to-orange-500';
+                mcStatus = 'Moderate performance in Multiple Choice';
+            } else {
+                mcColorClass = 'from-red-500 to-pink-500';
+                mcStatus = 'Needs improvement in Multiple Choice';
+            }
+
+            metricsDiv.innerHTML = `
+                <div class="bg-gradient-to-br ${mcColorClass} rounded-xl p-6 text-white shadow-lg transform hover:scale-105 transition-transform max-w-md mx-auto w-full">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-sm font-semibold uppercase tracking-wide">Multiple Choice</span>
+                        <i class="fas fa-list-check text-2xl"></i>
                     </div>
-                    <div class="bg-green-50 p-4 rounded-lg">
-                        <div class="text-sm text-green-600 font-semibold">Percentage</div>
-                        <div class="text-2xl font-bold text-green-900">${results.percentage}%</div>
+                    <div class="text-4xl font-bold mb-2">${mcPercentage}%</div>
+                    <div class="w-full bg-white/20 rounded-full h-3 mb-2">
+                        <div class="bg-white rounded-full h-3 transition-all duration-1000 shadow-lg" style="width: ${mcPercentage}%"></div>
                     </div>
+                    <div class="text-sm font-semibold mb-1">${mcCorrect}/${TOTAL_MCQ} Questions</div>
+                    <div class="text-xs opacity-90 italic">${mcStatus}</div>
                 </div>
             `;
         }
         
-        // Extract and display strengths/weaknesses
         function extractAndDisplayStrengthsWeaknesses(analysis) {
-            // This is a simplified version - you can enhance it with more sophisticated parsing
-            const strengthsContainer = document.getElementById('aiStrengths');
-            const weaknessesContainer = document.getElementById('aiWeaknesses');
+            const strengthsDiv = document.getElementById('strengthsList');
+            const weaknessesDiv = document.getElementById('weaknessesList');
             
-            if (strengthsContainer) {
-                const strengthsMatch = analysis.match(/Strengths?[:\s]+(.*?)(?=Weaknesses?|Areas?|$)/i);
-                if (strengthsMatch) {
-                    strengthsContainer.innerHTML = strengthsMatch[1];
-                }
+            if (!strengthsDiv || !weaknessesDiv) return;
+            
+            const strengthsMatch = analysis.match(/(?:##\s*)?STRENGTHS\n([\s\S]*?)(?=(?:##|AREAS|RECOMMENDATIONS|NEXT|ONLINE|$))/i);
+            const weaknessesMatch = analysis.match(/(?:##\s*)?AREAS FOR IMPROVEMENT\n([\s\S]*?)(?=(?:##|STRENGTHS|RECOMMENDATIONS|NEXT|ONLINE|$))/i);
+            
+            let strengths = [];
+            let weaknesses = [];
+            
+            if (strengthsMatch) {
+                const strengthsText = strengthsMatch[1];
+                strengths = strengthsText
+                    .split(/\n/)
+                    .filter(line => {
+                        const trimmed = line.trim();
+                        return trimmed &&
+                               (trimmed.startsWith('-') ||
+                                trimmed.startsWith('•') ||
+                                /^\d+\./.test(trimmed) ||
+                                (trimmed.length > 10 && !trimmed.includes('##')));
+                    })
+                    .slice(0, 6)
+                    .map(line => line.replace(/^[-•\d.\s#*]+/, '').trim())
+                    .filter(line => line.length > 0 && !line.toLowerCase().includes('meet with me') && !line.toLowerCase().includes('schedule'));
             }
             
-            if (weaknessesContainer) {
-                const weaknessesMatch = analysis.match(/Weaknesses?[:\s]+(.*?)(?=Recommendations?|$)/i);
-                if (weaknessesMatch) {
-                    weaknessesContainer.innerHTML = weaknessesMatch[1];
-                }
+            if (weaknessesMatch) {
+                const weaknessesText = weaknessesMatch[1];
+                weaknesses = weaknessesText
+                    .split(/\n/)
+                    .filter(line => {
+                        const trimmed = line.trim();
+                        return trimmed &&
+                               (trimmed.startsWith('-') ||
+                                trimmed.startsWith('•') ||
+                                /^\d+\./.test(trimmed) ||
+                                (trimmed.length > 10 && !trimmed.includes('##')));
+                    })
+                    .slice(0, 6)
+                    .map(line => line.replace(/^[-•\d.\s#*]+/, '').trim())
+                    .filter(line => line.length > 0 && !line.toLowerCase().includes('meet with me') && !line.toLowerCase().includes('schedule'));
+            }
+            
+            if (strengths.length > 0) {
+                strengthsDiv.innerHTML = strengths.slice(0, 6).map(s => `
+                    <div class="flex items-start bg-white rounded-lg p-4 border-l-4 border-green-500 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
+                            <i class="fas fa-check text-green-600 text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <span class="text-green-800 font-medium text-sm leading-relaxed">${s}</span>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                strengthsDiv.innerHTML = '<div class="bg-white rounded-lg p-4 border-l-4 border-green-500"><p class="text-green-700 text-sm italic">Keep up the great work! Continue practicing to maintain your strengths.</p></div>';
+            }
+            
+            if (weaknesses.length > 0) {
+                weaknessesDiv.innerHTML = weaknesses.slice(0, 6).map(w => `
+                    <div class="flex items-start bg-white rounded-lg p-4 border-l-4 border-red-500 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex-shrink-0 w-8 h-8 bg-red-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
+                            <i class="fas fa-exclamation-circle text-red-600 text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <span class="text-red-800 font-medium text-sm leading-relaxed">${w}</span>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                weaknessesDiv.innerHTML = '<div class="bg-white rounded-lg p-4 border-l-4 border-red-500"><p class="text-red-700 text-sm italic">Great job! Keep practicing to maintain your performance.</p></div>';
             }
         }
         

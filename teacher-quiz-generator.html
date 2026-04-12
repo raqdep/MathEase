@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Generator - MathEase</title>
+    <link rel="icon" type="image/png" href="Img/logo/logo-gradient.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800">
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-10">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+            <a href="teacher-dashboard.html#quiz-management" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                <i class="fas fa-arrow-left mr-1"></i> Back to Quiz Management
+            </a>
+            <span class="font-semibold text-slate-700">Quiz Generator (PDF + TOS)</span>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 py-8 space-y-8">
+        <div class="bg-white rounded-2xl shadow border border-slate-200 p-6">
+            <h1 class="text-2xl font-bold text-slate-900 mb-2">Create a quiz from a PDF</h1>
+            <p class="text-slate-600 text-sm mb-6">Upload a PDF, set your Table of Specification, generate questions with AI, then review and publish to a class. Nothing is shown to students until you publish.</p>
+
+            <div id="step1" class="space-y-4">
+                <h2 class="text-lg font-semibold text-slate-800">1. Upload PDF</h2>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Quiz title</label>
+                    <input type="text" id="quizTitle" class="w-full border border-slate-300 rounded-lg px-3 py-2" placeholder="e.g. Chapter 3 Review" value="Untitled Quiz">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">PDF file</label>
+                    <input type="file" id="pdfFile" accept="application/pdf" class="block w-full text-sm text-slate-600">
+                </div>
+                <button type="button" id="btnUpload" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg font-medium">
+                    Upload &amp; extract topics
+                </button>
+            </div>
+        </div>
+
+        <div id="step2" class="bg-white rounded-2xl shadow border border-slate-200 p-6 hidden">
+            <h2 class="text-lg font-semibold text-slate-800 mb-4">2. Table of Specification</h2>
+            <p class="text-sm text-slate-600 mb-2">Questions per cognitive level. <strong>Total across all four levels must not exceed 30.</strong> You can edit or delete items after generation.</p>
+            <p class="text-sm font-medium text-indigo-700 mb-4" id="tosSumLabel">Current total: 12 / 30</p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div><label class="text-xs font-medium text-slate-600">Remembering</label><input type="number" id="tos_r" min="0" max="30" value="3" class="tos-input w-full border rounded-lg px-2 py-2"></div>
+                <div><label class="text-xs font-medium text-slate-600">Understanding</label><input type="number" id="tos_u" min="0" max="30" value="3" class="tos-input w-full border rounded-lg px-2 py-2"></div>
+                <div><label class="text-xs font-medium text-slate-600">Applying</label><input type="number" id="tos_a" min="0" max="30" value="3" class="tos-input w-full border rounded-lg px-2 py-2"></div>
+                <div><label class="text-xs font-medium text-slate-600">Analyzing</label><input type="number" id="tos_an" min="0" max="30" value="3" class="tos-input w-full border rounded-lg px-2 py-2"></div>
+            </div>
+            <button type="button" id="btnGenerate" class="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2.5 rounded-lg font-medium">
+                Generate questions (Groq)
+            </button>
+        </div>
+
+        <div id="step3" class="bg-white rounded-2xl shadow border border-slate-200 p-6 hidden">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                <h2 class="text-lg font-semibold text-slate-800">3. Review &amp; edit</h2>
+                <button type="button" id="btnAddQuestion" class="text-sm border border-slate-300 rounded-lg px-3 py-2 hover:bg-slate-50">+ Add question</button>
+            </div>
+            <p class="text-sm text-slate-600 mb-4">Edit text, fix answers, or remove rows. Save draft anytime.</p>
+            <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                <table class="min-w-full text-sm">
+                    <thead class="bg-slate-100 text-left">
+                        <tr>
+                            <th class="p-2">#</th>
+                            <th class="p-2">Question</th>
+                            <th class="p-2">Type</th>
+                            <th class="p-2">Answer</th>
+                            <th class="p-2"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="qTable"></tbody>
+                </table>
+            </div>
+            <div class="mt-4 flex flex-wrap gap-3">
+                <button type="button" id="btnSaveDraft" class="bg-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm">Save draft</button>
+            </div>
+        </div>
+
+        <div id="step4" class="bg-white rounded-2xl shadow border border-slate-200 p-6 hidden">
+            <h2 class="text-lg font-semibold text-slate-800 mb-4">4. Publish to class</h2>
+            <div class="max-w-md space-y-3">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Class</label>
+                    <select id="classSelect" class="w-full border border-slate-300 rounded-lg px-3 py-2"></select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Final title</label>
+                    <input type="text" id="publishTitle" class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                </div>
+                <button type="button" id="btnPublish" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg font-medium">
+                    Publish quiz
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let draftId = null;
+        let questions = [];
+
+        async function parseJsonResponse(r) {
+            const text = await r.text();
+            const status = r.status;
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                console.error('Expected JSON from server (HTTP ' + status + '), got:', text.slice(0, 1200));
+                if (!text || !String(text).trim()) {
+                    throw new Error(
+                        'Empty response (HTTP ' + status + '). Usually a PHP fatal error or DB connection failure. ' +
+                        'Check: (1) Apache/PHP error log, (2) database reachable in php/config.php / .env, (3) PHP extensions: fileinfo, curl, pdo_mysql.'
+                    );
+                }
+                var hint = (text.indexOf('<br') !== -1 || text.indexOf('<b>') !== -1)
+                    ? 'The server returned a PHP/HTML error page instead of JSON. Check the PHP error log and browser Network tab.'
+                    : text.slice(0, 300);
+                throw new Error(hint);
+            }
+        }
+
+        async function ensureTeacher() {
+            const r = await fetch('php/get-teacher-classes.php', { credentials: 'same-origin' });
+            const d = await parseJsonResponse(r);
+            if (!d.success) {
+                window.location.href = 'teacher-login.html';
+                throw new Error('auth');
+            }
+            const sel = document.getElementById('classSelect');
+            sel.innerHTML = '';
+            (d.classes || []).forEach(function (c) {
+                const o = document.createElement('option');
+                o.value = c.id;
+                o.textContent = c.class_name + ' (' + (c.student_count || 0) + ' students)';
+                sel.appendChild(o);
+            });
+        }
+
+        function renderTable() {
+            const tb = document.getElementById('qTable');
+            tb.innerHTML = '';
+            questions.forEach(function (q, i) {
+                const tr = document.createElement('tr');
+                tr.className = 'border-t border-slate-100';
+                tr.innerHTML =
+                    '<td class="p-2 align-top">' + (i + 1) + '</td>' +
+                    '<td class="p-2"><textarea data-i="' + i + '" data-f="question" class="w-full min-w-[200px] border rounded p-1 text-xs" rows="2">' + escapeHtml(q.question || '') + '</textarea></td>' +
+                    '<td class="p-2 align-top">' +
+                    '<select data-i="' + i + '" data-f="type" class="border rounded text-xs">' +
+                    '<option value="multiple_choice"' + (q.type === 'multiple_choice' ? ' selected' : '') + '>MC</option>' +
+                    '<option value="identification"' + (q.type === 'identification' ? ' selected' : '') + '>ID</option>' +
+                    '<option value="problem_solving"' + (q.type === 'problem_solving' ? ' selected' : '') + '>Problem</option>' +
+                    '</select></td>' +
+                    '<td class="p-2"><input type="text" data-i="' + i + '" data-f="answer" class="w-full border rounded p-1 text-xs" value="' + escapeHtml(q.answer || '') + '"></td>' +
+                    '<td class="p-2 align-top"><button type="button" data-del="' + i + '" class="text-red-600 text-xs">Remove</button></td>';
+                tb.appendChild(tr);
+            });
+            tb.querySelectorAll('textarea,select,input').forEach(function (el) {
+                el.addEventListener('change', onCellChange);
+            });
+            tb.querySelectorAll('button[data-del]').forEach(function (b) {
+                b.addEventListener('click', function () {
+                    questions.splice(parseInt(b.getAttribute('data-del'), 10), 1);
+                    renderTable();
+                });
+            });
+        }
+
+        function onCellChange(e) {
+            const el = e.target;
+            const i = parseInt(el.getAttribute('data-i'), 10);
+            const f = el.getAttribute('data-f');
+            if (!questions[i]) return;
+            questions[i][f] = el.value;
+        }
+
+        function escapeHtml(s) {
+            const d = document.createElement('div');
+            d.textContent = s;
+            return d.innerHTML;
+        }
+
+        document.getElementById('btnUpload').addEventListener('click', async function () {
+            const f = document.getElementById('pdfFile').files[0];
+            if (!f) {
+                Swal.fire({ icon: 'warning', title: 'Choose a PDF' });
+                return;
+            }
+            try {
+                const fd = new FormData();
+                fd.append('pdf_file', f);
+                fd.append('quiz_title', document.getElementById('quizTitle').value || 'Untitled Quiz');
+                const r = await fetch('php/quiz-generator/upload-pdf.php', { method: 'POST', body: fd, credentials: 'same-origin' });
+                const d = await parseJsonResponse(r);
+                if (!d.success) {
+                    Swal.fire({ icon: 'error', title: d.message || 'Upload failed' });
+                    return;
+                }
+                draftId = d.draft_id;
+                document.getElementById('step2').classList.remove('hidden');
+                Swal.fire({ icon: 'success', title: 'Topics extracted', text: 'Segments: ' + (d.topics && d.topics.length) });
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: 'Upload failed', text: String(err.message || err) });
+            }
+        });
+
+        function updateTosSum() {
+            const sum = ['tos_r', 'tos_u', 'tos_a', 'tos_an'].reduce(function (a, id) {
+                return a + (parseInt(document.getElementById(id).value, 10) || 0);
+            }, 0);
+            const el = document.getElementById('tosSumLabel');
+            if (el) el.textContent = 'Current total: ' + sum + ' / 30';
+        }
+        document.querySelectorAll('.tos-input').forEach(function (inp) {
+            inp.addEventListener('input', updateTosSum);
+        });
+        updateTosSum();
+
+        document.getElementById('btnGenerate').addEventListener('click', async function () {
+            if (!draftId) return;
+            const tos = {
+                remembering: parseInt(document.getElementById('tos_r').value, 10) || 0,
+                understanding: parseInt(document.getElementById('tos_u').value, 10) || 0,
+                applying: parseInt(document.getElementById('tos_a').value, 10) || 0,
+                analyzing: parseInt(document.getElementById('tos_an').value, 10) || 0
+            };
+            const sum = tos.remembering + tos.understanding + tos.applying + tos.analyzing;
+            if (sum < 1) {
+                Swal.fire({ icon: 'warning', title: 'Set at least one question in TOS' });
+                return;
+            }
+            if (sum > 30) {
+                Swal.fire({ icon: 'warning', title: 'Maximum 30 questions', text: 'Reduce the counts so the total is 30 or less.' });
+                return;
+            }
+            Swal.fire({ title: 'Generating…', allowOutsideClick: false, didOpen: function () { Swal.showLoading(); } });
+            try {
+                const r = await fetch('php/quiz-generator/generate-questions.php', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ draft_id: draftId, tos: tos })
+                });
+                const d = await parseJsonResponse(r);
+                Swal.close();
+                if (!d.success) {
+                    Swal.fire({ icon: 'error', title: d.message || 'Generation failed' });
+                    return;
+                }
+                questions = d.questions || [];
+                document.getElementById('step3').classList.remove('hidden');
+                document.getElementById('step4').classList.remove('hidden');
+                document.getElementById('publishTitle').value = document.getElementById('quizTitle').value || 'Untitled Quiz';
+                renderTable();
+            } catch (err) {
+                Swal.close();
+                Swal.fire({ icon: 'error', title: 'Generation failed', text: String(err.message || err) });
+            }
+        });
+
+        document.getElementById('btnSaveDraft').addEventListener('click', async function () {
+            if (!draftId) return;
+            try {
+                const r = await fetch('php/quiz-generator/save-draft.php', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ draft_id: draftId, questions: questions })
+                });
+                const d = await parseJsonResponse(r);
+                Swal.fire({ icon: d.success ? 'success' : 'error', title: d.message || (d.success ? 'Saved' : 'Error') });
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: 'Save failed', text: String(err.message || err) });
+            }
+        });
+
+        document.getElementById('btnAddQuestion').addEventListener('click', function () {
+            if (questions.length >= 30) {
+                Swal.fire({ icon: 'warning', title: 'Maximum 30 questions', text: 'Remove an item or edit an existing one.' });
+                return;
+            }
+            questions.push({
+                question: 'New question',
+                type: 'identification',
+                cognitive_level: 'remembering',
+                difficulty: 'medium',
+                choices: [],
+                answer: '',
+                topic_title: '',
+                feedback: ''
+            });
+            renderTable();
+        });
+
+        document.getElementById('btnPublish').addEventListener('click', async function () {
+            if (!draftId) return;
+            const classId = parseInt(document.getElementById('classSelect').value, 10);
+            const title = document.getElementById('publishTitle').value.trim();
+            if (!classId || !title) {
+                Swal.fire({ icon: 'warning', title: 'Class and title required' });
+                return;
+            }
+            if (questions.length < 1) {
+                Swal.fire({ icon: 'warning', title: 'Add at least one question' });
+                return;
+            }
+            try {
+                const r = await fetch('php/quiz-generator/publish-quiz.php', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ draft_id: draftId, class_id: classId, title: title, questions: questions })
+                });
+                const d = await parseJsonResponse(r);
+                if (!d.success) {
+                    Swal.fire({ icon: 'error', title: d.message || 'Publish failed' });
+                    return;
+                }
+                Swal.fire({ icon: 'success', title: 'Published', text: 'Students in that class will see it under Quizzes.' });
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: 'Publish failed', text: String(err.message || err) });
+            }
+        });
+
+        ensureTeacher().catch(function (err) {
+            if (err && err.message !== 'auth') {
+                Swal.fire({ icon: 'error', title: 'Could not load classes', text: String(err.message || err) });
+            }
+        });
+    </script>
+</body>
+</html>

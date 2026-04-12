@@ -4510,6 +4510,12 @@
                         .replace(/\*(.*?)\*/g, '<em class="italic text-gray-600">$1</em>')
                         .replace(/```[\s\S]*?```/g, '')
                         .replace(/`([^`]+)`/g, '<code class="bg-gray-100 px-2 py-1 rounded text-sm font-mono text-purple-600">$1</code>')
+                        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, function (_, label, href) {
+                            href = String(href).replace(/"/g, '&quot;');
+                            var ext = /^https?:\/\//i.test(href);
+                            return '<a href="' + href + '" class="text-indigo-600 underline font-medium hover:text-indigo-800"' +
+                                (ext ? ' target="_blank" rel="noopener noreferrer"' : '') + '>' + label + '</a>';
+                        })
                         .replace(/\*{3,}/g, '')
                         .replace(/\n{3,}/g, '\n\n')
                         .trim();
