@@ -2068,6 +2068,71 @@ class QuizManager {
         }
     }
 
+    /**
+     * Permanently remove a teacher-generated quiz only while it is unpublished (not visible to students).
+     * Cleans quiz_attempts, quiz_settings, generated_quiz_attempts (CASCADE), and the quiz row.
+     */
+    public function deleteTeacherGenQuizIfUnpublished(int $quizId, $classId = null): array
+    {
+        try {
+            $tid = (int) ($_SESSION['teacher_id'] ?? 0);
+            if ($tid <= 0 || $quizId <= 0) {
+                return ['success' => false, 'message' => 'Unauthorized'];
+            }
+            if ($classId !== null && (int) $classId > 0) {
+                $verifyStmt = $this->pdo->prepare('SELECT id FROM classes WHERE id = ? AND teacher_id = ? AND is_active = TRUE');
+                $verifyStmt->execute([(int) $classId, $tid]);
+                if (!$verifyStmt->fetch()) {
+                    return ['success' => false, 'message' => 'Invalid class'];
+                }
+            }
+            require_once __DIR__ . '/quiz-generator/schema.php';
+            require_once __DIR__ . '/quiz-generator/Repository.php';
+            quiz_gen_ensure_schema($this->pdo);
+            $repo = new QuizGen_Repository($this->pdo);
+            $row = $repo->findForTeacher($quizId, $tid);
+            if (!$row) {
+                return ['success' => false, 'message' => 'Quiz not found.'];
+            }
+            if ((int) ($row['visible_to_students'] ?? 0) !== 0) {
+                return ['success' => false, 'message' => 'Unpublish this quiz from students before deleting it.'];
+            }
+            $quizClassId = (int) ($row['class_id'] ?? 0);
+            if ($classId !== null && (int) $classId > 0 && $quizClassId > 0 && $quizClassId !== (int) $classId) {
+                return ['success' => false, 'message' => 'This quiz is not in the selected class.'];
+            }
+
+            $qt = 'teacher_gen_' . $quizId;
+            $this->pdo->beginTransaction();
+            try {
+                $d1 = $this->pdo->prepare('DELETE FROM quiz_attempts WHERE quiz_type = ?');
+                $d1->execute([$qt]);
+                $d2 = $this->pdo->prepare('DELETE FROM quiz_settings WHERE quiz_type = ?');
+                $d2->execute([$qt]);
+                $d3 = $this->pdo->prepare('
+                    DELETE FROM teacher_generated_quizzes
+                    WHERE id = ? AND teacher_id = ? AND visible_to_students = 0
+                ');
+                $d3->execute([$quizId, $tid]);
+                if ($d3->rowCount() === 0) {
+                    $this->pdo->rollBack();
+
+                    return ['success' => false, 'message' => 'Could not delete. Refresh and try again.'];
+                }
+                $this->pdo->commit();
+
+                return ['success' => true, 'message' => 'Quiz deleted.'];
+            } catch (Throwable $e) {
+                $this->pdo->rollBack();
+                throw $e;
+            }
+        } catch (Throwable $e) {
+            error_log('deleteTeacherGenQuizIfUnpublished: ' . $e->getMessage());
+
+            return ['success' => false, 'message' => 'Could not delete quiz.'];
+        }
+    }
+
     // Get quiz settings and deadlines for specific class
     public function getQuizSettings($classId = null) {
         try {
@@ -3285,7 +3350,7 @@ $isTeacher = is_teacher_logged_in();
 
 // For certain actions, we need to handle authentication more gracefully
 $authRequiredActions = ['start_quiz', 'check_existing_attempt', 'get_student_history', 'submit_quiz', 'save_quiz_progress', 'get_quiz_answers'];
-$teacherOnlyActions = ['save_quiz_settings', 'get_quiz_results', 'get_quiz_statistics', 'toggle_quiz_status', 'get_attempt_answer_details', 'reset_all_student_quiz', 'set_teacher_gen_visibility'];
+$teacherOnlyActions = ['save_quiz_settings', 'get_quiz_results', 'get_quiz_statistics', 'toggle_quiz_status', 'get_attempt_answer_details', 'reset_all_student_quiz', 'set_teacher_gen_visibility', 'delete_teacher_gen_quiz'];
 $publicActions = ['get_quiz_settings', 'get_quiz_status']; // These can be accessed by both students and teachers
 
 // Check if action requires authentication
@@ -3596,6 +3661,17 @@ try {
             $visible = isset($_POST['visible']) && ((string) $_POST['visible'] === '1' || $_POST['visible'] === true || $_POST['visible'] === 1);
             $classIdVis = isset($_POST['class_id']) ? (int) $_POST['class_id'] : null;
             $result = $quizManager->setTeacherGenStudentVisibility($quizId, $visible, $classIdVis);
+            echo json_encode($result);
+            break;
+
+        case 'delete_teacher_gen_quiz':
+            if (!$isTeacher) {
+                echo json_encode(['success' => false, 'message' => 'Teacher authentication required']);
+                break;
+            }
+            $delQuizId = (int) ($_POST['quiz_id'] ?? 0);
+            $delClassId = isset($_POST['class_id']) ? (int) $_POST['class_id'] : null;
+            $result = $quizManager->deleteTeacherGenQuizIfUnpublished($delQuizId, $delClassId ?: null);
             echo json_encode($result);
             break;
             

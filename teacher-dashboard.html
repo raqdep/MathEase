@@ -5524,9 +5524,9 @@ let currentQuizResultsSearch = '';
                         '<td class="p-2"><textarea data-tqg-i="' + i + '" data-tqg-f="question" class="w-full min-w-[200px] border rounded p-1 text-xs" rows="2">' + escapeHtml(q.question || '') + '</textarea></td>' +
                         '<td class="p-2 align-top">' +
                         '<select data-tqg-i="' + i + '" data-tqg-f="type" class="border rounded text-xs">' +
-                        '<option value="multiple_choice"' + (q.type === 'multiple_choice' ? ' selected' : '') + '>MC</option>' +
-                        '<option value="identification"' + (q.type === 'identification' ? ' selected' : '') + '>ID</option>' +
-                        '<option value="problem_solving"' + (q.type === 'problem_solving' ? ' selected' : '') + '>Problem</option>' +
+                        '<option value="multiple_choice"' + (q.type === 'multiple_choice' ? ' selected' : '') + '>multiple_choice</option>' +
+                        '<option value="identification"' + (q.type === 'identification' ? ' selected' : '') + '>identification</option>' +
+                        '<option value="problem_solving"' + (q.type === 'problem_solving' ? ' selected' : '') + '>problem_solving</option>' +
                         '</select></td>' +
                         '<td class="p-2"><input type="text" data-tqg-i="' + i + '" data-tqg-f="answer" class="w-full border rounded p-1 text-xs" value="' + escapeHtml(q.answer || '') + '"></td>' +
                         '<td class="p-2 align-top"><button type="button" data-tqg-del="' + i + '" class="text-red-600 text-xs">Remove</button></td>';
@@ -5880,7 +5880,10 @@ let currentQuizResultsSearch = '';
             return ''
                 + '<div class="flex flex-wrap items-center justify-between gap-2 sm:gap-3 px-3 py-2 rounded-lg border border-amber-100 bg-amber-50/60 hover:bg-amber-50" data-tgq-id="' + id + '">'
                 + '  <span class="text-sm font-semibold text-gray-900 min-w-0 flex-1 truncate" title="' + title + '">' + title + '</span>'
-                + '  <button type="button" onclick="setTeacherGenStudentVisible(' + id + ', true)" class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-teal-600 text-white hover:bg-teal-700">Publish to students</button>'
+                + '  <div class="flex flex-wrap items-center gap-2 shrink-0">'
+                + '    <button type="button" onclick="setTeacherGenStudentVisible(' + id + ', true)" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-teal-600 text-white hover:bg-teal-700">Publish to students</button>'
+                + '    <button type="button" onclick="confirmDeleteTeacherGenQuiz(' + id + ')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-red-700 border border-red-200 hover:bg-red-50" title="Delete permanently"><i class="fas fa-trash-alt mr-1"></i>Delete</button>'
+                + '  </div>'
                 + '</div>';
         }
 
@@ -5967,6 +5970,44 @@ let currentQuizResultsSearch = '';
                 }
                 await loadQuizSettings();
                 await loadQuizStatus();
+            } catch (e) {
+                Swal.fire({ icon: 'error', title: String(e.message || e) });
+            }
+        }
+
+        async function confirmDeleteTeacherGenQuiz(id) {
+            const sel = document.getElementById('quizClassSelector');
+            const classId = (sel && sel.value) ? sel.value : currentClassId;
+            if (!classId) {
+                await Swal.fire({ icon: 'info', title: 'Select a class', text: 'Please select a class first.' });
+                return;
+            }
+            const res = await Swal.fire({
+                title: 'Delete this quiz?',
+                html: 'This permanently removes the quiz, its settings, and all student attempts for this class. This cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                focusCancel: true,
+                confirmButtonText: 'Yes, delete',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#6b7280'
+            });
+            if (!res.isConfirmed) return;
+            try {
+                const fd = new FormData();
+                fd.append('action', 'delete_teacher_gen_quiz');
+                fd.append('quiz_id', String(id));
+                fd.append('class_id', String(classId));
+                const r = await fetch('php/quiz-management.php', { method: 'POST', body: fd, credentials: 'include' });
+                const d = await r.json();
+                if (!d.success) {
+                    Swal.fire({ icon: 'error', title: d.message || 'Could not delete' });
+                    return;
+                }
+                await Swal.fire({ icon: 'success', title: 'Deleted', timer: 1600, showConfirmButton: false });
+                if (typeof loadQuizSettings === 'function') await loadQuizSettings();
+                if (typeof loadQuizStatus === 'function') await loadQuizStatus();
             } catch (e) {
                 Swal.fire({ icon: 'error', title: String(e.message || e) });
             }

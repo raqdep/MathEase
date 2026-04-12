@@ -153,9 +153,9 @@
                     '<td class="p-2"><textarea data-i="' + i + '" data-f="question" class="w-full min-w-[200px] border rounded p-1 text-xs" rows="2">' + escapeHtml(q.question || '') + '</textarea></td>' +
                     '<td class="p-2 align-top">' +
                     '<select data-i="' + i + '" data-f="type" class="border rounded text-xs">' +
-                    '<option value="multiple_choice"' + (q.type === 'multiple_choice' ? ' selected' : '') + '>MC</option>' +
-                    '<option value="identification"' + (q.type === 'identification' ? ' selected' : '') + '>ID</option>' +
-                    '<option value="problem_solving"' + (q.type === 'problem_solving' ? ' selected' : '') + '>Problem</option>' +
+                    '<option value="multiple_choice"' + (q.type === 'multiple_choice' ? ' selected' : '') + '>multiple_choice</option>' +
+                    '<option value="identification"' + (q.type === 'identification' ? ' selected' : '') + '>identification</option>' +
+                    '<option value="problem_solving"' + (q.type === 'problem_solving' ? ' selected' : '') + '>problem_solving</option>' +
                     '</select></td>' +
                     '<td class="p-2"><input type="text" data-i="' + i + '" data-f="answer" class="w-full border rounded p-1 text-xs" value="' + escapeHtml(q.answer || '') + '"></td>' +
                     '<td class="p-2 align-top"><button type="button" data-del="' + i + '" class="text-red-600 text-xs">Remove</button></td>';
