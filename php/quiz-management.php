@@ -366,7 +366,20 @@ class QuizManager {
                     'message' => 'Student not found. Please log in again.'
                 ];
             }
-            
+
+            if (preg_match('/^teacher_gen_(\d+)$/', $quizType, $tgStart)) {
+                require_once __DIR__ . '/quiz-generator/schema.php';
+                require_once __DIR__ . '/quiz-generator/Repository.php';
+                quiz_gen_ensure_schema($this->pdo);
+                $tgRepo = new QuizGen_Repository($this->pdo);
+                if (!$tgRepo->studentCanAccessQuiz((int) $tgStart[1], (int) $studentId)) {
+                    return [
+                        'success' => false,
+                        'message' => 'This quiz is not available for your class or is not published yet.',
+                    ];
+                }
+            }
+
             // Check if there's already an in-progress attempt
             // IMPORTANT: Exclude topic quiz types (those with _topic_ or _lesson_ in quiz_type)
             // Topic quizzes use store-quiz-data.php and don't have 'in_progress' status
@@ -692,10 +705,10 @@ class QuizManager {
                 } elseif (is_array($orderRaw)) {
                     $order = $orderRaw;
                 }
-                $qStmt = $this->pdo->prepare("SELECT questions_json, status FROM teacher_generated_quizzes WHERE id = ? LIMIT 1");
+                $qStmt = $this->pdo->prepare("SELECT questions_json, status, visible_to_students FROM teacher_generated_quizzes WHERE id = ? LIMIT 1");
                 $qStmt->execute([$genId]);
                 $genRow = $qStmt->fetch(PDO::FETCH_ASSOC);
-                if (!$genRow || ($genRow['status'] ?? '') !== 'published') {
+                if (!$genRow || ($genRow['status'] ?? '') !== 'published' || empty($genRow['visible_to_students'])) {
                     throw new Exception('This teacher quiz is not available.');
                 }
                 $bank = json_decode($genRow['questions_json'] ?? '{}', true);
@@ -2022,9 +2035,43 @@ class QuizManager {
         }
     }
     
+    /**
+     * Show/hide teacher-generated quiz on the student Quizzes page (not the same as open/closed).
+     */
+    public function setTeacherGenStudentVisibility(int $quizId, bool $visible, $classId = null): array
+    {
+        try {
+            $tid = (int) ($_SESSION['teacher_id'] ?? 0);
+            if ($tid <= 0 || $quizId <= 0) {
+                return ['success' => false, 'message' => 'Unauthorized'];
+            }
+            if ($classId !== null && (int) $classId > 0) {
+                $verifyStmt = $this->pdo->prepare('SELECT id FROM classes WHERE id = ? AND teacher_id = ? AND is_active = TRUE');
+                $verifyStmt->execute([(int) $classId, $tid]);
+                if (!$verifyStmt->fetch()) {
+                    return ['success' => false, 'message' => 'Invalid class'];
+                }
+            }
+            require_once __DIR__ . '/quiz-generator/schema.php';
+            require_once __DIR__ . '/quiz-generator/Repository.php';
+            quiz_gen_ensure_schema($this->pdo);
+            $repo = new QuizGen_Repository($this->pdo);
+            if (!$repo->setVisibleToStudents($quizId, $tid, $visible)) {
+                return ['success' => false, 'message' => 'Quiz not found or not saved for this class yet.'];
+            }
+
+            return ['success' => true, 'visible_to_students' => $visible ? 1 : 0];
+        } catch (Throwable $e) {
+            error_log('setTeacherGenStudentVisibility: ' . $e->getMessage());
+
+            return ['success' => false, 'message' => 'Could not update visibility'];
+        }
+    }
+
     // Get quiz settings and deadlines for specific class
     public function getQuizSettings($classId = null) {
         try {
+            $requestedClassId = $classId;
             // Ensure quiz_settings table exists
             $this->ensureQuizSettingsTableExists();
             
@@ -2085,11 +2132,44 @@ class QuizManager {
             }
             
             error_log("Retrieved quiz settings for class_id: " . ($classId ?: 'all') . " - " . json_encode($settings));
+
+            $teacherGenerated = [];
+            if ($requestedClassId && isset($_SESSION['teacher_id']) && ($_SESSION['user_type'] ?? '') === 'teacher') {
+                require_once __DIR__ . '/quiz-generator/schema.php';
+                quiz_gen_ensure_schema($this->pdo);
+                $tid = (int) $_SESSION['teacher_id'];
+                $cid = (int) $requestedClassId;
+                $tgStmt = $this->pdo->prepare("
+                    SELECT id, title, visible_to_students, updated_at
+                    FROM teacher_generated_quizzes
+                    WHERE teacher_id = ? AND class_id = ? AND status = 'published'
+                    ORDER BY updated_at DESC
+                ");
+                $tgStmt->execute([$tid, $cid]);
+                while ($gr = $tgStmt->fetch(PDO::FETCH_ASSOC)) {
+                    $qtk = 'teacher_gen_' . (int) $gr['id'];
+                    $rowS = $settings[$qtk][$cid] ?? null;
+                    $deadlineISO = null;
+                    if ($rowS && !empty($rowS['deadline'])) {
+                        $deadlineISO = $rowS['deadline'];
+                    }
+                    $teacherGenerated[] = [
+                        'id' => (int) $gr['id'],
+                        'title' => $gr['title'],
+                        'quiz_type' => $qtk,
+                        'visible_to_students' => (int) ($gr['visible_to_students'] ?? 0),
+                        'deadline' => $deadlineISO,
+                        'time_limit' => $rowS ? (int) ($rowS['time_limit'] ?? 20) : 20,
+                        'is_open' => $rowS ? (bool) ($rowS['is_open'] ?? false) : false,
+                    ];
+                }
+            }
             
             return [
                 'success' => true,
                 'settings' => $settings,
-                'class_id' => $classId
+                'class_id' => $requestedClassId,
+                'teacher_generated_quizzes' => $teacherGenerated,
             ];
         } catch (Exception $e) {
             error_log("Error getting quiz settings: " . $e->getMessage());
@@ -3205,7 +3285,7 @@ $isTeacher = is_teacher_logged_in();
 
 // For certain actions, we need to handle authentication more gracefully
 $authRequiredActions = ['start_quiz', 'check_existing_attempt', 'get_student_history', 'submit_quiz', 'save_quiz_progress', 'get_quiz_answers'];
-$teacherOnlyActions = ['save_quiz_settings', 'get_quiz_results', 'get_quiz_statistics', 'toggle_quiz_status', 'get_attempt_answer_details', 'reset_all_student_quiz'];
+$teacherOnlyActions = ['save_quiz_settings', 'get_quiz_results', 'get_quiz_statistics', 'toggle_quiz_status', 'get_attempt_answer_details', 'reset_all_student_quiz', 'set_teacher_gen_visibility'];
 $publicActions = ['get_quiz_settings', 'get_quiz_status']; // These can be accessed by both students and teachers
 
 // Check if action requires authentication
@@ -3504,6 +3584,18 @@ try {
             $isOpen = $_POST['is_open'] ?? '0';
             $classId = $_POST['class_id'] ?? null;
             $result = $quizManager->toggleQuizStatus($quizType, $isOpen, $classId);
+            echo json_encode($result);
+            break;
+
+        case 'set_teacher_gen_visibility':
+            if (!$isTeacher) {
+                echo json_encode(['success' => false, 'message' => 'Teacher authentication required']);
+                break;
+            }
+            $quizId = (int) ($_POST['quiz_id'] ?? 0);
+            $visible = isset($_POST['visible']) && ((string) $_POST['visible'] === '1' || $_POST['visible'] === true || $_POST['visible'] === 1);
+            $classIdVis = isset($_POST['class_id']) ? (int) $_POST['class_id'] : null;
+            $result = $quizManager->setTeacherGenStudentVisibility($quizId, $visible, $classIdVis);
             echo json_encode($result);
             break;
             

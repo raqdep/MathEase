@@ -2045,6 +2045,25 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Teacher-created (AI) quizzes — same controls as built-in; listed when published to students -->
+                            <div id="teacherGenActiveSection" class="space-y-4">
+                                <div class="flex items-center gap-2 px-1">
+                                    <span class="text-sm font-bold text-teal-800 uppercase tracking-wide">Teacher-created quizzes</span>
+                                    <span class="text-xs text-gray-500">(AI-generated · shown to students when published below)</span>
+                                </div>
+                                <div id="teacherGenActiveList" class="space-y-4"></div>
+                            </div>
+
+                            <!-- Unpublished teacher quizzes (hidden from student Quizzes page) -->
+                            <div id="teacherGenArchiveSection" class="mt-8 pt-6 border-t border-dashed border-gray-300">
+                                <div class="flex items-center gap-2 px-1 mb-3">
+                                    <i class="fas fa-archive text-amber-600"></i>
+                                    <span class="text-sm font-bold text-amber-900">Quiz archive</span>
+                                    <span class="text-xs text-gray-500">Teacher-created quizzes not published to students</span>
+                                </div>
+                                <div id="teacherGenArchiveList" class="space-y-4"></div>
+                            </div>
                         </div>
                     </div>
                     <!-- End Quiz Content Wrapper -->
@@ -4322,6 +4341,44 @@
                 });
             }
         }
+
+        /** Open/close for teacher-generated quizzes (quiz_type teacher_gen_{id}); uses tgq_{id}_toggleOpen button id. */
+        async function toggleTeacherGenOpen(quizRowId) {
+            const quizType = 'teacher_gen_' + quizRowId;
+            const toggleButton = document.getElementById('tgq_' + quizRowId + '_toggleOpen');
+            const selectedClassElement = document.getElementById('quizClassSelector');
+            const selectedClassId = selectedClassElement && selectedClassElement.value ? selectedClassElement.value : currentClassId;
+            if (!selectedClassId) {
+                await Swal.fire({ title: 'Select a Class', text: 'Please select a class first.', icon: 'info', confirmButtonText: 'OK', confirmButtonColor: '#6366f1' });
+                return;
+            }
+            if (!toggleButton) {
+                await Swal.fire({ title: 'Error', text: 'Toggle control not found. Please refresh.', icon: 'error', confirmButtonText: 'OK', confirmButtonColor: '#6366f1' });
+                return;
+            }
+            const stateAttr = toggleButton.getAttribute('data-open');
+            const isCurrentlyOpen = stateAttr === '1' || toggleButton.classList.contains('bg-emerald-500') || toggleButton.classList.contains('bg-green-500');
+            const newStatus = !isCurrentlyOpen;
+            updateToggleButtonUI(toggleButton, newStatus);
+            const formData = new FormData();
+            formData.append('action', 'toggle_quiz_status');
+            formData.append('quiz_type', quizType);
+            formData.append('is_open', newStatus ? '1' : '0');
+            formData.append('class_id', selectedClassId);
+            try {
+                const response = await fetch('php/quiz-management.php', { method: 'POST', body: formData, credentials: 'include' });
+                const result = await response.json();
+                if (result.success) {
+                    await Swal.fire({ title: newStatus ? 'Quiz Opened!' : 'Quiz Closed!', text: `The quiz has been ${newStatus ? 'opened' : 'closed'} for students.`, icon: 'success', timer: 1500, showConfirmButton: false });
+                } else {
+                    updateToggleButtonUI(toggleButton, isCurrentlyOpen);
+                    await Swal.fire({ title: 'Error', text: result.message || 'Failed to update quiz status.', icon: 'error', confirmButtonText: 'OK', confirmButtonColor: '#6366f1' });
+                }
+            } catch (e) {
+                updateToggleButtonUI(toggleButton, isCurrentlyOpen);
+                await Swal.fire({ title: 'Error', text: e.message || 'Failed to update quiz status.', icon: 'error', confirmButtonText: 'OK', confirmButtonColor: '#6366f1' });
+            }
+        }
         
         // Update toggle button UI
         function updateToggleButtonUI(button, isOpen) {
@@ -5761,13 +5818,148 @@ let currentQuizResultsSearch = '';
                             Swal.fire({ icon: 'error', title: d.message || 'Publish failed' });
                             return;
                         }
-                        Swal.fire({ icon: 'success', title: 'Published', text: 'Students in this class will see the quiz under Quizzes.' });
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Saved to class',
+                            html: 'The quiz is in <strong>Quiz Management</strong> below. It is <strong>not visible</strong> to students until you click <strong>Publish to students</strong> on its card (or it appears under <strong>Quiz archive</strong> while unpublished).'
+                        });
+                        if (typeof loadQuizSettings === 'function') await loadQuizSettings();
+                        if (typeof loadQuizStatus === 'function') await loadQuizStatus();
                     } catch (err) {
                         Swal.fire({ icon: 'error', title: 'Publish failed', text: String(err.message || err) });
                     }
                 });
             };
         })();
+
+        function teacherGenCardHtml(q) {
+            const id = q.id;
+            const qt = q.quiz_type || ('teacher_gen_' + id);
+            const title = escapeHtml(q.title || ('Quiz #' + id));
+            const vis = !!q.visible_to_students;
+            const dl = q.deadline ? toDatetimeLocalValueFromServer(q.deadline) : '';
+            const tl = q.time_limit != null ? String(q.time_limit) : '20';
+            const badge = vis
+                ? '<span class="px-2 py-0.5 rounded text-xs font-semibold bg-teal-100 text-teal-800 border border-teal-200">Teacher-created · Published to students</span>'
+                : '<span class="px-2 py-0.5 rounded text-xs font-semibold bg-amber-100 text-amber-900 border border-amber-200">Teacher-created · In archive (hidden from students)</span>';
+            const visBtn = vis
+                ? '<button type="button" onclick="setTeacherGenStudentVisible(' + id + ', false)" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100">Unpublish from students</button>'
+                : '<button type="button" onclick="setTeacherGenStudentVisible(' + id + ', true)" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-teal-600 text-white hover:bg-teal-700">Publish to students</button>';
+            return ''
+                + '<div class="bg-white rounded-xl shadow-md border-2 border-teal-100 hover:border-teal-300 transition-all duration-200 overflow-hidden" data-tgq-id="' + id + '">'
+                + '  <div class="bg-gradient-to-r from-teal-50 to-cyan-50 px-6 py-4 border-b border-gray-200">'
+                + '    <div class="flex flex-wrap items-center justify-between gap-2">'
+                + '      <div class="flex items-center space-x-4">'
+                + '        <div class="w-14 h-14 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg">'
+                + '          <i class="fas fa-robot text-white text-xl"></i></div>'
+                + '        <div>'
+                + '          <h4 class="text-lg font-bold text-gray-900">' + title + '</h4>'
+                + '          <p class="text-sm text-gray-600 mt-0.5">AI-generated · same deadline, time limit, and open/close as built-in quizzes</p>'
+                + '        </div></div>'
+                + '      <div class="flex flex-wrap items-center gap-2">' + badge + '</div></div></div>'
+                + '  <div class="p-6">'
+                + '    <div class="flex flex-wrap gap-2 mb-4">' + visBtn + '</div>'
+                + '    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">'
+                + '      <div><label class="block text-sm font-semibold text-gray-700 mb-2"><i class="fas fa-calendar-alt text-teal-500 mr-1"></i>Quiz Deadline <span class="text-xs text-gray-500">(Local)</span></label>'
+                + '        <input type="datetime-local" id="tgq_' + id + '_deadline" class="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg" value="' + escapeHtml(dl) + '"></div>'
+                + '      <div><label class="block text-sm font-semibold text-gray-700 mb-2"><i class="fas fa-clock text-teal-500 mr-1"></i>Time Limit (minutes)</label>'
+                + '        <input type="number" id="tgq_' + id + '_time" min="5" max="120" value="' + escapeHtml(tl) + '" class="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg"></div>'
+                + '      <div><label class="block text-sm font-semibold text-gray-700 mb-2"><i class="fas fa-toggle-on text-teal-500 mr-1"></i>Quiz Status</label>'
+                + '        <button type="button" id="tgq_' + id + '_toggleOpen" onclick="toggleTeacherGenOpen(' + id + ')" class="w-full px-4 py-2.5 rounded-lg text-sm font-semibold bg-gray-200 text-gray-700">Open/Close</button></div>'
+                + '    </div>'
+                + '    <div class="flex flex-wrap gap-3 pt-4 border-t border-gray-200">'
+                + '      <button type="button" onclick="saveTeacherGenQuizSettings(' + id + ')" class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold"><i class="fas fa-save mr-2"></i>Save Settings</button>'
+                + '      <button type="button" onclick="viewQuizResults(\'' + qt + '\')" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg text-sm font-semibold"><i class="fas fa-chart-bar mr-2"></i>View Results</button>'
+                + '    </div></div></div>';
+        }
+
+        function renderTeacherGenQuizzes(items) {
+            const active = document.getElementById('teacherGenActiveList');
+            const arch = document.getElementById('teacherGenArchiveList');
+            const secArch = document.getElementById('teacherGenArchiveSection');
+            if (!active || !arch) return;
+            active.innerHTML = '';
+            arch.innerHTML = '';
+            if (!items || !items.length) {
+                active.innerHTML = '<p class="text-sm text-gray-500 px-2 py-4">No teacher-created quizzes for this class yet. Use <strong>AI Quiz Generator</strong> above.</p>';
+                if (secArch) secArch.classList.add('hidden');
+                return;
+            }
+            if (secArch) secArch.classList.remove('hidden');
+            const listed = items.filter(function (x) { return x.visible_to_students; });
+            const unlisted = items.filter(function (x) { return !x.visible_to_students; });
+            if (listed.length === 0) {
+                active.innerHTML = '<p class="text-sm text-amber-800 bg-amber-50 border border-amber-100 rounded-lg px-3 py-3">No teacher-created quiz is <strong>published to students</strong> yet. Publish one from the archive below, or create a new quiz above.</p>';
+            } else {
+                listed.forEach(function (q) {
+                    active.insertAdjacentHTML('beforeend', teacherGenCardHtml(q));
+                });
+            }
+            if (unlisted.length === 0) {
+                arch.innerHTML = '<p class="text-sm text-gray-500 px-2 py-2">No archived (unpublished) quizzes.</p>';
+            } else {
+                unlisted.forEach(function (q) {
+                    arch.insertAdjacentHTML('beforeend', teacherGenCardHtml(q));
+                });
+            }
+        }
+
+        async function saveTeacherGenQuizSettings(id) {
+            const qt = 'teacher_gen_' + id;
+            const deadlineEl = document.getElementById('tgq_' + id + '_deadline');
+            const timeEl = document.getElementById('tgq_' + id + '_time');
+            const sel = document.getElementById('quizClassSelector');
+            const classId = (sel && sel.value) ? sel.value : currentClassId;
+            if (!deadlineEl || !timeEl) return;
+            if (!classId) {
+                Swal.fire({ icon: 'info', title: 'Select a class first' });
+                return;
+            }
+            if (!deadlineEl.value) {
+                Swal.fire({ icon: 'warning', title: 'Set a deadline first' });
+                return;
+            }
+            const deadline = toUTCISOStringFromLocal(deadlineEl.value);
+            const formData = new FormData();
+            formData.append('action', 'save_quiz_settings');
+            formData.append('quiz_type', qt);
+            formData.append('deadline', deadline);
+            formData.append('time_limit', timeEl.value);
+            formData.append('class_id', classId);
+            try {
+                const response = await fetch('php/quiz-management.php', { method: 'POST', body: formData, credentials: 'include' });
+                const result = await response.json();
+                Swal.fire({ icon: result.success ? 'success' : 'error', title: result.success ? 'Saved' : (result.message || 'Error') });
+            } catch (e) {
+                Swal.fire({ icon: 'error', title: 'Save failed', text: String(e.message || e) });
+            }
+        }
+
+        async function setTeacherGenStudentVisible(id, visible) {
+            try {
+                const sel = document.getElementById('quizClassSelector');
+                const classId = (sel && sel.value) ? sel.value : currentClassId;
+                if (!classId) {
+                    await Swal.fire({ icon: 'info', title: 'Select a class', text: 'Please select a class first.' });
+                    return;
+                }
+                const fd = new FormData();
+                fd.append('action', 'set_teacher_gen_visibility');
+                fd.append('quiz_id', String(id));
+                fd.append('visible', visible ? '1' : '0');
+                fd.append('class_id', String(classId || ''));
+                const r = await fetch('php/quiz-management.php', { method: 'POST', body: fd, credentials: 'include' });
+                const d = await r.json();
+                if (!d.success) {
+                    Swal.fire({ icon: 'error', title: d.message || 'Could not update' });
+                    return;
+                }
+                await loadQuizSettings();
+                await loadQuizStatus();
+            } catch (e) {
+                Swal.fire({ icon: 'error', title: String(e.message || e) });
+            }
+        }
 
         function showQuizContent() {
             document.getElementById('noClassSelectedMessage').classList.add('hidden');
@@ -6891,6 +7083,15 @@ let currentQuizResultsSearch = '';
                     } else {
                         clearQuizStatusFields('one-to-one-functions');
                     }
+
+                    Object.keys(status).forEach(function (qtKey) {
+                        if (qtKey.indexOf('teacher_gen_') !== 0) return;
+                        const nid = qtKey.replace('teacher_gen_', '');
+                        const btn = document.getElementById('tgq_' + nid + '_toggleOpen');
+                        if (btn) {
+                            updateToggleButtonUI(btn, !!status[qtKey]);
+                        }
+                    });
                     
                     // Update quiz stats summary
                     updateQuizStatsSummary(status);
@@ -7060,6 +7261,12 @@ let currentQuizResultsSearch = '';
                     } else {
                         clearQuizSettingsFields('one-to-one-functions');
                     }
+
+                    if (Array.isArray(result.teacher_generated_quizzes)) {
+                        renderTeacherGenQuizzes(result.teacher_generated_quizzes);
+                    } else {
+                        renderTeacherGenQuizzes([]);
+                    }
                 } else {
                     console.log('No quiz settings found for class:', currentClassId);
                     clearQuizSettingsUI();
@@ -7146,6 +7353,7 @@ let currentQuizResultsSearch = '';
             quizTypes.forEach(quizType => {
                 clearQuizSettingsFields(quizType);
             });
+            renderTeacherGenQuizzes([]);
         }
 
         // Update deadline status display

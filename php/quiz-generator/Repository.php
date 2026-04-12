@@ -24,6 +24,17 @@ final class QuizGen_Repository
         return $row ?: null;
     }
 
+    public function findPublishedVisibleToStudents(int $id): ?array
+    {
+        $st = $this->pdo->prepare("
+            SELECT * FROM teacher_generated_quizzes
+            WHERE id = ? AND status = 'published' AND visible_to_students = 1
+        ");
+        $st->execute([$id]);
+        $row = $st->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    }
+
     public function createDraft(int $teacherId, string $title, string $slug, ?string $pdfPath, string $topicsJson, string $extractedText): int
     {
         $st = $this->pdo->prepare('
@@ -54,10 +65,23 @@ final class QuizGen_Repository
     {
         $st = $this->pdo->prepare("
             UPDATE teacher_generated_quizzes
-            SET status = 'published', class_id = ?, title = ?, questions_json = ?, published_at = NOW(), updated_at = NOW()
+            SET status = 'published', class_id = ?, title = ?, questions_json = ?,
+                visible_to_students = 0, published_at = NOW(), updated_at = NOW()
             WHERE id = ? AND teacher_id = ?
         ");
         $st->execute([$classId, $title, $questionsJson, $id, $teacherId]);
+    }
+
+    public function setVisibleToStudents(int $id, int $teacherId, bool $visible): bool
+    {
+        $st = $this->pdo->prepare("
+            UPDATE teacher_generated_quizzes
+            SET visible_to_students = ?, updated_at = NOW()
+            WHERE id = ? AND teacher_id = ? AND status = 'published'
+        ");
+        $st->execute([$visible ? 1 : 0, $id, $teacherId]);
+
+        return $st->rowCount() > 0;
     }
 
     /**
@@ -66,7 +90,7 @@ final class QuizGen_Repository
     public function listForTeacher(int $teacherId): array
     {
         $st = $this->pdo->prepare('
-            SELECT id, title, status, class_id, public_slug, created_at, published_at
+            SELECT id, title, status, class_id, public_slug, created_at, published_at, visible_to_students
             FROM teacher_generated_quizzes
             WHERE teacher_id = ?
             ORDER BY updated_at DESC
@@ -86,7 +110,8 @@ final class QuizGen_Repository
             FROM teacher_generated_quizzes q
             JOIN class_enrollments ce ON ce.class_id = q.class_id AND ce.student_id = ?
             JOIN classes c ON c.id = q.class_id AND c.is_active = TRUE
-            WHERE q.status = 'published' AND ce.enrollment_status = 'approved'
+            WHERE q.status = 'published' AND q.visible_to_students = 1
+              AND ce.enrollment_status = 'approved'
             ORDER BY q.published_at DESC
         ");
         $st->execute([$studentId]);
@@ -106,7 +131,8 @@ final class QuizGen_Repository
             SELECT q.id
             FROM teacher_generated_quizzes q
             JOIN class_enrollments ce ON ce.class_id = q.class_id AND ce.student_id = ?
-            WHERE q.id = ? AND q.status = 'published' AND ce.enrollment_status = 'approved'
+            WHERE q.id = ? AND q.status = 'published' AND q.visible_to_students = 1
+              AND ce.enrollment_status = 'approved'
         ");
         $st->execute([$studentId, $quizId]);
         return (bool) $st->fetch();

@@ -64,4 +64,14 @@ CREATE TABLE IF NOT EXISTS generated_quiz_attempts (
     } catch (PDOException $e) {
         error_log('[QuizGen schema widen columns] ' . $e->getMessage());
     }
+
+    try {
+        $r = $pdo->query("SHOW COLUMNS FROM teacher_generated_quizzes LIKE 'visible_to_students'");
+        if ($r && !$r->fetch()) {
+            $pdo->exec('ALTER TABLE teacher_generated_quizzes ADD COLUMN visible_to_students TINYINT(1) NOT NULL DEFAULT 0 AFTER status');
+            $pdo->exec('UPDATE teacher_generated_quizzes SET visible_to_students = 1 WHERE status = \'published\'');
+        }
+    } catch (PDOException $e) {
+        error_log('[QuizGen schema visible_to_students] ' . $e->getMessage());
+    }
 }

@@ -22,7 +22,7 @@ if (!$repo->studentCanAccessQuiz($id, $studentId)) {
     quiz_gen_json(['success' => false, 'message' => 'Quiz not available.'], 403);
 }
 
-$row = $repo->findPublished($id);
+$row = $repo->findPublishedVisibleToStudents($id);
 if (!$row) {
     quiz_gen_json(['success' => false, 'message' => 'Not found.'], 404);
 }

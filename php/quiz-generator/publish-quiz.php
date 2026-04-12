@@ -47,6 +47,35 @@ if ($wrap === false) {
 
 $repo->publish($draftId, $teacherId, $classId, $title, (string) $wrap);
 
+$quizTypeKey = 'teacher_gen_' . $draftId;
+try {
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS quiz_settings (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            quiz_type VARCHAR(64) NOT NULL,
+            class_id INT NOT NULL,
+            deadline DATETIME NOT NULL,
+            time_limit INT NOT NULL DEFAULT 20,
+            is_open TINYINT(1) DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            UNIQUE KEY unique_quiz_class (quiz_type, class_id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    ");
+} catch (Throwable $e) {
+    error_log('[QuizGen publish] quiz_settings ensure: ' . $e->getMessage());
+}
+try {
+    $ins = $pdo->prepare('
+        INSERT INTO quiz_settings (quiz_type, class_id, deadline, time_limit, is_open)
+        VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 7 DAY), 20, 0)
+        ON DUPLICATE KEY UPDATE updated_at = CURRENT_TIMESTAMP
+    ');
+    $ins->execute([$quizTypeKey, $classId]);
+} catch (Throwable $e) {
+    error_log('[QuizGen publish] quiz_settings insert: ' . $e->getMessage());
+}
+
 quiz_gen_json([
     'success' => true,
     'message' => 'Quiz published for the selected class.',
