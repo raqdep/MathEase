@@ -2062,7 +2062,7 @@
                                     <span class="text-sm font-bold text-amber-900">Quiz archive</span>
                                     <span class="text-xs text-gray-500">Teacher-created quizzes not published to students</span>
                                 </div>
-                                <div id="teacherGenArchiveList" class="space-y-4"></div>
+                                <div id="teacherGenArchiveList" class="space-y-2"></div>
                             </div>
                         </div>
                     </div>
@@ -5873,6 +5873,17 @@ let currentQuizResultsSearch = '';
                 + '    </div></div></div>';
         }
 
+        /** Compact row for Quiz archive (unpublished): title + publish only. */
+        function teacherGenArchiveRowHtml(q) {
+            const id = q.id;
+            const title = escapeHtml(q.title || ('Quiz #' + id));
+            return ''
+                + '<div class="flex flex-wrap items-center justify-between gap-2 sm:gap-3 px-3 py-2 rounded-lg border border-amber-100 bg-amber-50/60 hover:bg-amber-50" data-tgq-id="' + id + '">'
+                + '  <span class="text-sm font-semibold text-gray-900 min-w-0 flex-1 truncate" title="' + title + '">' + title + '</span>'
+                + '  <button type="button" onclick="setTeacherGenStudentVisible(' + id + ', true)" class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-teal-600 text-white hover:bg-teal-700">Publish to students</button>'
+                + '</div>';
+        }
+
         function renderTeacherGenQuizzes(items) {
             const active = document.getElementById('teacherGenActiveList');
             const arch = document.getElementById('teacherGenArchiveList');
@@ -5899,7 +5910,7 @@ let currentQuizResultsSearch = '';
                 arch.innerHTML = '<p class="text-sm text-gray-500 px-2 py-2">No archived (unpublished) quizzes.</p>';
             } else {
                 unlisted.forEach(function (q) {
-                    arch.insertAdjacentHTML('beforeend', teacherGenCardHtml(q));
+                    arch.insertAdjacentHTML('beforeend', teacherGenArchiveRowHtml(q));
                 });
             }
         }
