@@ -41,8 +41,9 @@ function quiz_gen_require_student(): int
 
 function quiz_gen_groq_config(): array
 {
-    $key = getenv('GROQ_API_KEY')
-        ?: getenv('GROQ_QUIZ_GENERATOR_API_KEY')
+    // Prefer a quiz-only key when set so it actually wins over GROQ_API_KEY (optional isolation / quotas).
+    $key = getenv('GROQ_QUIZ_GENERATOR_API_KEY')
+        ?: getenv('GROQ_API_KEY')
         ?: getenv('GROQ_LESSON_API_KEY');
     $url = getenv('GROQ_API_URL') ?: 'https://api.groq.com/openai/v1/chat/completions';
     $model = getenv('GROQ_MODEL')

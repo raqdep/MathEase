@@ -1190,14 +1190,14 @@
                                 <h3 class="text-2xl font-bold text-gray-900">Quiz Management</h3>
                                 <p class="text-sm text-gray-600 mt-1">Manage quiz deadlines, time limits, and view student performance</p>
                             </div>
-                            <div class="hidden md:flex items-center space-x-2">
+                            <div class="flex flex-wrap items-center gap-2 justify-end">
                                 <div class="px-3 py-1.5 bg-indigo-100 text-indigo-700 rounded-lg text-xs font-semibold">
                                     <i class="fas fa-clipboard-list mr-1"></i>
                                     <span id="totalQuizzesCount">10 Quizzes</span>
                                 </div>
-                                <a href="teacher-quiz-generator.html" class="inline-flex items-center px-3 py-1.5 bg-violet-600 hover:bg-violet-700 text-white rounded-lg text-xs font-semibold shadow-sm transition">
-                                    <i class="fas fa-wand-magic-sparkles mr-1"></i>
-                                    Quiz Generator
+                                <a href="teacher-quiz-generator.html" class="hidden sm:inline-flex items-center px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold border border-slate-200 transition" title="Standalone page with the same tools">
+                                    <i class="fas fa-external-link-alt mr-1"></i>
+                                    Full-page generator
                                 </a>
                             </div>
                         </div>
@@ -1266,6 +1266,132 @@
 
                     <!-- Quiz Content Wrapper -->
                     <div id="quizContentWrapper" class="hidden">
+                        <!-- AI Quiz Generator (flashcards-style; lesson or teacher-created source) -->
+                        <div id="teacherQuizGenPanel" class="mb-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <div class="lg:col-span-1">
+                                <div class="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-indigo-100/80 p-6">
+                                    <h2 class="text-2xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-1">
+                                        AI Quiz Generator
+                                    </h2>
+                                    <p class="text-slate-600 text-sm mb-5">Pick a built-in lesson (same lists as Flashcards), or one of your created lessons. Then set the Table of Specification and generate questions—nothing is published until you choose.</p>
+
+                                    <div class="space-y-3 mb-5">
+                                        <span class="block text-xs font-bold text-slate-500 uppercase tracking-wide">Content source</span>
+                                        <div class="flex flex-col gap-2">
+                                            <label class="flex items-center gap-2 cursor-pointer text-sm text-slate-800">
+                                                <input type="radio" name="tqgSource" value="builtin" class="tqg-source rounded-full border-slate-300 text-indigo-600" checked>
+                                                Built-in MathEase lesson
+                                            </label>
+                                            <label class="flex items-center gap-2 cursor-pointer text-sm text-slate-800">
+                                                <input type="radio" name="tqgSource" value="teacher" class="tqg-source rounded-full border-slate-300 text-indigo-600">
+                                                My created lesson
+                                            </label>
+                                            <label class="flex items-center gap-2 cursor-pointer text-sm text-slate-800">
+                                                <input type="radio" name="tqgSource" value="pdf" class="tqg-source rounded-full border-slate-300 text-indigo-600">
+                                                Upload PDF
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div id="tqgBuiltinFields" class="space-y-4">
+                                        <div>
+                                            <label for="tqgLessonModule" class="block text-sm font-semibold text-slate-700 mb-2">Lesson</label>
+                                            <select id="tqgLessonModule" class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white text-sm"></select>
+                                        </div>
+                                        <div>
+                                            <label for="tqgLessonTopic" class="block text-sm font-semibold text-slate-700 mb-2">Topic</label>
+                                            <select id="tqgLessonTopic" class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white text-sm"></select>
+                                        </div>
+                                    </div>
+
+                                    <div id="tqgTeacherFields" class="space-y-4 hidden">
+                                        <div>
+                                            <label for="tqgTeacherLesson" class="block text-sm font-semibold text-slate-700 mb-2">Your lesson</label>
+                                            <select id="tqgTeacherLesson" class="w-full px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 bg-white text-sm">
+                                                <option value="">Loading…</option>
+                                            </select>
+                                            <p class="text-xs text-slate-500 mt-1">Lessons you created under Lesson Management.</p>
+                                        </div>
+                                    </div>
+
+                                    <div id="tqgPdfFields" class="space-y-4 hidden">
+                                        <div>
+                                            <label for="tqgPdfFile" class="block text-sm font-semibold text-slate-700 mb-2">PDF file</label>
+                                            <input type="file" id="tqgPdfFile" accept="application/pdf" class="block w-full text-sm text-slate-600">
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-5">
+                                        <label for="tqgQuizTitle" class="block text-sm font-semibold text-slate-700 mb-2">Quiz title</label>
+                                        <input type="text" id="tqgQuizTitle" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm" placeholder="e.g. Chapter 3 review" value="">
+                                    </div>
+
+                                    <button type="button" id="tqgBtnPrepare" class="mt-5 w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-4 py-3 rounded-xl font-bold text-sm shadow-lg transition">
+                                        <i class="fas fa-file-import mr-2"></i>Prepare draft from source
+                                    </button>
+                                    <p id="tqgPrepareHint" class="text-xs text-slate-500 mt-2 hidden">Draft ready. Set the question mix on the right, then generate.</p>
+                                </div>
+                            </div>
+
+                            <div class="lg:col-span-2 space-y-6">
+                                <div id="tqgTosCard" class="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-violet-100/80 p-6 opacity-60 pointer-events-none">
+                                    <h3 class="text-lg font-bold text-slate-800 mb-1">Table of Specification</h3>
+                                    <p class="text-sm text-slate-600 mb-3">Questions per cognitive level. <strong>Total must not exceed 30.</strong></p>
+                                    <p class="text-sm font-medium text-indigo-700 mb-4" id="tqgTosSumLabel">Current total: 12 / 30</p>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+                                        <div><label class="text-xs font-medium text-slate-600">Remembering</label><input type="number" id="tqg_tos_r" min="0" max="30" value="3" class="tqg-tos-input w-full border border-slate-200 rounded-lg px-2 py-2 text-sm"></div>
+                                        <div><label class="text-xs font-medium text-slate-600">Understanding</label><input type="number" id="tqg_tos_u" min="0" max="30" value="3" class="tqg-tos-input w-full border border-slate-200 rounded-lg px-2 py-2 text-sm"></div>
+                                        <div><label class="text-xs font-medium text-slate-600">Applying</label><input type="number" id="tqg_tos_a" min="0" max="30" value="3" class="tqg-tos-input w-full border border-slate-200 rounded-lg px-2 py-2 text-sm"></div>
+                                        <div><label class="text-xs font-medium text-slate-600">Analyzing</label><input type="number" id="tqg_tos_an" min="0" max="30" value="3" class="tqg-tos-input w-full border border-slate-200 rounded-lg px-2 py-2 text-sm"></div>
+                                    </div>
+                                    <button type="button" id="tqgBtnGenerate" class="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-md disabled:opacity-50 disabled:pointer-events-none" disabled>
+                                        <i class="fas fa-wand-magic-sparkles mr-2"></i>Generate questions (Groq)
+                                    </button>
+                                    <div id="tqgGenLoading" class="hidden mt-3 flex items-center gap-2 text-slate-600 text-sm">
+                                        <i class="fas fa-spinner fa-spin"></i><span>Generating…</span>
+                                    </div>
+                                </div>
+
+                                <div id="tqgReviewCard" class="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-slate-200/80 p-6 hidden">
+                                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                                        <h3 class="text-lg font-bold text-slate-800">Review &amp; edit</h3>
+                                        <button type="button" id="tqgBtnAddQ" class="text-sm border border-slate-300 rounded-lg px-3 py-2 hover:bg-slate-50">+ Add question</button>
+                                    </div>
+                                    <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                                        <table class="min-w-full text-sm">
+                                            <thead class="bg-slate-100 text-left">
+                                                <tr>
+                                                    <th class="p-2">#</th>
+                                                    <th class="p-2">Question</th>
+                                                    <th class="p-2">Type</th>
+                                                    <th class="p-2">Answer</th>
+                                                    <th class="p-2"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tqgQTable"></tbody>
+                                        </table>
+                                    </div>
+                                    <div class="mt-4 flex flex-wrap gap-3">
+                                        <button type="button" id="tqgBtnSaveDraft" class="bg-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded-xl text-sm">Save draft</button>
+                                    </div>
+                                </div>
+
+                                <div id="tqgPublishCard" class="bg-emerald-50/90 backdrop-blur-lg rounded-3xl shadow-lg border border-emerald-200 p-6 hidden">
+                                    <h3 class="text-lg font-bold text-slate-800 mb-3">Publish to class</h3>
+                                    <p class="text-xs text-slate-600 mb-3">Uses the class selected above in Quiz Management.</p>
+                                    <div class="max-w-md space-y-3">
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-700">Final title</label>
+                                            <input type="text" id="tqgPublishTitle" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm">
+                                        </div>
+                                        <button type="button" id="tqgBtnPublish" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold">
+                                            Publish quiz
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Quick Stats Summary -->
                         <div id="quizStatsSummary" class="mb-6 grid grid-cols-2 md:grid-cols-4 gap-4 hidden">
                             <div class="bg-white rounded-xl shadow-md border border-gray-200 p-4">
@@ -5274,6 +5400,375 @@ let currentQuizResultsSearch = '';
             document.getElementById('selectedClassInfo').classList.add('hidden');
         }
 
+        (function () {
+            let tqgDraftId = null;
+            let tqgQuestions = [];
+            let tqgModules = [];
+            let tqgTeacherLessons = [];
+            let tqgBound = false;
+
+            async function tqgParseJson(r) {
+                const text = await r.text();
+                const status = r.status;
+                try {
+                    return JSON.parse(text);
+                } catch (e) {
+                    if (!text || !String(text).trim()) {
+                        throw new Error('Empty response (HTTP ' + status + '). Check PHP error log / database.');
+                    }
+                    throw new Error(text.slice(0, 400));
+                }
+            }
+
+            function tqgSetTosEnabled(on) {
+                const card = document.getElementById('tqgTosCard');
+                const btn = document.getElementById('tqgBtnGenerate');
+                if (card) {
+                    card.classList.toggle('opacity-60', !on);
+                    card.classList.toggle('pointer-events-none', !on);
+                }
+                if (btn) btn.disabled = !on;
+            }
+
+            function tqgUpdateTosSum() {
+                const sum = ['tqg_tos_r', 'tqg_tos_u', 'tqg_tos_a', 'tqg_tos_an'].reduce(function (a, id) {
+                    const el = document.getElementById(id);
+                    return a + (parseInt(el && el.value, 10) || 0);
+                }, 0);
+                const el = document.getElementById('tqgTosSumLabel');
+                if (el) el.textContent = 'Current total: ' + sum + ' / 30';
+            }
+
+            function tqgPopulateBuiltinTopicOptions() {
+                const modSel = document.getElementById('tqgLessonModule');
+                const topSel = document.getElementById('tqgLessonTopic');
+                if (!modSel || !topSel) return;
+                const slug = modSel.value;
+                const mod = tqgModules.find(function (m) { return m.slug === slug; });
+                topSel.innerHTML = '';
+                if (!mod || !mod.topics) return;
+                mod.topics.forEach(function (title, i) {
+                    const o = document.createElement('option');
+                    o.value = String(i + 1);
+                    o.textContent = (i + 1) + '. ' + title;
+                    topSel.appendChild(o);
+                });
+            }
+
+            function tqgRenderQuestionTable() {
+                const tb = document.getElementById('tqgQTable');
+                if (!tb) return;
+                tb.innerHTML = '';
+                tqgQuestions.forEach(function (q, i) {
+                    const tr = document.createElement('tr');
+                    tr.className = 'border-t border-slate-100';
+                    tr.innerHTML =
+                        '<td class="p-2 align-top">' + (i + 1) + '</td>' +
+                        '<td class="p-2"><textarea data-tqg-i="' + i + '" data-tqg-f="question" class="w-full min-w-[200px] border rounded p-1 text-xs" rows="2">' + escapeHtml(q.question || '') + '</textarea></td>' +
+                        '<td class="p-2 align-top">' +
+                        '<select data-tqg-i="' + i + '" data-tqg-f="type" class="border rounded text-xs">' +
+                        '<option value="multiple_choice"' + (q.type === 'multiple_choice' ? ' selected' : '') + '>MC</option>' +
+                        '<option value="identification"' + (q.type === 'identification' ? ' selected' : '') + '>ID</option>' +
+                        '<option value="problem_solving"' + (q.type === 'problem_solving' ? ' selected' : '') + '>Problem</option>' +
+                        '</select></td>' +
+                        '<td class="p-2"><input type="text" data-tqg-i="' + i + '" data-tqg-f="answer" class="w-full border rounded p-1 text-xs" value="' + escapeHtml(q.answer || '') + '"></td>' +
+                        '<td class="p-2 align-top"><button type="button" data-tqg-del="' + i + '" class="text-red-600 text-xs">Remove</button></td>';
+                    tb.appendChild(tr);
+                });
+                tb.querySelectorAll('textarea,select,input').forEach(function (el) {
+                    el.addEventListener('change', tqgOnCellChange);
+                });
+                tb.querySelectorAll('button[data-tqg-del]').forEach(function (b) {
+                    b.addEventListener('click', function () {
+                        tqgQuestions.splice(parseInt(b.getAttribute('data-tqg-del'), 10), 1);
+                        tqgRenderQuestionTable();
+                    });
+                });
+            }
+
+            function tqgOnCellChange(e) {
+                const el = e.target;
+                const i = parseInt(el.getAttribute('data-tqg-i'), 10);
+                const f = el.getAttribute('data-tqg-f');
+                if (!tqgQuestions[i]) return;
+                tqgQuestions[i][f] = el.value;
+            }
+
+            function tqgResetFlow() {
+                tqgDraftId = null;
+                tqgQuestions = [];
+                tqgSetTosEnabled(false);
+                const hint = document.getElementById('tqgPrepareHint');
+                if (hint) hint.classList.add('hidden');
+                document.getElementById('tqgReviewCard')?.classList.add('hidden');
+                document.getElementById('tqgPublishCard')?.classList.add('hidden');
+                tqgRenderQuestionTable();
+            }
+
+            window.initTeacherQuizGeneratorPanel = async function () {
+                const panel = document.getElementById('teacherQuizGenPanel');
+                if (!panel) return;
+
+                try {
+                    const r = await fetch('php/quiz-generator/builtin-lessons-catalog.php', { credentials: 'same-origin' });
+                    const d = await tqgParseJson(r);
+                    if (d.success && Array.isArray(d.modules)) {
+                        tqgModules = d.modules;
+                        const modSel = document.getElementById('tqgLessonModule');
+                        if (modSel) {
+                            modSel.innerHTML = '';
+                            d.modules.forEach(function (m) {
+                                const o = document.createElement('option');
+                                o.value = m.slug;
+                                o.textContent = m.lessonTitle || m.slug;
+                                modSel.appendChild(o);
+                            });
+                            tqgPopulateBuiltinTopicOptions();
+                        }
+                    }
+                } catch (err) {
+                    console.warn('Builtin lesson catalog:', err);
+                }
+
+                try {
+                    const r2 = await fetch('php/get-teacher-lessons.php', { credentials: 'same-origin' });
+                    const d2 = await tqgParseJson(r2);
+                    const sel = document.getElementById('tqgTeacherLesson');
+                    if (sel && d2.success && Array.isArray(d2.lessons)) {
+                        tqgTeacherLessons = d2.lessons;
+                        sel.innerHTML = '';
+                        if (d2.lessons.length === 0) {
+                            sel.innerHTML = '<option value="">No lessons yet — create one in Lesson Management</option>';
+                        } else {
+                            d2.lessons.forEach(function (L) {
+                                const o = document.createElement('option');
+                                o.value = L.id;
+                                o.textContent = (L.title || 'Untitled') + (L.topic ? ' — ' + L.topic : '');
+                                sel.appendChild(o);
+                            });
+                        }
+                    }
+                } catch (err) {
+                    console.warn('Teacher lessons:', err);
+                }
+
+                if (tqgBound) return;
+                tqgBound = true;
+
+                document.getElementById('tqgLessonModule')?.addEventListener('change', tqgPopulateBuiltinTopicOptions);
+
+                document.querySelectorAll('input[name="tqgSource"]').forEach(function (radio) {
+                    radio.addEventListener('change', function () {
+                        const v = document.querySelector('input[name="tqgSource"]:checked')?.value || 'builtin';
+                        document.getElementById('tqgBuiltinFields')?.classList.toggle('hidden', v !== 'builtin');
+                        document.getElementById('tqgTeacherFields')?.classList.toggle('hidden', v !== 'teacher');
+                        document.getElementById('tqgPdfFields')?.classList.toggle('hidden', v !== 'pdf');
+                        tqgResetFlow();
+                    });
+                });
+
+                document.querySelectorAll('.tqg-tos-input').forEach(function (inp) {
+                    inp.addEventListener('input', tqgUpdateTosSum);
+                });
+                tqgUpdateTosSum();
+
+                document.getElementById('tqgBtnPrepare')?.addEventListener('click', async function () {
+                    const src = document.querySelector('input[name="tqgSource"]:checked')?.value || 'builtin';
+                    const titleEl = document.getElementById('tqgQuizTitle');
+                    const quizTitle = (titleEl && titleEl.value.trim()) ? titleEl.value.trim() : '';
+                    try {
+                        if (src === 'pdf') {
+                            const f = document.getElementById('tqgPdfFile')?.files?.[0];
+                            if (!f) {
+                                Swal.fire({ icon: 'warning', title: 'Choose a PDF' });
+                                return;
+                            }
+                            const fd = new FormData();
+                            fd.append('pdf_file', f);
+                            fd.append('quiz_title', quizTitle || 'Untitled Quiz');
+                            Swal.fire({ title: 'Uploading…', allowOutsideClick: false, didOpen: function () { Swal.showLoading(); } });
+                            const r = await fetch('php/quiz-generator/upload-pdf.php', { method: 'POST', body: fd, credentials: 'same-origin' });
+                            const d = await tqgParseJson(r);
+                            Swal.close();
+                            if (!d.success) {
+                                Swal.fire({ icon: 'error', title: d.message || 'Upload failed' });
+                                return;
+                            }
+                            tqgDraftId = d.draft_id;
+                        } else if (src === 'builtin') {
+                            const slug = document.getElementById('tqgLessonModule')?.value;
+                            const lessonIndex = parseInt(document.getElementById('tqgLessonTopic')?.value || '1', 10);
+                            Swal.fire({ title: 'Preparing…', allowOutsideClick: false, didOpen: function () { Swal.showLoading(); } });
+                            const r = await fetch('php/quiz-generator/create-draft-from-lesson.php', {
+                                method: 'POST',
+                                credentials: 'same-origin',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    source: 'builtin',
+                                    topic_slug: slug,
+                                    lesson_index: lessonIndex,
+                                    quiz_title: quizTitle
+                                })
+                            });
+                            const d = await tqgParseJson(r);
+                            Swal.close();
+                            if (!d.success) {
+                                Swal.fire({ icon: 'error', title: d.message || 'Could not create draft' });
+                                return;
+                            }
+                            tqgDraftId = d.draft_id;
+                            if (titleEl && !titleEl.value.trim() && d.title) titleEl.value = d.title;
+                        } else {
+                            const lid = parseInt(document.getElementById('tqgTeacherLesson')?.value || '0', 10);
+                            if (!lid) {
+                                Swal.fire({ icon: 'warning', title: 'Select a lesson' });
+                                return;
+                            }
+                            Swal.fire({ title: 'Preparing…', allowOutsideClick: false, didOpen: function () { Swal.showLoading(); } });
+                            const r = await fetch('php/quiz-generator/create-draft-from-lesson.php', {
+                                method: 'POST',
+                                credentials: 'same-origin',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    source: 'teacher_lesson',
+                                    teacher_lesson_id: lid,
+                                    quiz_title: quizTitle
+                                })
+                            });
+                            const d = await tqgParseJson(r);
+                            Swal.close();
+                            if (!d.success) {
+                                Swal.fire({ icon: 'error', title: d.message || 'Could not create draft' });
+                                return;
+                            }
+                            tqgDraftId = d.draft_id;
+                            if (titleEl && !titleEl.value.trim() && d.title) titleEl.value = d.title;
+                        }
+                        document.getElementById('tqgPrepareHint')?.classList.remove('hidden');
+                        tqgSetTosEnabled(true);
+                        const pub = document.getElementById('tqgPublishTitle');
+                        if (pub) pub.value = (titleEl && titleEl.value.trim()) ? titleEl.value.trim() : 'Untitled Quiz';
+                    } catch (err) {
+                        Swal.close();
+                        Swal.fire({ icon: 'error', title: 'Error', text: String(err.message || err) });
+                    }
+                });
+
+                document.getElementById('tqgBtnGenerate')?.addEventListener('click', async function () {
+                    if (!tqgDraftId) return;
+                    const tos = {
+                        remembering: parseInt(document.getElementById('tqg_tos_r')?.value, 10) || 0,
+                        understanding: parseInt(document.getElementById('tqg_tos_u')?.value, 10) || 0,
+                        applying: parseInt(document.getElementById('tqg_tos_a')?.value, 10) || 0,
+                        analyzing: parseInt(document.getElementById('tqg_tos_an')?.value, 10) || 0
+                    };
+                    const sum = tos.remembering + tos.understanding + tos.applying + tos.analyzing;
+                    if (sum < 1) {
+                        Swal.fire({ icon: 'warning', title: 'Set at least one question in TOS' });
+                        return;
+                    }
+                    if (sum > 30) {
+                        Swal.fire({ icon: 'warning', title: 'Maximum 30 questions total' });
+                        return;
+                    }
+                    document.getElementById('tqgGenLoading')?.classList.remove('hidden');
+                    try {
+                        const r = await fetch('php/quiz-generator/generate-questions.php', {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ draft_id: tqgDraftId, tos: tos })
+                        });
+                        const d = await tqgParseJson(r);
+                        document.getElementById('tqgGenLoading')?.classList.add('hidden');
+                        if (!d.success) {
+                            Swal.fire({ icon: 'error', title: d.message || 'Generation failed' });
+                            return;
+                        }
+                        tqgQuestions = d.questions || [];
+                        document.getElementById('tqgReviewCard')?.classList.remove('hidden');
+                        document.getElementById('tqgPublishCard')?.classList.remove('hidden');
+                        const pt = document.getElementById('tqgPublishTitle');
+                        const qt = document.getElementById('tqgQuizTitle');
+                        if (pt && qt && qt.value.trim()) pt.value = qt.value.trim();
+                        tqgRenderQuestionTable();
+                    } catch (err) {
+                        document.getElementById('tqgGenLoading')?.classList.add('hidden');
+                        Swal.fire({ icon: 'error', title: 'Generation failed', text: String(err.message || err) });
+                    }
+                });
+
+                document.getElementById('tqgBtnSaveDraft')?.addEventListener('click', async function () {
+                    if (!tqgDraftId) return;
+                    try {
+                        const r = await fetch('php/quiz-generator/save-draft.php', {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ draft_id: tqgDraftId, questions: tqgQuestions })
+                        });
+                        const d = await tqgParseJson(r);
+                        Swal.fire({ icon: d.success ? 'success' : 'error', title: d.message || (d.success ? 'Saved' : 'Error') });
+                    } catch (err) {
+                        Swal.fire({ icon: 'error', title: 'Save failed', text: String(err.message || err) });
+                    }
+                });
+
+                document.getElementById('tqgBtnAddQ')?.addEventListener('click', function () {
+                    if (tqgQuestions.length >= 30) {
+                        Swal.fire({ icon: 'warning', title: 'Maximum 30 questions' });
+                        return;
+                    }
+                    tqgQuestions.push({
+                        question: 'New question',
+                        type: 'identification',
+                        cognitive_level: 'remembering',
+                        difficulty: 'medium',
+                        choices: [],
+                        answer: '',
+                        topic_title: '',
+                        feedback: ''
+                    });
+                    tqgRenderQuestionTable();
+                });
+
+                document.getElementById('tqgBtnPublish')?.addEventListener('click', async function () {
+                    if (!tqgDraftId) return;
+                    const classId = parseInt(document.getElementById('quizClassSelector')?.value || '0', 10);
+                    const title = document.getElementById('tqgPublishTitle')?.value.trim() || '';
+                    if (!classId || !title) {
+                        Swal.fire({ icon: 'warning', title: 'Select a class above and enter a title' });
+                        return;
+                    }
+                    if (tqgQuestions.length < 1) {
+                        Swal.fire({ icon: 'warning', title: 'Generate questions first' });
+                        return;
+                    }
+                    try {
+                        const r = await fetch('php/quiz-generator/publish-quiz.php', {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                draft_id: tqgDraftId,
+                                class_id: classId,
+                                title: title,
+                                questions: tqgQuestions
+                            })
+                        });
+                        const d = await tqgParseJson(r);
+                        if (!d.success) {
+                            Swal.fire({ icon: 'error', title: d.message || 'Publish failed' });
+                            return;
+                        }
+                        Swal.fire({ icon: 'success', title: 'Published', text: 'Students in this class will see the quiz under Quizzes.' });
+                    } catch (err) {
+                        Swal.fire({ icon: 'error', title: 'Publish failed', text: String(err.message || err) });
+                    }
+                });
+            };
+        })();
+
         function showQuizContent() {
             document.getElementById('noClassSelectedMessage').classList.add('hidden');
             const quizContentWrapper = document.getElementById('quizContentWrapper');
@@ -5283,6 +5778,9 @@ let currentQuizResultsSearch = '';
             const quizStatsSummary = document.getElementById('quizStatsSummary');
             if (quizStatsSummary) {
                 quizStatsSummary.classList.remove('hidden');
+            }
+            if (typeof initTeacherQuizGeneratorPanel === 'function') {
+                initTeacherQuizGeneratorPanel();
             }
         }
 
